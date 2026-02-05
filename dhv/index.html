@@ -139,43 +139,51 @@
         nav {
             background: rgba(255, 255, 255, 0.5);
             border: 2px solid var(--accent);
-            padding: 30px;
-            margin: 50px 0;
-            border-radius: 2px;
+            padding: 30px 35px;
+            margin: 50px auto;
+            border-radius: 4px;
             box-shadow: 0 10px 40px var(--shadow);
             backdrop-filter: blur(10px);
+            max-width: 600px;
         }
         
         nav h3 {
             font-family: 'Cinzel', serif;
             text-align: center;
             margin-bottom: 20px;
-            font-size: 1.4em;
-            color: var(--accent);
+            margin-top: 0;
+            font-size: 1.6em;
+            color: var(--ink);
             letter-spacing: 0.05em;
         }
         
         nav ul {
             list-style: none;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 12px;
+            padding: 0;
+            margin: 0;
+        }
+        
+        nav li {
+            margin: 10px 0;
         }
         
         nav a {
-            color: var(--accent);
+            color: var(--ink);
             text-decoration: none;
             transition: all 0.3s ease;
             padding: 8px 12px;
             display: block;
             border-radius: 2px;
-            font-size: 0.95em;
+            font-size: 1.05em;
+            border-left: 3px solid transparent;
+            font-weight: 500;
         }
         
         nav a:hover {
             color: var(--gold);
             background: rgba(201, 169, 97, 0.1);
-            transform: translateX(5px);
+            border-left-color: var(--gold);
+            padding-left: 20px;
         }
         
         /* Section styling */
@@ -2176,15 +2184,15 @@
 
             <h2>References</h2>
             <ol style="line-height: 2.2;">
-                <li>sKiDa (2025). <em>Delta Harmonic Vector Theory: The Unified Substrate Beneath HRT and SACS</em>, v3.1.</li>
-                <li>sKiDa (2025). <em>Delta Harmonic Vector Theory: Tensor Field Formalization</em>, v4.0.</li>
-                <li>sKiDa (2025). <em>Delta Harmonic Vector Theory: Stability Analysis and Attractor Landscapes</em>, v4.1.</li>
-                <li>sKiDa (2025). <em>Delta Harmonic Vector Theory: Multi-Scale Coupling Model</em>, v4.2.</li>
-                <li>sKiDa (2025). <em>Delta Harmonic Vector Theory: Unified Synthesis & Refinements</em>, v5.0.</li>
-                <li>sKiDa (2025). <em>Delta Harmonic Vector Theory: Experimental Protocols & Validation Supplement</em>.</li>
-                <li>sKiDa (2025). <em>Resonant Equilibrium Theory: Expanding Nash Equilibrium with Coherence Costs</em>.</li>
-                <li>sKiDa (2025). <em>Temporal Collapse Theory: Time as Active Compression Parameter</em>.</li>
-                <li>sKiDa (2025). <em>The Coherence Architecture Project: Unifying Field Physics, Aging Biology, and Platform Design</em>.</li>
+                <li>Kyuri (2025). <em>Delta Harmonic Vector Theory: The Unified Substrate Beneath HRT and SACS</em>, v3.1.</li>
+                <li>Kyuri (2025). <em>Delta Harmonic Vector Theory: Tensor Field Formalization</em>, v4.0.</li>
+                <li>Kyuri (2025). <em>Delta Harmonic Vector Theory: Stability Analysis and Attractor Landscapes</em>, v4.1.</li>
+                <li>Kyuri (2025). <em>Delta Harmonic Vector Theory: Multi-Scale Coupling Model</em>, v4.2.</li>
+                <li>Kyuri (2025). <em>Delta Harmonic Vector Theory: Unified Synthesis & Refinements</em>, v5.0.</li>
+                <li>Kyuri (2025). <em>Delta Harmonic Vector Theory: Experimental Protocols & Validation Supplement</em>.</li>
+                <li>Kyuri (2025). <em>Resonant Equilibrium Theory: Expanding Nash Equilibrium with Coherence Costs</em>.</li>
+                <li>Kyuri (2025). <em>Temporal Collapse Theory: Time as Active Compression Parameter</em>.</li>
+                <li>Kyuri (2025). <em>The Coherence Architecture Project: Unifying Field Physics, Aging Biology, and Platform Design</em>.</li>
                 <li>Penrose, R. (1965). <em>Gravitational Collapse and Space-Time Singularities</em>, Physical Review Letters 14: 57-59.</li>
                 <li>Hawking, S.W. & Penrose, R. (1970). <em>The Singularities of Gravitational Collapse and Cosmology</em>, Proceedings of the Royal Society A 314: 529-548.</li>
                 <li>Hawking, S.W. & Ellis, G.F.R. (1973). <em>The Large Scale Structure of Space-Time</em>, Cambridge University Press.</li>
