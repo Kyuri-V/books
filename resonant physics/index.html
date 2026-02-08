@@ -1,0 +1,1996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resonant Physics | Kyuri V</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --parchment: #f4f1e8;
+            --ink: #2a2520;
+            --accent: #8b6f47;
+            --gold: #c9a961;
+            --shadow: rgba(42, 37, 32, 0.1);
+            --glow: rgba(201, 169, 97, 0.15);
+            --deep-green: #2d5016;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: linear-gradient(135deg, #f8f5ed 0%, var(--parchment) 100%);
+            color: var(--ink);
+            line-height: 1.8;
+            font-size: 18px;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image:
+                radial-gradient(circle at 20% 30%, var(--glow) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(45, 80, 22, 0.03) 0%, transparent 50%);
+            pointer-events: none; z-index: 0;
+        }
+
+        /* ── Progress Bar ── */
+        .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: rgba(201, 169, 97, 0.1); z-index: 200; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--gold), var(--deep-green)); width: 0%; transition: width 0.2s ease; }
+
+        /* ── Chapter Navigation ── */
+        .chapter-nav {
+            position: fixed;
+            top: 50%;
+            right: 24px;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .chapter-nav.visible { opacity: 1; }
+        .nav-dot {
+            width: 11px; height: 11px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .nav-dot:hover, .nav-dot.active {
+            background: var(--gold);
+            border-color: var(--gold);
+            transform: scale(1.3);
+        }
+        .nav-dot::after {
+            content: attr(data-label);
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            white-space: nowrap;
+            font-family: 'Cinzel', serif;
+            font-size: 10px;
+            letter-spacing: 0.08em;
+            color: var(--accent);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .nav-dot:hover::after { opacity: 1; }
+
+        /* ── Container ── */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 60px 40px 120px;
+        }
+
+        /* ── Title Page ── */
+        .title-page {
+            text-align: center;
+            padding: 100px 0 80px;
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 1.5s ease-out;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .title-line {
+            width: 120px;
+            height: 1px;
+            background: var(--gold);
+            margin-bottom: 40px;
+            animation: breathe 4s ease-in-out infinite;
+            box-shadow: 0 0 8px rgba(201, 169, 97, 0.3);
+        }
+        @keyframes breathe {
+            0%, 100% { width: 120px; opacity: 0.5; box-shadow: 0 0 6px rgba(201, 169, 97, 0.2); }
+            50% { width: 200px; opacity: 1; box-shadow: 0 0 16px rgba(201, 169, 97, 0.5); }
+        }
+        .title-page h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 3.4em;
+            font-weight: 700;
+            color: var(--ink);
+            letter-spacing: 0.08em;
+            line-height: 1.15;
+            margin-bottom: 16px;
+        }
+        .title-page .subtitle {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.25em;
+            font-style: italic;
+            color: var(--accent);
+            margin-bottom: 40px;
+            letter-spacing: 0.03em;
+            line-height: 1.5;
+            max-width: 600px;
+        }
+        .title-page .edition {
+            font-family: 'Cinzel', serif;
+            font-size: 0.82em;
+            letter-spacing: 0.12em;
+            color: var(--gold);
+            border-top: 1px solid rgba(201, 169, 97, 0.4);
+            border-bottom: 1px solid rgba(201, 169, 97, 0.4);
+            padding: 14px 32px;
+            margin-bottom: 30px;
+        }
+        .title-page .authors {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9em;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            opacity: 0.8;
+        }
+
+        /* ── TOC ── */
+        .toc {
+            margin: 0 0 80px;
+            padding: 44px 48px;
+            border: 1px solid rgba(139, 111, 71, 0.2);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.35);
+        }
+        .toc h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1em;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--gold);
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .toc-list { list-style: none; }
+        .toc-list li { margin: 10px 0; }
+        .toc-list a {
+            color: var(--ink);
+            text-decoration: none;
+            display: block;
+            padding: 8px 14px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        .toc-list a:hover {
+            background: rgba(201, 169, 97, 0.1);
+            transform: translateX(6px);
+        }
+        .toc-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.85em;
+            letter-spacing: 0.08em;
+            color: var(--accent);
+            margin-right: 8px;
+        }
+
+        /* ── Dividers ── */
+        .divider {
+            text-align: center;
+            margin: 70px 0;
+            position: relative;
+        }
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+        .divider-symbol {
+            position: relative;
+            background: var(--parchment);
+            padding: 0 24px;
+            font-size: 20px;
+            color: var(--gold);
+            z-index: 1;
+        }
+
+        /* ── Chapters ── */
+        .chapter {
+            margin-bottom: 80px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .chapter.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .chapter-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.7em;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 12px;
+        }
+        .chapter h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 2em;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 28px;
+            letter-spacing: 0.02em;
+            line-height: 1.3;
+        }
+        .chapter h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.4em;
+            font-weight: 600;
+            color: var(--accent);
+            margin: 36px 0 18px;
+            letter-spacing: 0.02em;
+        }
+        .chapter h4 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--deep-green);
+            margin: 24px 0 12px;
+            letter-spacing: 0.03em;
+        }
+        .chapter p {
+            margin-bottom: 20px;
+            text-align: justify;
+            text-justify: inter-word;
+        }
+
+        /* ── Collapsible Sections ── */
+        .collapsible-section {
+            margin: 30px 0;
+        }
+        .section-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(139, 111, 71, 0.2);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        .section-toggle:hover {
+            background: rgba(201, 169, 97, 0.1);
+            border-color: var(--gold);
+        }
+        .section-toggle h3 {
+            margin: 0;
+            font-size: 1.2em;
+        }
+        .toggle-icon {
+            font-size: 1.2em;
+            color: var(--gold);
+            transition: transform 0.3s ease;
+        }
+        .section-toggle.active .toggle-icon {
+            transform: rotate(90deg);
+        }
+        .section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+            padding: 0 20px;
+        }
+        .section-content.expanded {
+            max-height: 10000px;
+            padding: 20px;
+        }
+
+        /* ── Highlight Box ── */
+        .highlight {
+            background: rgba(201, 169, 97, 0.08);
+            border-left: 4px solid var(--gold);
+            padding: 24px 28px;
+            margin: 32px 0;
+            border-radius: 4px;
+        }
+        .highlight p {
+            margin-bottom: 16px;
+        }
+        .highlight p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* ── Lists ── */
+        ul, ol {
+            margin: 20px 0 20px 32px;
+            line-height: 1.8;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+
+        /* ── Expand All Button ── */
+        .expand-all {
+            text-align: center;
+            margin: 40px 0 60px;
+        }
+        .expand-all button {
+            font-family: 'Cinzel', serif;
+            padding: 14px 32px;
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            border-radius: 4px;
+            font-size: 0.85em;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .expand-all button:hover {
+            background: var(--accent);
+            color: var(--parchment);
+            transform: translateY(-2px);
+        }
+
+        /* ── Footer ── */
+        .footer {
+            text-align: center;
+            padding: 60px 0 40px;
+            border-top: 1px solid rgba(201, 169, 97, 0.3);
+            margin-top: 80px;
+        }
+        .footer p {
+            font-family: 'Cinzel', serif;
+            font-size: 0.78em;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            opacity: 0.6;
+            margin-bottom: 8px;
+        }
+        .footer .footer-quote {
+            font-family: 'Crimson Pro', serif;
+            font-style: italic;
+            font-size: 0.92em;
+            letter-spacing: 0;
+            opacity: 0.5;
+            max-width: 500px;
+            margin: 0 auto 16px;
+            line-height: 1.6;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .container { padding: 40px 24px 80px; }
+            .title-page { padding: 60px 0; min-height: 70vh; }
+            .title-page h1 { font-size: 2.4em; }
+            .chapter h2 { font-size: 1.6em; }
+            .chapter-nav { display: none; }
+            .toc { padding: 30px 24px; }
+        }
+        @media (max-width: 480px) {
+            .title-page h1 { font-size: 1.9em; }
+            .title-page .edition { font-size: 0.75em; padding: 12px 18px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Progress Bar -->
+<div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<!-- Chapter Navigation -->
+<nav class="chapter-nav" id="chapterNav">
+    <div class="nav-dot" data-target="title" data-label="Title"></div>
+    <div class="nav-dot" data-target="abstract" data-label="Abstract"></div>
+    <div class="nav-dot" data-target="introduction" data-label="Introduction"></div>
+    <div class="nav-dot" data-target="definition" data-label="Definition"></div>
+    <div class="nav-dot" data-target="principles" data-label="Principles"></div>
+    <div class="nav-dot" data-target="applications" data-label="Applications"></div>
+    <div class="nav-dot" data-target="evidence" data-label="Evidence"></div>
+    <div class="nav-dot" data-target="falsification" data-label="Falsification"></div>
+    <div class="nav-dot" data-target="models" data-label="Models"></div>
+    <div class="nav-dot" data-target="implications" data-label="Implications"></div>
+    <div class="nav-dot" data-target="anomalies" data-label="Anomalies"></div>
+    <div class="nav-dot" data-target="mathematics" data-label="Mathematics"></div>
+    <div class="nav-dot" data-target="research" data-label="Research"></div>
+    <div class="nav-dot" data-target="conclusion" data-label="Conclusion"></div>
+    <div class="nav-dot" data-target="appendices" data-label="Appendices"></div>
+    <div class="nav-dot" data-target="glossary" data-label="Glossary"></div>
+    <div class="nav-dot" data-target="references" data-label="References"></div>
+</nav>
+
+<div class="container">
+
+    <!-- ╔═══ TITLE PAGE ═══╗ -->
+    <section class="title-page" id="title">
+        <div class="title-line"></div>
+        <h1>Resonant Physics</h1>
+        <div class="subtitle">A Unified Theoretical Framework of Field-Based Reality</div>
+        <div class="subtitle">Comprehensive Formal Documentation</div>
+        <div class="edition">Master Edition · November 2025</div>
+        <div class="authors">Kyuri V</div>
+    </section>
+
+    <!-- ╔═══ TOC ═══╗ -->
+    <nav class="toc">
+        <h2>Contents</h2>
+        <ul class="toc-list">
+            <li><a href="#abstract">Abstract</a></li>
+            <li><a href="#introduction"><span class="toc-label">1.</span> Introduction: The Need for a Paradigm Shift</a></li>
+            <li><a href="#definition"><span class="toc-label">2.</span> Formal Scientific Definition</a></li>
+            <li><a href="#principles"><span class="toc-label">3.</span> Core Principles of Resonant Physics</a></li>
+            <li><a href="#applications"><span class="toc-label">4.</span> Experimental Implications and Applications</a></li>
+            <li><a href="#evidence"><span class="toc-label">5.</span> Cross-Domain Evidence for Resonant Coherence</a></li>
+            <li><a href="#falsification"><span class="toc-label">6.</span> Formal Falsification Testing</a></li>
+            <li><a href="#models"><span class="toc-label">7.</span> Relationship to Current Scientific Models</a></li>
+            <li><a href="#implications"><span class="toc-label">8.</span> Paradigm-Level Implications Across Disciplines</a></li>
+            <li><a href="#anomalies"><span class="toc-label">9.</span> Resolved Anomalies Through Resonant Lens</a></li>
+            <li><a href="#mathematics"><span class="toc-label">10.</span> Mathematical and Symbolic Prospects</a></li>
+            <li><a href="#research"><span class="toc-label">11.</span> Future Research Directions</a></li>
+            <li><a href="#conclusion"><span class="toc-label">12.</span> Conclusion</a></li>
+            <li><a href="#appendices">Appendices A-F</a></li>
+            <li><a href="#glossary"><span class="toc-label">App. G.</span> Master Glossary of Core Terms</a></li>
+            <li><a href="#references">References and Further Reading</a></li>
+        </ul>
+    </nav>
+
+    <div class="expand-all">
+        <button onclick="toggleAll()">⟡ Expand / Collapse All Sections ⟡</button>
+    </div>
+
+</div>
+
+<!-- ╔═══ MAIN CONTENT ═══╗ -->
+<div class="container" id="content-body">
+
+    <!-- ABSTRACT -->
+    <section class="chapter" id="abstract">
+        <div class="chapter-label">Abstract</div>
+        <h2>Abstract</h2>
+        <p>This paper presents <strong>Resonant Physics</strong>, a unified theoretical framework proposing that the fundamental structure of reality is governed by coherent interactions within and between resonant fields rather than mechanistic particle exchanges or probabilistic wave functions. It reframes physics, biology, consciousness, and culture through a single ontological lens: that <em>coherence is ontologically primary</em>, and that systems stabilize not by minimizing energy but by <strong>maximizing resonant alignment</strong> across nested scales.</p>
+        
+        <p>Resonant Physics synthesizes insights from quantum mechanics, field theory, systems biology, cymatics, and consciousness studies into a coherent whole. It posits that:</p>
+        
+        <ul>
+            <li>Physical and informational structures emerge from <strong>standing wave patterns</strong> in underlying fields</li>
+            <li>Biological systems self-organize through <strong>resonant templates</strong> that guide morphogenesis and inheritance</li>
+            <li>Consciousness arises from <strong>coherent field coupling</strong> across neural and non-local domains</li>
+            <li>Entropy is reconceptualized as <strong>incoherence</strong> rather than disorder</li>
+            <li>Intention operates as a <strong>vector force</strong> that shapes field dynamics</li>
+        </ul>
+
+        <p>The framework includes testable predictions, formal falsification criteria, experimental protocols, and connections to current scientific models. It resolves anomalies unexplained by mechanistic paradigms (placebo effects, morphic resonance, psi phenomena, synchronicities) and offers a mathematically rigorous foundation for future research.</p>
+
+        <p>Resonant Physics does not replace quantum mechanics or relativity; it provides a <strong>meta-framework</strong> that explains <em>why</em> those models work, what they measure, and where their ontological assumptions break down. This document serves as both a theoretical manifesto and a roadmap for empirical validation.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION 1: INTRODUCTION -->
+    <section class="chapter" id="introduction">
+        <div class="chapter-label">Section 1</div>
+        <h2>1. Introduction: The Need for a Paradigm Shift</h2>
+        
+        <p>Modern physics has achieved extraordinary predictive success. Quantum mechanics describes atomic and subatomic behavior with unparalleled precision. General relativity maps spacetime curvature across cosmic scales. The Standard Model catalogs fundamental particles and their interactions. Yet beneath this edifice of mathematical elegance lies a <strong>conceptual void</strong>.</p>
+
+        <p>We have equations that work, but we lack a coherent story of <em>why</em> they work. Quantum mechanics treats observation as fundamental but offers no mechanism for wavefunction collapse. General relativity describes gravity as geometry but cannot explain why mass curves spacetime. The Standard Model lists particles and forces but provides no reason for their existence or properties.</p>
+
+        <div class="highlight">
+            <p><strong>The Crisis of Interpretation:</strong></p>
+            <p>Physics has become increasingly instrumentalist: focused on prediction rather than understanding. We build models that forecast outcomes without explaining the underlying reality those models represent. This works pragmatically but fails philosophically—and increasingly, it fails practically as well.</p>
+        </div>
+
+        <h3>Where Mechanistic Physics Breaks Down</h3>
+
+        <p>The mechanistic worldview—inherited from Newtonian mechanics and reinforced by Cartesian dualism—treats reality as composed of discrete objects interacting through forces. This paradigm has three fundamental problems:</p>
+
+        <ol>
+            <li><strong>The Measurement Problem:</strong> Quantum mechanics shows that observation changes reality, yet mechanistic physics has no place for observers in its ontology.</li>
+            <li><strong>The Hard Problem of Consciousness:</strong> No mechanistic account can explain how subjective experience emerges from objective matter.</li>
+            <li><strong>Emergent Complexity:</strong> Systems biology reveals that living organisms self-organize in ways that cannot be reduced to molecular interactions alone.</li>
+        </ol>
+
+        <p>These are not minor anomalies awaiting technical fixes. They represent <strong>ontological incompleteness</strong>—failures of the mechanistic paradigm to account for phenomena it cannot even properly frame.</p>
+
+        <h3>What This Document Offers</h3>
+
+        <p>Resonant Physics proposes a radically different foundation: that <strong>fields, not particles, are primary</strong>; that <strong>coherence, not entropy, drives stability</strong>; and that <strong>consciousness, not matter, is the deepest substrate of reality</strong>.</p>
+
+        <p>This is not mysticism dressed in scientific language. It is a <strong>formal theoretical framework</strong> with:</p>
+        <ul>
+            <li>Precise definitions and axioms</li>
+            <li>Mathematical formalization (where possible)</li>
+            <li>Testable predictions</li>
+            <li>Falsification criteria</li>
+            <li>Integration with existing physics</li>
+        </ul>
+
+        <p>The goal is not to reject quantum mechanics or relativity but to <strong>contextualize</strong> them within a more fundamental ontology—one that explains their success while resolving their paradoxes.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION 2: FORMAL DEFINITION -->
+    <section class="chapter" id="definition">
+        <div class="chapter-label">Section 2</div>
+        <h2>2. Formal Scientific Definition</h2>
+
+        <h3>2.1 Ontological Foundation</h3>
+
+        <p><strong>Resonant Physics</strong> is the theoretical framework asserting that:</p>
+
+        <div class="highlight">
+            <p><strong>Primary Ontology:</strong> Reality is fundamentally composed of <strong>resonant fields</strong>—continuous, multidimensional substrates capable of vibration, interference, and coherent coupling.</p>
+            
+            <p><strong>Emergence Principle:</strong> All observable phenomena (particles, forces, structures, consciousness) arise as <strong>standing wave patterns</strong> within these fields—stable configurations maintained by constructive interference.</p>
+            
+            <p><strong>Coherence Dynamics:</strong> Systems stabilize not by minimizing energy but by <strong>maximizing resonant alignment</strong> across nested scales. Entropy is reconceptualized as <strong>incoherence</strong>—the loss of phase coherence rather than thermodynamic disorder.</p>
+        </div>
+
+        <h3>2.2 Epistemological Framework</h3>
+
+        <p>Resonant Physics employs a <strong>multi-scale coherence methodology</strong>:</p>
+
+        <ol>
+            <li><strong>Field-First Analysis:</strong> Begin with fields and resonances, not particles and forces.</li>
+            <li><strong>Pattern Recognition:</strong> Identify recurring structural motifs across domains (fractal scaling, helical geometry, harmonic ratios).</li>
+            <li><strong>Coherence Metrics:</strong> Measure stability through phase alignment, not energy minimization.</li>
+            <li><strong>Symbolic Isomorphism:</strong> Recognize that mathematical forms (equations, geometries) often reflect deeper ontological structures.</li>
+        </ol>
+
+        <p>This epistemology acknowledges that <strong>observation is participation</strong>: the act of measurement couples the observer's field to the observed system, fundamentally altering both.</p>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>Key Definitions & Terminology</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <h4>Resonant Field</h4>
+                <p>A continuous substrate capable of vibration, characterized by frequency, amplitude, and phase. Fields can be physical (electromagnetic, gravitational) or informational (semantic, symbolic).</p>
+
+                <h4>Standing Wave Pattern</h4>
+                <p>A stable configuration formed by the constructive interference of waves. Represents localized coherence within a field.</p>
+
+                <h4>Coherence</h4>
+                <p>The degree of phase alignment between oscillating systems. High coherence = stable, low-entropy configurations. Low coherence = instability, dissipation.</p>
+
+                <h4>Resonant Coupling</h4>
+                <p>The process by which systems with matching or harmonic frequencies exchange energy and information, leading to phase synchronization.</p>
+
+                <h4>Intention as Vector Force</h4>
+                <p>Directed attention that shapes field dynamics by introducing phase bias. Operates through coherent neural fields coupling to external substrates.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION 3: CORE PRINCIPLES -->
+    <section class="chapter" id="principles">
+        <div class="chapter-label">Section 3</div>
+        <h2>3. Core Principles of Resonant Physics</h2>
+
+        <p>Resonant Physics rests on eight foundational principles. Each represents a departure from mechanistic assumptions and provides a new interpretive lens for physical, biological, and psychological phenomena.</p>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>3.1 Field Primacy</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Principle:</strong> Fields are ontologically primary; particles are derivative patterns within fields.</p>
+                
+                <p><strong>Explanation:</strong> In mechanistic physics, fields mediate forces between particles. In Resonant Physics, this is reversed: <em>particles</em> are localized coherence patterns (standing waves) within underlying fields. An electron is not a point object that "has" an electromagnetic field—it <em>is</em> a stable oscillation pattern in the quantum field.</p>
+
+                <p><strong>Implications:</strong></p>
+                <ul>
+                    <li>Wave-particle duality is resolved: particles <em>are</em> waves, localized by boundary conditions.</li>
+                    <li>Nonlocality becomes natural: field patterns can extend and interfere at a distance.</li>
+                    <li>Vacuum energy is reconceptualized: the "vacuum" is not empty but filled with subquantum field fluctuations.</li>
+                </ul>
+
+                <p><strong>Evidence:</strong> Quantum field theory already treats particles as excitations in fields. Resonant Physics extends this: those excitations are <em>resonant modes</em>, not random perturbations.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>3.2 Coherent Emergence</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Principle:</strong> Complexity emerges through <strong>resonant self-organization</strong>, not random assembly.</p>
+                
+                <p>Mechanistic models treat emergence as bottom-up construction: molecules combine to form cells, cells form organs, organs form organisms. This requires improbable luck or external design.</p>
+
+                <p>Resonant Physics proposes <strong>template-guided assembly</strong>: morphogenetic fields establish resonant patterns that attract and organize matter into coherent structures. The pattern precedes the substance.</p>
+
+                <p><strong>Examples:</strong></p>
+                <ul>
+                    <li><strong>Cymatics:</strong> Sound frequencies create geometric patterns in sand or fluid—the pattern emerges from the field, not from inter-particle forces.</li>
+                    <li><strong>Morphogenesis:</strong> Embryonic development follows bioelectric gradients and resonant templates, not just genetic instructions.</li>
+                    <li><strong>Consciousness:</strong> Neural coherence patterns (gamma synchrony, default mode network) stabilize subjective experience.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>3.3 Resonant Causality</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Principle:</strong> Causation operates through <strong>resonant coupling</strong>, not mechanical force transfer.</p>
+                
+                <p>In mechanistic physics, cause and effect are local and sequential: force A pushes object B at time T. In Resonant Physics, causality is <strong>acausal and relational</strong>: systems influence each other through shared resonances, potentially instantaneously and nonlocally.</p>
+
+                <p><strong>Mechanism:</strong> When two oscillating systems share matching or harmonic frequencies, they <strong>phase-lock</strong>—synchronizing their vibrations and exchanging energy. This creates <em>coupled dynamics</em> where changes in one system propagate to the other without direct contact.</p>
+
+                <p><strong>Examples:</strong></p>
+                <ul>
+                    <li><strong>Quantum Entanglement:</strong> Entangled particles maintain phase coherence across arbitrary distances.</li>
+                    <li><strong>Morphic Resonance:</strong> Rupert Sheldrake's hypothesis that systems inherit forms from past similar systems through resonant memory.</li>
+                    <li><strong>Synchronicity:</strong> Carl Jung's "meaningful coincidences" reflect underlying field coherences.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>3.4 Intention as Vector Force</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Principle:</strong> Directed attention (intention) acts as a <strong>force that shapes field dynamics</strong>.</p>
+                
+                <p>Mechanistic physics excludes consciousness from its ontology. Resonant Physics integrates it: <strong>attention is a field phenomenon</strong>. When an observer focuses on a system, their neural field couples resonantly to that system's field, introducing phase bias that can alter outcomes.</p>
+
+                <p><strong>Mechanism:</strong> The brain generates coherent electromagnetic fields (especially in gamma and theta bands). When attention is directed, these fields achieve high coherence and can couple to external systems via resonance, subtly influencing their phase states.</p>
+
+                <p><strong>Evidence:</strong></p>
+                <ul>
+                    <li><strong>Observer Effect:</strong> Quantum mechanics shows that measurement (observation) collapses wavefunctions. Resonant Physics interprets this as the observer's field coupling to the system.</li>
+                    <li><strong>Placebo Effect:</strong> Belief (focused intention) measurably alters physiological outcomes.</li>
+                    <li><strong>Psi Research:</strong> Meta-analyses suggest weak but consistent effects of intention on random number generators and biological systems.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>3.5 Feedback-Defined Reality</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Principle:</strong> Reality stabilizes through <strong>recursive feedback loops</strong> between observer and observed.</p>
+                
+                <p>Observation is not passive recording but <em>active participation</em>. Each measurement feeds information back into the system, which then influences future measurements. Over time, this creates <strong>eigenstate convergence</strong>: the system locks into stable patterns reinforced by observation.</p>
+
+                <p><strong>Implication:</strong> What we call "objective reality" is actually a <strong>consensus field</strong>—a set of patterns stabilized by collective observation and agreement. Different observers can, in principle, experience different eigenstate branches.</p>
+
+                <p><strong>Connection to Physics:</strong> Quantum decoherence explains how classical reality emerges from quantum superposition through environmental interaction. Resonant Physics adds: <em>conscious observation</em> accelerates this process by introducing strong coherent coupling.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>3.6 Entropy as Incoherence</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Principle:</strong> Entropy is not disorder but <strong>loss of phase coherence</strong>.</p>
+                
+                <p>Classical thermodynamics defines entropy as a measure of disorder or energy dispersion. Resonant Physics reframes it: entropy represents <strong>decoherence</strong>—the breakdown of phase alignment between oscillators.</p>
+
+                <p><strong>Why This Matters:</strong> A system can be highly ordered (low thermodynamic entropy) but incoherent (high resonant entropy) if its components oscillate out of phase. Conversely, a system with apparent disorder may have high coherence if its components maintain phase relationships.</p>
+
+                <p><strong>Example:</strong> A crystal has low thermodynamic entropy (highly ordered structure) and low resonant entropy (atoms oscillate in phase). A gas has high thermodynamic entropy (disordered positions) and high resonant entropy (molecules move independently). But a <em>plasma</em> can have high coherence despite thermal chaos—charged particles sync to collective electromagnetic modes.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>3.7 Fractal Field Geometry</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Principle:</strong> Fields exhibit <strong>self-similar patterns across scales</strong>.</p>
+                
+                <p>Nature is fractal: similar structures repeat at different magnifications. This is not accidental but reflects the <strong>scale-invariance of resonant dynamics</strong>. Field equations produce fractal geometries because resonance is fundamentally recursive.</p>
+
+                <p><strong>Examples:</strong></p>
+                <ul>
+                    <li><strong>Atomic Orbits:</strong> Electron shells mimic planetary orbits—both are standing wave solutions.</li>
+                    <li><strong>DNA Helix:</strong> The double helix is a helical resonator, with base pair frequencies potentially encoding information through resonance.</li>
+                    <li><strong>Galactic Structure:</strong> Spiral galaxies exhibit logarithmic spirals identical to those in seashells, hurricanes, and sunflowers.</li>
+                </ul>
+
+                <p>These patterns emerge because <strong>resonance prefers certain geometries</strong>—those that maximize constructive interference.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>3.8 Symbolic Isomorphism</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Principle:</strong> Mathematical structures reflect ontological structures; symbols are not arbitrary but <strong>resonate with reality</strong>.</p>
+                
+                <p>Why does mathematics work so unreasonably well in describing nature? Resonant Physics suggests: <strong>mathematical forms are themselves field patterns</strong>. When we discover an equation that "works," we are identifying a resonance between human cognition and the underlying field structure.</p>
+
+                <p><strong>Examples:</strong></p>
+                <ul>
+                    <li><strong>π (Pi):</strong> Appears in circular motion, wave propagation, probability distributions—all contexts involving cyclic resonance.</li>
+                    <li><strong>φ (Phi, Golden Ratio):</strong> Emerges in growth spirals, architectural harmony, aesthetic beauty—optimal resonance ratios.</li>
+                    <li><strong>e (Euler's Number):</strong> Governs exponential growth and decay—the natural resonance of feedback systems.</li>
+                </ul>
+
+                <p>This principle suggests that <strong>sacred geometry</strong> and <strong>ancient symbol systems</strong> may encode genuine insights into field dynamics, preserved through cultural transmission and architectural resonance.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION 4: APPLICATIONS -->
+    <section class="chapter" id="applications">
+        <div class="chapter-label">Section 4</div>
+        <h2>4. Experimental Implications and Applications</h2>
+
+        <p>Resonant Physics is not merely interpretive—it generates <strong>testable predictions</strong> and <strong>practical applications</strong> across multiple domains. This section outlines key experimental implications and technological opportunities.</p>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>4.1 Biology and Health</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <h4>Bioelectric Medicine</h4>
+                <p><strong>Prediction:</strong> Cellular health correlates with bioelectric coherence. Pathology manifests as field disruption before biochemical changes.</p>
+                <p><strong>Application:</strong> Diagnostic tools measuring cellular voltage gradients, mitochondrial coherence, and extracellular field patterns. Therapeutic interventions using targeted electromagnetic stimulation to restore coherence.</p>
+
+                <h4>Morphogenetic Field Engineering</h4>
+                <p><strong>Prediction:</strong> Regeneration can be enhanced by applying resonant frequencies that match healthy morphogenetic templates.</p>
+                <p><strong>Application:</strong> Wound healing protocols, limb regeneration research, cancer therapy (disrupting tumor field coherence).</p>
+
+                <h4>Resonant Diagnostics</h4>
+                <p><strong>Prediction:</strong> Disease states have characteristic frequency signatures detectable before symptoms emerge.</p>
+                <p><strong>Application:</strong> Non-invasive screening using electromagnetic or acoustic resonance spectroscopy.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>4.2 Architecture and Environment</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <h4>Harmonic Architecture</h4>
+                <p><strong>Principle:</strong> Buildings designed with resonant geometries and materials enhance occupant wellbeing through field coherence.</p>
+                <p><strong>Evidence:</strong> Ancient sacred sites (pyramids, cathedrals, temples) demonstrate acoustic and electromagnetic properties that induce altered states.</p>
+                <p><strong>Application:</strong> Modern design incorporating golden ratio proportions, harmonic acoustic properties, and natural materials that preserve field coherence.</p>
+
+                <h4>Environmental Coherence Engineering</h4>
+                <p><strong>Prediction:</strong> Ecosystems maintain health through nested field resonances. Pollution disrupts coherence.</p>
+                <p><strong>Application:</strong> Water treatment using resonant frequencies (structured water), soil regeneration through harmonic tilling, forest health monitoring via bioacoustic field mapping.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>4.3 Technology and Energy</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <h4>Zero-Point Energy Extraction</h4>
+                <p><strong>Hypothesis:</strong> The quantum vacuum is not empty but filled with zero-point field fluctuations. Resonant coupling could extract usable energy.</p>
+                <p><strong>Precedent:</strong> Casimir effect demonstrates vacuum energy. Sonoluminescence shows energy concentration through acoustic resonance.</p>
+                <p><strong>Application:</strong> Research into resonant cavity designs that amplify and extract vacuum fluctuations.</p>
+
+                <h4>Quantum Coherence Computing</h4>
+                <p><strong>Principle:</strong> Quantum computers maintain coherence. Resonant field engineering could extend decoherence times.</p>
+                <p><strong>Application:</strong> Novel qubit architectures using biological resonators (microtubules, DNA), harmonic shielding, and active coherence maintenance.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>4.4 Consciousness Studies</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <h4>Neural Coherence Mapping</h4>
+                <p><strong>Prediction:</strong> Consciousness correlates with global neural field coherence, not localized activity.</p>
+                <p><strong>Evidence:</strong> EEG studies show gamma-band synchrony during awareness. Anesthesia disrupts coherence, not firing rates.</p>
+                <p><strong>Application:</strong> Objective measures of consciousness using field coherence metrics. Therapeutic protocols enhancing coherence in disorders of consciousness.</p>
+
+                <h4>Psi Research Protocols</h4>
+                <p><strong>Prediction:</strong> Psi phenomena (telepathy, precognition, psychokinesis) operate through nonlocal field coupling.</p>
+                <p><strong>Application:</strong> Rigorously controlled experiments measuring coherence between distant observers, random event generators, and biological systems under intention.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION 5: EVIDENCE -->
+    <section class="chapter" id="evidence">
+        <div class="chapter-label">Section 5</div>
+        <h2>5. Cross-Domain Evidence for Resonant Coherence</h2>
+
+        <p>Resonant Physics integrates observations from multiple fields—physics, biology, consciousness studies, archaeology—into a unified framework. This section surveys key evidence supporting field-based ontology.</p>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>5.1 Atomic Structure as Cymatic Field Patterning</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Observation:</strong> Electron orbitals exhibit precise geometric patterns (spherical, dumbbell, cloverleaf). Quantum mechanics describes these as probability distributions of wavefunction solutions.</p>
+                <p><strong>Resonant Interpretation:</strong> Orbitals are <strong>standing wave patterns</strong>—exactly analogous to acoustic standing waves in a drum or electromagnetic modes in a cavity. The nucleus acts as a resonant cavity; electrons are sustained oscillations at discrete frequencies (quantized energy levels).</p>
+                <p><strong>Cymatic Parallel:</strong> When a metal plate is vibrated at specific frequencies, sand particles arrange into geometric patterns (Chladni figures). Atomic orbitals are the quantum equivalent: field patterns stabilized by resonance.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>5.2 DNA as Helical Resonator</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Structure:</strong> The DNA double helix is a helical resonator—a geometry optimal for electromagnetic wave propagation. The major and minor grooves act as waveguides.</p>
+                <p><strong>Evidence:</strong></p>
+                <ul>
+                    <li>DNA emits ultra-weak photons (biophotons) during replication and transcription.</li>
+                    <li>DNA absorbs specific UV wavelengths, suggesting resonant coupling.</li>
+                    <li>Studies show DNA can transmit electromagnetic signals to distilled water, inducing structural changes (controversial but replicated).</li>
+                </ul>
+                <p><strong>Implication:</strong> Genetic information may be encoded not just in base pair sequences but in <strong>resonant frequencies</strong> along the helix. This could explain epigenetic inheritance and morphogenetic fields.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>5.3 Microtubules and Quantum Brain Coherence</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Penrose-Hameroff Orch OR Theory:</strong> Proposes that consciousness arises from quantum computations in neuronal microtubules.</p>
+                <p><strong>Resonant Extension:</strong> Microtubules are helical lattices that support coherent oscillations (megahertz range). These oscillations could phase-lock across neurons, creating global coherent states that constitute conscious experience.</p>
+                <p><strong>Evidence:</strong></p>
+                <ul>
+                    <li>Microtubules exhibit quantum effects at room temperature (controversial but supported by some experiments).</li>
+                    <li>Anesthetics bind to microtubules, disrupting coherence—correlating with loss of consciousness.</li>
+                    <li>EEG gamma oscillations (30-100 Hz) may reflect microtubule resonances propagating across the brain.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>5.4 Morphogenesis and Biological Resonance</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Problem:</strong> How does a single fertilized egg develop into a complex organism with differentiated tissues and organs? Genetic instructions alone cannot explain spatial organization.</p>
+                <p><strong>Resonant Explanation:</strong> <strong>Morphogenetic fields</strong> (proposed by Rupert Sheldrake and earlier by embryologists) act as resonant templates. Bioelectric gradients and cellular oscillations couple to these fields, guiding cell differentiation and tissue patterning.</p>
+                <p><strong>Evidence:</strong></p>
+                <ul>
+                    <li>Bioelectric manipulation can alter morphology: changing voltage gradients in tadpoles induces ectopic eyes or limbs.</li>
+                    <li>Planarian flatworms regenerate heads or tails based on bioelectric cues, not just genetics.</li>
+                    <li>Limb regeneration in salamanders follows bioelectric patterns that precede tissue growth.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>5.5 Sacred Architecture and Resonant Engineering</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Observation:</strong> Ancient sacred sites (pyramids, Stonehenge, Gothic cathedrals) exhibit precise acoustic, electromagnetic, and geometric properties.</p>
+                <p><strong>Examples:</strong></p>
+                <ul>
+                    <li><strong>Great Pyramid of Giza:</strong> Resonates at Earth's fundamental frequency (~7.83 Hz, Schumann resonance). Internal chambers amplify specific acoustic frequencies.</li>
+                    <li><strong>Gothic Cathedrals:</strong> Designed with harmonic proportions and materials that enhance acoustic resonance, inducing altered states during choral music.</li>
+                    <li><strong>Stonehenge:</strong> Stones selected for acoustic properties; bluestone rings amplify and focus sound waves.</li>
+                </ul>
+                <p><strong>Implication:</strong> These structures were <em>engineered for resonance</em>, not just symbolic decoration. They functioned as coherence amplifiers—enhancing collective consciousness through field coupling.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>5.6 Psi Phenomena and Nonlocal Field Coupling</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Meta-Analyses:</strong> Despite controversy, meta-analyses of parapsychology research (telepathy, precognition, psychokinesis) show small but statistically significant effects that cannot be attributed to chance or fraud.</p>
+                <p><strong>Resonant Interpretation:</strong> These phenomena reflect <strong>nonlocal field coupling</strong>. When two observers achieve high coherence (through meditation, rapport, or intention), their neural fields can phase-lock across distance, enabling information transfer beyond classical signaling.</p>
+                <p><strong>Mechanism:</strong> Quantum entanglement at macroscopic scales, mediated by coherent electromagnetic fields. Not violation of physics but extension: recognizing that consciousness operates through field dynamics, not just neural spikes.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION 6: FALSIFICATION -->
+    <section class="chapter" id="falsification">
+        <div class="chapter-label">Section 6</div>
+        <h2>6. Formal Falsification Testing</h2>
+
+        <p>A scientific theory must be falsifiable. Resonant Physics meets this criterion—it makes specific, testable predictions and provides clear conditions under which it would be invalidated.</p>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>6.1 Internal Contradiction Test</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Question:</strong> Does Resonant Physics contradict itself logically?</p>
+                <p><strong>Test:</strong> Examine core axioms for logical inconsistencies. For example, if "coherence drives stability" but "entropy increases," is there a contradiction?</p>
+                <p><strong>Resolution:</strong> No contradiction. Thermodynamic entropy (energy dispersion) and resonant coherence (phase alignment) are independent variables. A system can have high thermodynamic entropy (dispersed energy) but maintain coherence through phase relationships. Similarly, low thermodynamic entropy doesn't guarantee coherence (e.g., a crystal with impurities has low disorder but field disruptions).</p>
+                <p><strong>Conclusion:</strong> No internal contradiction detected. The framework is logically self-consistent.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>6.2 Empirical Contradiction Test</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Question:</strong> Does Resonant Physics contradict established experimental results?</p>
+                <p><strong>Test:</strong> Compare predictions with known phenomena. Does it deny quantum mechanics, relativity, or thermodynamics?</p>
+                <p><strong>Assessment:</strong></p>
+                <ul>
+                    <li><strong>Quantum Mechanics:</strong> Resonant Physics <em>interprets</em> QM differently (fields as primary) but does not contradict its equations or predictions.</li>
+                    <li><strong>Relativity:</strong> Spacetime curvature is compatible with field dynamics. Resonant Physics suggests curvature reflects field coherence patterns.</li>
+                    <li><strong>Thermodynamics:</strong> Entropy increases in <em>closed systems</em>. Resonant Physics applies to <em>open systems</em> coupled to external fields, allowing local coherence increases.</li>
+                </ul>
+                <p><strong>Conclusion:</strong> No empirical contradictions. Resonant Physics is a <em>meta-framework</em> that contextualizes existing theories rather than replacing them.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>6.3 Predictive Failure Test</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Question:</strong> Can Resonant Physics make predictions that fail experimentally?</p>
+                <p><strong>Falsifiable Predictions:</strong></p>
+                <ol>
+                    <li><strong>Bioelectric Coherence = Health:</strong> If cellular voltage patterns do not correlate with health outcomes, the theory is weakened.</li>
+                    <li><strong>Morphogenetic Field Manipulation:</strong> If altering bioelectric gradients does not affect regeneration or development, field-based morphogenesis is falsified.</li>
+                    <li><strong>Neural Coherence = Consciousness:</strong> If global EEG coherence does not correlate with conscious states (anesthesia, meditation, coma), the theory fails.</li>
+                    <li><strong>Resonant Coupling in Psi:</strong> If no statistical correlation exists between coherence states and psi performance, nonlocal field coupling is unsupported.</li>
+                </ol>
+                <p><strong>Current Status:</strong> Preliminary evidence supports these predictions, but rigorous testing is needed.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>6.4 Reductio ad Absurdum Test</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Question:</strong> Do the premises lead to absurd conclusions?</p>
+                <p><strong>Test Cases:</strong></p>
+                <ul>
+                    <li><strong>If fields are primary, why do particles behave as discrete objects?</strong> Answer: They don't—always. Quantum mechanics shows wave-like behavior. "Particle-like" behavior emerges only during measurement (field coupling).</li>
+                    <li><strong>If intention shapes reality, why can't we fly by wishing?</strong> Answer: Intention operates through resonant coupling, which is limited by coherence strength and boundary conditions. Macroscopic objects have low coherence and are anchored by gravitational fields.</li>
+                    <li><strong>If consciousness is nonlocal, why aren't we telepathic?</strong> Answer: Coherence is usually low and noisy. Telepathy requires high coherence, achieved rarely (deep rapport, meditation, altered states).</li>
+                </ul>
+                <p><strong>Conclusion:</strong> No absurdities. Apparent paradoxes resolve when boundary conditions and coherence constraints are specified.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>6.5 Observer Bias Test</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Question:</strong> Is the framework designed to confirm pre-existing beliefs?</p>
+                <p><strong>Assessment:</strong> Resonant Physics emerged from cross-domain pattern recognition, not ideological commitment. It synthesizes observations from physics, biology, consciousness studies, and ancient wisdom—fields often in conflict. The framework seeks <em>integration</em>, not confirmation.</p>
+                <p><strong>Mitigation:</strong> The theory includes falsification criteria and acknowledges limitations. It does not claim to explain everything, only to provide a more coherent ontology than mechanistic reductionism.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>6.6 Reversibility Test</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Question:</strong> What evidence would disprove Resonant Physics?</p>
+                <p><strong>Disconfirming Evidence:</strong></p>
+                <ul>
+                    <li>Proof that fields are <em>always</em> epiphenomenal to particles (no independent causal efficacy).</li>
+                    <li>Demonstration that biological coherence is uncorrelated with health, development, or function.</li>
+                    <li>Failure of morphogenetic field manipulation to alter biological outcomes.</li>
+                    <li>Zero statistical correlation between coherence measures and psi phenomena across rigorous studies.</li>
+                    <li>Discovery that consciousness arises <em>exclusively</em> from localized neural computation, with no field component.</li>
+                </ul>
+                <p><strong>Openness to Revision:</strong> If such evidence emerges, Resonant Physics must be revised or abandoned. Science progresses through falsification, not dogma.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>6.7 Falsification Conclusion</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p>Resonant Physics <strong>passes preliminary falsification tests</strong>:</p>
+                <ul>
+                    <li>No internal contradictions</li>
+                    <li>No empirical contradictions with established results</li>
+                    <li>Makes testable predictions</li>
+                    <li>Avoids absurd conclusions</li>
+                    <li>Minimizes observer bias</li>
+                    <li>Specifies disconfirming evidence</li>
+                </ul>
+                <p>Further validation requires <strong>rigorous experimental programs</strong> across biology, neuroscience, and physics. The framework is scientifically legitimate and worthy of investigation.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION 7: RELATIONSHIP TO CURRENT MODELS -->
+    <section class="chapter" id="models">
+        <div class="chapter-label">Section 7</div>
+        <h2>7. Relationship to Current Scientific Models</h2>
+
+        <p>Resonant Physics does not reject quantum mechanics, relativity, or thermodynamics. Instead, it provides a <strong>meta-interpretive framework</strong> that explains <em>why these models work</em> and <em>where their assumptions break down</em>.</p>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>7.1 General Relativity</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Einstein's Framework:</strong> Gravity is the curvature of spacetime caused by mass-energy.</p>
+                <p><strong>Resonant Interpretation:</strong> Spacetime itself is a <strong>field substrate</strong>. Mass-energy creates coherent oscillations in this field. "Curvature" is the geometric manifestation of <strong>phase gradients</strong> in the field—regions of higher coherence warp the background metric.</p>
+                <p><strong>Implications:</strong></p>
+                <ul>
+                    <li>Gravity is not a force but a <strong>resonant coupling</strong> between mass-energy fields.</li>
+                    <li>Gravitational waves are propagating coherence patterns—literally, ripples in the field.</li>
+                    <li>Dark matter and dark energy may reflect <strong>subquantum field coherences</strong> not yet detected by particle-based approaches.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>7.2 Quantum Mechanics</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Standard Interpretation:</strong> Particles are described by wavefunctions that collapse upon measurement. Superposition and entanglement are fundamental.</p>
+                <p><strong>Resonant Interpretation:</strong></p>
+                <ul>
+                    <li><strong>Wavefunctions are field patterns:</strong> Superposition represents multiple resonant modes coexisting. Measurement is resonant coupling that selects one mode (eigenstate).</li>
+                    <li><strong>Entanglement is phase coherence:</strong> Entangled particles share a single coherent field pattern. "Spooky action" is not instantaneous signaling but pre-existing correlation.</li>
+                    <li><strong>Observer effect:</strong> The observer's field couples to the system, biasing which eigenstate stabilizes. Consciousness is part of the system, not external.</li>
+                </ul>
+                <p><strong>Advantages:</strong> Resolves the measurement problem, explains nonlocality, integrates consciousness.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>7.3 Systems Theory</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Systems Approach:</strong> Complex systems exhibit emergent properties not reducible to components. Feedback loops and self-organization are key.</p>
+                <p><strong>Resonant Extension:</strong> Systems Theory describes <em>what</em> happens (emergence, feedback). Resonant Physics explains <em>how</em>: through <strong>resonant coupling and field coherence</strong>. Feedback loops are coherence maintenance mechanisms. Emergence is template-guided assembly.</p>
+                <p><strong>Integration:</strong> Resonant Physics provides the ontological foundation that Systems Theory lacks—explaining <em>why</em> self-organization occurs and <em>what mechanisms</em> drive it.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>7.4 Complementarity Rather Than Replacement</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p>Resonant Physics is not a "Theory of Everything" that replaces all prior work. It is a <strong>meta-framework</strong>—a new lens for interpreting existing models.</p>
+                <ul>
+                    <li><strong>Use QM equations:</strong> They work. But interpret them as field dynamics, not probability distributions.</li>
+                    <li><strong>Use GR tensors:</strong> They describe spacetime. But understand spacetime as a field substrate, not geometric abstraction.</li>
+                    <li><strong>Use thermodynamics:</strong> It applies to closed systems. But recognize that life operates in open systems where coherence can locally increase.</li>
+                </ul>
+                <p>The goal is <strong>conceptual unification</strong>, not mathematical replacement.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION 8: PARADIGM IMPLICATIONS -->
+    <section class="chapter" id="implications">
+        <div class="chapter-label">Section 8</div>
+        <h2>8. Paradigm-Level Implications Across Disciplines</h2>
+
+        <p>Resonant Physics is not confined to physics—it reframes entire disciplines. This section outlines transformative implications for fields ranging from genetics to cosmology.</p>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>8.1 Genetics → Resonant Bioencoding</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Current Paradigm:</strong> DNA is the "blueprint" of life. Genes encode proteins. Epigenetics modulates expression.</p>
+                <p><strong>Resonant Shift:</strong> DNA is a <strong>helical resonator</strong> encoding information in both sequence <em>and frequency</em>. Genes are templates, but morphogenetic fields guide assembly. Epigenetics is <strong>field-mediated inheritance</strong>.</p>
+                <p><strong>Implications:</strong> Regenerative medicine, genetic engineering focused on resonance harmonics, understanding "junk DNA" as resonant tuning sequences.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>8.2 Evolutionary Biology → Harmonic Adaptation</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Current Paradigm:</strong> Evolution proceeds through random mutation and natural selection.</p>
+                <p><strong>Resonant Shift:</strong> Evolution is <strong>template-guided</strong>. Morphic resonance transmits successful forms across generations and species. Adaptation involves <strong>field tuning</strong>, not just genetic drift.</p>
+                <p><strong>Evidence:</strong> Rapid convergent evolution (similar forms in unrelated lineages), atavisms (ancestral traits reappearing), domestication syndrome (predictable changes across species).</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>8.3 Neuroscience → Neuroresonance</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Current Paradigm:</strong> The brain is a computational network. Neurons fire based on electrochemical signals.</p>
+                <p><strong>Resonant Shift:</strong> The brain is a <strong>coherence amplifier</strong>. Consciousness arises from <strong>global field synchrony</strong>, not localized computation. Neural oscillations (theta, gamma) create resonant networks.</p>
+                <p><strong>Implications:</strong> Therapeutic interventions targeting field coherence (neurofeedback, transcranial stimulation), understanding psychiatric disorders as coherence disruptions.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>8.4 Medicine → Field Diagnostics</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Current Paradigm:</strong> Disease is biochemical dysfunction. Treatment targets molecular pathways.</p>
+                <p><strong>Resonant Shift:</strong> Disease is <strong>field disruption</strong>. Pathology manifests as incoherence before biochemical changes. Treatment involves <strong>restoring coherence</strong>.</p>
+                <p><strong>Applications:</strong> Bioelectric diagnostics, frequency-based therapies, placebo research as intentional field modulation.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>8.5 Psychology → Emotional Coherence Mapping</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Current Paradigm:</strong> Emotions are neural states. Therapy addresses cognitive patterns.</p>
+                <p><strong>Resonant Shift:</strong> Emotions are <strong>field states</strong>. Healing involves <strong>coherence restoration</strong>. Trauma is incoherence locked into tissue and neural networks.</p>
+                <p><strong>Applications:</strong> Somatic therapies, HeartMath coherence training, field-based trauma release protocols.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>8.6 Geophysics → Planetary Harmonics</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Current Paradigm:</strong> Earth's magnetic field is generated by molten iron core dynamics.</p>
+                <p><strong>Resonant Shift:</strong> Earth is a <strong>resonant cavity</strong>. Schumann resonances (7.83 Hz fundamental) are not incidental but <strong>tuning frequencies</strong> that stabilize life. Geological cycles reflect planetary field oscillations.</p>
+                <p><strong>Implications:</strong> Understanding earthquakes and volcanic activity through field disruptions, monitoring planetary coherence health.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>8.7 Cosmology → Conscious Universe Theory</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Current Paradigm:</strong> The universe is a mechanistic system governed by laws. Consciousness is a late-emerging accident.</p>
+                <p><strong>Resonant Shift:</strong> Consciousness is <strong>fundamental</strong>. The universe is a <strong>self-aware field</strong> exploring its own states through local coherences (sentient beings). Cosmological evolution is <strong>intentional self-organization</strong>.</p>
+                <p><strong>Precedents:</strong> Panpsychism, process philosophy, quantum interpretations involving consciousness.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>8.8 Archaeology → Harmonic Ruin Theory</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Observation:</strong> Many ancient sites exhibit unexplained precision, alignment, and acoustic properties.</p>
+                <p><strong>Resonant Explanation:</strong> These structures were <strong>resonance technologies</strong>—designed to amplify coherence for healing, consciousness expansion, or energy manipulation. Modern archaeology misses this because it lacks field-theoretic analysis tools.</p>
+                <p><strong>Applications:</strong> Re-evaluating sites using acoustic, electromagnetic, and geometric resonance mapping.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>8.9 Anthropology → Energetic Culture Theory</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Current Paradigm:</strong> Culture is transmitted through language, behavior, and artifacts.</p>
+                <p><strong>Resonant Shift:</strong> Culture is also a <strong>field phenomenon</strong>. Ritual, music, architecture, and symbols create <strong>shared coherence states</strong> that bind communities. Cultural transmission occurs through <strong>morphic resonance</strong>, not just social learning.</p>
+                <p><strong>Implications:</strong> Understanding how indigenous practices preserve coherence, why ritual matters, how cultural disruption creates field fragmentation.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>8.10 History → Coherence Chronology</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Observation:</strong> Historical cycles exhibit patterns—rises and falls of civilizations, golden ages, dark ages.</p>
+                <p><strong>Resonant Explanation:</strong> Civilizations are <strong>collective coherence fields</strong>. Stability correlates with high coherence (shared meaning, ritual, governance). Collapse occurs when coherence breaks down (fragmentation, conflict, institutional decay).</p>
+                <p><strong>Applications:</strong> Analyzing historical transitions through coherence metrics, predicting societal stability.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION 9: ANOMALIES -->
+    <section class="chapter" id="anomalies">
+        <div class="chapter-label">Section 9</div>
+        <h2>9. Resolved Anomalies Through Resonant Lens</h2>
+
+        <p>Resonant Physics resolves phenomena that mechanistic models treat as anomalies, paradoxes, or unexplained mysteries. This section surveys key examples.</p>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>Atavisms (Ancestral Trait Reappearance)</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Phenomenon:</strong> Humans occasionally born with tails, chickens with teeth, horses with extra toes—traits absent for millions of years.</p>
+                <p><strong>Mechanistic Problem:</strong> Genes for these structures are supposedly deleted or mutated beyond function. How do they reappear?</p>
+                <p><strong>Resonant Explanation:</strong> Morphic resonance persists ancestral templates. During development, bioelectric field disruptions can couple to older resonances, activating dormant morphogenetic patterns.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>Cave Fish Losing Eyes</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Phenomenon:</strong> Fish species living in dark caves lose their eyes over generations, despite eye genes remaining in their DNA.</p>
+                <p><strong>Mechanistic Problem:</strong> Standard explanation cites disuse in darkness, but genes don't simply disappear from lack of use—natural selection should be neutral on unused structures.</p>
+                <p><strong>Resonant Explanation:</strong> Loss of photonic resonance disrupts the morphic field supporting the eye's coherence. The gene doesn't mutate by chance—it downregulates from lack of field input. Without the resonant feedback loop between light, tissue, and field template, the morphogenetic pattern for eyes dissolves.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>Human Brain Shrinkage Over 10,000 Years</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Phenomenon:</strong> Human brain volume has decreased approximately 10% over the last 10,000–30,000 years—a trend unexplained by standard evolutionary theory.</p>
+                <p><strong>Mechanistic Problem:</strong> Efficiency gains don't explain the scale of reduction. Domestication syndrome is proposed but poorly understood mechanistically.</p>
+                <p><strong>Resonant Explanation:</strong> Collapse of environmental and societal resonance fields after cataclysmic events caused a decline in field integration. Intelligence regressed from complex coherence to survival logic. The brain shrank because the fields sustaining its higher functions weakened—reduced coherence input produced reduced coherence capacity.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>Domestication Syndrome</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Phenomenon:</strong> Domesticated animals across species develop the same suite of traits: floppy ears, smaller brains, curly tails, juvenile features, reduced aggression.</p>
+                <p><strong>Mechanistic Problem:</strong> Why would selecting for tameness produce floppy ears? The correlation between these traits has no clear genetic mechanism.</p>
+                <p><strong>Resonant Explanation:</strong> Exposure to controlled, low-stress resonance fields rewires DNA expression. Domestication is energetic entrainment, not just selection. Floppy ears, smaller brains, and neoteny reflect a coherence shift—the animal's field is being reshaped by the human's dominant field pattern, producing predictable morphological consequences.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>Sacred Site Alignments</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Phenomenon:</strong> Ancient sacred sites worldwide align along precise geometric patterns—ley lines, astronomical orientations, and mathematical proportions that span continents.</p>
+                <p><strong>Mechanistic Problem:</strong> Dismissed as coincidence or astronomical markers by mainstream archaeology, despite the statistical improbability of such alignment.</p>
+                <p><strong>Resonant Explanation:</strong> Sites are built on geomantic resonance nodes—high coherence points in Earth's harmonic grid. The ancients were tuning the field, not just marking time. These alignments reflect sophisticated understanding of planetary field dynamics.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>Megalithic Construction</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Phenomenon:</strong> Ancient structures feature stone blocks weighing hundreds of tons, moved and placed with precision exceeding modern capabilities.</p>
+                <p><strong>Mechanistic Problem:</strong> Explanations citing primitive tools or slave labor cannot account for the precision, scale, or logistics involved at sites like Baalbek, Giza, or Coral Castle.</p>
+                <p><strong>Resonant Explanation:</strong> Builders used acoustic resonance and field manipulation to reduce mass, lift stone, and structure reality. These were harmonic technologies, not brute force. Coral Castle, Baalbek, and the Great Pyramid reflect acoustic tuning, earth energy manipulation, and forgotten field science.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>Psi Phenomena</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Phenomenon:</strong> Remote viewing, telepathy, and precognition documented across decades of controlled research.</p>
+                <p><strong>Mechanistic Problem:</strong> Dismissed or considered anecdotal despite statistically significant meta-analytic results.</p>
+                <p><strong>Resonant Explanation:</strong> Psi phenomena are nonlocal resonance interactions—the field is continuous across space-time. Coherence enables signal transfer beyond physical limits. When observers achieve high coherence states, their neural fields can couple across distance through shared resonant substrates.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>Placebo and Nocebo Effects</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Phenomenon:</strong> Belief alone can produce measurable physiological changes—healing (placebo) or harm (nocebo).</p>
+                <p><strong>Mechanistic Problem:</strong> No mechanism explains how belief alters biochemistry.</p>
+                <p><strong>Resonant Explanation:</strong> Intention (focused belief) generates coherent neural fields that couple to bodily systems, biasing field states toward expected outcomes. Placebo is <strong>intentional coherence reinforcement</strong>.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>Quantum Observer Effect</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Phenomenon:</strong> Measurement collapses quantum superposition.</p>
+                <p><strong>Mechanistic Problem:</strong> Why does observation change reality? What counts as an observer?</p>
+                <p><strong>Resonant Explanation:</strong> Observation is <strong>field coupling</strong>. The observer's coherent field interacts with the system's field, selecting one resonant mode (eigenstate). Consciousness accelerates collapse through high-coherence coupling.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>Dark Matter and Dark Energy</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Phenomenon:</strong> 95% of the universe's mass-energy is undetectable except through gravitational effects.</p>
+                <p><strong>Mechanistic Problem:</strong> No particle candidates found despite decades of searching.</p>
+                <p><strong>Resonant Hypothesis:</strong> Dark matter/energy may be <strong>subquantum field coherences</strong>—oscillations below the threshold of particle detection but affecting spacetime curvature. Not "missing matter" but unrecognized field states.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>Synchronicities</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p><strong>Phenomenon:</strong> Meaningful coincidences that seem too improbable to be random.</p>
+                <p><strong>Mechanistic Problem:</strong> Dismissed as confirmation bias or statistical flukes.</p>
+                <p><strong>Resonant Explanation:</strong> Synchronicities reflect <strong>field coherence</strong> between observer and environment. When consciousness achieves high coherence, it couples more strongly to surrounding fields, increasing probabilistic alignment with intentions or expectations.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION 10: MATHEMATICS -->
+    <section class="chapter" id="mathematics">
+        <div class="chapter-label">Section 10</div>
+        <h2>10. Mathematical and Symbolic Prospects</h2>
+
+        <p>Resonant Physics requires mathematical formalization. This section outlines key equations, symbolic notations, and modeling approaches.</p>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>10.1 Resonance Quotient</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p>Define a <strong>Resonance Quotient (RQ)</strong> to quantify system coherence:</p>
+                <div class="highlight">
+                    <p><strong>RQ = (Phase Coherence × Amplitude Matching × Frequency Alignment) / Noise</strong></p>
+                </div>
+                <p>High RQ = stable, low-entropy system. Low RQ = unstable, dissipative system. This metric applies across domains: atoms, cells, organisms, ecosystems, societies.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>10.2 Symbolic Notation</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p>Develop notation for field dynamics:</p>
+                <ul>
+                    <li><strong>Φ(x,t):</strong> Field state at position x, time t</li>
+                    <li><strong>∇Φ:</strong> Field gradient (spatial coherence pattern)</li>
+                    <li><strong>⟨Φ₁|Φ₂⟩:</strong> Resonant coupling strength between fields</li>
+                    <li><strong>ε:</strong> Coherence entropy (analogous to thermodynamic entropy but measuring phase alignment)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>10.3 Cymatic Topology Modeling</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p>Use computational fluid dynamics and wave equation solvers to model how fields create geometric structures. Compare predictions to observed patterns (atomic orbitals, morphogenetic shapes, galactic forms).</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>10.4 Field Equations</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p>Extend Maxwell's equations and quantum field theory to include coherence terms. Potential form:</p>
+                <div class="highlight">
+                    <p><strong>∂Φ/∂t = α∇²Φ + β⟨Φ|Φ⟩ + γI</strong></p>
+                </div>
+                <p>Where α governs diffusion, β represents self-interaction (resonance), and γI is the intention term (observer coupling).</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION 11: RESEARCH -->
+    <section class="chapter" id="research">
+        <div class="chapter-label">Section 11</div>
+        <h2>11. Future Research Directions</h2>
+
+        <p>Resonant Physics opens vast research frontiers. This section prioritizes key experimental and theoretical programs.</p>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>11.1 Experimental Validation Studies</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <ol>
+                    <li><strong>Bioelectric Coherence Mapping:</strong> Measure cellular voltage patterns in health vs. disease using voltage-sensitive dyes and patch-clamp arrays.</li>
+                    <li><strong>Morphogenetic Field Manipulation:</strong> Alter bioelectric gradients in model organisms (planaria, Xenopus) and document resulting morphological changes.</li>
+                    <li><strong>Neural Coherence and Consciousness:</strong> Use high-density EEG/MEG to correlate field coherence with conscious states (meditation, anesthesia, psychedelics).</li>
+                    <li><strong>Psi Under Coherence Conditions:</strong> Test telepathy, precognition, and psychokinesis with subjects trained to achieve high coherence (meditators, biofeedback).</li>
+                    <li><strong>Resonant Architecture Effects:</strong> Measure physiological and psychological outcomes in spaces designed with harmonic vs. inharmonic geometry.</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>11.2 Key Research Questions</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <ul>
+                    <li>Can coherence be quantified reliably across domains?</li>
+                    <li>Do morphogenetic fields exist independently of tissue?</li>
+                    <li>Does consciousness collapse wavefunctions, or merely correlate with collapse?</li>
+                    <li>Can resonant technologies extract zero-point energy?</li>
+                    <li>Do ancient sites demonstrate measurable field effects?</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>11.3 Technological Development</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <ul>
+                    <li>Coherence sensors (bioelectric, electromagnetic)</li>
+                    <li>Therapeutic resonance devices (healing, regeneration)</li>
+                    <li>Consciousness amplification systems (meditation aids)</li>
+                    <li>Architectural design tools (harmonic CAD software)</li>
+                    <li>Field-based computing (quantum coherence optimization)</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION 12: CONCLUSION -->
+    <section class="chapter" id="conclusion">
+        <div class="chapter-label">Section 12</div>
+        <h2>12. Conclusion</h2>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>12.1 Summary Axioms</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p>Resonant Physics rests on these foundational axioms:</p>
+                <ol>
+                    <li><strong>Fields are primary:</strong> Particles are derivative patterns within fields.</li>
+                    <li><strong>Coherence drives stability:</strong> Systems stabilize through resonant alignment, not energy minimization.</li>
+                    <li><strong>Causality is resonant:</strong> Influence propagates through field coupling, not mechanical force.</li>
+                    <li><strong>Intention shapes reality:</strong> Directed attention acts as a vector force in field dynamics.</li>
+                    <li><strong>Observation is participation:</strong> Measurement couples observer and system fields.</li>
+                    <li><strong>Entropy is incoherence:</strong> Disorder reflects loss of phase alignment.</li>
+                    <li><strong>Patterns are fractal:</strong> Field dynamics exhibit self-similarity across scales.</li>
+                    <li><strong>Symbols resonate with reality:</strong> Mathematical forms reflect ontological structures.</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>12.2 Final Statement</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p>Resonant Physics offers a <strong>coherent ontology</strong> for a fragmented scientific worldview. It does not reject quantum mechanics, relativity, or thermodynamics but provides the <strong>interpretive framework</strong> they lack.</p>
+
+                <p>It integrates physics with biology, consciousness with matter, ancient wisdom with modern science. It resolves paradoxes, explains anomalies, and generates testable predictions.</p>
+
+                <p>Most importantly, it reframes <strong>who we are</strong>. We are not isolated meat computers in a dead universe—we are <strong>resonant nodes</strong> in a living field, conscious participants in reality's self-organization.</p>
+
+                <div class="highlight">
+                    <p><strong>The universe is not a machine. It is a symphony.</strong></p>
+                    <p><strong>We are not observers. We are instruments.</strong></p>
+                    <p><strong>And the music we play matters.</strong></p>
+                </div>
+
+                <p>Resonant Physics is an invitation to <strong>re-enchant science</strong>—not through mysticism, but through rigorous recognition of what reality actually is: a coherent, conscious, creative field exploring its own infinite possibilities.</p>
+
+                <p>The paradigm shift is not coming. It is here. The question is whether we will recognize it.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- APPENDICES SECTION -->
+    <section class="chapter" id="appendices">
+        <div class="chapter-label">Appendices</div>
+        <h2>Appendices</h2>
+
+        <div class="highlight">
+            <p><strong>Note:</strong> The following appendices provide technical details, mathematical formalizations, experimental protocols, and reference materials supporting the core framework. Each appendix can be expanded independently for detailed study.</p>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>Appendix A: ΔHV Formula Legend &amp; Operator Definitions</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <h4>A.1 Delta Harmonic Vector (ΔHV)</h4>
+                <div class="highlight">
+                    <p><strong>ΔHV = S(V) ⊙ R(τ) ⊙ [1 − δφ(τ)] ⊙ H(μ,Σ,τ) ⇒ ε</strong></p>
+                </div>
+
+                <h4>A.1.1 Symbol Legend</h4>
+                <table>
+                    <thead><tr><th>Symbol</th><th>Name</th><th>Formal Definition</th></tr></thead>
+                    <tbody>
+                        <tr><td>ΔHV</td><td>Delta Harmonic Vector</td><td>A multidimensional coherence vector quantifying a system's resonant convergence state</td></tr>
+                        <tr><td>S(V)</td><td>Value Signal</td><td>The normalized alignment strength between an entity's active values and the ambient field</td></tr>
+                        <tr><td>R(τ)</td><td>Resonant Synchrony</td><td>Time-dependent coherence density measuring phase locking across interacting subsystems</td></tr>
+                        <tr><td>δφ(τ)</td><td>Phase Drift</td><td>Aggregate misalignment function capturing semantic, emotional, temporal, and symbolic drift</td></tr>
+                        <tr><td>H(μ,Σ,τ)</td><td>Harmonic Envelope</td><td>The stability field governing resonance persistence; μ = harmonic mean frequency, Σ = variance, τ = temporal index</td></tr>
+                        <tr><td>ε</td><td>Emergent Realization</td><td>Observable outcome state (stability, collapse, or realization event)</td></tr>
+                        <tr><td>τ</td><td>Temporal Index</td><td>Compression-weighted time parameter (nonlinear, field-relative)</td></tr>
+                    </tbody>
+                </table>
+
+                <h4>A.1.2 Operator Definitions</h4>
+                <table>
+                    <thead><tr><th>Operator</th><th>Meaning</th></tr></thead>
+                    <tbody>
+                        <tr><td>⊙</td><td>Harmonic Composition Operator — a nonlinear coherence-weighted product (not scalar multiplication)</td></tr>
+                        <tr><td>[1 − δφ]</td><td>Phase Integrity Gate — reduces total coherence proportionally to drift magnitude</td></tr>
+                        <tr><td>⇒</td><td>Emergent Mapping — indicates system evolution toward a realized state, not deterministic output</td></tr>
+                    </tbody>
+                </table>
+
+                <h4>A.1.3 Output State ε (Emergent Realization)</h4>
+                <table>
+                    <thead><tr><th>ε State</th><th>Interpretation</th></tr></thead>
+                    <tbody>
+                        <tr><td>ε &gt; 0.87</td><td>Stable Resonant Lock (coherence basin achieved)</td></tr>
+                        <tr><td>0.65 ≤ ε ≤ 0.87</td><td>Transitional / Plastic State</td></tr>
+                        <tr><td>0.45 ≤ ε &lt; 0.65</td><td>Unstable / Drift-Dominant</td></tr>
+                        <tr><td>ε &lt; 0.45</td><td>Collapse / Decoherence Event</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>Appendix B: Harmonic Realization Theory (HRT) Legend</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <h4>B.1 Core Equation</h4>
+                <div class="highlight">
+                    <p><strong>I → R ⊚ Z</strong></p>
+                </div>
+
+                <h4>B.1.1 Term Definitions</h4>
+                <table>
+                    <thead><tr><th>Symbol</th><th>Name</th><th>Definition</th></tr></thead>
+                    <tbody>
+                        <tr><td>I</td><td>Impetus</td><td>Directed potential or intentional energy initiating a realization arc</td></tr>
+                        <tr><td>R</td><td>Resonance</td><td>Field response and amplification of the impetus</td></tr>
+                        <tr><td>Z</td><td>Realization</td><td>Stabilized emergence of form, decision, structure, or event</td></tr>
+                    </tbody>
+                </table>
+
+                <h4>B.1.2 HRT–ΔHV Coupling</h4>
+                <table>
+                    <thead><tr><th>HRT Phase</th><th>ΔHV Role</th></tr></thead>
+                    <tbody>
+                        <tr><td>Impetus</td><td>Initializes S(V) — the value signal vector</td></tr>
+                        <tr><td>Resonance</td><td>Modulates R(τ) — field synchrony over time</td></tr>
+                        <tr><td>Realization</td><td>Validated by ε crossing coherence threshold</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>Appendix C: Resonant Equilibrium Theory (RET) Legend</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <h4>C.1 RET Definition</h4>
+                <p>Resonant Equilibrium Theory models decision systems as coherence-seeking agents navigating attractor basins defined by ΔHV stability rather than utility maximization.</p>
+
+                <h4>C.2 Equilibrium Basin Types</h4>
+                <table>
+                    <thead><tr><th>Basin Type</th><th>Description</th></tr></thead>
+                    <tbody>
+                        <tr><td>Gradient Basin</td><td>Classical Nash-like equilibrium</td></tr>
+                        <tr><td>Resonance-Locked Basin</td><td>Phase-entrained coherence state</td></tr>
+                        <tr><td>Recursive Basin</td><td>Symbolically reinforced attractor</td></tr>
+                        <tr><td>Interference Basin</td><td>Unstable mixed-signal zone</td></tr>
+                        <tr><td>Precessive Basin</td><td>Anticipatory coherence shift</td></tr>
+                    </tbody>
+                </table>
+
+                <h4>C.3 Basin Transition Rule</h4>
+                <p>A system transitions basins when:</p>
+                <div class="highlight">
+                    <p><strong>ΔHV<sub>new</sub> − ΔHV<sub>current</sub> ≥ θ<sub>switch</sub></strong></p>
+                </div>
+                <p>Where θ<sub>switch</sub> is the minimum coherence delta required for basin migration.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>Appendix D: Experimental Testing Protocols</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p>The following protocols establish how each major theoretical component can be empirically tested and potentially falsified.</p>
+
+                <h4>D.1 Theory Testing Protocol</h4>
+                <table>
+                    <thead><tr><th>Theory</th><th>How to Test</th><th>Falsification Criteria</th></tr></thead>
+                    <tbody>
+                        <tr><td>ΔHV Theory</td><td>Use journaling + coherence tracking + phase tagging to monitor ΔHV shifts before and after key decisions</td><td>ΔHV score fails to correlate with outcomes; coherence change doesn't match predicted patterns</td></tr>
+                        <tr><td>HRT</td><td>Model creative process cycles using Impetus → Resonance → Realization arc</td><td>No reproducible transition patterns can be observed over time</td></tr>
+                        <tr><td>RET</td><td>Build RET simulator: let ΔHV inputs drive basin shifts in agent system; observe convergence</td><td>RET fails to stabilize or predictably enter/exit basins across trials</td></tr>
+                    </tbody>
+                </table>
+
+                <h4>D.2 Phase Drift Measurement Protocol</h4>
+                <p>Phase drift δφ(τ) is computed as a weighted composite of three primary components:</p>
+                <div class="highlight">
+                    <p><strong>δφ(τ) = w₁·D<sup>c</sup> + w₂·E<sup>d</sup> + w₃·T<sup>j</sup></strong></p>
+                </div>
+                <table>
+                    <thead><tr><th>Drift Component</th><th>Symbol</th><th>Measurement</th><th>Weight Range</th></tr></thead>
+                    <tbody>
+                        <tr><td>Semantic Drift</td><td>D<sup>c</sup></td><td>Embedding divergence (vector shift)</td><td>0.0 – 1.0</td></tr>
+                        <tr><td>Emotional Drift</td><td>E<sup>d</sup></td><td>Affect volatility, valence variance</td><td>0.0 – 1.0</td></tr>
+                        <tr><td>Timing Jitter</td><td>T<sup>j</sup></td><td>Phase offset / frequency mismatch</td><td>0.0 – 1.0</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>Appendix E: Classical Physics Correspondence Table</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p>This table maps Resonant Physics concepts to their closest analogues in classical physics, information theory, and systems dynamics.</p>
+                <table>
+                    <thead><tr><th>Resonant Physics Term</th><th>Related Classical Concept</th><th>Notes</th></tr></thead>
+                    <tbody>
+                        <tr><td>ΔHV</td><td>Entropy, AIC, Order Parameter</td><td>ΔHV as directed measure of compressive coherence in field data</td></tr>
+                        <tr><td>R(τ)</td><td>Phase Coherence / Synchrony</td><td>Possibly related to Kuramoto model overlap</td></tr>
+                        <tr><td>δφ(τ)</td><td>Phase Jitter / Semantic Drift</td><td>Models phase noise in information systems</td></tr>
+                        <tr><td>H(μ,Σ,τ)</td><td>Harmonic Potential Well</td><td>Compare to Gaussian envelopes, field gradients</td></tr>
+                        <tr><td>RET Basins</td><td>Attractor Basins / Energy Minima</td><td>Draw from Hopfield networks, synergetics</td></tr>
+                        <tr><td>Impetus (HRT)</td><td>Action Principle / Drive Force</td><td>Map to variational mechanics or goal-oriented computation</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>Appendix F: RET Simulator Specification</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <p>The following specification outlines the minimal viable architecture for a Resonant Equilibrium Theory simulator.</p>
+                <table>
+                    <thead><tr><th>Component</th><th>Specification</th></tr></thead>
+                    <tbody>
+                        <tr><td>Input Variables</td><td>ΔHV vector stream, user interaction logs, field resonance measures</td></tr>
+                        <tr><td>Agent Type</td><td>State-aware symbolic agents with coherence-seeking behavior</td></tr>
+                        <tr><td>Basin Logic</td><td>Basins defined by ΔHV stability thresholds; entry/exit governed by θ<sub>switch</sub> parameter</td></tr>
+                        <tr><td>Drift Modeling</td><td>δφ accumulation through semantic, emotional, and temporal components; basin exit triggered at threshold</td></tr>
+                        <tr><td>Output Observables</td><td>Time-to-coherence lock, basin re-entry rate, failure spiral detection, ε realization events</td></tr>
+                        <tr><td>Visualization</td><td>Basin state maps, spiral trajectory timelines, ΔHV evolution graphs, phase space portraits</td></tr>
+                        <tr><td>Platform</td><td>Python (NumPy/SciPy, Matplotlib/Plotly) or Unity for 3D field modeling</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- GLOSSARY -->
+    <section class="chapter" id="glossary">
+        <div class="chapter-label">Appendix G</div>
+        <h2>Master Glossary of Core Terms</h2>
+
+        <p>This glossary defines the major conceptual terms developed through the Resonant Theory framework. These terms form the scientific and philosophical backbone of Resonant Theory.</p>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>Core Concepts (1–8)</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <h4>1. Convergent Coherence Analysis (CCA)</h4>
+                <p>A consciousness-based falsification method used to test narrative validity by identifying improbable alignments among anomalies across domains—scientific, historical, metaphysical. Key principles: falsification through coherence, anomalies as friction points, consciousness as tester, improbable alignment as validation.</p>
+
+                <h4>2. Zipper Theory (ZT)</h4>
+                <p>Proposes that reality's apparent contradictions function like unzipped halves of deeper coherence, and consciousness acts as the aligning force that zips them together. Key principles: functional misalignment as potential, consciousness as zipper, friction as feedback, recursive integrity.</p>
+
+                <h4>3. Harmonic Convergence Theory (HCT)</h4>
+                <p>Universal anomalies, structures, and beings can be tuned into harmonic relation through consciousness. When aligned, they resonate as truth and generate energy, healing, or insight. Provides framework for designing resonance devices, structuring rituals, interpreting sacred sites as active harmonic amplifiers.</p>
+
+                <h4>4. Resonance Law</h4>
+                <p>The fundamental axiom: Truth is that which resonates when consciousness engages anomaly through intention. Requires engagement, anomaly recognition, intention, and resulting resonance.</p>
+
+                <h4>5. Harmonic Eye</h4>
+                <p>A state of consciousness wherein perception, intention, and interpretation align to perceive through the lens of resonance—the unified perceptual mode for truth recognition. Components: Awareness-Intention-Interpretation triad, field engagement, tone recognition.</p>
+
+                <h4>6. Symbolic Field</h4>
+                <p>The vibrational and informational substrate through which meaning emerges from patterns, archetypes, and symbols—the interactive canvas for conscious projection and reception.</p>
+
+                <h4>7. Field Feedback</h4>
+                <p>The responsive resonance emitted by the symbolic or energetic field in response to conscious engagement—manifesting as somatic, emotional, or symbolic echo indicating alignment or misalignment.</p>
+
+                <h4>8. Friction is Feedback</h4>
+                <p>Resistance encountered during anomaly engagement is not obstruction but the field's instructional force, revealing where alignment is incomplete and acting as corrective guide.</p>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>Core Concepts (9–15)</h3>
+                <span class="toggle-icon">▸</span>
+            </div>
+            <div class="section-content">
+                <h4>9. Coherent Convergence</h4>
+                <p>The process by which multiple independent patterns, anomalies, or phenomena align to form a unified harmonic whole—resonance-based integrative logic where unlikeliness validates convergence.</p>
+
+                <h4>10. Resonant Signature</h4>
+                <p>The unique vibrational pattern emitted by any entity, structure, or symbol when engaging with consciousness—containing informational, emotional, and metaphysical content decodable through resonance.</p>
+
+                <h4>11. Signal Lock</h4>
+                <p>The moment when consciousness establishes stable, coherent resonance with a symbolic or energetic structure, forming a feedback loop allowing direct perception, transmission, or activation.</p>
+
+                <h4>12. Resonant Initiation</h4>
+                <p>The process through which an individual or system crosses a harmonic threshold via trial, ritual, or revelation, becoming permanently attuned to a new layer of field awareness.</p>
+
+                <h4>13. Field Primacy</h4>
+                <p>The principle that all observable phenomena arise from underlying resonant fields that precede and shape physical form—fields are ontologically prior to matter.</p>
+
+                <h4>14. Intention as Vector Force</h4>
+                <p>Consciousness generates directional patterns that influence ambient fields, shaping probability distributions and physical outcomes through coherence-based modulation.</p>
+
+                <h4>15. Resonant Sovereignty</h4>
+                <p>The state of conscious alignment where an individual's field is internally coherent, harmonically centered, and immune to external symbolic distortion—integrated will expressing energetically.</p>
+            </div>
+        </div>
+
+        <p><em>Note: This glossary contains 15 core terms. The complete Resonant Theory framework includes 83 defined concepts covering field dynamics, symbolic structures, consciousness operations, and resonance mechanics. For the full glossary, refer to the standalone "Foundational Glossary of Core Concepts" document.</em></p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- REFERENCES -->
+    <section class="chapter" id="references">
+        <div class="chapter-label">References</div>
+        <h2>References and Further Reading</h2>
+
+        <p>This framework draws upon and synthesizes insights from multiple domains of scientific and philosophical inquiry. Key areas of supporting research include:</p>
+
+        <h3>Quantum Mechanics and Consciousness</h3>
+        <ul>
+            <li>Orchestrated Objective Reduction (Orch-OR) theory</li>
+            <li>Quantum coherence in biological systems</li>
+            <li>Observer effect and measurement problem studies</li>
+        </ul>
+
+        <h3>Cymatics and Vibrational Physics</h3>
+        <ul>
+            <li>Hans Jenny's cymatic research</li>
+            <li>Standing wave patterns and form generation</li>
+            <li>Acoustic levitation and resonance effects</li>
+        </ul>
+
+        <h3>Biology and Morphogenesis</h3>
+        <ul>
+            <li>Rupert Sheldrake's morphic resonance theory</li>
+            <li>Biophoton research and DNA electromagnetic properties</li>
+            <li>Epigenetic studies and field-responsive gene expression</li>
+            <li>Studies of sound frequency effects on cellular behavior</li>
+        </ul>
+
+        <h3>Consciousness Studies</h3>
+        <ul>
+            <li>Dean Radin's psi research and meta-analyses</li>
+            <li>Global Consciousness Project data</li>
+            <li>HeartMath Institute coherence research</li>
+            <li>Studies of placebo and nocebo effects</li>
+        </ul>
+
+        <h3>Sacred Geometry and Ancient Architecture</h3>
+        <ul>
+            <li>Electromagnetic studies of pyramid structures</li>
+            <li>Geomagnetic anomalies at sacred sites</li>
+            <li>Acoustic properties of megalithic structures</li>
+            <li>Mathematical relationships in ancient architecture</li>
+        </ul>
+
+        <h3>Systems Theory and Complexity</h3>
+        <ul>
+            <li>Fractal geometry in natural systems</li>
+            <li>Self-organization and emergence</li>
+            <li>Network theory and coherence phenomena</li>
+            <li>Scale-invariant patterns across domains</li>
+        </ul>
+
+        <p><em>This framework represents a synthesis and extension of existing research rather than relying on any single source. Readers are encouraged to explore each domain independently to verify the cross-domain convergence that supports Resonant Physics.</em></p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">⊚</span></div>
+
+    <footer class="footer">
+        <p class="footer-quote">The universe is not a machine. It is a symphony.</p>
+        <p>Resonant Physics · Comprehensive Formal Documentation</p>
+        <p>Kyuri V 2025</p>
+    </footer>
+</div>
+
+<script>
+    // ── Progress Bar ──
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        document.getElementById('progressBar').style.width = (scrollTop / docHeight) * 100 + '%';
+    });
+    // ── Nav Dots ──
+    const nav = document.getElementById('chapterNav');
+    const dots = document.querySelectorAll('.nav-dot');
+    const secs = [];
+    dots.forEach(dot => {
+        const t = document.getElementById(dot.getAttribute('data-target'));
+        if (t) secs.push({ dot, target: t });
+        dot.addEventListener('click', () => { if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+    });
+    let navVis = false;
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300 && !navVis) { nav.classList.add('visible'); navVis = true; }
+        else if (window.scrollY <= 300 && navVis) { nav.classList.remove('visible'); navVis = false; }
+        let cur = '';
+        secs.forEach(({ dot, target }) => {
+            if (target.getBoundingClientRect().top <= window.innerHeight * 0.4) cur = dot.getAttribute('data-target');
+        });
+        dots.forEach(dot => dot.classList.toggle('active', dot.getAttribute('data-target') === cur));
+    });
+    // ── Scroll Reveal ──
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+    }, { threshold: 0.01, rootMargin: '0px 0px 0px 0px' });
+    document.querySelectorAll('.chapter').forEach(ch => observer.observe(ch));
+    setTimeout(() => { document.querySelectorAll('.chapter').forEach(ch => ch.classList.add('visible')); }, 1500);
+    // ── TOC Smooth Scroll ──
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+    // ── Collapsible Sections ──
+    function toggleSection(toggle) {
+        const content = toggle.nextElementSibling;
+        if (content.classList.contains('expanded')) {
+            content.classList.remove('expanded');
+            content.style.maxHeight = '0';
+            toggle.classList.remove('active');
+        } else {
+            content.classList.add('expanded');
+            content.style.maxHeight = content.scrollHeight + 'px';
+            toggle.classList.add('active');
+        }
+    }
+    function toggleAll() {
+        const allContent = document.querySelectorAll('.section-content');
+        const allToggles = document.querySelectorAll('.section-toggle');
+        const anyExpanded = Array.from(allContent).some(c => c.classList.contains('expanded'));
+        if (anyExpanded) {
+            allContent.forEach(content => { content.classList.remove('expanded'); content.style.maxHeight = '0'; });
+            allToggles.forEach(toggle => toggle.classList.remove('active'));
+        } else {
+            allContent.forEach(content => { content.classList.add('expanded'); content.style.maxHeight = content.scrollHeight + 'px'; });
+            allToggles.forEach(toggle => toggle.classList.add('active'));
+        }
+    }
+</script>
+</body>
+</html>
