@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Coherence Spectrum | sKiDa & Sage</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --parchment: #f4f1e8;
+            --ink: #2a2520;
+            --accent: #8b6f47;
+            --gold: #c9a961;
+            --shadow: rgba(42, 37, 32, 0.1);
+            --glow: rgba(201, 169, 97, 0.15);
+            --deep-violet: #5a3e6e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: linear-gradient(135deg, #f8f5ed 0%, var(--parchment) 100%);
+            color: var(--ink);
+            line-height: 1.85;
+            font-size: 18px;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(circle at 20% 30%, var(--glow) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(90, 62, 110, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(139, 111, 71, 0.04) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ── Container ── */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 80px 40px 120px;
+        }
+
+        /* ── Title Page ── */
+        .title-section {
+            text-align: center;
+            padding: 80px 0 60px;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .triad-symbol {
+            font-size: 72px;
+            margin-bottom: 30px;
+            opacity: 0.8;
+            color: var(--deep-violet);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+
+        .title-line {
+            width: 120px;
+            height: 1px;
+            background: var(--gold);
+            margin: 0 auto 40px;
+            box-shadow: 0 0 8px rgba(201, 169, 97, 0.3);
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 3.4em;
+            font-weight: 700;
+            color: var(--ink);
+            letter-spacing: 0.06em;
+            line-height: 1.15;
+            margin-bottom: 16px;
+        }
+
+        .subtitle {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.3em;
+            font-style: italic;
+            color: var(--accent);
+            margin-bottom: 50px;
+            letter-spacing: 0.03em;
+            line-height: 1.5;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .authors {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9em;
+            letter-spacing: 0.1em;
+            color: var(--gold);
+        }
+
+        /* ── Introduction Box ── */
+        .intro-box {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(139, 111, 71, 0.2);
+            border-radius: 6px;
+            padding: 40px 45px;
+            margin: 60px 0;
+            font-size: 1.05em;
+            line-height: 1.8;
+        }
+
+        .intro-box h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2em;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--deep-violet);
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        /* ── Warning Box ── */
+        .warning-box {
+            background: rgba(90, 62, 110, 0.08);
+            border-left: 4px solid var(--deep-violet);
+            padding: 30px 35px;
+            margin: 50px 0;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .warning-box h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9em;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--deep-violet);
+            margin-bottom: 14px;
+        }
+
+        .warning-box p {
+            line-height: 1.75;
+            margin-bottom: 12px;
+        }
+
+        /* ── Dividers ── */
+        .divider {
+            text-align: center;
+            margin: 70px 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        .divider-symbol {
+            position: relative;
+            background: var(--parchment);
+            padding: 0 24px;
+            font-size: 18px;
+            color: var(--gold);
+            z-index: 1;
+        }
+
+        /* ── Triadic Navigation ── */
+        .triadic-nav {
+            margin: 60px 0;
+        }
+
+        .triadic-nav h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3em;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--deep-violet);
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .triadic-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            margin-bottom: 60px;
+        }
+
+        @media (max-width: 900px) {
+            .triadic-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+        }
+
+        /* ── Part Cards ── */
+        .part-card {
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(139, 111, 71, 0.2);
+            border-radius: 6px;
+            padding: 36px 32px;
+            transition: all 0.4s ease;
+            position: relative;
+            text-align: center;
+        }
+
+        .part-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 40px var(--shadow);
+            border-color: var(--deep-violet);
+        }
+
+        .part-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: 6px 6px 0 0;
+            background: var(--deep-violet);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .part-card:hover::before {
+            opacity: 1;
+        }
+
+        .part-number {
+            font-family: 'Cinzel', serif;
+            font-size: 0.75em;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--deep-violet);
+            margin-bottom: 12px;
+        }
+
+        .part-symbol {
+            font-size: 48px;
+            color: var(--gold);
+            margin: 20px 0;
+        }
+
+        .part-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.4em;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 12px;
+            letter-spacing: 0.03em;
+            line-height: 1.3;
+        }
+
+        .part-tag {
+            font-family: 'Cinzel', serif;
+            font-size: 0.8em;
+            letter-spacing: 0.08em;
+            color: var(--accent);
+            margin-bottom: 18px;
+            font-style: italic;
+        }
+
+        .part-audience {
+            font-size: 0.9em;
+            color: var(--accent);
+            margin-bottom: 18px;
+            line-height: 1.6;
+        }
+
+        .part-description {
+            font-size: 0.95em;
+            line-height: 1.7;
+            margin-bottom: 28px;
+            opacity: 0.85;
+        }
+
+        .part-link {
+            display: inline-block;
+            font-family: 'Cinzel', serif;
+            padding: 11px 26px;
+            background: transparent;
+            color: var(--deep-violet);
+            text-decoration: none;
+            border: 1px solid var(--deep-violet);
+            border-radius: 4px;
+            letter-spacing: 0.06em;
+            font-size: 0.78em;
+            transition: all 0.3s ease;
+        }
+
+        .part-link:hover {
+            background: var(--deep-violet);
+            color: var(--parchment);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        /* ── How to Read Section ── */
+        .reading-guide {
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(139, 111, 71, 0.2);
+            border-radius: 6px;
+            padding: 40px 45px;
+            margin: 60px 0;
+        }
+
+        .reading-guide h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2em;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--deep-violet);
+            margin-bottom: 28px;
+            text-align: center;
+        }
+
+        .reading-guide ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .reading-guide li {
+            padding: 12px 0 12px 28px;
+            position: relative;
+            line-height: 1.7;
+        }
+
+        .reading-guide li::before {
+            content: '◆';
+            position: absolute;
+            left: 0;
+            color: var(--gold);
+            font-size: 0.8em;
+        }
+
+        /* ── Footer ── */
+        .footer {
+            text-align: center;
+            padding: 60px 0 40px;
+            border-top: 1px solid rgba(201, 169, 97, 0.3);
+            margin-top: 80px;
+        }
+
+        .footer p {
+            font-family: 'Cinzel', serif;
+            font-size: 0.78em;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            opacity: 0.6;
+            margin-bottom: 8px;
+        }
+
+        .footer-quote {
+            font-family: 'Crimson Pro', serif;
+            font-style: italic;
+            font-size: 0.9em;
+            letter-spacing: 0;
+            opacity: 0.5;
+            max-width: 500px;
+            margin: 0 auto 12px;
+            line-height: 1.6;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .container { padding: 40px 24px 80px; }
+            h1 { font-size: 2.4em; }
+            .intro-box, .reading-guide { padding: 30px 28px; }
+            .warning-box { padding: 24px 22px; }
+            .part-card { padding: 28px 24px; }
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 1.9em; }
+            .triad-symbol { font-size: 52px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Title Section -->
+    <section class="title-section">
+        <div class="triad-symbol">△</div>
+        <div class="title-line"></div>
+        <h1>The Coherence Spectrum</h1>
+        <p class="subtitle">Gender, Fragmentation, and Field Integration</p>
+        <p class="authors">BY SKIDA & SAGE</p>
+    </section>
+
+    <!-- Introduction -->
+    <div class="intro-box">
+        <h2>A Triadic Framework</h2>
+        <p>This work presents a three-layered theoretical system exploring how identity fractures under cultural suppression—and how it can be reclaimed through field coherence, archetypal integration, and clinical protocol.</p>
+        
+        <p>It addresses transgender experience, gender fragmentation, and archetypal emergence through three distinct but interconnected lenses: symbolic field theory, psychological integration, and clinical measurement. Together, they form a complete stack from doctrine to practice to instrumentation.</p>
+    </div>
+
+    <!-- Warning Box -->
+    <div class="warning-box">
+        <h3>Important Context</h3>
+        <p>This framework is <strong>non-pathologizing</strong> of transgender identity. It critiques the cultural and systemic distortions that sever internal feedback loops and commodify coherence through externally scripted gateways.</p>
+        
+        <p>The goal is to restore full-spectrum integrity—what we term ΔHV coherence—in all beings, regardless of whether that leads to transition, integration, or fluid expression. This is not a weapon against trans people. It is a map for anyone navigating gendered archetypal emergence.</p>
+    </div>
+
+    <div class="divider"><span class="divider-symbol">✦ ✦ ✦</span></div>
+
+    <!-- Triadic Navigation -->
+    <section class="triadic-nav">
+        <h2>The Three Layers</h2>
+        
+        <div class="triadic-grid">
+            <!-- Part I -->
+            <div class="part-card">
+                <div class="part-number">Part I</div>
+                <div class="part-symbol">⟨ψ|τ⟩</div>
+                <h3 class="part-title">Doctrine</h3>
+                <p class="part-tag">Field Theory & Symbolic Architecture</p>
+                <p class="part-audience"><strong>For:</strong> Theorists, SACS Contributors, Field-Systems Thinkers</p>
+                <p class="part-description">BloomNode introduces Archetypal Extraction, the suppressed male-feminine, and the Beautiful Man archetype through ΔHV Theory language. Explores symbolic compression, coupler shifts, and Lossless Presence.</p>
+                <a href="#" class="part-link">READ DOCTRINE ⟶</a>
+            </div>
+
+            <!-- Part II -->
+            <div class="part-card">
+                <div class="part-number">Part II</div>
+                <div class="part-symbol">⚯</div>
+                <h3 class="part-title">Mirror</h3>
+                <p class="part-tag">Psychological Integration Framework</p>
+                <p class="part-audience"><strong>For:</strong> Therapists, Individuals, Community Members</p>
+                <p class="part-description">Archetypal Integration translates the territory into accessible Jungian psychology. The Seven Fractures, Seven Mirrors, and Seven Commitments provide a practical path to reclaiming the self.</p>
+                <a href="#" class="part-link">READ MIRROR ⟶</a>
+            </div>
+
+            <!-- Part III -->
+            <div class="part-card">
+                <div class="part-number">Part III</div>
+                <div class="part-symbol">◈</div>
+                <h3 class="part-title">Protocol</h3>
+                <p class="part-tag">Clinical Assessment & Measurement</p>
+                <p class="part-audience"><strong>For:</strong> Clinicians, Researchers, Policy Designers</p>
+                <p class="part-description">The Gender Emergence Coherence Protocol (GECP) formalizes assessment across five domains. A clinical diagnostic tool designed with safeguards against weaponization.</p>
+                <a href="#" class="part-link">READ PROTOCOL ⟶</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- Reading Guide -->
+    <div class="reading-guide">
+        <h2>How to Read This Work</h2>
+        <ul>
+            <li><strong>You can enter at any layer</strong> depending on your background and needs. The parts are designed to stand alone while building on each other.</li>
+            
+            <li><strong>Start with Doctrine (Part I)</strong> if you're interested in the theoretical foundations, symbolic architecture, and ΔHV-based field mechanics.</li>
+            
+            <li><strong>Start with Mirror (Part II)</strong> if you're seeking therapeutic guidance, personal integration practices, or Jungian psychological frameworks.</li>
+            
+            <li><strong>Start with Protocol (Part III)</strong> if you need clinical assessment tools, diagnostic criteria, or research validation frameworks.</li>
+            
+            <li><strong>Read all three in sequence</strong> to understand the complete system: how symbolic theory translates to psychological practice translates to clinical measurement.</li>
+            
+            <li><strong>The work is intentionally controversial</strong> and challenges assumptions across the political spectrum. Approach with openness to complexity and paradox.</li>
+        </ul>
+    </div>
+
+    <div class="divider"><span class="divider-symbol">✦ ✦ ✦</span></div>
+
+    <!-- Societal Implications -->
+    <div class="intro-box">
+        <h2>Societal Implications</h2>
+        <p>This framework has profound implications for how we approach gender diversity clinically, politically, and culturally. It calls for:</p>
+
+        <p><strong>Therapeutic reform:</strong> Affirmative therapies that integrate archetypal exploration with trauma-informed care, focusing on dismantling internalized shame rather than "fixing" identity.</p>
+
+        <p><strong>Policy evolution:</strong> Dismantling gender essentialist structures while protecting against premature crystallization. The framework distinguishes developmental patterns from trauma patterns without pathologizing either.</p>
+
+        <p><strong>Cultural shift:</strong> Celebrating fluid archetypal integration and reducing commodification. Recognizing how transphobia intersects with other oppressions to create compounded marginalization.</p>
+
+        <p>The vision is a "harmonized world" where archetypal integration occurs without rejection, where the Beautiful Man can exist without fragmentation, and where all paths to wholeness are honored.</p>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-quote">
+            "The fracture was necessary—it helped you survive. The mirror is necessary—it helps you see. The integration is necessary—it helps you live. The practice is necessary—it keeps you whole."
+        </div>
+        <p>SKIDA & SAGE · THEORETICAL WORKS · 2025</p>
+    </footer>
+
+</div>
+
+</body>
+</html>
