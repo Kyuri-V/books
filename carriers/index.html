@@ -36,6 +36,11 @@
                 radial-gradient(circle at 50% 50%, rgba(158, 90, 60, 0.02) 0%, transparent 60%);
             pointer-events: none; z-index: 0;
         }
+        <div class="expand-all">
+  <button type="button" onclick="window.location.href='https://kyuri-v.github.io/books/'">
+    ⟵ Back to Theoretical Works
+  </button>
+</div>
         /* ── Progress ── */
         .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: rgba(201, 169, 97, 0.2); z-index: 1000; }
         .progress-bar { height: 100%; background: linear-gradient(90deg, var(--ember), var(--gold), var(--flame)); width: 0%; transition: width 0.15s ease-out; }
@@ -47,13 +52,7 @@
         .nav-dot::after { content: attr(data-label); position: absolute; right: 20px; top: 50%; transform: translateY(-50%); white-space: nowrap; font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.08em; color: var(--accent); opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         .nav-dot:hover::after { opacity: 1; }
         /* ── Container ── */
-        .container { position: relative; z-index: 1; max-width: 780px; margin: 0 auto; padding: 60px 40px 120px; }
-<div class="expand-all">
-  <button type="button" onclick="window.location.href='https://kyuri-v.github.io/books/'">
-    ⟵ Back to Theoretical Works
-  </button>
-</div>
-        
+        .container { position: relative; z-index: 1; max-width: 780px; margin: 0 auto; padding: 60px 40px 120px; }     
         /* ── Title Page ── */
         .title-page { text-align: center; padding: 100px 0 80px; min-height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: fadeIn 1.5s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
