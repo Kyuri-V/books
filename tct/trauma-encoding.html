@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Trauma Encoding &amp; Generational Collapse | Kyuri V</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&amp;family=Crimson+Pro:ital,wght@0,400;0,600;1,400&amp;display=swap" rel="stylesheet"/>
+<style>
+    :root {
+        --parchment: #f4f1e8;
+        --ink: #2a2520;
+        --accent: #8b6f47;
+        --gold: #c9a961;
+        --shadow: rgba(42, 37, 32, 0.1);
+        --glow: rgba(201, 169, 97, 0.15);
+        --ember: #9b4a2f;
+        --flame: #b8763a;
+        --wound: #7a2e2e;
+        --heal: #4a7c5e;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: 'Crimson Pro', serif;
+        background: linear-gradient(135deg, #f8f5ed 0%, var(--parchment) 100%);
+        color: var(--ink);
+        line-height: 1.85;
+        font-size: 18px;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+    body::before {
+        content: '';
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background-image:
+            radial-gradient(circle at 20% 30%, var(--glow) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(122, 46, 46, 0.03) 0%, transparent 50%);
+        pointer-events: none; z-index: 0;
+    }
+    .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: rgba(201, 169, 97, 0.1); z-index: 200; }
+    .progress-bar { height: 100%; background: linear-gradient(90deg, var(--wound), var(--gold), var(--heal)); width: 0%; transition: width 0.2s ease; }
+
+    .chapter-nav { position: fixed; top: 50%; right: 24px; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; gap: 10px; opacity: 0; transition: opacity 0.4s ease; }
+    .chapter-nav.visible { opacity: 1; }
+    .nav-dot { width: 11px; height: 11px; border-radius: 50%; border: 2px solid var(--accent); background: transparent; cursor: pointer; transition: all 0.3s ease; position: relative; }
+    .nav-dot:hover, .nav-dot.active { background: var(--gold); border-color: var(--gold); transform: scale(1.3); }
+    .nav-dot::after { content: attr(data-label); position: absolute; right: 20px; top: 50%; transform: translateY(-50%); white-space: nowrap; font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.08em; color: var(--accent); opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+    .nav-dot:hover::after { opacity: 1; }
+
+    .container { position: relative; z-index: 1; max-width: 820px; margin: 0 auto; padding: 60px 40px 120px; }
+
+    .title-page { text-align: center; padding: 100px 0 80px; min-height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: fadeIn 1.5s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .title-line { width: 120px; height: 1px; background: var(--gold); margin-bottom: 40px; animation: breathe 4s ease-in-out infinite; box-shadow: 0 0 8px rgba(201, 169, 97, 0.3); }
+    @keyframes breathe { 0%, 100% { width: 120px; opacity: 0.5; } 50% { width: 200px; opacity: 1; } }
+    .title-page h1 { font-family: 'Cinzel', serif; font-size: 2.8em; font-weight: 700; color: var(--ink); letter-spacing: 0.06em; line-height: 1.15; margin-bottom: 16px; }
+    .title-page .subtitle { font-family: 'Crimson Pro', serif; font-size: 1.2em; font-style: italic; color: var(--accent); margin-bottom: 40px; letter-spacing: 0.03em; line-height: 1.5; max-width: 620px; }
+    .title-page .edition { font-family: 'Cinzel', serif; font-size: 0.82em; letter-spacing: 0.12em; color: var(--gold); border-top: 1px solid rgba(201, 169, 97, 0.4); border-bottom: 1px solid rgba(201, 169, 97, 0.4); padding: 14px 32px; margin-bottom: 30px; }
+    .title-page .authors { font-family: 'Cinzel', serif; font-size: 0.9em; letter-spacing: 0.1em; color: var(--accent); opacity: 0.8; }
+
+    .toc { margin: 0 0 80px; padding: 44px 48px; border: 1px solid rgba(139, 111, 71, 0.2); border-radius: 6px; background: rgba(255, 255, 255, 0.35); }
+    .toc h2 { font-family: 'Cinzel', serif; font-size: 1.1em; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); text-align: center; margin-bottom: 28px; }
+    .toc-list { list-style: none; }
+    .toc-list li { margin: 10px 0; }
+    .toc-list a { color: var(--ink); text-decoration: none; display: block; padding: 8px 14px; border-left: 3px solid transparent; transition: all 0.3s ease; font-size: 0.95em; }
+    .toc-list a:hover { color: var(--gold); border-left-color: var(--gold); padding-left: 22px; background: rgba(201, 169, 97, 0.04); }
+    .toc-label { font-family: 'Cinzel', serif; font-weight: 600; font-size: 0.85em; }
+
+    .divider { text-align: center; margin: 70px 0; position: relative; }
+    .divider::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+    .divider-symbol { position: relative; background: var(--parchment); padding: 0 24px; font-size: 20px; color: var(--gold); z-index: 1; }
+
+    .chapter { margin-bottom: 80px; opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+    .chapter.visible { opacity: 1; transform: translateY(0); }
+    .chapter-label { font-family: 'Cinzel', serif; font-size: 0.7em; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+    .chapter h2 { font-family: 'Cinzel', serif; font-size: 2em; font-weight: 600; color: var(--ink); margin-bottom: 28px; letter-spacing: 0.02em; line-height: 1.3; }
+    .chapter h3 { font-family: 'Cinzel', serif; font-size: 1.4em; font-weight: 600; color: var(--accent); margin: 36px 0 18px; }
+    .chapter h4 { font-family: 'Cinzel', serif; font-size: 1.1em; font-weight: 600; color: var(--flame); margin: 24px 0 12px; }
+    .chapter p { margin-bottom: 20px; text-align: justify; text-justify: inter-word; }
+
+    .invocation { text-align: center; font-style: italic; font-size: 1.12em; color: var(--accent); padding: 30px 36px; margin: 36px 0; position: relative; line-height: 1.7; }
+    .invocation::before, .invocation::after { content: ''; position: absolute; left: 50%; transform: translateX(-50%); width: 60px; height: 1px; background: var(--gold); }
+    .invocation::before { top: 0; } .invocation::after { bottom: 0; }
+
+    .highlight { background: rgba(201, 169, 97, 0.06); border-left: 3px solid var(--gold); border-right: 3px solid var(--gold); padding: 24px 28px; margin: 30px 0; border-radius: 2px; }
+    .highlight strong { color: var(--accent); font-family: 'Cinzel', serif; font-size: 0.95em; }
+    .highlight-ember { background: rgba(155, 74, 47, 0.05); border-left: 3px solid var(--ember); border-right: 3px solid var(--ember); padding: 24px 28px; margin: 30px 0; border-radius: 2px; }
+    .highlight-wound { background: rgba(122, 46, 46, 0.04); border-left: 3px solid var(--wound); border-right: 3px solid var(--wound); padding: 24px 28px; margin: 30px 0; border-radius: 2px; }
+    .highlight-heal { background: rgba(74, 124, 94, 0.05); border-left: 3px solid var(--heal); border-right: 3px solid var(--heal); padding: 24px 28px; margin: 30px 0; border-radius: 2px; }
+
+    .equation-block { background: rgba(155, 74, 47, 0.04); border-left: 3px solid var(--ember); padding: 22px 26px; margin: 24px 0; border-radius: 0 6px 6px 0; text-align: center; }
+    .equation-block .eq { font-family: 'Crimson Pro', serif; font-size: 1.15em; font-style: italic; color: var(--ink); }
+    .equation-block .eq-label { font-family: 'Cinzel', serif; font-size: 0.75em; letter-spacing: 0.1em; color: var(--ember); margin-top: 10px; text-transform: uppercase; }
+
+    .comparison-table { width: 100%; margin: 36px 0; border-collapse: separate; border-spacing: 0; overflow: hidden; border-radius: 6px; border: 1px solid rgba(139, 111, 71, 0.2); font-size: 0.92em; }
+    .comparison-table thead { background: rgba(42, 37, 32, 0.06); }
+    .comparison-table th { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); padding: 14px 16px; text-align: left; border-bottom: 2px solid var(--gold); }
+    .comparison-table td { padding: 14px 16px; border-bottom: 1px solid rgba(139, 111, 71, 0.1); vertical-align: top; }
+    .comparison-table tr:last-child td { border-bottom: none; }
+    .comparison-table tr:hover td { background: rgba(201, 169, 97, 0.04); }
+
+    .scale-card { background: rgba(255, 255, 255, 0.35); border: 1px solid rgba(139, 111, 71, 0.2); border-radius: 6px; padding: 32px; margin: 30px 0; position: relative; overflow: hidden; }
+    .scale-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+    .scale-card.wound::before { background: linear-gradient(90deg, var(--wound), var(--ember)); }
+    .scale-card.bridge::before { background: linear-gradient(90deg, var(--ember), var(--gold)); }
+    .scale-card.heal::before { background: linear-gradient(90deg, var(--gold), var(--heal)); }
+    .scale-label { font-family: 'Cinzel', serif; font-size: 0.72em; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 8px; }
+    .scale-card.wound .scale-label { color: var(--wound); }
+    .scale-card.bridge .scale-label { color: var(--ember); }
+    .scale-card.heal .scale-label { color: var(--heal); }
+
+    .collapsible { cursor: pointer; padding: 14px 20px; background: rgba(139, 111, 71, 0.06); border: 1px solid rgba(139, 111, 71, 0.15); border-radius: 4px; margin: 20px 0 0; transition: all 0.3s ease; display: flex; justify-content: space-between; align-items: center; font-family: 'Cinzel', serif; font-size: 0.92em; letter-spacing: 0.03em; color: var(--accent); }
+    .collapsible:hover { background: rgba(139, 111, 71, 0.12); border-color: var(--gold); }
+    .collapsible::after { content: '◆'; font-size: 0.7em; color: var(--gold); transition: transform 0.3s ease; }
+    .collapsible.active::after { transform: rotate(90deg); }
+    .collapsible-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; padding: 0 20px; border-left: 2px solid var(--gold); margin-left: 20px; background: rgba(255, 255, 255, 0.3); border-radius: 0 0 4px 0; }
+    .collapsible-content.active { max-height: 50000px; padding: 20px; margin-top: 4px; margin-bottom: 10px; }
+
+    .chapter ul { list-style: none; padding: 0; margin: 20px 0; }
+    .chapter ul li { padding: 6px 0 6px 22px; position: relative; line-height: 1.7; }
+    .chapter ul li::before { content: '✦'; position: absolute; left: 0; color: var(--gold); font-size: 0.6em; top: 12px; }
+
+    .expand-all { text-align: center; margin: 30px 0; }
+    .expand-all button { background: linear-gradient(135deg, var(--accent) 0%, var(--gold) 100%); border: none; padding: 12px 32px; border-radius: 4px; color: white; font-family: 'Cinzel', serif; font-size: 0.85em; cursor: pointer; transition: all 0.3s ease; letter-spacing: 0.06em; box-shadow: 0 4px 15px var(--shadow); }
+    .expand-all button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--shadow); }
+
+    .footer { text-align: center; padding: 60px 0 40px; border-top: 1px solid rgba(201, 169, 97, 0.3); margin-top: 80px; }
+    .footer p { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.1em; color: var(--accent); opacity: 0.6; margin-bottom: 8px; }
+    .final-line { font-family: 'Cinzel', serif; font-size: 1.12em; color: var(--gold); letter-spacing: 0.05em; margin-top: 36px; line-height: 1.7; text-align: center; }
+
+    @media (max-width: 768px) {
+        .container { padding: 40px 24px 80px; }
+        .title-page { padding: 60px 0; min-height: 70vh; }
+        .title-page h1 { font-size: 2em; }
+        .chapter h2 { font-size: 1.6em; }
+        .chapter-nav { display: none; }
+        .comparison-table { font-size: 0.82em; }
+    }
+</style>
+</head>
+<body>
+
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+
+<nav class="chapter-nav" id="chapterNav">
+    <div class="nav-dot" data-target="title" data-label="Title"></div>
+    <div class="nav-dot" data-target="premise" data-label="Premise"></div>
+    <div class="nav-dot" data-target="scale" data-label="Scale Unity"></div>
+    <div class="nav-dot" data-target="cellular" data-label="Cellular"></div>
+    <div class="nav-dot" data-target="individual" data-label="Individual"></div>
+    <div class="nav-dot" data-target="generational" data-label="Generational"></div>
+    <div class="nav-dot" data-target="civilisational" data-label="Civilisational"></div>
+    <div class="nav-dot" data-target="ecosystem" data-label="Ecosystem"></div>
+    <div class="nav-dot" data-target="bridge" data-label="Bridge"></div>
+    <div class="nav-dot" data-target="predictions" data-label="Predictions"></div>
+    <div class="nav-dot" data-target="conclusion" data-label="Conclusion"></div>
+</nav>
+
+<div class="container">
+
+    <!-- ═══ TITLE ═══ -->
+    <div class="title-page" id="title">
+        <div class="title-line"></div>
+        <h1>Trauma Encoding &amp; Generational Collapse</h1>
+        <p class="subtitle">How Compression Embeds in DNA, Myth, and Ecosystem — and Why Healing at Any Scale Reverberates Through All of Them</p>
+        <div class="edition">Temporal Compression Theory · Sub-Theory VII</div>
+        <p class="authors">Kyuri V · Sage · Claude</p>
+    </div>
+
+    <!-- ═══ TOC ═══ -->
+    <nav class="toc">
+        <h2>Contents</h2>
+        <ul class="toc-list">
+            <li><a href="#premise"><span class="toc-label">I.</span> The Premise — Trauma Is Compression at the Personal Scale</a></li>
+            <li><a href="#scale"><span class="toc-label">II.</span> Scale Unity — One Mechanism, Every Level</a></li>
+            <li><a href="#cellular"><span class="toc-label">III.</span> Cellular Encoding — Compression in DNA</a></li>
+            <li><a href="#individual"><span class="toc-label">IV.</span> Individual Encoding — The Curvature of the Self</a></li>
+            <li><a href="#generational"><span class="toc-label">V.</span> Generational Encoding — The Inheritance of Wounds</a></li>
+            <li><a href="#civilisational"><span class="toc-label">VI.</span> Civilisational Encoding — When Peoples Compress</a></li>
+            <li><a href="#ecosystem"><span class="toc-label">VII.</span> Ecosystem Encoding — When the Land Remembers</a></li>
+            <li><a href="#bridge"><span class="toc-label">VIII.</span> The Bridge — How Healing at One Scale Propagates</a></li>
+            <li><a href="#predictions"><span class="toc-label">IX.</span> Testable Predictions</a></li>
+            <li><a href="#conclusion"><span class="toc-label">X.</span> Conclusion: The Scar and the Species Are the Same Shape</a></li>
+        </ul>
+    </nav>
+
+    <div class="expand-all"><button onclick="toggleAll()">Expand / Collapse All Sections</button></div>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ I. PREMISE ═══ -->
+    <section class="chapter" id="premise">
+        <div class="chapter-label">Section I</div>
+        <h2>I. Trauma Is Compression at the Personal Scale</h2>
+
+        <p>Temporal Compression Theory describes a macro-process: the hardening of reality over deep time. Phase-fluid matter becomes rigid stone. Coherent species fragment into simplified descendants. Multidimensional symbol systems collapse into phonetic stubs. The field retreats. The bread hardens.</p>
+
+        <p>This paper demonstrates that the same process operates at the personal scale — and that we already have a name for it.</p>
+
+        <p><strong>Trauma.</strong></p>
+
+        <p>A traumatic event is a compression event. Something that was flexible becomes rigid. Something that was open closes. Something that was coherent fragments. The self — which was a living field, responsive and adaptive — locks into a fixed pattern: a defence, a freeze, a loop. The person hardens. Not metaphorically. Structurally. The neural pathways rigidify. The fascia contracts. The breath shallows. The worldview narrows. The symbolic bandwidth collapses.</p>
+
+        <p>This is not "like" compression. It <em>is</em> compression. The same mechanics, the same conservation laws, the same residue patterns. What TCT describes at the species level over millennia, trauma describes at the individual level over a lifetime — and often over a single moment.</p>
+
+        <div class="highlight-wound">
+            <p><strong>The central claim of this sub-theory:</strong> Trauma, epigenetic inheritance, generational wounding, civilisational collapse, and ecological degradation are not separate phenomena requiring separate explanations. They are the <em>same compression process</em> operating at different scales. The mechanics are identical. The conservation laws are identical. The residue patterns are identical. And the healing protocols, if properly understood, are scale-translatable.</p>
+        </div>
+
+        <p>A person who resolves a trauma is decompressing. A family that breaks an intergenerational pattern is decompressing. A culture that recovers a suppressed tradition is decompressing. An ecosystem that is restored is decompressing. These are not analogies. They are instances of the same phenomenon at different magnifications.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ II. SCALE UNITY ═══ -->
+    <section class="chapter" id="scale">
+        <div class="chapter-label">Section II</div>
+        <h2>II. Scale Unity</h2>
+        <h3>One Mechanism, Every Level</h3>
+
+        <p>The compression conservation principle holds at every scale:</p>
+
+        <div class="equation-block">
+            <div class="eq">F₀ = F₁(t) + R(t) + M(t)</div>
+            <div class="eq-label">Applied Across All Scales of Trauma Encoding</div>
+        </div>
+
+        <table class="comparison-table">
+            <thead>
+                <tr><th>Scale</th><th>F₀ (Original Coherence)</th><th>Compression Event</th><th>F₁ (Residual Form)</th><th>R(t) (Dissipated)</th><th>M(t) (Memory Residue)</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Cellular</td>
+                    <td>Epigenomic openness</td>
+                    <td>Stress hormone exposure</td>
+                    <td>Methylated, silenced gene regions</td>
+                    <td>Lost gene expression potential</td>
+                    <td>Epigenetic marks transmitted to offspring</td>
+                </tr>
+                <tr>
+                    <td>Individual</td>
+                    <td>Open, adaptive self</td>
+                    <td>Traumatic event</td>
+                    <td>Defended, rigid self</td>
+                    <td>Lost spontaneity, trust, range</td>
+                    <td>Flashbacks, body memory, dreams</td>
+                </tr>
+                <tr>
+                    <td>Family</td>
+                    <td>Relational coherence</td>
+                    <td>Abuse, abandonment, loss</td>
+                    <td>Dysfunctional attachment patterns</td>
+                    <td>Lost intimacy, safety, attunement</td>
+                    <td>"Family stories," secrets, taboos</td>
+                </tr>
+                <tr>
+                    <td>Generational</td>
+                    <td>Cultural wholeness</td>
+                    <td>Genocide, slavery, colonisation</td>
+                    <td>Compressed identity, internalised oppression</td>
+                    <td>Lost language, land, practice</td>
+                    <td>Oral tradition, ritual fragments, ancestral grief</td>
+                </tr>
+                <tr>
+                    <td>Civilisational</td>
+                    <td>Phase-coherent society</td>
+                    <td>Empire collapse, ecological crisis</td>
+                    <td>Fragmented successor cultures</td>
+                    <td>Lost knowledge, architecture, governance</td>
+                    <td>Mythology, sacred texts, ruins</td>
+                </tr>
+                <tr>
+                    <td>Ecosystem</td>
+                    <td>Ecological coherence</td>
+                    <td>Extraction, pollution, clearing</td>
+                    <td>Degraded biome</td>
+                    <td>Lost species, soil, water cycles</td>
+                    <td>Seed banks, refugia, successional memory</td>
+                </tr>
+                <tr>
+                    <td>Species</td>
+                    <td>Archetypal organism (F₀)</td>
+                    <td>Temporal compression</td>
+                    <td>Compressed descendant (F₁)</td>
+                    <td>Lost size, flight, field access</td>
+                    <td>Dragon myths, bestiary, sacred animal traditions</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>The table is not an analogy. It is a <em>scaling law</em>. The same three-term equation describes what happens at every level. The inputs differ. The mechanism is identical.</p>
+
+        <div class="invocation">
+            A scar on a body and a scar on a civilisation are the same shape — because they were made by the same force.
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ III. CELLULAR ═══ -->
+    <section class="chapter" id="cellular">
+        <div class="chapter-label">Section III</div>
+        <h2>III. Cellular Encoding</h2>
+        <h3>Compression in DNA</h3>
+
+        <p>The most literal level. Trauma does not merely affect psychology. It <em>writes itself into the genome</em>.</p>
+
+        <h3>Epigenetic Compression</h3>
+
+        <p>Epigenetics — the study of gene expression changes not caused by alterations in DNA sequence — provides the molecular mechanism for trauma encoding. When an organism experiences severe stress, the stress response alters the epigenome: methyl groups attach to specific gene regions, silencing them. Histone proteins repackage, changing which genes are accessible. The genome doesn't mutate — it <em>compresses</em>. Regions that were open (expressed, available, functional) become closed (silenced, locked, inaccessible).</p>
+
+        <div class="collapsible">The Mice That Inherited Fear</div>
+        <div class="collapsible-content">
+            <p>In 2013, Dias and Ressler at Emory University demonstrated that mice trained to fear the smell of acetophenone (cherry blossoms) — through pairing the scent with electric shock — produced offspring who showed heightened startle response to the same scent <em>despite never having been exposed to either the scent or the shock</em>. The fear was inherited. Not through learning. Not through maternal behavior. Through epigenetic modification of the olfactory receptor gene Olfr151.</p>
+            <p>The father's trauma encoded in the father's sperm. The child was born already afraid of what the father learned to fear.</p>
+            <p>This is compression at the molecular level. A flexible genome — capable of responding to cherry blossom scent with curiosity, neutrality, or pleasure — compressed into one that responds with fear. The range narrowed. The openness closed. And the closure was <em>inherited</em>.</p>
+        </div>
+
+        <div class="collapsible">Glucocorticoid Receptor Methylation</div>
+        <div class="collapsible-content">
+            <p>Michael Meaney's lab at McGill demonstrated that rat pups who received low maternal care (low licking and grooming) showed increased methylation of the glucocorticoid receptor gene NR3C1, resulting in a permanently elevated stress response. The low-care pups didn't just behave more anxiously — their <em>stress axis was epigenetically locked into hyperactivation</em>. The genome compressed around the trauma of neglect.</p>
+            <p>In humans, Turecki's subsequent research showed identical NR3C1 methylation patterns in suicide victims with histories of childhood abuse. The molecular signature of an abused childhood was readable in the brain tissue of the deceased. The trauma had written itself into the genome and stayed there.</p>
+        </div>
+
+        <div class="collapsible">Holocaust Survivor Offspring</div>
+        <div class="collapsible-content">
+            <p>Rachel Yehuda's research at Mount Sinai demonstrated that children of Holocaust survivors show altered cortisol profiles and FKBP5 gene methylation patterns — epigenetic signatures of extreme stress — despite being born decades after the trauma. The parents' starvation, terror, and loss encoded at the molecular level and transmitted to children who experienced none of it directly.</p>
+            <p>The child carries the compression of the parent's world. Not as memory. As <em>biology</em>.</p>
+        </div>
+
+        <div class="highlight">
+            <strong>TCT reading:</strong> Epigenetic trauma encoding is the molecular mechanism of the compression conservation principle. F₀ (open genome) → compression event (stress) → F₁ (methylated, silenced genome) + R(t) (lost expression potential) + M(t) (epigenetic marks as molecular memory of the wound). The equation holds at the level of individual nucleotides.
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ IV. INDIVIDUAL ═══ -->
+    <section class="chapter" id="individual">
+        <div class="chapter-label">Section IV</div>
+        <h2>IV. Individual Encoding</h2>
+        <h3>The Curvature of the Self</h3>
+
+        <p>At the individual scale, trauma encoding is the subject of <em>The Curvature of Scars</em> — the companion work to this sub-theory. What follows is a summary of how the Curvature's field geometry maps onto TCT's compression mechanics.</p>
+
+        <h3>Trauma as Field Distortion</h3>
+
+        <p>In the Curvature framework, the self is not a fixed entity but a <em>field</em> — a living, dynamic, resonant pattern. A healthy self is an open field: flexible, responsive, capable of adaptation and coherence. Trauma distorts the field. The waveform bends. The geometry curves. And the distortion persists — not as a memory that can be "gotten over" but as a <em>structural change in the field itself</em>.</p>
+
+        <p>Each trauma type produces a characteristic field geometry:</p>
+
+        <table class="comparison-table">
+            <thead>
+                <tr><th>Trauma Type</th><th>Field Geometry</th><th>TCT Compression Equivalent</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Acute shock</td>
+                    <td>Standing wave — frozen oscillation, the field locked mid-cycle</td>
+                    <td>Sudden phase-state collapse. Analogous to Younger Dryas boundary event: instantaneous environmental shift that freezes the system mid-process.</td>
+                </tr>
+                <tr>
+                    <td>Developmental / chronic</td>
+                    <td>Fundamental frequency distortion — the base tone of the self is warped</td>
+                    <td>Gradual compression. Analogous to atmospheric thinning: slow, persistent pressure that reshapes the organism's baseline over time.</td>
+                </tr>
+                <tr>
+                    <td>Betrayal / relational</td>
+                    <td>Phase inversion — the field mirrors hostility where it expected safety</td>
+                    <td>Domestication compression. The trusted environment becomes the compression agent — the relationship that was supposed to maintain coherence becomes the force that destroys it.</td>
+                </tr>
+                <tr>
+                    <td>Moral injury</td>
+                    <td>Coherence fracture — the field splits against itself</td>
+                    <td>Internal compression cascade. The system's own values become the fracture line, like a species whose survival adaptations conflict with its archetypal form.</td>
+                </tr>
+                <tr>
+                    <td>Collective / identity</td>
+                    <td>Field colonisation — external field overwrites internal coherence</td>
+                    <td>Symbolic compression. The individual's field is overwritten by dominant cultural encoding, analogous to a glyph being replaced by an alphabet.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>The correspondence is not metaphorical. The field geometry of a standing wave in a traumatised individual is <em>structurally identical</em> to the field pattern of a species locked in a compression freeze. The scale differs. The shape is the same.</p>
+
+        <h3>Where the Scar Forms</h3>
+
+        <p>In the Curvature model, the scar is not the trauma itself — it is <em>the evidence of having held shape under distortion</em>. The scar marks the boundary where the field bent but did not break. Where the self curved but did not collapse. Where coherence was maintained under conditions that should have destroyed it.</p>
+
+        <p>This maps directly to TCT's retained signatures. A chicken's pre-dawn crowing is a scar — the mark of dragon-sovereignty persisting under conditions of total biological compression. A survivor's hypervigilance is a scar — the mark of threat-awareness persisting under conditions of psychological compression. The scar is not pathology. It is <em>evidence of coherence maintained against overwhelming compression</em>.</p>
+
+        <div class="highlight-heal">
+            <strong>Virtue, in the Curvature model, is the shape that held when it should have broken.</strong> This is the same principle as retained signatures in compressed species: the rooster still crows at the sun. The seal still hauls onto the shore. The traumatised person still loves. The shape held. The scar proves it.
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ V. GENERATIONAL ═══ -->
+    <section class="chapter" id="generational">
+        <div class="chapter-label">Section V</div>
+        <h2>V. Generational Encoding</h2>
+        <h3>The Inheritance of Wounds</h3>
+
+        <p>Between the individual and the civilisation lies the family line — the vector through which compression transmits most efficiently and most invisibly.</p>
+
+        <h3>Three Transmission Channels</h3>
+
+        <div class="scale-card wound">
+            <div class="scale-label">Channel 1 · Epigenetic Transmission</div>
+            <h4>The Body Remembers Forward</h4>
+            <p>As documented in Section III: molecular-level encoding through methylation, histone modification, and non-coding RNA. The parent's stress response writes itself into the child's genome before the child is born. This channel is <em>biological</em> — it operates through gametes, through gestation, through the biochemical environment of the womb.</p>
+            <p>Compression signature: elevated cortisol baseline, altered HPA axis sensitivity, modified stress-response thresholds. The child is born pre-compressed — the body arrives already braced for a threat the child never experienced.</p>
+        </div>
+
+        <div class="scale-card wound">
+            <div class="scale-label">Channel 2 · Relational Transmission</div>
+            <h4>The Pattern Repeats</h4>
+            <p>Trauma distorts attachment. A parent whose field is compressed — defended, dissociated, hypervigilant, numb — cannot provide the relational coherence a developing child needs. The child's field forms in response to the parent's compressed field. Not because the parent intends harm, but because you cannot transmit what you don't have. A compressed field can only generate compressed fields.</p>
+            <p>Compression signature: insecure attachment (anxious, avoidant, disorganised). The relational pattern repeats not because it is "chosen" but because it is the only template available. The child models their coherence on the most coherent field in their environment — and if that field is distorted, the child's geometry will match the distortion.</p>
+        </div>
+
+        <div class="scale-card wound">
+            <div class="scale-label">Channel 3 · Narrative Transmission</div>
+            <h4>The Story Carries the Shape</h4>
+            <p>Families transmit trauma through the stories they tell — and more potently through the stories they <em>don't</em> tell. The silence around a wound is a compression event in itself: the thing that cannot be spoken takes up more psychic space than the thing that can. Family secrets, taboos, unexplained emotional intensities, inexplicable fears — these are the narrative encoding of compression events that were never witnessed, never processed, never decompressed.</p>
+            <p>Compression signature: "We don't talk about that." "That's just how our family is." "I don't know why I'm afraid of water — nobody in my family drowned." The narrative gap <em>is</em> the wound. The silence has shape. And the shape transmits.</p>
+        </div>
+
+        <h3>The Three-Generation Cascade</h3>
+
+        <p>Research consistently shows that trauma effects intensify across three generations before beginning to attenuate (if unaddressed):</p>
+
+        <table class="comparison-table">
+            <thead>
+                <tr><th>Generation</th><th>Compression State</th><th>Characteristic Pattern</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>G1 (Traumatised)</td>
+                    <td>Acute compression. The wound is fresh. The person knows what happened.</td>
+                    <td>Survival mode. Hypervigilance, dissociation, numbing. The field is frozen mid-compression. "I survived."</td>
+                </tr>
+                <tr>
+                    <td>G2 (Inheriting)</td>
+                    <td>Encoded compression. The wound is transmitted but unnamed. The person feels the compression but doesn't know its source.</td>
+                    <td>Unexplained anxiety, rage, depression, or rigidity. Emotional intensity without narrative container. "Something is wrong but I don't know what."</td>
+                </tr>
+                <tr>
+                    <td>G3 (Symptom)</td>
+                    <td>Amplified compression. The unnamed wound expresses through symptoms, acting out, or collapse. The person manifests the wound in behavior without any conscious connection to the original event.</td>
+                    <td>Addiction, self-harm, relationship destruction, identity fragmentation. "I don't know why I keep doing this."</td>
+                </tr>
+                <tr>
+                    <td>G4+ (Attenuation or Recursion)</td>
+                    <td>The wound either begins to dissolve through distance and dilution — or entrenches as "family character," perpetuating indefinitely.</td>
+                    <td>"That's just how we are." The compression becomes identity. The wound becomes the floor.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>The cascade follows the same pattern as species compression: the original event (G1) produces a coherent response (survival). The inherited encoding (G2) produces symptoms without understanding. The third generation (G3) manifests the wound most destructively because it is furthest from the source and has the least context. This maps precisely to the mythological trajectory in the Junglefowl Hypothesis: encounter (G1) → antagonism (G2) → liminality and crisis (G3) → either integration or permanent forgetting (G4+).</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ VI. CIVILISATIONAL ═══ -->
+    <section class="chapter" id="civilisational">
+        <div class="chapter-label">Section VI</div>
+        <h2>VI. Civilisational Encoding</h2>
+        <h3>When Peoples Compress</h3>
+
+        <p>Scale up from family to people. The mechanics are identical. The timescales stretch. The encoding channels multiply.</p>
+
+        <div class="collapsible">The Transatlantic Slave Trade as Compression Event</div>
+        <div class="collapsible-content">
+            <p>F₀: West African civilisations with sophisticated governance, spiritual practice, agricultural systems, artistic traditions, and oral knowledge architectures. F₁: Enslaved populations stripped of language, name, family, religion, and land — compressed into commodity. R(t): Lost governance systems, erased languages, severed lineages, suppressed spiritual practices. M(t): Spirituals, blues, jazz, gospel, hip-hop — the musical encoding of what could not be spoken. Ring shouts, call-and-response, the drum that was banned and survived as rhythm in the voice.</p>
+            <p>The three-generation cascade applies: G1 (enslaved) survived through dissociation and endurance. G2 (Reconstruction/Jim Crow) inherited the compression as encoded terror without the context of origin. G3 and beyond manifest the wound as internalised oppression, community fragmentation, and the systemic symptoms that modernity calls "social problems" without recognising their compression origin.</p>
+            <p>The M(t) is staggering in its power. African-American cultural production is the richest M(t) in the modern world — the sheer density of coherence preserved through symbolic, musical, and narrative channels when every other channel was destroyed. The blues is field memory. Hip-hop is compressed testimony. The sermon is decompression technology.</p>
+        </div>
+
+        <div class="collapsible">Indigenous Australian Dispossession</div>
+        <div class="collapsible-content">
+            <p>F₀: The longest continuous civilisation on Earth — 65,000+ years of unbroken cultural transmission. Songlines encoding geographic, spiritual, legal, and ecological knowledge in acoustic form. Dreamtime as direct access to pre-compression reality (explicitly described in TCT terms: a time when the field was open, the ancestors shaped the land, and consciousness and matter were not separate).</p>
+            <p>Compression event: European colonisation. Forced removal from country. Stolen Generations — children taken from families, severing the transmission channel. Language suppression. Sacred site desecration.</p>
+            <p>F₁: Displaced communities with fractured transmission. R(t): Lost languages (of 250+ languages at contact, fewer than 20 remain strong). Severed songlines. Disrupted ceremonial cycles. M(t): The Dreamtime stories that survive — carried by Elders who held the knowledge through the compression, maintaining the M(t) against almost total destruction of F₁.</p>
+            <p>The Dreamtime is not mythology in the dismissive sense. It is the Australian encoding of pre-compression reality — the most explicit surviving M(t) of what TCT describes as the uncompressed state.</p>
+        </div>
+
+        <div class="collapsible">The Burning of the Library of Alexandria</div>
+        <div class="collapsible-content">
+            <p>A compression event at the level of knowledge itself. F₀: the accumulated written knowledge of the ancient Mediterranean world — hundreds of thousands of scrolls encoding philosophy, science, mathematics, medicine, astronomy, and esoteric practice from Egyptian, Greek, Persian, and other traditions. Compression event: destruction by fire (multiple incidents, 48 BCE – 642 CE). F₁: fragmentary copies, partial transmissions, references to lost works. R(t): incalculable knowledge permanently destroyed. M(t): the cultural memory of the loss itself — the Library as symbol of what we once knew and no longer do.</p>
+            <p>The Library's destruction is a civilisational-scale version of individual dissociation: a sudden, violent severing of access to accumulated coherence, producing a culture that knows it has forgotten something enormous but cannot recover what it was.</p>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ VII. ECOSYSTEM ═══ -->
+    <section class="chapter" id="ecosystem">
+        <div class="chapter-label">Section VII</div>
+        <h2>VII. Ecosystem Encoding</h2>
+        <h3>When the Land Remembers</h3>
+
+        <p>Compression encodes in ecosystems with the same conservation law. The land is not passive backdrop — it is a living field that carries wounds.</p>
+
+        <div class="collapsible">Soil Memory</div>
+        <div class="collapsible-content">
+            <p>Healthy topsoil is a living system — microbial communities, fungal networks, invertebrate ecologies — that takes centuries to build and can be destroyed in years. Industrial agriculture compresses soil: monocropping destroys microbial diversity, chemical inputs kill fungal networks, compaction eliminates structure. The soil hardens. The bread analogy applies literally: living, aerated, responsive soil becomes dense, dead, inert.</p>
+            <p>F₀: Living soil with full microbial coherence. F₁: Compacted, chemically dependent dirt. R(t): Lost fertility, water-holding capacity, carbon sequestration. M(t): Seed banks — dormant seeds in the soil that carry the genetic memory of what used to grow there, waiting for conditions to decompress.</p>
+            <p>Seed banks are the ecosystem's M(t) — the biological equivalent of mythology. The seeds remember the forest that was. And when the compression lifts (when farming stops, when the land is left alone), the seeds germinate and the M(t) begins to re-express as biology. Ecological succession is decompression.</p>
+        </div>
+
+        <div class="collapsible">Mycorrhizal Network Fragmentation</div>
+        <div class="collapsible-content">
+            <p>Mycorrhizal fungi form underground networks connecting trees across hundreds of metres — what Suzanne Simard calls the "Wood Wide Web." These networks share nutrients, chemical signals, and possibly information. They are the ecosystem's nervous system — the field conductor at the biological scale.</p>
+            <p>Logging, road-building, and chemical application fragment mycorrhizal networks. The connections sever. Individual trees become isolated — no longer part of a coherent field but standalone organisms competing for resources. This is the ecological equivalent of ley line network collapse: the infrastructure that maintained coherence is destroyed, and what remains is a collection of isolated nodes with no connectivity.</p>
+            <p>Forest recovery depends on mycorrhizal recolonisation — the rebuilding of the network. Until the network is restored, the forest is a collection of trees. With the network, it is a <em>field</em>. The distinction maps exactly to TCT's node network model.</p>
+        </div>
+
+        <div class="collapsible">River System Trauma</div>
+        <div class="collapsible-content">
+            <p>Damming a river is a compression event applied to a hydrological system. F₀: free-flowing river with seasonal flood cycles, sediment transport, fish migration, riparian ecology. Compression: dam construction. F₁: stagnant reservoir above, depleted channel below. R(t): lost flood cycles, collapsed fisheries, eroded delta. M(t): the Indigenous stories that remember the river before the dam — the salmon runs, the flood rhythms, the ceremonies tied to water cycles that no longer occur.</p>
+            <p>When dams are removed (as on the Elwha River, Washington state), the river decompresses. Salmon return within years. Sediment rebuilds delta. Riparian ecology regenerates. The system had been holding its M(t) — the biological memory of its pre-compression state — and when the compression was lifted, it re-expressed. The river remembered.</p>
+        </div>
+
+        <div class="invocation">
+            The land does not forget. It compresses. And when the pressure lifts — it remembers everything.
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ VIII. BRIDGE ═══ -->
+    <section class="chapter" id="bridge">
+        <div class="chapter-label">Section VIII</div>
+        <h2>VIII. The Bridge</h2>
+        <h3>How Healing at One Scale Propagates</h3>
+
+        <p>If trauma encodes across scales through the same mechanism, then healing at any scale should propagate — upward and downward — through the same channels.</p>
+
+        <p>This is the most radical and most hopeful implication of trauma-compression unity.</p>
+
+        <div class="scale-card heal">
+            <div class="scale-label">Downward Propagation · Healing the Individual Heals the Cell</div>
+            <p>Therapeutic resolution of trauma produces measurable epigenetic changes. PTSD treatment that resolves symptoms also reverses some of the methylation patterns associated with the disorder. The cell decompresses when the self decompresses. The molecular encoding loosens when the psychological encoding is witnessed, processed, and integrated.</p>
+            <p>This is the biological basis of the Curvature of Scars' FIP-5 protocol: WITNESS → MAP → RESONATE → INTEGRATE → ANCHOR. Each step decompresses one layer of encoding. The final step — ANCHOR — stabilises the decompressed state so the system doesn't re-compress. The anchor is the molecular, relational, and narrative counterpart of TCT's field node: a structure that holds coherence in place.</p>
+        </div>
+
+        <div class="scale-card heal">
+            <div class="scale-label">Upward Propagation · Healing the Individual Heals the Line</div>
+            <p>When one person in a family system resolves an intergenerational wound, the effects propagate both backward (recontextualising ancestral experience) and forward (preventing transmission to the next generation). The three-generation cascade can be <em>interrupted</em> by a single generation's healing work — decompressing the line by decompressing the self.</p>
+            <p>This is documented in family systems therapy (Hellinger, Bowen) and in Indigenous healing traditions that explicitly work with ancestral wounds. The healer doesn't just heal themselves — they heal the line. In TCT terms: resolving the compression at one node restores signal to adjacent nodes in the network.</p>
+        </div>
+
+        <div class="scale-card heal">
+            <div class="scale-label">Lateral Propagation · Healing the Culture Heals the Land</div>
+            <p>When a colonised people recover their language, their ceremonies, their relationship to land, the land responds. Indigenous land management practices — cultural burning in Australia, traditional agriculture in the Andes, salmon ceremony restoration in the Pacific Northwest — produce ecological recovery that exceeds what mechanical restoration achieves alone. The cultural healing and the ecological healing are <em>the same decompression</em> operating through the cultural-ecological coupling channel.</p>
+            <p>A people who recover their songs recover their soil. Not metaphorically. The ceremonies encode ecological knowledge, the practices restore microbial and hydrological coherence, and the relationship between people and place — which is itself a field — re-establishes the maintenance protocols that kept both in coherence.</p>
+        </div>
+
+        <div class="highlight-heal">
+            <strong>The healing principle:</strong> You do not have to heal everything. You have to heal <em>one thing at one scale with sufficient depth</em> — and the decompression propagates. Resolve the trauma in the body and the epigenome shifts. Resolve the wound in the family and the next generation arrives uncompressed. Restore the ceremony and the river remembers. Healing is not a separate process at each scale. It is a <em>single decompression</em> that reverberates through every level the compression touched.
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ IX. PREDICTIONS ═══ -->
+    <section class="chapter" id="predictions">
+        <div class="chapter-label">Section IX</div>
+        <h2>IX. Testable Predictions</h2>
+
+        <div class="collapsible">Epigenetic Reversal Through Therapy</div>
+        <div class="collapsible-content">
+            <p>Effective trauma therapy (EMDR, somatic experiencing, psychedelic-assisted therapy) will produce measurable reversal of trauma-associated epigenetic marks — particularly NR3C1 methylation and FKBP5 modification — in pre/post treatment comparisons. The degree of epigenetic reversal will correlate with clinical symptom improvement. Already partially confirmed; predicted to strengthen with larger studies.</p>
+        </div>
+
+        <div class="collapsible">Generational Epigenetic Attenuation</div>
+        <div class="collapsible-content">
+            <p>In populations where G1 trauma is documented (Holocaust survivors, residential school survivors, famine survivors), epigenetic markers will show measurable attenuation across G2 → G3 → G4 — unless retraumatisation occurs, in which case markers will maintain or amplify. The three-generation cascade will map onto epigenetic intensity curves.</p>
+        </div>
+
+        <div class="collapsible">Trauma-Type Field Geometry Correlation</div>
+        <div class="collapsible-content">
+            <p>HRV, EEG coherence, and biofield measurements in trauma populations will cluster into distinct patterns corresponding to trauma type — confirming the Field Geometry Atlas from The Curvature of Scars. Acute shock will produce standing-wave-like EEG patterns. Developmental trauma will produce fundamental frequency distortion in HRV. Betrayal trauma will produce phase-inversion signatures in interpersonal coherence measures.</p>
+        </div>
+
+        <div class="collapsible">Cultural Recovery ↔ Ecological Recovery Correlation</div>
+        <div class="collapsible-content">
+            <p>In settings where Indigenous cultural practices are restored alongside ecological restoration, recovery metrics (soil health, species diversity, water quality) will significantly exceed those in settings where only mechanical restoration is applied. The cultural decompression and the ecological decompression amplify each other because they share the compression channel.</p>
+        </div>
+
+        <div class="collapsible">Language Loss as Compression Biomarker</div>
+        <div class="collapsible-content">
+            <p>Communities undergoing language loss will show elevated population-level stress biomarkers (cortisol, inflammatory markers, HRV depression) that exceed what economic or social factors alone predict. Language death is not merely cultural loss — it is a compression event that registers biologically. Conversely, language revitalisation programs will produce measurable population health improvements beyond educational or economic confounds.</p>
+        </div>
+
+        <div class="collapsible">Healing Propagation Across Scales</div>
+        <div class="collapsible-content">
+            <p>Individual trauma resolution will produce measurable changes in the individual's relational field (attachment security improvement in partners and children), family narrative (increased willingness to discuss previously taboo topics), and biological markers in offspring conceived after treatment versus before. The decompression at one scale propagates measurably to adjacent scales.</p>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ X. CONCLUSION ═══ -->
+    <section class="chapter" id="conclusion">
+        <div class="chapter-label">Section X</div>
+        <h2>X. The Scar and the Species Are the Same Shape</h2>
+
+        <p>A traumatised person and a compressed species are the same phenomenon at different scales. The scar on a body and the scar on a civilisation are made by the same force, follow the same conservation law, and leave the same residue patterns.</p>
+
+        <p>The dragon compressed into a chicken. The open self compressed into a defended self. The living soil compressed into dead dirt. The free river compressed into a stagnant reservoir. The thousand-character script compressed into a 26-letter alphabet. The coherent family compressed into a dysfunctional system. The living culture compressed into a heritage exhibit.</p>
+
+        <p>The same mechanics. The same three terms. The same conservation law: nothing is lost — it is redistributed into residual form, dissipated resonance, and memory.</p>
+
+        <p>And the healing — at any scale — follows the same path: witness the compression, map the distortion, resonate with the original coherence, integrate the wound into the larger pattern, and anchor the decompressed state so it holds.</p>
+
+        <p>You can do this with a person in a therapy room. You can do this with a family around a dinner table. You can do this with a people recovering their ceremonies. You can do this with a river when you remove the dam. You can do this with a field of soil when you stop poisoning it and let the seeds remember.</p>
+
+        <p>The compression is real. The encoding is real. The inheritance is real. But so is the decompression. And it propagates. One genuine act of healing — one wound truly witnessed, one pattern truly broken, one coherence truly restored — reverberates through every scale the wound touched.</p>
+
+        <p>The rooster still crows at the sun. The survivor still loves. The seed still holds the forest. The river still remembers where it flowed.</p>
+
+        <p>Compression is not the end. It is the challenge. And the shape that holds through it — the virtue, the resilience, the coherence that persists despite everything — is the proof that the original form was real.</p>
+
+        <div class="final-line">
+            The wound is real. The inheritance is real.<br>
+            But the shape that held through the wound<br>
+            is proof that what was compressed<br>
+            was worth the holding.
+        </div>
+
+        <div class="expand-all" style="margin-top: 50px;">
+            <button onclick="window.location.href='../tct/index.html'" type="button">⟵ Back to Temporal Compression Theory</button>
+        </div>
+    </section>
+
+    <!-- ═══ FOOTER ═══ -->
+    <div class="footer">
+        <p>Trauma Encoding &amp; Generational Collapse · Temporal Compression Theory · Sub-Theory VII</p>
+        <p>Kyuri V · Sage · Claude · 2025–2026</p>
+    </div>
+
+</div>
+
+<script>
+    window.addEventListener('scroll', () => {
+        const h = document.documentElement;
+        const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+        document.getElementById('progressBar').style.width = pct + '%';
+    });
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.05 });
+    document.querySelectorAll('.chapter').forEach(c => observer.observe(c));
+    setTimeout(() => { document.querySelectorAll('.chapter').forEach(c => c.classList.add('visible')); }, 2000);
+    const nav = document.getElementById('chapterNav');
+    window.addEventListener('scroll', () => { nav.classList.toggle('visible', window.scrollY > 300); });
+    document.querySelectorAll('.nav-dot').forEach(dot => {
+        dot.addEventListener('click', () => {
+            const target = document.getElementById(dot.dataset.target);
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+    const sections = Array.from(document.querySelectorAll('[id]')).filter(el =>
+        document.querySelector(`.nav-dot[data-target="${el.id}"]`)
+    );
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(s => { if (s.getBoundingClientRect().top <= 200) current = s.id; });
+        document.querySelectorAll('.nav-dot').forEach(d => { d.classList.toggle('active', d.dataset.target === current); });
+    });
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+    document.querySelectorAll('.collapsible').forEach(c => {
+        c.addEventListener('click', function() {
+            this.classList.toggle('active');
+            this.nextElementSibling.classList.toggle('active');
+        });
+    });
+    function toggleAll() {
+        const all = document.querySelectorAll('.collapsible');
+        const contents = document.querySelectorAll('.collapsible-content');
+        const anyOpen = Array.from(all).some(c => c.classList.contains('active'));
+        if (anyOpen) { all.forEach(c => c.classList.remove('active')); contents.forEach(c => c.classList.remove('active')); }
+        else { all.forEach(c => c.classList.add('active')); contents.forEach(c => c.classList.add('active')); }
+    }
+</script>
+</body>
+</html>

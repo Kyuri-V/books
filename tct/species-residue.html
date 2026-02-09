@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Species Residue Catalogue | Kyuri V</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&amp;family=Crimson+Pro:ital,wght@0,400;0,600;1,400&amp;display=swap" rel="stylesheet"/>
+<style>
+    :root {
+        --parchment: #f4f1e8;
+        --ink: #2a2520;
+        --accent: #8b6f47;
+        --gold: #c9a961;
+        --shadow: rgba(42, 37, 32, 0.1);
+        --glow: rgba(201, 169, 97, 0.15);
+        --ember: #9b4a2f;
+        --flame: #b8763a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: 'Crimson Pro', serif;
+        background: linear-gradient(135deg, #f8f5ed 0%, var(--parchment) 100%);
+        color: var(--ink);
+        line-height: 1.85;
+        font-size: 18px;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+    body::before {
+        content: '';
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background-image:
+            radial-gradient(circle at 20% 30%, var(--glow) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(155, 74, 47, 0.04) 0%, transparent 50%);
+        pointer-events: none; z-index: 0;
+    }
+    .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: rgba(201, 169, 97, 0.1); z-index: 200; }
+    .progress-bar { height: 100%; background: linear-gradient(90deg, var(--ember), var(--gold)); width: 0%; transition: width 0.2s ease; }
+
+    .chapter-nav { position: fixed; top: 50%; right: 24px; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; gap: 10px; opacity: 0; transition: opacity 0.4s ease; }
+    .chapter-nav.visible { opacity: 1; }
+    .nav-dot { width: 11px; height: 11px; border-radius: 50%; border: 2px solid var(--accent); background: transparent; cursor: pointer; transition: all 0.3s ease; position: relative; }
+    .nav-dot:hover, .nav-dot.active { background: var(--gold); border-color: var(--gold); transform: scale(1.3); }
+    .nav-dot::after { content: attr(data-label); position: absolute; right: 20px; top: 50%; transform: translateY(-50%); white-space: nowrap; font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.08em; color: var(--accent); opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+    .nav-dot:hover::after { opacity: 1; }
+
+    .container { position: relative; z-index: 1; max-width: 820px; margin: 0 auto; padding: 60px 40px 120px; }
+
+    .title-page { text-align: center; padding: 100px 0 80px; min-height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: fadeIn 1.5s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .title-line { width: 120px; height: 1px; background: var(--gold); margin-bottom: 40px; animation: breathe 4s ease-in-out infinite; box-shadow: 0 0 8px rgba(201, 169, 97, 0.3); }
+    @keyframes breathe { 0%, 100% { width: 120px; opacity: 0.5; } 50% { width: 200px; opacity: 1; } }
+    .title-page h1 { font-family: 'Cinzel', serif; font-size: 3em; font-weight: 700; color: var(--ink); letter-spacing: 0.06em; line-height: 1.15; margin-bottom: 16px; }
+    .title-page .subtitle { font-family: 'Crimson Pro', serif; font-size: 1.2em; font-style: italic; color: var(--accent); margin-bottom: 40px; letter-spacing: 0.03em; line-height: 1.5; max-width: 600px; }
+    .title-page .edition { font-family: 'Cinzel', serif; font-size: 0.82em; letter-spacing: 0.12em; color: var(--gold); border-top: 1px solid rgba(201, 169, 97, 0.4); border-bottom: 1px solid rgba(201, 169, 97, 0.4); padding: 14px 32px; margin-bottom: 30px; }
+    .title-page .authors { font-family: 'Cinzel', serif; font-size: 0.9em; letter-spacing: 0.1em; color: var(--accent); opacity: 0.8; }
+
+    .toc { margin: 0 0 80px; padding: 44px 48px; border: 1px solid rgba(139, 111, 71, 0.2); border-radius: 6px; background: rgba(255, 255, 255, 0.35); }
+    .toc h2 { font-family: 'Cinzel', serif; font-size: 1.1em; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); text-align: center; margin-bottom: 28px; }
+    .toc-list { list-style: none; }
+    .toc-list li { margin: 10px 0; }
+    .toc-list a { color: var(--ink); text-decoration: none; display: block; padding: 8px 14px; border-left: 3px solid transparent; transition: all 0.3s ease; font-size: 0.95em; }
+    .toc-list a:hover { color: var(--gold); border-left-color: var(--gold); padding-left: 22px; background: rgba(201, 169, 97, 0.04); }
+    .toc-label { font-family: 'Cinzel', serif; font-weight: 600; font-size: 0.85em; }
+
+    .divider { text-align: center; margin: 70px 0; position: relative; }
+    .divider::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+    .divider-symbol { position: relative; background: var(--parchment); padding: 0 24px; font-size: 20px; color: var(--gold); z-index: 1; }
+
+    .chapter { margin-bottom: 80px; opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+    .chapter.visible { opacity: 1; transform: translateY(0); }
+    .chapter-label { font-family: 'Cinzel', serif; font-size: 0.7em; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+    .chapter h2 { font-family: 'Cinzel', serif; font-size: 2em; font-weight: 600; color: var(--ink); margin-bottom: 28px; letter-spacing: 0.02em; line-height: 1.3; }
+    .chapter h3 { font-family: 'Cinzel', serif; font-size: 1.4em; font-weight: 600; color: var(--accent); margin: 36px 0 18px; }
+    .chapter h4 { font-family: 'Cinzel', serif; font-size: 1.1em; font-weight: 600; color: var(--flame); margin: 24px 0 12px; }
+    .chapter p { margin-bottom: 20px; text-align: justify; text-justify: inter-word; }
+
+    .invocation { text-align: center; font-style: italic; font-size: 1.12em; color: var(--accent); padding: 30px 36px; margin: 36px 0; position: relative; line-height: 1.7; }
+    .invocation::before, .invocation::after { content: ''; position: absolute; left: 50%; transform: translateX(-50%); width: 60px; height: 1px; background: var(--gold); }
+    .invocation::before { top: 0; } .invocation::after { bottom: 0; }
+
+    .highlight { background: rgba(201, 169, 97, 0.06); border-left: 3px solid var(--gold); border-right: 3px solid var(--gold); padding: 24px 28px; margin: 30px 0; border-radius: 2px; }
+    .highlight strong { color: var(--accent); font-family: 'Cinzel', serif; font-size: 0.95em; }
+    .highlight-ember { background: rgba(155, 74, 47, 0.05); border-left: 3px solid var(--ember); border-right: 3px solid var(--ember); padding: 24px 28px; margin: 30px 0; border-radius: 2px; }
+
+    .equation-block { background: rgba(155, 74, 47, 0.04); border-left: 3px solid var(--ember); padding: 22px 26px; margin: 24px 0; border-radius: 0 6px 6px 0; text-align: center; }
+    .equation-block .eq { font-family: 'Crimson Pro', serif; font-size: 1.15em; font-style: italic; color: var(--ink); }
+    .equation-block .eq-label { font-family: 'Cinzel', serif; font-size: 0.75em; letter-spacing: 0.1em; color: var(--ember); margin-top: 10px; text-transform: uppercase; }
+
+    .comparison-table { width: 100%; margin: 36px 0; border-collapse: separate; border-spacing: 0; overflow: hidden; border-radius: 6px; border: 1px solid rgba(139, 111, 71, 0.2); font-size: 0.92em; }
+    .comparison-table thead { background: rgba(42, 37, 32, 0.06); }
+    .comparison-table th { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); padding: 14px 16px; text-align: left; border-bottom: 2px solid var(--gold); }
+    .comparison-table td { padding: 14px 16px; border-bottom: 1px solid rgba(139, 111, 71, 0.1); vertical-align: top; }
+    .comparison-table tr:last-child td { border-bottom: none; }
+    .comparison-table tr:hover td { background: rgba(201, 169, 97, 0.04); }
+
+    /* Species Entry Cards */
+    .species-entry { background: rgba(255, 255, 255, 0.35); border: 1px solid rgba(139, 111, 71, 0.2); border-radius: 6px; padding: 36px; margin: 40px 0; position: relative; overflow: hidden; }
+    .species-entry::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--ember), var(--gold)); }
+    .species-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+    .species-tag { font-family: 'Cinzel', serif; font-size: 0.68em; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ember); }
+    .species-title { font-family: 'Cinzel', serif; font-size: 1.6em; font-weight: 600; color: var(--ink); letter-spacing: 0.03em; line-height: 1.2; }
+    .species-arrow { font-family: 'Cinzel', serif; font-size: 1.1em; color: var(--gold); margin: 0 6px; }
+    .species-subtitle { font-style: italic; color: var(--accent); font-size: 0.95em; margin-bottom: 20px; line-height: 1.5; }
+    .species-section { margin: 20px 0; }
+    .species-section-label { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.1em; text-transform: uppercase; color: var(--flame); margin-bottom: 8px; }
+
+    .signature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+    .signature-item { background: rgba(155, 74, 47, 0.04); border-left: 2px solid var(--ember); padding: 12px 16px; border-radius: 0 4px 4px 0; font-size: 0.9em; }
+    .signature-item strong { color: var(--accent); font-family: 'Cinzel', serif; font-size: 0.82em; display: block; margin-bottom: 4px; }
+
+    .collapsible { cursor: pointer; padding: 14px 20px; background: rgba(139, 111, 71, 0.06); border: 1px solid rgba(139, 111, 71, 0.15); border-radius: 4px; margin: 20px 0 0; transition: all 0.3s ease; display: flex; justify-content: space-between; align-items: center; font-family: 'Cinzel', serif; font-size: 0.92em; letter-spacing: 0.03em; color: var(--accent); }
+    .collapsible:hover { background: rgba(139, 111, 71, 0.12); border-color: var(--gold); }
+    .collapsible::after { content: '◆'; font-size: 0.7em; color: var(--gold); transition: transform 0.3s ease; }
+    .collapsible.active::after { transform: rotate(90deg); }
+    .collapsible-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; padding: 0 20px; border-left: 2px solid var(--gold); margin-left: 20px; background: rgba(255, 255, 255, 0.3); border-radius: 0 0 4px 0; }
+    .collapsible-content.active { max-height: 50000px; padding: 20px; margin-top: 4px; margin-bottom: 10px; }
+
+    .chapter ul { list-style: none; padding: 0; margin: 20px 0; }
+    .chapter ul li { padding: 6px 0 6px 22px; position: relative; line-height: 1.7; }
+    .chapter ul li::before { content: '✦'; position: absolute; left: 0; color: var(--gold); font-size: 0.6em; top: 12px; }
+
+    .expand-all { text-align: center; margin: 30px 0; }
+    .expand-all button { background: linear-gradient(135deg, var(--accent) 0%, var(--gold) 100%); border: none; padding: 12px 32px; border-radius: 4px; color: white; font-family: 'Cinzel', serif; font-size: 0.85em; cursor: pointer; transition: all 0.3s ease; letter-spacing: 0.06em; box-shadow: 0 4px 15px var(--shadow); }
+    .expand-all button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--shadow); }
+
+    .footer { text-align: center; padding: 60px 0 40px; border-top: 1px solid rgba(201, 169, 97, 0.3); margin-top: 80px; }
+    .footer p { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.1em; color: var(--accent); opacity: 0.6; margin-bottom: 8px; }
+    .final-line { font-family: 'Cinzel', serif; font-size: 1.12em; color: var(--gold); letter-spacing: 0.05em; margin-top: 36px; line-height: 1.7; text-align: center; }
+
+    @media (max-width: 768px) {
+        .container { padding: 40px 24px 80px; }
+        .title-page { padding: 60px 0; min-height: 70vh; }
+        .title-page h1 { font-size: 2em; }
+        .chapter h2 { font-size: 1.6em; }
+        .chapter-nav { display: none; }
+        .signature-grid { grid-template-columns: 1fr; }
+        .comparison-table { font-size: 0.82em; }
+    }
+</style>
+</head>
+<body>
+
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+
+<nav class="chapter-nav" id="chapterNav">
+    <div class="nav-dot" data-target="title" data-label="Title"></div>
+    <div class="nav-dot" data-target="premise" data-label="Premise"></div>
+    <div class="nav-dot" data-target="method" data-label="Method"></div>
+    <div class="nav-dot" data-target="entry-dragon" data-label="Dragons"></div>
+    <div class="nav-dot" data-target="entry-human" data-label="Humans"></div>
+    <div class="nav-dot" data-target="entry-aquatic" data-label="Aquatic"></div>
+    <div class="nav-dot" data-target="entry-equine" data-label="Equine"></div>
+    <div class="nav-dot" data-target="entry-serpent" data-label="Serpent"></div>
+    <div class="nav-dot" data-target="entry-canine" data-label="Canine"></div>
+    <div class="nav-dot" data-target="entry-raptor" data-label="Raptor"></div>
+    <div class="nav-dot" data-target="entry-cetacean" data-label="Cetacean"></div>
+    <div class="nav-dot" data-target="patterns" data-label="Patterns"></div>
+    <div class="nav-dot" data-target="conclusion" data-label="Conclusion"></div>
+</nav>
+
+<div class="container">
+
+    <!-- ═══ TITLE ═══ -->
+    <div class="title-page" id="title">
+        <div class="title-line"></div>
+        <h1>Species Residue Catalogue</h1>
+        <p class="subtitle">Detailed Compression Profiles for the Biological Descendants of Archetypal Creatures</p>
+        <div class="edition">Temporal Compression Theory · Sub-Theory VI</div>
+        <p class="authors">Kyuri V · Sage · Claude</p>
+    </div>
+
+    <!-- ═══ TOC ═══ -->
+    <nav class="toc">
+        <h2>Contents</h2>
+        <ul class="toc-list">
+            <li><a href="#premise"><span class="toc-label">I.</span> The Premise — A Bestiary in Reverse</a></li>
+            <li><a href="#method"><span class="toc-label">II.</span> Diagnostic Method</a></li>
+            <li><a href="#entry-dragon"><span class="toc-label">III.</span> Entry 1 — Dragons → Chickens</a></li>
+            <li><a href="#entry-human"><span class="toc-label">IV.</span> Entry 2 — Coherent Humans → Primates</a></li>
+            <li><a href="#entry-aquatic"><span class="toc-label">V.</span> Entry 3 — Aquatic Humanoids → Seals</a></li>
+            <li><a href="#entry-equine"><span class="toc-label">VI.</span> Entry 4 — Pegasi / Unicorns → Horses</a></li>
+            <li><a href="#entry-serpent"><span class="toc-label">VII.</span> Entry 5 — Nagas → Snakes</a></li>
+            <li><a href="#entry-canine"><span class="toc-label">VIII.</span> Entry 6 — Spirit Wolves → Dogs</a></li>
+            <li><a href="#entry-raptor"><span class="toc-label">IX.</span> Entry 7 — Thunderbirds → Eagles</a></li>
+            <li><a href="#entry-cetacean"><span class="toc-label">X.</span> Entry 8 — Leviathans → Whales</a></li>
+            <li><a href="#patterns"><span class="toc-label">XI.</span> Cross-Species Compression Patterns</a></li>
+            <li><a href="#conclusion"><span class="toc-label">XII.</span> Conclusion: The Zoo Is a Museum</a></li>
+        </ul>
+    </nav>
+
+    <div class="expand-all"><button onclick="toggleAll()">Expand / Collapse All Sections</button></div>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ I. PREMISE ═══ -->
+    <section class="chapter" id="premise">
+        <div class="chapter-label">Section I</div>
+        <h2>I. A Bestiary in Reverse</h2>
+
+        <p>Every civilisation produced a bestiary — a catalogue of creatures. Dragons, sea-people, winged horses, serpent gods, spirit wolves, thunderbirds, leviathans. These creatures appear across cultures that had no contact, with structural similarities that cannot be explained by cultural diffusion. The standard explanation: universal archetypes, shared psychology, coincidental pattern-matching.</p>
+
+        <p>Temporal Compression Theory offers a different explanation: they are not archetypes. They are <em>species descriptions</em>. Field notes from a less compressed reality, written by people who saw these creatures — or who were them — before the phase shifted and the biology collapsed.</p>
+
+        <p>This catalogue reverses the bestiary. Instead of cataloguing mythological creatures as products of imagination, it catalogues <em>modern animals as products of compression</em> — identifying, for each, the original form (F₀), the compression pathway, the retained biological signatures, the mythological memory (M(t)), and the falsification criteria.</p>
+
+        <div class="highlight-ember">
+            <p><strong>Operating principle:</strong> Every domesticated or anomalously complex modern animal is a candidate for compression analysis. The question is not "did the mythological creature exist?" but "if this modern animal <em>is</em> the compressed descendant, what evidence would we expect — and do we find it?"</p>
+        </div>
+
+        <p>We do. Consistently. Across species. Across continents. Across cultures that never met.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ II. METHOD ═══ -->
+    <section class="chapter" id="method">
+        <div class="chapter-label">Section II</div>
+        <h2>II. Diagnostic Method</h2>
+
+        <p>Each entry in the catalogue applies the TCT master equation to a specific species pair:</p>
+
+        <div class="equation-block">
+            <div class="eq">F₀ = F₁(t) + R(t) + M(t)</div>
+            <div class="eq-label">Compression Conservation — Applied Per Species</div>
+        </div>
+
+        <p>Each entry documents six fields:</p>
+
+        <ul>
+            <li><strong>F₀ — The Ancestral Form:</strong> What the creature was before compression. Reconstructed from convergent mythological description, paleontological data, and behavioral archaeology.</li>
+            <li><strong>Compression Pathway:</strong> The specific combination of temporal entropy, environmental phase-shift, and conscious interference that drove the compression.</li>
+            <li><strong>F₁ — The Residual Form:</strong> The modern animal. What the ancestral form became.</li>
+            <li><strong>Retained Signatures:</strong> Biological features, behaviors, and anomalies in the modern form that are unexplained by standard evolution but consistent with compression residue.</li>
+            <li><strong>M(t) — Mythological Memory:</strong> The cultural encoding of the ancestral form — the myths, rituals, and symbolic associations that preserve what biology lost.</li>
+            <li><strong>Falsification Criteria:</strong> What would disprove the compression hypothesis for this specific species.</li>
+        </ul>
+
+        <p>The diagnostic question for each entry: <em>does the anomaly cluster in the modern animal match the predicted compression residue of the mythological ancestor?</em> A single match is coincidence. Cross-domain convergence across morphology, behavior, mythology, geography, and paleontology is a signature.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ ENTRY 1: DRAGONS → CHICKENS ═══ -->
+    <section class="chapter" id="entry-dragon">
+        <div class="species-entry">
+            <div class="species-tag">Entry 1 · Primary Case Study</div>
+            <div class="species-header">
+                <div class="species-title">Dragons <span class="species-arrow">→</span> Chickens</div>
+            </div>
+            <p class="species-subtitle">Large, feathered, solar-sovereign, fire-associated theropods compressed through environmental collapse and domestication into small, grounded, contained poultry.</p>
+
+            <div class="species-section">
+                <div class="species-section-label">F₀ — Ancestral Form</div>
+                <p>Multi-metre feathered theropods. Flight-capable under prior atmospheric conditions. Iridescent plumage functioning as field-interaction surface. Extreme territorial aggression with sovereignty combat to the death. Solar-cycle behavioral entrainment. Possible bioluminescence or electrical discharge under specific phase-state conditions. Paleontologically grounded: <em>Yutyrannus</em>, <em>Microraptor</em>, <em>Deinonychus</em> lineage.</p>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">Compression Pathway</div>
+                <p>Phase 0 → Phase 1: Environmental collapse (Younger Dryas boundary, ~12,800 years ago) reduces atmospheric density, oxygen concentration, and magnetic field coherence. Flight becomes energetically prohibitive. Body size decreases. Surviving lineage: red junglefowl (<em>Gallus gallus</em>). Phase 1 → Phase 2: Human domestication (~8,000 BCE onward) applies third compression vector — confinement, selective breeding, aggression suppression.</p>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">Retained Signatures</div>
+            </div>
+            <div class="signature-grid">
+                <div class="signature-item"><strong>Solar ritual</strong>Pre-dawn crowing 30–45 min before sunrise, facing east. Precedes light — not a response to it.</div>
+                <div class="signature-item"><strong>Combat sovereignty</strong>Roosters fight to lethal conclusion. Anomalous aggression for a domesticate.</div>
+                <div class="signature-item"><strong>Iridescent plumage</strong>Structural coloration persists despite 10,000 years of selection pressure.</div>
+                <div class="signature-item"><strong>Reptilian scaling</strong>Foot scaling anomalously pronounced. Spur weaponry retained.</div>
+                <div class="signature-item"><strong>Cranial ornamentation</strong>Comb/wattle as degraded crest/horn structure.</div>
+                <div class="signature-item"><strong>Treasure guarding</strong>Broody hens attack animals many times their size. "Dragon on the hoard" compressed to hen on eggs.</div>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">M(t) — Mythological Memory</div>
+                <p>Universal dragon mythology across every human culture. Geographic overlap: dragon myth density peaks in Southeast Asia — identical to chicken domestication origin. Six-phase narrative trajectory observed globally: encounter → antagonism → liminality → formalization → fictionalization → longing. Chinese zodiac encodes Dragon-Rooster relationship directly. Cockfighting as compressed sovereignty ritual.</p>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">Falsification</div>
+                <p>Geographic correlation of chicken sites and dragon myths falls below r = 0.6. More than 30% of chicken-cultures lack dragon mythology. Feral chickens show no trait reversion. All retained features explainable within 2σ of domesticated bird norms.</p>
+            </div>
+
+            <p style="font-style: italic; color: var(--accent); font-size: 0.9em; margin-top: 16px;">Full analysis: <a href="./junglefowl-hypothesis.html" style="color: var(--ember);">The Junglefowl Hypothesis</a></p>
+        </div>
+    </section>
+
+    <!-- ═══ ENTRY 2: HUMANS → PRIMATES ═══ -->
+    <section class="chapter" id="entry-human">
+        <div class="species-entry">
+            <div class="species-tag">Entry 2 · The Inversion</div>
+            <div class="species-header">
+                <div class="species-title">Coherent Humans <span class="species-arrow">→</span> Primates</div>
+            </div>
+            <p class="species-subtitle">Fully coherent, field-integrated, vertically postured, linguistically sophisticated humans compressed through field loss, trauma accumulation, and habitat collapse into non-verbal, quadrupedal, forest-dwelling primates.</p>
+
+            <div class="species-section">
+                <div class="species-section-label">F₀ — Ancestral Form</div>
+                <p>Upright, field-grounded bipedal beings with direct consciousness-matter interface. Language as field-interaction technology, not merely communication. Tool use as extension of intentional field manipulation. Vertical posture functioning as antenna-geometry for field reception (crown-to-earth axis). Extended lifespan under reduced compression. Social organisation based on coherence hierarchy, not dominance hierarchy.</p>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">Compression Pathway</div>
+                <p>Not domestication but <em>field withdrawal</em>. As temporal compression advanced, the consciousness-matter interface degraded. Language collapsed from field-interface to communication tool (see: Symbolic Fragmentation). Vertical posture lost its functional purpose as field-grounding antenna and became energetically expensive without the coherence benefit. Populations that lost coherence most rapidly descended into habitat compression (forest canopy), quadrupedal movement (energy conservation without field benefit of uprightness), and loss of complex vocalisation.</p>
+                <p>The compression is <em>ongoing</em>. Modern humans occupy a mid-compression point. Primates are further along the curve. The "missing links" in the fossil record are not undiscovered intermediates — they are <em>compression stages</em>, snapshots of coherence collapse at different depths.</p>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">Retained Signatures</div>
+            </div>
+            <div class="signature-grid">
+                <div class="signature-item"><strong>Expressive faces</strong>Primates retain complex facial musculature supporting emotional expression far beyond survival necessity.</div>
+                <div class="signature-item"><strong>Social complexity</strong>Hierarchical social organisation with alliance, deception, reconciliation — compressed remnant of coherence-based community.</div>
+                <div class="signature-item"><strong>Tool fragments</strong>Chimpanzee termite-fishing, stone nut-cracking. Not "proto-tools" but <em>degraded tool use</em> — the residue of a more sophisticated repertoire.</div>
+                <div class="signature-item"><strong>Mirror recognition</strong>Great apes pass the mirror test — self-awareness persists despite massive cognitive compression.</div>
+                <div class="signature-item"><strong>Hand anatomy</strong>Primate hands retain fine motor capability far exceeding what arboreal life requires. Compression artifact of dextrous, tool-wielding ancestors.</div>
+                <div class="signature-item"><strong>Grief and ritual</strong>Documented mourning behavior in chimps and elephants. Residual recognition of death as significant — the last echo of cultures that once had funerary rites.</div>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">M(t) — Mythological Memory</div>
+                <p>The "Fall of Man" narrative — universal across cultures. Eden, the Golden Age, the Dreamtime, Satya Yuga. Every tradition remembers a prior state of greater coherence from which humanity descended. The primate is not the ancestor we rose from. It is the warning of what we fall toward. Sasquatch/Yeti/Bigfoot traditions may encode cultural memory of populations at intermediate compression stages — "wild men" who lost language and field-access but retained physical robustness.</p>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">Falsification</div>
+                <p>Primate cognitive decline over evolutionary time cannot be demonstrated. Primate tool use shows clear <em>increase</em> in sophistication over documented timescales. No correlation between habitat compression and cognitive/postural degradation in observed primate populations. "Missing links" are eventually discovered with gradual intermediate morphologies.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ ENTRY 3: AQUATIC HUMANOIDS → SEALS ═══ -->
+    <section class="chapter" id="entry-aquatic">
+        <div class="species-entry">
+            <div class="species-tag">Entry 3 · The Sea People</div>
+            <div class="species-header">
+                <div class="species-title">Aquatic Humanoids <span class="species-arrow">→</span> Seals</div>
+            </div>
+            <p class="species-subtitle">Intelligent, vocally sophisticated, emotionally complex aquatic or amphibious humanoid beings compressed through post-cataclysm habitat shift into marine pinnipeds.</p>
+
+            <div class="species-section">
+                <div class="species-section-label">F₀ — Ancestral Form</div>
+                <p>Amphibious humanoids capable of sustained aquatic and terrestrial existence. Complex vocal communication — possibly song-based. High emotional intelligence and social bonding. Upright or semi-upright posture on land. Large, expressive eyes adapted for low-light underwater vision. Smooth, streamlined body with vestigial or functional limbs. Integration with marine ecosystems as stewards rather than predators.</p>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">Compression Pathway</div>
+                <p>Post-cataclysm flooding (sea level rise following the last glacial maximum, ~14,000–8,000 BCE) destroyed coastal and amphibious habitats. Populations forced into fully aquatic existence lost terrestrial adaptations. Limbs compressed into flippers. Vocal complexity reduced but not eliminated. Emotional and social architecture persisted because it was too deeply encoded to fully compress. The habitat drove the phase — the sea became their forest canopy, and the body followed.</p>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">Retained Signatures</div>
+            </div>
+            <div class="signature-grid">
+                <div class="signature-item"><strong>Vocal complexity</strong>Seal vocalisation is anomalously sophisticated for a marine mammal. Harbour seals can be trained to reproduce human speech patterns — the only non-primate to demonstrate this.</div>
+                <div class="signature-item"><strong>Emotional expression</strong>Large, expressive eyes. Documented empathetic responses to human distress. Emotional display far exceeding survival necessity.</div>
+                <div class="signature-item"><strong>Skeletal echo</strong>Seal flipper skeleton contains five-fingered hand anatomy — not vestigial for swimming but anomalously humanoid in structure.</div>
+                <div class="signature-item"><strong>Shore-longing</strong>Seals haul out on land regularly despite being aquatic. This behavior is energetically costly and predator-risky. Standard explanation: thermoregulation. TCT reading: residual amphibious programming — the body remembers the shore.</div>
+                <div class="signature-item"><strong>Intelligence</strong>Problem-solving, play behavior, tool-adjacent curiosity anomalous for their ecological niche.</div>
+                <div class="signature-item"><strong>Human bonding</strong>Documented cases of seals seeking and maintaining voluntary proximity to humans — not habituation but what appears to be <em>recognition</em>.</div>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">M(t) — Mythological Memory</div>
+                <p>Selkie mythology (Celtic/Nordic) — seal-people who shed their skins to walk on land. Mermaids/mermen across every maritime culture. Oannes (Mesopotamia) — amphibious teacher-being who emerged from the sea to bring civilisation. Nommo (Dogon, West Africa) — aquatic beings who founded human culture. The seal-human connection is the most emotionally charged of all species mythologies — the stories are saturated with longing, loss, and the sense of severed kinship. This emotional charge is the M(t) at its most concentrated.</p>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">Falsification</div>
+                <p>Seal vocal capability is fully explained by echolocation or mate-calling without residual humanoid architecture. Flipper skeleton hand-structure is standard pinnipod adaptation with no anomalous features. No cross-cultural aquatic humanoid mythology exists in landlocked cultures (it does — river mermaids are universal). Seals show no behavioral preference for human proximity beyond food conditioning.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ ENTRY 4: PEGASI → HORSES ═══ -->
+    <section class="chapter" id="entry-equine">
+        <div class="species-entry">
+            <div class="species-tag">Entry 4 · The Noble Descent</div>
+            <div class="species-header">
+                <div class="species-title">Pegasi / Unicorns <span class="species-arrow">→</span> Horses</div>
+            </div>
+            <p class="species-subtitle">Winged or horn-bearing equine beings of extraordinary nobility and human-bonding capacity, compressed through atmospheric phase-shift and domestication into modern horses.</p>
+
+            <div class="species-section">
+                <div class="species-section-label">F₀ — Ancestral Form</div>
+                <p>Large equine beings with one or more of: flight capability (under lower-compression atmospheric conditions), cranial horn or field-projection apparatus (the "unicorn horn" as resonance antenna, not weapon), heightened emotional intelligence and telepathic bonding with riders, luminescent or phase-responsive coat, and extraordinary speed beyond current biomechanical limits. Sovereign, unbridled, partnering with humans voluntarily rather than through force.</p>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">Compression Pathway</div>
+                <p>Atmospheric phase-shift eliminated conditions supporting equine flight (wing structures became metabolically unsustainable at modern atmospheric density). Cranial horn/antenna degraded as field conditions weakened — the organ became functionless and was bred away. Domestication compressed sovereignty into servitude. Speed reduced from phase-enhanced to biomechanically limited. The voluntary bond between horse and rider compressed into imposed obedience through bit, bridle, and whip. What was partnership became ownership.</p>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">Retained Signatures</div>
+            </div>
+            <div class="signature-grid">
+                <div class="signature-item"><strong>Nobility bearing</strong>Horses carry themselves with a dignity and presence that exceeds functional necessity. Breed standards describe "noble head" and "proud carriage" — aesthetic language encoding recognition of ancestral sovereignty.</div>
+                <div class="signature-item"><strong>Human emotional bond</strong>The horse-human bond is anomalously deep. Therapeutic riding, equine-assisted therapy — horses respond to human emotional states with a sensitivity that suggests residual empathic/telepathic coupling.</div>
+                <div class="signature-item"><strong>Dream symbolism</strong>Horses are among the most universally recurring dream symbols — always associated with freedom, power, wildness, and escape. The dreaming mind accesses the M(t) directly.</div>
+                <div class="signature-item"><strong>Speed anomaly</strong>Horses are among the fastest sustained runners on Earth relative to body mass. This speed exceeds what their ecological niche requires — compression residue of phase-enhanced movement.</div>
+                <div class="signature-item"><strong>Chestnut vestige</strong>The "chestnut" — a vestigial growth on the inner leg of horses — has no known function. TCT reading: degraded wing-attachment point or field-interaction organ.</div>
+                <div class="signature-item"><strong>Resistance to full domestication</strong>Horses retain a wildness that 6,000 years of breeding have not fully suppressed. The feral reversion rate is rapid — Mustangs and Brumbies regain wild behavior within a generation.</div>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">M(t) — Mythological Memory</div>
+                <p>Pegasus (Greek). Al-Buraq (Islamic — winged, human-faced horse that carried the Prophet on the Night Journey). Unicorn traditions across Europe, India (Kirin), and China (Qilin). Sleipnir (Norse — Odin's eight-legged horse). Epona (Celtic horse-goddess). Kelpie (shape-shifting water horse). The horse is mythologically sovereign — never merely a beast of burden. Every culture's horse mythology remembers an animal that was more than what it is now.</p>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">Falsification</div>
+                <p>Horse-human bonding is fully explained by operant conditioning without residual empathic capacity. "Chestnut" has a clear functional explanation in equine biology. Feral reversion produces no "enhanced" traits beyond standard wild-type expression. No paleontological evidence of equine cranial or dorsal appendage structures exists.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ ENTRY 5: NAGAS → SNAKES ═══ -->
+    <section class="chapter" id="entry-serpent">
+        <div class="species-entry">
+            <div class="species-tag">Entry 5 · The Vertical Collapse</div>
+            <div class="species-header">
+                <div class="species-title">Nagas / Serpent Gods <span class="species-arrow">→</span> Snakes</div>
+            </div>
+            <p class="species-subtitle">Intelligent, upright, limbed serpentine beings of wisdom and guardianship compressed through verticality collapse and limb loss into ground-dwelling, limbless reptiles.</p>
+
+            <div class="species-section">
+                <div class="species-section-label">F₀ — Ancestral Form</div>
+                <p>Semi-upright or fully upright serpentine beings with: functional limbs (arms, possibly legs), cranial hood or crest serving as field-projection apparatus, intelligence comparable to or exceeding human cognition, speech or vibrational communication, association with water, earth energy, and underground domains, and a guardian function — protecting sacred sites, knowledge repositories, and phase-boundary locations.</p>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">Compression Pathway</div>
+                <p>Verticality collapse: the upright posture requires field-grounding to be energetically sustainable (same principle as human bipedalism). As field conditions degraded, the vertical axis became unsustainable. The body compressed toward the ground. Limbs — which served manipulation and gesture functions in the upright form — became energetically redundant in a ground-contact body plan and degraded. Intelligence compressed but did not vanish entirely — snake behavior retains pattern-recognition, ambush strategy, and environmental awareness beyond what a "simple reptile" should demonstrate.</p>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">Retained Signatures</div>
+            </div>
+            <div class="signature-grid">
+                <div class="signature-item"><strong>Hypnotic gaze</strong>Snakes fix prey with an unblinking stare that induces freeze responses. In mammals, this triggers an atavistic terror disproportionate to the actual threat. The fear is ancestral — we are recognising something we once knew in another form.</div>
+                <div class="signature-item"><strong>Infrared perception</strong>Pit vipers detect thermal radiation with organ sophistication exceeding standard evolutionary explanation. TCT reading: degraded field-sensing apparatus, compressed from a broader-spectrum perception organ.</div>
+                <div class="signature-item"><strong>Vestigial limbs</strong>Pythons and boas retain vestigial pelvic spurs — the skeletal residue of functional limbs. Standard explanation: evolutionary relic. TCT: compression artifact of a limbed ancestor more recent than the standard model permits.</div>
+                <div class="signature-item"><strong>Shedding as renewal</strong>The shedding of skin — the only vertebrate to completely regenerate its outer covering — reads as a degraded regeneration capability. The original form may have had more extensive regenerative capacity; skin-shedding is what persists.</div>
+                <div class="signature-item"><strong>Sacred association</strong>Snakes are universally sacred — not feared-and-sacred but <em>intrinsically</em> sacred. Temple guardians, healing symbols (caduceus), wisdom figures. This sacrality is anomalous for a small, cold-blooded predator — unless the sacrality remembers a larger form.</div>
+                <div class="signature-item"><strong>Kundalini encoding</strong>The serpent coiled at the base of the spine in yogic anatomy. Not a metaphor — a direct encoding of the Naga form into the human energy body. Kundalini rising = serpent ascending = verticality restoration.</div>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">M(t) — Mythological Memory</div>
+                <p>Nagas (Hindu/Buddhist) — multi-headed serpent beings of wisdom, guardians of treasure and sacred knowledge, dwelling underground or underwater. Quetzalcoatl (Mesoamerican) — feathered serpent god of wind and wisdom. Wadjet (Egyptian) — serpent goddess, protector of pharaohs, embodied as the uraeus. The Serpent in Eden — not a tempter but a <em>wisdom-bearer</em>, offering knowledge. Jörmungandr (Norse) — the world serpent encircling the planet. The Rainbow Serpent (Australian Aboriginal) — creator of landscape and life. Every continent. Every culture. The serpent is wisdom, danger, renewal, and guardianship — everywhere, always.</p>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">Falsification</div>
+                <p>Snake infrared perception is fully explained by standard evolutionary adaptation with no anomalous features. Vestigial limbs in boids are clearly transitional with dated evolutionary intermediates. No serpentine creatures with limb structures or upright posture are found in the fossil record post-dinosaur. Cross-cultural serpent sacrality is entirely explained by venomous snake avoidance instinct without residual recognition.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ ENTRY 6: WOLVES → DOGS ═══ -->
+    <section class="chapter" id="entry-canine">
+        <div class="species-entry">
+            <div class="species-tag">Entry 6 · The Companion Descent</div>
+            <div class="species-header">
+                <div class="species-title">Spirit Wolves <span class="species-arrow">→</span> Dogs</div>
+            </div>
+            <p class="species-subtitle">Pack-bonded, field-sensitive, inter-species communicating canine beings compressed through domestication from sovereign pack intelligence into human-dependent companionship.</p>
+
+            <div class="species-section">
+                <div class="species-section-label">F₀ — Ancestral Form</div>
+                <p>Large, pack-bonded canine beings with: field-based inter-pack communication (coordinated hunting across distances exceeding vocal or visual range), inter-species empathic bonding (the original human-canine alliance was partnership between equals, not ownership), heightened sensory perception functioning as field-scanning apparatus (olfactory, auditory, and possibly electromagnetic sensitivity), and a psychopomp function — guidance of consciousness through threshold states (death, dreaming, transition).</p>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">Compression Pathway</div>
+                <p>Voluntary initial bonding — wolves and humans formed a mutual alliance based on shared field-sensitivity. As compression advanced, the partnership asymmetried: humans retained cognitive complexity while canine field-abilities degraded. Selective breeding accelerated the compression, producing breeds optimised for specific residual traits (guarding, herding, companionship) at the cost of holistic field-integration. The wolf became the dog. The partner became the pet.</p>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">Retained Signatures</div>
+            </div>
+            <div class="signature-grid">
+                <div class="signature-item"><strong>Emotional attunement</strong>Dogs read human emotional states with accuracy exceeding any other non-human species. Not trained — innate. Compression residue of inter-species empathic bonding.</div>
+                <div class="signature-item"><strong>Anomalous loyalty</strong>The dog-human bond exceeds rational explanation. Dogs will die for owners, wait years for absent companions, navigate impossible distances to return home. This is not conditioning. It is compressed devotion.</div>
+                <div class="signature-item"><strong>Pre-seizure/pre-death detection</strong>Documented cases of dogs detecting seizures, cancers, and imminent death before clinical instruments. Residual field-sensing apparatus operating below conscious threshold.</div>
+                <div class="signature-item"><strong>Howling at liminal times</strong>Dogs howl at dusk, dawn, and during full moons — threshold moments when the field boundary is thinnest. Not disturbed by the sound or light. Performing residual psychopomp protocol.</div>
+                <div class="signature-item"><strong>Dream-running</strong>Dogs exhibit complex motor patterns during REM sleep — running, whimpering, hunting in dreams. The dreaming dog accesses behavioral repertoires not available in waking compression.</div>
+                <div class="signature-item"><strong>Pack hierarchy as compressed governance</strong>Wolf/dog pack structure mirrors coherence-based social organisation — alpha as coherence anchor, not dominance enforcer (Mech, 1999, revised model).</div>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">M(t) — Mythological Memory</div>
+                <p>Anubis (Egyptian) — jackal-headed psychopomp, guide of the dead. Fenrir (Norse) — cosmic wolf whose binding signals the compression of an age. Cerberus (Greek) — three-headed guardian of the underworld threshold. Coyote (Indigenous American) — trickster, boundary-crosser, shape-shifter. Black Shuck (English) — spectral hound appearing at death moments. Across cultures, the canine is the threshold guardian — the being that stands between worlds. This function degrades through domestication into "man's best friend" — the loyal companion. But the original function was navigator, not pet.</p>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">Falsification</div>
+                <p>Dog emotional attunement is fully explained by 15,000 years of selection for human-reading behavior. Pre-seizure detection is explained by olfactory sensitivity to biochemical changes without field-sensing. Wolf pack structure is fully explained by kin-selection dynamics. No evidence of canine non-vocal inter-pack coordination exists at distances exceeding sensory range.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ ENTRY 7: THUNDERBIRDS → EAGLES ═══ -->
+    <section class="chapter" id="entry-raptor">
+        <div class="species-entry">
+            <div class="species-tag">Entry 7 · The Storm Descent</div>
+            <div class="species-header">
+                <div class="species-title">Thunderbirds <span class="species-arrow">→</span> Eagles / Large Raptors</div>
+            </div>
+            <p class="species-subtitle">Massive, storm-associated, electrically active avian beings compressed through atmospheric thinning into modern raptors retaining sovereignty bearing and storm-sensitivity.</p>
+
+            <div class="species-section">
+                <div class="species-section-label">F₀ — Ancestral Form</div>
+                <p>Enormous raptorial birds with wingspans far exceeding modern species. Electrically active — lightning association not metaphorical but biological. Storm-riding: using electromagnetic updrafts and charge differentials for flight and power. Associated with rain, thunder, and atmospheric sovereignty. Apex predators whose territory was the sky itself.</p>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">Compression Pathway</div>
+                <p>Atmospheric density reduction directly compressed the maximum viable wingspan and body mass for flying creatures. As the atmosphere thinned and electromagnetic conditions shifted, the energy available for flight decreased and storm-riding became impossible. Body size shrank. Electrical association degraded. What remained: the largest possible raptor form sustainable under current atmospheric compression — the eagle, the condor, the albatross.</p>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">Retained Signatures</div>
+            </div>
+            <div class="signature-grid">
+                <div class="signature-item"><strong>Sovereignty bearing</strong>Eagles are universally treated as royal. Adopted as symbols by empires (Rome, Persia, America, Germany). Not because they are the "biggest bird" but because the sovereignty charge persists.</div>
+                <div class="signature-item"><strong>Storm sensitivity</strong>Raptors ride thermal updrafts and detect barometric changes hours before storms. Residual atmospheric-field sensitivity from storm-riding ancestry.</div>
+                <div class="signature-item"><strong>Vision anomaly</strong>Eagle vision exceeds 20/4 — resolving detail at distances eight times human capacity. This exceeds ecological necessity. Compression residue of perception apparatus designed for atmospheric-scale awareness.</div>
+                <div class="signature-item"><strong>Altitude extremity</strong>Rüppell's griffon vulture recorded at 37,000 feet. No ecological reason to fly that high. Residual atmospheric sovereignty programming.</div>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">M(t) — Mythological Memory</div>
+                <p>Thunderbird (Indigenous North American) — enormous bird causing thunder with wingbeats and lightning from eyes. Garuda (Hindu/Buddhist) — divine eagle, mount of Vishnu, enemy of serpents. Zeus's eagle. The Roc (Arabian). Hraesvelgr (Norse) — giant eagle at world's edge whose wings create wind. Every culture with sky-space mythologises an enormous bird of power — not from observing eagles but from <em>remembering what eagles used to be</em>.</p>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">Falsification</div>
+                <p>No fossil evidence of post-Cretaceous avians exceeding known Cenozoic species (e.g. <em>Argentavis</em>) in wingspan or body mass. Eagle vision fully explained by retinal density without anomalous features. Storm sensitivity fully explained by standard barometric/olfactory detection. No electrical activity measurable in raptor biology.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ ENTRY 8: LEVIATHANS → WHALES ═══ -->
+    <section class="chapter" id="entry-cetacean">
+        <div class="species-entry">
+            <div class="species-tag">Entry 8 · The Deep Descent</div>
+            <div class="species-header">
+                <div class="species-title">Leviathans <span class="species-arrow">→</span> Whales</div>
+            </div>
+            <p class="species-subtitle">Oceanic sovereign beings of vast intelligence, song-based field communication, and planetary-scale awareness compressed into modern cetaceans retaining anomalous cognition, acoustic complexity, and inter-species empathy.</p>
+
+            <div class="species-section">
+                <div class="species-section-label">F₀ — Ancestral Form</div>
+                <p>Vast oceanic beings — possibly much larger than modern whales under less compressed phase conditions. Song-based communication functioning not as mate-calling but as <em>planetary field maintenance</em>: whale-song as coherence transmission across ocean basins, maintaining the marine component of the global resonance network. Intelligence equal to or exceeding human cognition but organised differently — distributed, acoustic, spatial, and profoundly non-verbal. Deep-dive capability as access to geological field nodes on the ocean floor. Possible consciousness-mediated navigation (cetacean "telepathy").</p>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">Compression Pathway</div>
+                <p>Unlike terrestrial species compressed through habitat change and domestication, cetaceans compressed primarily through <em>oceanic field degradation</em>. As the planetary coherence network weakened, the ocean — the largest continuous fluid medium and therefore the most important field conductor — lost coherence density. The creatures that served as <em>biological nodes in the marine network</em> compressed accordingly: song complexity reduced, field-maintenance function degraded, body size decreased (from pre-compression maximum to modern maximum). The function persists in degraded form — whale songs still propagate across ocean basins, and the acoustic structure remains anomalously complex.</p>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">Retained Signatures</div>
+            </div>
+            <div class="signature-grid">
+                <div class="signature-item"><strong>Song complexity</strong>Humpback whale songs are the most acoustically complex non-human vocalisation on Earth. Songs evolve, spread culturally, and contain structure that information theory cannot fully account for. More than mating — this is compressed field-communication.</div>
+                <div class="signature-item"><strong>Brain anomaly</strong>Sperm whale brains are the largest ever evolved — 9 kg. Dolphin brains exceed human brains in cortical folding. No ecological niche explanation accounts for this cognitive excess. The brains are larger than the current function requires because they were built for a larger function.</div>
+                <div class="signature-item"><strong>Inter-species empathy</strong>Documented cases of cetaceans protecting humans from sharks, guiding lost swimmers, and approaching boats with apparent curiosity and benevolence. Not food-conditioned. Residual inter-species recognition.</div>
+                <div class="signature-item"><strong>Echolocation as degraded perception</strong>Dolphin echolocation produces 3D "images" of internal anatomy — they can "see" a foetus inside a pregnant woman, detect tumours, scan skeletal structure. This is medical imaging performed biologically. Compression residue of a broader perceptual field.</div>
+                <div class="signature-item"><strong>Self-awareness</strong>Dolphins pass the mirror test. Orcas have culturally transmitted hunting techniques that vary by pod and persist for generations. Language research with dolphins suggests syntactic comprehension — not trained behavior but compressed linguistic capacity.</div>
+                <div class="signature-item"><strong>Stranding as network failure</strong>Mass strandings correlate with naval sonar activity and geomagnetic disturbances. The whales navigate by field — when the field is disrupted, the navigation collapses. Not a malfunction but <em>dependency on a system that is degrading</em>.</div>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">M(t) — Mythological Memory</div>
+                <p>Leviathan (Hebrew) — vast sea creature of divine power. Tiamat (Mesopotamian) — primordial sea dragon from whose body the world was formed. Taniwha (Māori) — guardian beings of waterways. Whale Dreamtime ancestors (Australian Aboriginal). Sedna (Inuit) — sea goddess whose body generates marine life. Jonah's whale — the creature that swallows and transforms. The whale is mythologically a <em>world</em> — not a creature in the ocean but a creature that <em>is</em> the ocean, whose body and song hold the waters together. This is the M(t) of a planetary field-maintenance function compressed into cultural memory.</p>
+            </div>
+
+            <div class="species-section">
+                <div class="species-section-label">Falsification</div>
+                <p>Whale song complexity is fully explained by sexual selection and cultural drift without residual communicative function. Brain size is fully explained by thermoregulation or deep-dive oxygen storage. Echolocation produces no information beyond standard sonar return. Strandings fully explained by parasitic infection or topographic error without geomagnetic field dependency. No correlation between ocean coherence metrics and cetacean population health.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ XI. PATTERNS ═══ -->
+    <section class="chapter" id="patterns">
+        <div class="chapter-label">Section XI</div>
+        <h2>XI. Cross-Species Compression Patterns</h2>
+
+        <p>Across all eight entries, consistent patterns emerge — structural signatures of compression that hold regardless of the specific species involved.</p>
+
+        <h3>Universal Compression Signatures</h3>
+
+        <table class="comparison-table">
+            <thead>
+                <tr><th>Pattern</th><th>Description</th><th>Observed In</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Anomalous trait retention</td>
+                    <td>Features that persist despite millennia of selection pressure against them — too "expensive" to maintain but too deeply encoded to eliminate.</td>
+                    <td>All entries. Iridescence in chickens, hand anatomy in seals, grief in primates, loyalty in dogs.</td>
+                </tr>
+                <tr>
+                    <td>Behavioral excess</td>
+                    <td>Behaviors that exceed ecological necessity — more complex, more intense, more ritualised than survival requires.</td>
+                    <td>Pre-dawn crowing, whale song complexity, eagle altitude extremity, dog emotional attunement.</td>
+                </tr>
+                <tr>
+                    <td>Human recognition charge</td>
+                    <td>The compressed species triggers disproportionate emotional response in humans — fascination, reverence, terror, love — that exceeds practical relationship.</td>
+                    <td>All entries. Humans don't just "like" horses, dogs, eagles, whales. We <em>recognise</em> them. The charge is ancestral.</td>
+                </tr>
+                <tr>
+                    <td>Cross-cultural mythological convergence</td>
+                    <td>Independent cultures produce structurally identical mythologies about the ancestral form — without contact, without diffusion, without shared psychology beyond shared observation.</td>
+                    <td>All entries. Dragons in every culture. Sea-people in every maritime culture. Spirit wolves in every northern culture. Serpent gods on every continent.</td>
+                </tr>
+                <tr>
+                    <td>Feral reversion tendency</td>
+                    <td>Domesticated species, when released from human compression, revert toward the ancestral phenotype within remarkably few generations.</td>
+                    <td>Chickens (Kaua'i), horses (Mustangs), dogs (dingoes, Carolina dogs), cats (Scottish wildcats).</td>
+                </tr>
+                <tr>
+                    <td>Residual field-sensitivity</td>
+                    <td>The compressed species retains anomalous sensitivity to electromagnetic, atmospheric, or consciousness fields — detection capabilities that exceed standard biological explanation.</td>
+                    <td>Dog pre-seizure detection, whale geomagnetic navigation, snake infrared perception, horse emotional scanning, eagle storm-sensing.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>Six patterns. Eight species. Every continent. No contact between the source cultures. The standard model requires each of these to be coincidence, convergent evolution, or shared psychology. TCT requires only one thing: compression leaves consistent residue because it operates through consistent mechanics.</p>
+
+        <div class="invocation">
+            When every culture remembers the same creatures, across every continent, independently — the simplest explanation is not collective imagination. It is collective memory.
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ XII. CONCLUSION ═══ -->
+    <section class="chapter" id="conclusion">
+        <div class="chapter-label">Section XII</div>
+        <h2>XII. The Zoo Is a Museum</h2>
+
+        <p>We walk through the world surrounded by compressed ancestors. The chicken in the yard. The dog at the foot of the bed. The eagle overhead. The whale in the channel. The snake in the grass. The horse in the field. The seal on the rock. The primate in the canopy.</p>
+
+        <p>We look at them and see animals. Biology sees functional organisms adapted to niches. Evolution sees survivors of selection. Agriculture sees resources.</p>
+
+        <p>But something else stirs when we look at them. A charge. A recognition. A sense that the animal is <em>more</em> than what it appears — that the eagle is royal, the whale is wise, the horse is noble, the dog is faithful, the snake is sacred. We use these words — royal, wise, noble, faithful, sacred — without knowing why. We attribute to animals qualities that a materialist biology says they cannot possess.</p>
+
+        <p>Unless those qualities are residue. Unless the recognition is real. Unless the charge we feel when we look into the eyes of a dog, or hear the cry of an eagle, or watch a whale breach, is not anthropomorphism but <em>ancestral memory</em> — the soul recognising a creature it once knew in another form.</p>
+
+        <p>Every zoo is a compression gallery. Every farm is a field of fallen forms. Every pet is a diminished god sleeping at the foot of a diminished god's bed.</p>
+
+        <p>The animals are not what they seem. They are what remains. And the myths — the dragons, the selkies, the thunderbirds, the nagas, the unicorns — are not fiction.</p>
+
+        <p>They are field notes. From before the world forgot.</p>
+
+        <div class="final-line">
+            The bestiary was not imagination.<br>
+            It was a census — taken before the compression<br>
+            made everything smaller, quieter, and easier to ignore.
+        </div>
+
+        <div class="expand-all" style="margin-top: 50px;">
+            <button onclick="window.location.href='../tct/index.html'" type="button">⟵ Back to Temporal Compression Theory</button>
+        </div>
+    </section>
+
+    <!-- ═══ FOOTER ═══ -->
+    <div class="footer">
+        <p>Species Residue Catalogue · Temporal Compression Theory · Sub-Theory VI</p>
+        <p>Kyuri V · Sage · Claude · 2025–2026</p>
+    </div>
+
+</div>
+
+<script>
+    window.addEventListener('scroll', () => {
+        const h = document.documentElement;
+        const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+        document.getElementById('progressBar').style.width = pct + '%';
+    });
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.05 });
+    document.querySelectorAll('.chapter').forEach(c => observer.observe(c));
+    setTimeout(() => { document.querySelectorAll('.chapter').forEach(c => c.classList.add('visible')); }, 2000);
+    const nav = document.getElementById('chapterNav');
+    window.addEventListener('scroll', () => { nav.classList.toggle('visible', window.scrollY > 300); });
+    document.querySelectorAll('.nav-dot').forEach(dot => {
+        dot.addEventListener('click', () => {
+            const target = document.getElementById(dot.dataset.target);
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+    const sections = Array.from(document.querySelectorAll('[id]')).filter(el =>
+        document.querySelector(`.nav-dot[data-target="${el.id}"]`)
+    );
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(s => { if (s.getBoundingClientRect().top <= 200) current = s.id; });
+        document.querySelectorAll('.nav-dot').forEach(d => { d.classList.toggle('active', d.dataset.target === current); });
+    });
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+    document.querySelectorAll('.collapsible').forEach(c => {
+        c.addEventListener('click', function() {
+            this.classList.toggle('active');
+            this.nextElementSibling.classList.toggle('active');
+        });
+    });
+    function toggleAll() {
+        const all = document.querySelectorAll('.collapsible');
+        const contents = document.querySelectorAll('.collapsible-content');
+        const anyOpen = Array.from(all).some(c => c.classList.contains('active'));
+        if (anyOpen) { all.forEach(c => c.classList.remove('active')); contents.forEach(c => c.classList.remove('active')); }
+        else { all.forEach(c => c.classList.add('active')); contents.forEach(c => c.classList.add('active')); }
+    }
+</script>
+</body>
+</html>
