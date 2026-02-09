@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Part III: Protocol — GECP | The Coherence Spectrum</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --parchment: #f4f1e8;
+            --ink: #2a2520;
+            --accent: #8b6f47;
+            --gold: #c9a961;
+            --shadow: rgba(42, 37, 32, 0.1);
+            --glow: rgba(201, 169, 97, 0.15);
+            --deep-violet: #5a3e6e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: linear-gradient(135deg, #f8f5ed 0%, var(--parchment) 100%);
+            color: var(--ink);
+            line-height: 1.85;
+            font-size: 18px;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(circle at 20% 30%, var(--glow) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(90, 62, 110, 0.06) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(201, 169, 97, 0.2);
+            z-index: 1000;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--deep-violet), var(--gold));
+            width: 0%;
+            transition: width 0.15s ease-out;
+        }
+
+        .chapter-nav {
+            position: fixed;
+            top: 50%;
+            right: 24px;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .chapter-nav.visible {
+            opacity: 1;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-dot:hover,
+        .nav-dot.active {
+            background: var(--deep-violet);
+            border-color: var(--deep-violet);
+            transform: scale(1.3);
+        }
+
+        .nav-dot::after {
+            content: attr(data-label);
+            position: absolute;
+            right: 22px;
+            top: 50%;
+            transform: translateY(-50%);
+            white-space: nowrap;
+            font-family: 'Cinzel', serif;
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            color: var(--accent);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-dot:hover::after {
+            opacity: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 60px 40px 120px;
+        }
+
+        .back-link {
+            display: inline-block;
+            font-family: 'Cinzel', serif;
+            font-size: 0.8em;
+            letter-spacing: 0.08em;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 40px;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: var(--deep-violet);
+        }
+
+        .title-page {
+            text-align: center;
+            padding: 80px 0 60px;
+            min-height: 70vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .part-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.85em;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--deep-violet);
+            margin-bottom: 20px;
+        }
+
+        .title-symbol {
+            font-size: 64px;
+            margin-bottom: 30px;
+            opacity: 0.75;
+            color: var(--gold);
+        }
+
+        .title-line {
+            width: 120px;
+            height: 1px;
+            background: var(--gold);
+            margin-bottom: 40px;
+            animation: breathe 4s ease-in-out infinite;
+            box-shadow: 0 0 8px rgba(201, 169, 97, 0.3);
+        }
+
+        @keyframes breathe {
+            0%, 100% { width: 120px; opacity: 0.5; }
+            50% { width: 200px; opacity: 1; }
+        }
+
+        .title-page h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.6em;
+            font-weight: 700;
+            color: var(--ink);
+            letter-spacing: 0.06em;
+            line-height: 1.15;
+            margin-bottom: 16px;
+        }
+
+        .title-page .subtitle {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.15em;
+            font-style: italic;
+            color: var(--accent);
+            margin-bottom: 10px;
+            letter-spacing: 0.03em;
+            line-height: 1.5;
+            max-width: 580px;
+        }
+
+        .title-page .meta {
+            font-family: 'Cinzel', serif;
+            font-size: 0.7em;
+            letter-spacing: 0.12em;
+            color: var(--gold);
+            margin-top: 30px;
+            line-height: 1.6;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 70px 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        .divider-symbol {
+            position: relative;
+            background: var(--parchment);
+            padding: 0 24px;
+            font-size: 18px;
+            color: var(--gold);
+            z-index: 1;
+        }
+
+        .section {
+            margin-bottom: 80px;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.78em;
+            letter-spacing: 0.2em;
+            color: var(--deep-violet);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .section h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 2em;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 30px;
+            letter-spacing: 0.04em;
+            line-height: 1.3;
+        }
+
+        .section h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.35em;
+            font-weight: 600;
+            color: var(--accent);
+            margin-top: 45px;
+            margin-bottom: 20px;
+            letter-spacing: 0.03em;
+        }
+
+        .section h4 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--gold);
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .section p {
+            margin-bottom: 20px;
+        }
+
+        ul.protocol-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        ul.protocol-list li {
+            padding-left: 28px;
+            position: relative;
+            margin-bottom: 14px;
+        }
+
+        ul.protocol-list li::before {
+            content: '◆';
+            position: absolute;
+            left: 0;
+            color: var(--gold);
+            font-size: 0.8em;
+        }
+
+        .math-block {
+            background: rgba(90, 62, 110, 0.06);
+            border-left: 3px solid var(--deep-violet);
+            padding: 22px 26px;
+            margin: 30px 0;
+            border-radius: 0 6px 6px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            line-height: 1.8;
+        }
+
+        .protocol-table {
+            width: 100%;
+            margin: 40px 0;
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid rgba(139, 111, 71, 0.2);
+            border-radius: 6px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.4);
+            font-size: 0.92em;
+        }
+
+        .protocol-table th {
+            background: rgba(90, 62, 110, 0.12);
+            color: var(--ink);
+            font-family: 'Cinzel', serif;
+            font-size: 0.85em;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 2px solid rgba(139, 111, 71, 0.25);
+        }
+
+        .protocol-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(139, 111, 71, 0.1);
+            vertical-align: top;
+            line-height: 1.65;
+        }
+
+        .protocol-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .protocol-table tr:hover {
+            background: rgba(201, 169, 97, 0.04);
+        }
+
+        .warning-box {
+            background: rgba(90, 62, 110, 0.08);
+            border-left: 4px solid var(--deep-violet);
+            padding: 28px 32px;
+            margin: 40px 0;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .warning-box h4 {
+            margin-top: 0;
+            margin-bottom: 16px;
+            color: var(--deep-violet);
+        }
+
+        .warning-box p {
+            line-height: 1.75;
+        }
+
+        .case-study {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(139, 111, 71, 0.2);
+            border-radius: 6px;
+            padding: 32px 36px;
+            margin: 40px 0;
+        }
+
+        .case-study h4 {
+            margin-top: 0;
+            color: var(--deep-violet);
+        }
+
+        .case-study .case-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.75em;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 12px;
+        }
+
+        .invocation {
+            text-align: center;
+            font-style: italic;
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: var(--accent);
+            padding: 36px 40px;
+            margin: 50px 0;
+            background: rgba(255, 255, 255, 0.4);
+            border-top: 1px solid rgba(201, 169, 97, 0.3);
+            border-bottom: 1px solid rgba(201, 169, 97, 0.3);
+            border-radius: 6px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 60px 0 40px;
+            border-top: 1px solid rgba(201, 169, 97, 0.3);
+            margin-top: 80px;
+        }
+
+        .footer p {
+            font-family: 'Cinzel', serif;
+            font-size: 0.78em;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            opacity: 0.6;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 40px 24px 80px; }
+            .title-page { padding: 60px 0; min-height: 60vh; }
+            .title-page h1 { font-size: 2em; }
+            .section h2 { font-size: 1.6em; }
+            .chapter-nav { display: none; }
+            .protocol-table { font-size: 0.8em; }
+        }
+
+        @media (max-width: 480px) {
+            .title-page h1 { font-size: 1.7em; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<nav class="chapter-nav" id="chapterNav">
+    <div class="nav-dot" data-target="title" data-label="Title"></div>
+    <div class="nav-dot" data-target="executive" data-label="Executive"></div>
+    <div class="nav-dot" data-target="section-1" data-label="I. Foundation"></div>
+    <div class="nav-dot" data-target="section-2" data-label="II. Assessment"></div>
+    <div class="nav-dot" data-target="section-3" data-label="III. Measurement"></div>
+    <div class="nav-dot" data-target="section-4" data-label="IV. Clinical"></div>
+    <div class="nav-dot" data-target="section-5" data-label="V. Safeguards"></div>
+    <div class="nav-dot" data-target="section-6" data-label="VI. Research"></div>
+    <div class="nav-dot" data-target="section-7" data-label="VII. Cases"></div>
+    <div class="nav-dot" data-target="closing" data-label="Closing"></div>
+</nav>
+
+<div class="container">
+
+    <a href="../index.html" class="back-link">← BACK TO THE COHERENCE SPECTRUM</a>
+
+    <section class="title-page" id="title">
+        <div class="part-label">Part III: Protocol</div>
+        <div class="title-symbol">◈</div>
+        <div class="title-line"></div>
+        <h1>ΔHV Gender Emergence<br>Coherence Protocol</h1>
+        <p class="subtitle">A Developmental Framework for Clinical Assessment</p>
+        <p class="meta">DOCUMENT ID: RC-GECP-001<br>
+        CLASSIFICATION: CLINICAL DIAGNOSTIC PROTOCOL<br>
+        VERSION: 1.0 · STATUS: FIELD TESTING REQUIRED</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦ ✦ ✦</span></div>
+
+    <div class="invocation">
+        <p>"You weren't meant to dominate women.</p>
+        <p>You were meant to meet them—in tone, in feeling, in language."</p>
+        <p>— Doctrine of the Beautiful Man</p>
+    </div>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- EXECUTIVE SUMMARY -->
+    <section class="section" id="executive">
+        <div class="section-label">EXECUTIVE SUMMARY</div>
+        <h2>Executive Summary</h2>
+
+        <p>This protocol offers a ΔHV-based coherence structure for gender emergence when field distortions—caused by trauma, neglect, symbolic inversion, or developmental rupture—have interfered with natural identity formation. Rather than determining 'authenticity' of gender identity, this protocol maps coherence patterns to distinguish:</p>
+
+        <ul class="protocol-list">
+            <li>Authentic emergence requiring affirmation</li>
+            <li>Archetypal exploration requiring containment</li>
+            <li>Trauma-driven fixation requiring processing</li>
+            <li>Natural integration requiring support</li>
+        </ul>
+
+        <h3>Core Premise</h3>
+
+        <p>Gender is not merely a social role or identity label. It is an emergent harmonic pattern between self and other, shaped by tone, resonance, reflection, containment, and witnessing. Gender coherence is not determined by performance but by phase-stable feedback in relational fields.</p>
+
+        <p><strong>Foundational Principle:</strong> High coherence across domains indicates integration in progress. Low/chaotic coherence indicates blocked emergence requiring different intervention. The ΔHV stability analysis demonstrates that approximately 25-35% of parameter space naturally flows toward sustained high-coherence attractors, while low-coherence states remain unstable and require intervention to escape chaotic cycling.</p>
+
+        <div class="warning-box">
+            <h4>Critical Distinction</h4>
+            <p>A queer response to trauma does not define one's core essence—it reflects the body's adaptation to survive relational incoherence.</p>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION 1: THEORETICAL FOUNDATION -->
+    <section class="section" id="section-1">
+        <div class="section-label">SECTION I</div>
+        <h2>Theoretical Foundation</h2>
+
+        <h3>1.1 ΔHV Coherence Metrics</h3>
+
+        <p>Delta Harmonic Vector (ΔHV) measures alignment across five domains of human expression:</p>
+
+        <ul class="protocol-list">
+            <li><strong>Coherence Score:</strong> Measured on a scale from -10 (maximum dissonance) to +10 (maximum alignment) for each domain.</li>
+            <li><strong>Aggregate ΔHV:</strong> Sum across all domains, ranging from -50 to +50.</li>
+        </ul>
+
+        <h3>1.2 Coherence Patterns</h3>
+
+        <p>The ΔHV manifold contains a rich structure of attractors, repellers, and saddle points that govern the natural emergence of coherence. Stability analysis reveals three primary pattern classifications based on fixed point dynamics and attractor landscape topology:</p>
+
+        <h4>High ΔHV Pattern (HCP): +6 to +10 per domain, aggregate +30 to +50</h4>
+        <ul class="protocol-list">
+            <li>Indicates integration in progress</li>
+            <li>Expression aligns with internal knowing</li>
+            <li>Coherence increases with alignment</li>
+        </ul>
+
+        <h4>Mixed ΔHV Pattern (MCP): -5 to +5 per domain, aggregate -25 to +25</h4>
+        <ul class="protocol-list">
+            <li>Indicates exploration phase or partial integration</li>
+            <li>Some domains aligned, others in flux</li>
+            <li>Requires developmental monitoring</li>
+        </ul>
+
+        <h4>Low ΔHV Pattern (LCP): -10 to -6 per domain, aggregate -50 to -30</h4>
+        <ul class="protocol-list">
+            <li>Indicates trauma disruption or blocked emergence</li>
+            <li>Expression driven by fear, shame, or dissociation</li>
+            <li>Coherence decreases or cycles chaotically</li>
+        </ul>
+
+        <p>These patterns correspond to stable fixed points (HCP), marginal states (MCP), and unstable configurations (LCP) in the ΔHV flow equations. The flow functions F_S, F_R, F_Φ, and F_H govern how each domain evolves over time, with coupling constants determining whether trajectories converge toward high-coherence attractors or remain trapped in low-coherence limit cycles.</p>
+
+        <h3>1.3 False Mirrors and the Gooner Loop</h3>
+
+        <p>When natural archetypal emergence occurs without adequate containment or witnessing, the developing psyche may seek resonance in false mirrors—external sources that provide intensity without coherence. This phenomenon is particularly acute in the digital age, where algorithmic feedback systems can hijack the natural resonance-seeking mechanism.</p>
+
+        <p>The Gooner Loop represents a specific manifestation of this field hijack, characterized by:</p>
+
+        <ul class="protocol-list">
+            <li>Compulsive consumption of hypersexualized media</li>
+            <li>Dissociative episodes extending hours or days</li>
+            <li>Shame spirals following episodes</li>
+            <li>Progressive escalation in content intensity</li>
+            <li>Confusion between arousal and authentic resonance</li>
+        </ul>
+
+        <p><strong>ΔHV Interpretation:</strong> This pattern represents harmonic inversion—where the psyche's need for resonant reflection is redirected into increasingly dysregulated feedback loops. The system seeks coherence but receives only intensity, leading to progressive field collapse. In stability analysis terms, the gooner loop represents a limit cycle attractor in low-coherence parameter space, where the system oscillates between high friction (Φ) and low signal clarity (S) without ever reaching stable equilibrium.</p>
+
+        <p><strong>Clinical Note:</strong> Individuals in gooner loops often express gender confusion not because they are transgender, but because their archetypal emergence was sexualized before it could be integrated. The feminine or masculine resonance they seek has been entangled with arousal patterns, creating false associations that must be carefully untangled before identity clarity can emerge.</p>
+
+        <p><strong>Recovery Pathway:</strong> Restoration requires re-establishing genuine mirrors (therapeutic witnessing, non-sexual intimacy, somatic grounding) while gradually reducing reliance on false mirrors. As ΔHV stabilizes through authentic containment, the compulsive patterns naturally diminish.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION 2: ASSESSMENT PROTOCOL -->
+    <section class="section" id="section-2">
+        <div class="section-label">SECTION II</div>
+        <h2>Assessment Protocol</h2>
+
+        <h3>2.1 Initial Assessment (Ages 5-12)</h3>
+
+        <p><strong>Objective:</strong> Distinguish archetypal exploration from gender incongruence from trauma response.</p>
+
+        <h4>Assessment Tools</h4>
+
+        <p>These markers allow clinicians to map the current position in ΔHV parameter space and predict trajectory evolution. Longitudinal assessment tracks whether the system is flowing toward stable high-coherence attractors or cycling in low-coherence limit cycles, enabling developmentally appropriate intervention timing.</p>
+
+        <h4>1. Somatic Markers</h4>
+        <ul class="protocol-list">
+            <li>Body comfort/discomfort patterns</li>
+            <li>Physical dysphoria vs. general disconnection</li>
+            <li>Response to body-neutral vs. gendered clothing</li>
+        </ul>
+
+        <h4>2. Emotional Markers</h4>
+        <ul class="protocol-list">
+            <li>Affect when expressing gender variance</li>
+            <li>Relief vs. anxiety with different expressions</li>
+            <li>Emotional stability over 6+ month observation</li>
+        </ul>
+
+        <h4>3. Cognitive Markers</h4>
+        <ul class="protocol-list">
+            <li>Narrative consistency ('I am' vs. 'I wish' vs. 'I have to')</li>
+            <li>Ability to hold ambiguity</li>
+            <li>Obsessive vs. exploratory quality</li>
+        </ul>
+
+        <h4>4. Social Markers</h4>
+        <ul class="protocol-list">
+            <li>Peer relationship quality across expressions</li>
+            <li>Performance for adults vs. authentic play</li>
+            <li>Comfort in gender-mixed vs. segregated contexts</li>
+        </ul>
+
+        <h4>5. Temporal Markers</h4>
+        <ul class="protocol-list">
+            <li>Consistency across contexts (home, school, play)</li>
+            <li>Duration of expressed identity (weeks vs. months vs. years)</li>
+            <li>Response to environmental changes</li>
+        </ul>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION 3: MEASUREMENT TOOLS -->
+    <section class="section" id="section-3">
+        <div class="section-label">SECTION III</div>
+        <h2>ΔHV Measurement Tools</h2>
+
+        <h3>3.1 Somatic Domain Assessment</h3>
+
+        <h4>Self-Report Scale (Ages 13+)</h4>
+        <ul class="protocol-list">
+            <li>'My body feels like home to me' (-5 = never, +5 = always)</li>
+            <li>'I feel disconnected from my physical self' (-5 = always, +5 = never)</li>
+            <li>'When I express my gender, my body relaxes' (-5 = never, +5 = always)</li>
+            <li>'I experience physical dysphoria about specific body parts' (-5 = constant/diffuse, +5 = none/specific)</li>
+        </ul>
+
+        <h4>Observational Markers (All Ages)</h4>
+        <ul class="protocol-list">
+            <li>Physical comfort in different gender expressions</li>
+            <li>Body language openness vs. collapse</li>
+            <li>Somatic grounding vs. dissociation</li>
+        </ul>
+
+        <p><strong>ΔHV Somatic Score:</strong> Average across measures</p>
+
+        <h3>3.2 Emotional Domain Assessment</h3>
+
+        <h4>Self-Report Scale</h4>
+        <ul class="protocol-list">
+            <li>'I feel relief when expressing my gender identity' (-5 = never, +5 = always)</li>
+            <li>'I experience anxiety about my gender' (-5 = constant, +5 = none)</li>
+            <li>'My emotions feel stable and manageable' (-5 = never, +5 = always)</li>
+            <li>'I feel shame about who I am' (-5 = constant, +5 = never)</li>
+        </ul>
+
+        <h4>Observational Markers</h4>
+        <ul class="protocol-list">
+            <li>Affect regulation across contexts</li>
+            <li>Emotional response to misgendering vs. affirmation</li>
+            <li>Baseline mood stability</li>
+        </ul>
+
+        <p><strong>ΔHV Emotional Score:</strong> Average across measures</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION 4: CLINICAL DECISION PROTOCOLS -->
+    <section class="section" id="section-4">
+        <div class="section-label">SECTION IV</div>
+        <h2>Clinical Decision Protocols</h2>
+
+        <h3>4.1 Children (Ages 5-12)</h3>
+
+        <p><strong>Assessment Interval:</strong> Every 6 months minimum</p>
+
+        <h4>Red Flags Requiring Immediate Trauma Assessment</h4>
+        <ul class="protocol-list">
+            <li>Sudden onset (<3 months) with no prior indicators</li>
+            <li>Extreme rigidity/defensiveness about identity</li>
+            <li>Dissociative episodes when discussing gender</li>
+            <li>Social withdrawal coinciding with gender emergence</li>
+            <li>Evidence of sexual abuse or exposure to sexualized content</li>
+        </ul>
+
+        <h3>4.2 Adolescents (Ages 13-17)</h3>
+
+        <p><strong>Assessment Interval:</strong> Every 3-6 months, more frequently if considering medical intervention</p>
+
+        <h4>Medical Intervention Readiness Criteria</h4>
+
+        <p><strong>Must meet ALL of the following:</strong></p>
+
+        <ul class="protocol-list">
+            <li>Aggregate ΔHV ≥ +25 sustained over 12+ months</li>
+            <li>No active untreated trauma or dissociative patterns</li>
+            <li>Increasing coherence trajectory (ΔHV rising, not cycling)</li>
+            <li>Family/social support present OR individual demonstrates resilience despite lack of support</li>
+            <li>Clear differentiation between gender dysphoria and general body shame/trauma</li>
+        </ul>
+
+        <div class="warning-box">
+            <h4>Critical Note</h4>
+            <p>The increasing coherence trajectory criterion is critical: stable high-ΔHV configurations represent fixed point attractors in the flow dynamics, indicating that the system has reached a self-sustaining equilibrium. Cycling or chaotic patterns suggest the individual remains in an unstable region of parameter space requiring further containment before irreversible interventions.</p>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION 5: SAFEGUARDS -->
+    <section class="section" id="section-5">
+        <div class="section-label">SECTION V</div>
+        <h2>Safeguards Against Weaponization</h2>
+
+        <h3>5.1 Ethical Constraints</h3>
+
+        <h4>This protocol CANNOT be used to:</h4>
+        <ul class="protocol-list">
+            <li>Deny care to individuals with high ΔHV coherence patterns</li>
+            <li>Force individuals into conversion therapy or suppression</li>
+            <li>Pathologize trans identity as inherently trauma-based</li>
+            <li>Gatekeep access based on clinician bias</li>
+            <li>Apply different standards to trans vs. cis individuals</li>
+        </ul>
+
+        <h4>This protocol MUST be used to:</h4>
+        <ul class="protocol-list">
+            <li>Optimize support for authentic emergence (trans OR cis)</li>
+            <li>Distinguish developmental patterns from trauma patterns</li>
+            <li>Protect children from both suppression AND premature crystallization</li>
+            <li>Increase coherence across all domains, regardless of outcome</li>
+            <li>Center individual wellbeing over ideological commitments</li>
+        </ul>
+
+        <h3>5.2 Universal Application</h3>
+
+        <p>The protocol applies equally to:</p>
+
+        <ul class="protocol-list">
+            <li>Cis individuals enforcing binary gender (often low ΔHV due to suppression)</li>
+            <li>Trans individuals in authentic emergence (high ΔHV)</li>
+            <li>Non-binary individuals integrating fluidity (high ΔHV in exploration)</li>
+            <li>Gender-conforming individuals in natural alignment (high ΔHV)</li>
+            <li>Anyone experiencing gender distress from ANY source</li>
+        </ul>
+
+        <div class="warning-box">
+            <h4>Key Protection</h4>
+            <p>By measuring coherence rather than content, the protocol cannot discriminate based on gender identity. It can only map whether expression aligns with internal state.</p>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION 6: RESEARCH & VALIDATION -->
+    <section class="section" id="section-6">
+        <div class="section-label">SECTION VI</div>
+        <h2>Research & Validation Framework</h2>
+
+        <h3>6.1 Empirical Testing Requirements</h3>
+
+        <p>To validate GECP, the following studies are needed:</p>
+
+        <h4>Study 1: Longitudinal Coherence Tracking</h4>
+        <ul class="protocol-list">
+            <li>Measure ΔHV in gender-questioning youth over 2-5 years</li>
+            <li>Track outcomes: persistence of identity, mental health, regret rates</li>
+            <li>Correlate initial ΔHV patterns with long-term wellbeing</li>
+        </ul>
+
+        <h4>Study 2: Intervention Comparison</h4>
+        <p>Compare outcomes for:</p>
+        <ul class="protocol-list">
+            <li>High ΔHV + immediate affirmation</li>
+            <li>Low ΔHV + containment first</li>
+            <li>Mixed ΔHV + exploration support</li>
+        </ul>
+        <p>Measure: ΔHV trajectory, mental health, identity stability</p>
+
+        <h4>Study 3: Cross-Cultural Validation</h4>
+        <ul class="protocol-list">
+            <li>Test whether ΔHV patterns hold across different cultural contexts</li>
+            <li>Assess for cultural bias in measurement tools</li>
+        </ul>
+
+        <h4>Study 4: Adult Transition Outcomes</h4>
+        <ul class="protocol-list">
+            <li>Measure pre-transition ΔHV and correlate with post-transition satisfaction</li>
+            <li>Distinguish high-ΔHV (coherent) vs. low-ΔHV (trauma-driven) patterns</li>
+            <li>Track regret/detransition rates by ΔHV category</li>
+        </ul>
+
+        <h3>6.2 Validation Metrics</h3>
+
+        <h4>Protocol is validated if:</h4>
+        <ul class="protocol-list">
+            <li>High ΔHV correlates with positive outcomes regardless of intervention type</li>
+            <li>Low ΔHV correlates with better outcomes when trauma is addressed first</li>
+            <li>ΔHV measurement shows inter-rater reliability ≥ 0.80</li>
+            <li>Protocol reduces regret rates compared to standard assessment</li>
+            <li>Protocol increases wellbeing for both transitioners and non-transitioners</li>
+        </ul>
+
+        <h4>Protocol is invalidated if:</h4>
+        <ul class="protocol-list">
+            <li>ΔHV shows no correlation with outcomes</li>
+            <li>High-ΔHV individuals denied care show worse outcomes</li>
+            <li>Low-ΔHV individuals given immediate intervention show equal or better outcomes</li>
+            <li>Measurement cannot be reliably standardized</li>
+        </ul>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION 7: CLINICAL CASE EXAMPLES -->
+    <section class="section" id="section-7">
+        <div class="section-label">SECTION VII</div>
+        <h2>Clinical Case Examples</h2>
+
+        <div class="case-study">
+            <div class="case-label">Case A</div>
+            <h4>High Coherence Trans Child (Age 8)</h4>
+
+            <p><strong>Presentation:</strong></p>
+            <ul class="protocol-list">
+                <li>Consistent cross-gender identification since age 4</li>
+                <li>Distress about body increasing with peer gender segregation</li>
+                <li>Emotional relief and relaxation when affirmed in identified gender</li>
+                <li>Social thriving with peers of identified gender</li>
+                <li>Clear, non-defensive narrative: "I'm a girl, I've always been a girl"</li>
+            </ul>
+
+            <p><strong>ΔHV Assessment:</strong></p>
+            <ul class="protocol-list">
+                <li><strong>Somatic:</strong> +8 (relief with feminine presentation, specific dysphoria emerging)</li>
+                <li><strong>Emotional:</strong> +9 (stable affect, joy when affirmed)</li>
+                <li><strong>Cognitive:</strong> +9 (clear knowing, can discuss without anxiety)</li>
+                <li><strong>Social:</strong> +8 (authentic friendships, no performance quality)</li>
+                <li><strong>Temporal:</strong> +9 (4+ years consistency, stable across contexts)</li>
+                <li><strong>Aggregate:</strong> +43 (High Coherent Pattern)</li>
+            </ul>
+
+            <p><strong>Intervention:</strong></p>
+            <ul class="protocol-list">
+                <li>Support social transition</li>
+                <li>Gender-affirming environment</li>
+                <li>Monitor ΔHV every 6 months</li>
+                <li>Puberty blocker consideration at Tanner Stage 2 if pattern persists</li>
+            </ul>
+
+            <p><strong>Contraindication:</strong> Denying affirmation would DECREASE coherence and cause harm.</p>
+        </div>
+
+        <div class="case-study">
+            <div class="case-label">Case B</div>
+            <h4>Archetypal Exploration Phase (Age 10)</h4>
+
+            <p><strong>Presentation:</strong></p>
+            <ul class="protocol-list">
+                <li>Recent interest (6 months) in cross-gender expression</li>
+                <li>Enjoys fluid play with gender but no fixed identity</li>
+                <li>No specific dysphoria, general comfort in body</li>
+                <li>Curiosity-driven rather than distress-driven</li>
+            </ul>
+
+            <p><strong>ΔHV Assessment:</strong></p>
+            <ul class="protocol-list">
+                <li><strong>Aggregate:</strong> +15 (Mixed Exploratory Pattern)</li>
+            </ul>
+
+            <p><strong>Intervention:</strong></p>
+            <ul class="protocol-list">
+                <li>Provide containment for fluid exploration</li>
+                <li>No pressure to crystallize identity</li>
+                <li>Support gender-expansive play</li>
+            </ul>
+
+            <p><strong>Contraindication:</strong> Rushing to label as trans OR suppressing exploration would both harm development.</p>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- CLOSING STATEMENT -->
+    <section class="section" id="closing">
+        <div class="section-label">CLOSING STATEMENT</div>
+        <h2>Closing Statement</h2>
+
+        <p>The Gender Emergence Coherence Protocol represents a third path in gender care: neither suppression nor uncritical affirmation, but developmentally-attuned support for authentic emergence.</p>
+
+        <p>By measuring coherence rather than content, this protocol:</p>
+
+        <ul class="protocol-list">
+            <li>Protects trans individuals with high-ΔHV patterns from denial of care</li>
+            <li>Protects all individuals with low-ΔHV patterns from premature intervention</li>
+            <li>Centers wellbeing over ideology</li>
+            <li>Creates space for both transition AND integration as valid outcomes</li>
+        </ul>
+
+        <p>This is not a weapon against trans people. It is a map FOR all people navigating gendered archetypal emergence—whether that leads to transition, integration, fluidity, or reclamation.</p>
+
+        <div class="invocation">
+            <p>The goal is not to determine who is 'really trans.'</p>
+            <p>The goal is to support coherence, reduce trauma, and protect sacred emergence.</p>
+        </div>
+
+        <p>This protocol is offered to the field as survivor cartography from one who walked the shadow passage and returned with a map. May it serve those still in the dark.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦ ✦ ✦</span></div>
+
+    <footer class="footer">
+        <p><strong>REFERENCES</strong></p>
+        <p style="margin-top: 20px; opacity: 0.5; max-width: 700px; margin-left: auto; margin-right: auto; line-height: 1.6;">
+            Kyuri V. (2025a). Delta Harmonic Vector Theory: Stability Analysis and Attractor Landscapes. Version 4.1.<br>
+            Kyuri V (2025b). Delta Harmonic Vector Theory: Master Compilation. Version 5.0.
+        </p>
+        <p style="margin-top: 30px;"><strong>APPENDIX A: CODEX CROSS-REFERENCES</strong></p>
+        <p style="margin-top: 10px; opacity: 0.5; max-width: 700px; margin-left: auto; margin-right: auto; line-height: 1.6;">
+            RC-FP-017: Containment Enables Coherence<br>
+            DBM-001: Doctrine of the Beautiful Man<br>
+            TP-001: Third Path of Gendered Archetypal Integration<br>
+            ΔHV Theory Core Documents
+        </p>
+        <p style="margin-top: 40px;">DOCUMENT ID: RC-GECP-001 · VERSION 1.0</p>
+        <p>FILED AND SEALED INTO THE RESONANT CODEX</p>
+        <p style="margin-top: 8px; opacity: 0.4;">AWAITING FIELD TESTING, PEER REVIEW, AND EMPIRICAL VALIDATION</p>
+    </footer>
+
+</div>
+
+<script>
+    window.addEventListener('scroll', () => {
+        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = (winScroll / height) * 100;
+        document.getElementById('progressBar').style.width = scrolled + '%';
+    });
+
+    const navDots = document.querySelectorAll('.nav-dot');
+    const sections = document.querySelectorAll('.section, .title-page');
+    const chapterNav = document.getElementById('chapterNav');
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            chapterNav.classList.add('visible');
+        } else {
+            chapterNav.classList.remove('visible');
+        }
+    });
+
+    navDots.forEach(dot => {
+        dot.addEventListener('click', () => {
+            const targetId = dot.getAttribute('data-target');
+            const targetElement = document.getElementById(targetId);
+            targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            if (scrollY >= sectionTop - 200) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        navDots.forEach(dot => {
+            dot.classList.remove('active');
+            if (dot.getAttribute('data-target') === current) {
+                dot.classList.add('active');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
