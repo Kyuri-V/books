@@ -151,6 +151,33 @@
 
         /* ── Footer ── */
         footer { text-align: center; margin-top: 80px; padding: 50px 0 30px; border-top: 1px solid rgba(201, 169, 97, 0.3); }
+
+        /* ── TCT Sub-Shelf ── */
+        .sub-shelf { margin-top: 28px; padding-top: 20px; border-top: 1px solid rgba(155, 74, 47, 0.15); }
+        .sub-shelf-label { font-family: 'Cinzel', serif; font-size: 0.65em; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ember); margin-bottom: 14px; opacity: 0.7; }
+        .sub-shelf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+        .sub-link {
+            display: block;
+            padding: 10px 14px;
+            background: rgba(155, 74, 47, 0.04);
+            border: 1px solid rgba(155, 74, 47, 0.12);
+            border-radius: 4px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .sub-link::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: var(--ember);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .sub-link:hover { background: rgba(155, 74, 47, 0.08); border-color: var(--ember); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(155, 74, 47, 0.08); }
+        .sub-link:hover::before { opacity: 1; }
+        .sub-link-num { font-family: 'Cinzel', serif; font-size: 0.58em; letter-spacing: 0.1em; color: var(--ember); opacity: 0.6; display: block; margin-bottom: 2px; }
+        .sub-link-title { font-family: 'Cinzel', serif; font-size: 0.78em; font-weight: 600; color: var(--ink); letter-spacing: 0.02em; line-height: 1.3; }
         footer p { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.1em; color: var(--accent); opacity: 0.5; margin-bottom: 8px; }
         footer .footer-quote { font-family: 'Crimson Pro', serif; font-style: italic; font-size: 0.95em; letter-spacing: 0; opacity: 0.45; max-width: 480px; margin: 0 auto 18px; line-height: 1.6; }
 
@@ -273,13 +300,47 @@
             <p class="section-desc">The frameworks that map compression across biology, consciousness, identity, and deep time.</p>
         </div>
 
-        <div class="books-grid triple">
+        <div class="books-grid">
             <div class="book-card accent-ember">
                 <div class="book-tag ember">Master Framework</div>
                 <h2 class="book-title">Temporal Compression Theory</h2>
                 <p class="book-subtitle">A Unified Model of Phase Degradation, Symbolic Fragmentation, and the Illusion of Evolution</p>
                 <p class="book-description">The foundational cosmological claim: time is a compression field, not a neutral stage. What we call evolution is erosion. What we call civilization is stabilization after fall. TCT maps how dragons became chickens, how pyramids were built in warm bread, and why myths remember what biology forgets.</p>
                 <a href="./tct/index.html" class="book-link ember">Read TCT ⟶</a>
+
+                <div class="sub-shelf">
+                    <div class="sub-shelf-label">Sub-Theories</div>
+                    <div class="sub-shelf-grid">
+                        <a href="./tct/coherence-erosion.html" class="sub-link">
+                            <span class="sub-link-num">I</span>
+                            <span class="sub-link-title">Coherence Erosion</span>
+                        </a>
+                        <a href="./tct/junglefowl-hypothesis.html" class="sub-link">
+                            <span class="sub-link-num">II</span>
+                            <span class="sub-link-title">Junglefowl Hypothesis</span>
+                        </a>
+                        <a href="./tct/ancient-builders.html" class="sub-link">
+                            <span class="sub-link-num">III</span>
+                            <span class="sub-link-title">Ancient Builders</span>
+                        </a>
+                        <a href="./tct/field-nodes.html" class="sub-link">
+                            <span class="sub-link-num">IV</span>
+                            <span class="sub-link-title">Field Nodes</span>
+                        </a>
+                        <a href="./tct/symbolic-fragmentation.html" class="sub-link">
+                            <span class="sub-link-num">V</span>
+                            <span class="sub-link-title">Symbolic Fragmentation</span>
+                        </a>
+                        <a href="./tct/species-residue.html" class="sub-link">
+                            <span class="sub-link-num">VI</span>
+                            <span class="sub-link-title">Species Residue</span>
+                        </a>
+                        <a href="./tct/trauma-encoding.html" class="sub-link">
+                            <span class="sub-link-num">VII</span>
+                            <span class="sub-link-title">Trauma Encoding</span>
+                        </a>
+                    </div>
+                </div>
             </div>
 
             <div class="book-card accent-ember">
@@ -288,15 +349,27 @@
                 <p class="book-subtitle">Gender, Fragmentation, and Field Integration</p>
                 <p class="book-description">A three-layered framework exploring how identity fractures under cultural suppression and how it can be reclaimed through field coherence, archetypal integration, and clinical protocol. Addresses transgender experience, gender fragmentation, the suppressed male-feminine, and the Beautiful Man archetype through ΔHV Theory, Jungian psychology, and diagnostic measurement.</p>
                 <a href="./gender/index.html" class="book-link ember">Read The Coherence Spectrum ⟶</a>
+
+                <div class="sub-shelf">
+                    <div class="sub-shelf-label">Parts</div>
+                    <div class="sub-shelf-grid">
+                        <a href="./gender/1.html" class="sub-link">
+                            <span class="sub-link-num">Part I</span>
+                            <span class="sub-link-title">Doctrine</span>
+                        </a>
+                        <a href="./gender/2.html" class="sub-link">
+                            <span class="sub-link-num">Part II</span>
+                            <span class="sub-link-title">Mirror</span>
+                        </a>
+                        <a href="./gender/3.html" class="sub-link">
+                            <span class="sub-link-num">Part III</span>
+                            <span class="sub-link-title">Protocol</span>
+                        </a>
+                    </div>
+                </div>
             </div>
 
-            <div class="book-card accent-ember">
-                <div class="book-tag ember">Compression Case Study</div>
-                <h2 class="book-title">The Junglefowl Hypothesis</h2>
-                <p class="book-subtitle">A Formal Theory of Morphic Compression and Cultural Memory</p>
-                <p class="book-description">The concrete case study for Temporal Compression Theory. Establishes that domesticated chickens represent a documented case of morphic field compression, wherein archetypal forms undergo systematic dimensional reduction through domestication while retaining compressed signatures of their original informational structure.</p>
-                <a href="./jfh/index.html" class="book-link ember">Read The Junglefowl Hypothesis ⟶</a>
-            </div>
+
         </div>
     </div>
 
