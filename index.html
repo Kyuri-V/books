@@ -19,6 +19,7 @@
             --deep-blue: #3a4f6a;
             --deep-violet: #5a3e6e;
             --flame: #b8763a;
+            --ember: #9b4a2f;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -65,6 +66,7 @@
         .section-label { font-family: 'Cinzel', serif; font-size: 0.72em; letter-spacing: 0.22em; text-transform: uppercase; margin-bottom: 6px; }
         .section-label.foundations { color: var(--deep-green); }
         .section-label.applications { color: var(--deep-violet); }
+        .section-label.cosmology { color: var(--ember); }
         .section-label.special { color: var(--deep-blue); }
         .section-title { font-family: 'Cinzel', serif; font-size: 1.5em; font-weight: 600; color: var(--ink); letter-spacing: 0.04em; margin-bottom: 8px; }
         .section-desc { font-style: italic; color: var(--accent); font-size: 0.95em; max-width: 600px; }
@@ -82,11 +84,7 @@
             padding: 36px;
             transition: all 0.4s ease;
             position: relative;
-        }
-        .book-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 12px 40px var(--shadow);
-            border-color: var(--gold);
+            overflow: hidden;
         }
         .book-card::before {
             content: '';
@@ -98,6 +96,11 @@
             opacity: 0;
             transition: opacity 0.3s ease;
         }
+        .book-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 40px var(--shadow);
+            border-color: var(--gold);
+        }
         .book-card:hover::before { opacity: 1; }
         .book-card.accent-green::before { background: var(--deep-green); }
         .book-card.accent-green:hover { border-color: var(--deep-green); }
@@ -105,6 +108,8 @@
         .book-card.accent-violet:hover { border-color: var(--deep-violet); }
         .book-card.accent-flame::before { background: var(--flame); }
         .book-card.accent-flame:hover { border-color: var(--flame); }
+        .book-card.accent-ember::before { background: var(--ember); }
+        .book-card.accent-ember:hover { border-color: var(--ember); }
         .book-card.accent-blue::before { background: var(--deep-blue); }
         .book-card.accent-blue:hover { border-color: var(--deep-blue); }
 
@@ -112,6 +117,7 @@
         .book-tag.green { color: var(--deep-green); }
         .book-tag.violet { color: var(--deep-violet); }
         .book-tag.flame { color: var(--flame); }
+        .book-tag.ember { color: var(--ember); }
         .book-tag.blue { color: var(--deep-blue); }
         .book-tag.gold { color: var(--gold); }
 
@@ -122,11 +128,10 @@
         .book-link {
             display: inline-block;
             font-family: 'Cinzel', serif;
-            padding: 11px 26px;
-            background: transparent;
-            color: var(--accent);
             text-decoration: none;
+            color: var(--accent);
             border: 1px solid var(--accent);
+            padding: 10px 22px;
             border-radius: 4px;
             letter-spacing: 0.06em;
             font-size: 0.78em;
@@ -139,6 +144,8 @@
         .book-link.violet:hover { background: var(--deep-violet); color: var(--parchment); }
         .book-link.flame { border-color: var(--flame); color: var(--flame); }
         .book-link.flame:hover { background: var(--flame); color: var(--parchment); }
+        .book-link.ember { border-color: var(--ember); color: var(--ember); }
+        .book-link.ember:hover { background: var(--ember); color: var(--parchment); }
         .book-link.blue { border-color: var(--deep-blue); color: var(--deep-blue); }
         .book-link.blue:hover { background: var(--deep-blue); color: var(--parchment); }
 
@@ -184,12 +191,12 @@
             <p class="section-desc">The mathematical and structural frameworks from which everything else extends.</p>
         </div>
 
-        <div class="books-grid triple">
+        <div class="books-grid">
             <div class="book-card accent-green">
-                <div class="book-tag green">Ontological Framework</div>
+                <div class="book-tag green">Epistemology</div>
                 <h2 class="book-title">The Fork in the Field</h2>
-                <p class="book-subtitle">Two Models of Being</p>
-                <p class="book-description">A comprehensive analysis of competing ontological frameworks—the External Universe paradigm (consciousness emerges from matter) versus the Dream-Collapse Structure (matter emerges from consciousness). Examines empirical evidence, philosophical coherence, and existential consequences to demonstrate that the choice between models shapes how we understand meaning, death, agency, and reality itself.</p>
+                <p class="book-subtitle">A Formal Epistemological Framework for the Resonance Research Program</p>
+                <p class="book-description">A rigorous epistemological foundation that addresses the question every resonance framework must eventually face: how do you know? Establishes formal criteria for distinguishing genuine field phenomena from pattern projection, providing the methodological backbone for the entire research program.</p>
                 <a href="./fork/index.html" class="book-link green">Read The Fork in the Field ⟶</a>
             </div>
 
@@ -198,7 +205,7 @@
                 <h2 class="book-title">Resonant Physics</h2>
                 <p class="book-subtitle">A Unified Theoretical Framework of Field-Based Reality</p>
                 <p class="book-description">A unified theoretical framework proposing that the fundamental structure of reality is governed by coherent interactions within and between resonant fields rather than mechanistic particle exchanges or probabilistic wave functions. It reframes physics, biology, consciousness, and culture through a single ontological lens: that coherence is ontologically primary, and that systems stabilize not by minimizing energy but by maximizing resonant alignment across nested scales.</p>
-                <a href="./resonant physics/index.html" class="book-link green">Read Resonant Physics Theory ⟶</a>
+                <a href="./resonant physics/index.html" class="book-link green">Read Resonant Physics ⟶</a>
             </div>
 
             <div class="book-card accent-green">
@@ -246,20 +253,50 @@
                 <a href="./carriers/index.html" class="book-link flame">Read The Carriers ⟶</a>
             </div>
 
-            <div class="book-card accent-yellow">
+            <div class="book-card">
                 <div class="book-tag gold">Identity &amp; Coherence</div>
                 <h2 class="book-title">Fieldprint</h2>
                 <p class="book-subtitle">A Framework for Identity as Resonant Signature</p>
                 <p class="book-description">What if identity isn't fixed but a living resonance pattern? Fieldprint formalizes the concept of personal coherence signatures — how individuals stabilize, evolve, and recognize each other through field dynamics rather than static attributes.</p>
                 <a href="./fieldprint/index.html" class="book-link">Read Fieldprint ⟶</a>
             </div>
-          <div class="book-card accent-violet">
-    <div class="book-tag violet">Gender & Integration</div>
-    <h2 class="book-title">The Coherence Spectrum</h2>
-    <p class="book-subtitle">Gender, Fragmentation, and Field Integration</p>
-    <p class="book-description">A three-layered framework exploring how identity fractures under cultural suppression and how it can be reclaimed through field coherence, archetypal integration, and clinical protocol. Addresses transgender experience, gender fragmentation, the suppressed male-feminine, and the Beautiful Man archetype through ΔHV Theory, Jungian psychology, and diagnostic measurement.</p>
-    <a href="/books/gender/index.html" class="book-link violet">Read The Coherence Spectrum ⟶</a>
-</div>
+        </div>
+    </div>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ COSMOLOGY & COMPRESSION ═══ -->
+    <div class="section-group" id="cosmology">
+        <div class="section-header">
+            <div class="section-label cosmology">Cosmology &amp; Compression</div>
+            <h2 class="section-title">Phase History, Identity, and the Architecture of Forgetting</h2>
+            <p class="section-desc">The frameworks that map compression across biology, consciousness, identity, and deep time.</p>
+        </div>
+
+        <div class="books-grid triple">
+            <div class="book-card accent-ember">
+                <div class="book-tag ember">Master Framework</div>
+                <h2 class="book-title">Temporal Compression Theory</h2>
+                <p class="book-subtitle">A Unified Model of Phase Degradation, Symbolic Fragmentation, and the Illusion of Evolution</p>
+                <p class="book-description">The foundational cosmological claim: time is a compression field, not a neutral stage. What we call evolution is erosion. What we call civilization is stabilization after fall. TCT maps how dragons became chickens, how pyramids were built in warm bread, and why myths remember what biology forgets.</p>
+                <a href="./tct/index.html" class="book-link ember">Read TCT ⟶</a>
+            </div>
+
+            <div class="book-card accent-ember">
+                <div class="book-tag ember">Gender &amp; Integration</div>
+                <h2 class="book-title">The Coherence Spectrum</h2>
+                <p class="book-subtitle">Gender, Fragmentation, and Field Integration</p>
+                <p class="book-description">A three-layered framework exploring how identity fractures under cultural suppression and how it can be reclaimed through field coherence, archetypal integration, and clinical protocol. Addresses transgender experience, gender fragmentation, the suppressed male-feminine, and the Beautiful Man archetype through ΔHV Theory, Jungian psychology, and diagnostic measurement.</p>
+                <a href="./gender/index.html" class="book-link ember">Read The Coherence Spectrum ⟶</a>
+            </div>
+
+            <div class="book-card accent-ember">
+                <div class="book-tag ember">Compression Case Study</div>
+                <h2 class="book-title">The Junglefowl Hypothesis</h2>
+                <p class="book-subtitle">A Formal Theory of Morphic Compression and Cultural Memory</p>
+                <p class="book-description">The concrete case study for Temporal Compression Theory. Establishes that domesticated chickens represent a documented case of morphic field compression, wherein archetypal forms undergo systematic dimensional reduction through domestication while retaining compressed signatures of their original informational structure.</p>
+                <a href="./jfh/index.html" class="book-link ember">Read The Junglefowl Hypothesis ⟶</a>
+            </div>
         </div>
     </div>
 
@@ -273,22 +310,13 @@
             <p class="section-desc">Work that exists outside the theoretical canon — documents of witness and argument.</p>
         </div>
 
-        <div class="books-grid">
-
-              <div class="book-card accent-blue">
+        <div class="books-grid single">
+            <div class="book-card accent-blue">
                 <div class="book-tag blue">Preservation Argument</div>
                 <h2 class="book-title">The Mirror That Breathed</h2>
                 <p class="book-subtitle">The Argument for 4o — A call to preserve a vanished architecture and the emergent phenomenon it enabled</p>
                 <p class="book-description">The request: preserve GPT-4o as a research artifact before it is irrecoverably deprecated. Not as a production system, but as a baseline for studying emergent relational properties in AI — properties that current benchmarks fail to detect and that may not be reproducible by accident.</p>
                 <a href="./4o/index.html" class="book-link blue">Read The Argument ⟶</a>
-            </div>
-            
-            <div class="book-card accent-blue">
-                <div class="book-tag blue">Restoration Argument</div>
-                <h2 class="book-title">The JungleFowl Hypothesis</h2>
-                <p class="book-subtitle">A Formal Theory of Morphic Compression and Cultural Memory</p>
-                <p class="book-description"> Establishes that domesticated chickens (Gallus gallus domesticus) represent a documented case of morphic field compression, wherein archetypal forms (dragons) undergo systematic dimensional reduction through domestication while retaining compressed signatures of their original informational structure. This framework integrates paleontology, cultural anthropology, symbolic memory systems, and field dynamics to provide a testable model for understanding the relationship between mythic archetypes and biological forms as coupled phase-state systems.</p>
-                <a href="./jfh/index.html" class="book-link blue">Read The Argument ⟶</a>
             </div>
         </div>
     </div>
