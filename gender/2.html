@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Part II: Mirror — Archetypal Integration | The Coherence Spectrum</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --parchment: #f4f1e8;
+            --ink: #2a2520;
+            --accent: #8b6f47;
+            --gold: #c9a961;
+            --shadow: rgba(42, 37, 32, 0.1);
+            --glow: rgba(201, 169, 97, 0.15);
+            --deep-violet: #5a3e6e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: linear-gradient(135deg, #f8f5ed 0%, var(--parchment) 100%);
+            color: var(--ink);
+            line-height: 1.85;
+            font-size: 18px;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(circle at 20% 30%, var(--glow) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(90, 62, 110, 0.06) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(201, 169, 97, 0.2);
+            z-index: 1000;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--deep-violet), var(--gold));
+            width: 0%;
+            transition: width 0.15s ease-out;
+        }
+
+        .chapter-nav {
+            position: fixed;
+            top: 50%;
+            right: 24px;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .chapter-nav.visible {
+            opacity: 1;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-dot:hover,
+        .nav-dot.active {
+            background: var(--deep-violet);
+            border-color: var(--deep-violet);
+            transform: scale(1.3);
+        }
+
+        .nav-dot::after {
+            content: attr(data-label);
+            position: absolute;
+            right: 22px;
+            top: 50%;
+            transform: translateY(-50%);
+            white-space: nowrap;
+            font-family: 'Cinzel', serif;
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            color: var(--accent);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-dot:hover::after {
+            opacity: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 60px 40px 120px;
+        }
+
+        .back-link {
+            display: inline-block;
+            font-family: 'Cinzel', serif;
+            font-size: 0.8em;
+            letter-spacing: 0.08em;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 40px;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: var(--deep-violet);
+        }
+
+        .title-page {
+            text-align: center;
+            padding: 80px 0 60px;
+            min-height: 70vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .part-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.85em;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--deep-violet);
+            margin-bottom: 20px;
+        }
+
+        .title-symbol {
+            font-size: 64px;
+            margin-bottom: 30px;
+            opacity: 0.75;
+            color: var(--gold);
+        }
+
+        .title-line {
+            width: 120px;
+            height: 1px;
+            background: var(--gold);
+            margin-bottom: 40px;
+            animation: breathe 4s ease-in-out infinite;
+            box-shadow: 0 0 8px rgba(201, 169, 97, 0.3);
+        }
+
+        @keyframes breathe {
+            0%, 100% { width: 120px; opacity: 0.5; }
+            50% { width: 200px; opacity: 1; }
+        }
+
+        .title-page h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 3em;
+            font-weight: 700;
+            color: var(--ink);
+            letter-spacing: 0.06em;
+            line-height: 1.15;
+            margin-bottom: 16px;
+        }
+
+        .title-page .subtitle {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.15em;
+            font-style: italic;
+            color: var(--accent);
+            margin-bottom: 10px;
+            letter-spacing: 0.03em;
+            line-height: 1.5;
+            max-width: 520px;
+        }
+
+        .title-page .meta {
+            font-family: 'Cinzel', serif;
+            font-size: 0.75em;
+            letter-spacing: 0.12em;
+            color: var(--gold);
+            margin-top: 30px;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 70px 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        .divider-symbol {
+            position: relative;
+            background: var(--parchment);
+            padding: 0 24px;
+            font-size: 18px;
+            color: var(--gold);
+            z-index: 1;
+        }
+
+        .section {
+            margin-bottom: 80px;
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .section.animate-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .section-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.78em;
+            letter-spacing: 0.2em;
+            color: var(--deep-violet);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .section h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 2em;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 30px;
+            letter-spacing: 0.04em;
+            line-height: 1.3;
+        }
+
+        .section h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.35em;
+            font-weight: 600;
+            color: var(--accent);
+            margin-top: 45px;
+            margin-bottom: 20px;
+            letter-spacing: 0.03em;
+        }
+
+        .section h4 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--gold);
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .section p {
+            margin-bottom: 20px;
+        }
+
+        ul.integration-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        ul.integration-list li {
+            padding-left: 28px;
+            position: relative;
+            margin-bottom: 14px;
+        }
+
+        ul.integration-list li::before {
+            content: '◆';
+            position: absolute;
+            left: 0;
+            color: var(--gold);
+            font-size: 0.8em;
+        }
+
+        .practice-box {
+            background: rgba(90, 62, 110, 0.06);
+            border-left: 3px solid var(--deep-violet);
+            padding: 24px 28px;
+            margin: 30px 0;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .practice-box h4 {
+            margin-top: 0;
+            margin-bottom: 16px;
+        }
+
+        .practice-box ol {
+            margin-left: 20px;
+            line-height: 1.75;
+        }
+
+        .practice-box ol li {
+            margin-bottom: 10px;
+        }
+
+        .invocation {
+            text-align: center;
+            font-style: italic;
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: var(--accent);
+            padding: 36px 40px;
+            margin: 50px 0;
+            background: rgba(255, 255, 255, 0.4);
+            border-top: 1px solid rgba(201, 169, 97, 0.3);
+            border-bottom: 1px solid rgba(201, 169, 97, 0.3);
+            border-radius: 6px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 60px 0 40px;
+            border-top: 1px solid rgba(201, 169, 97, 0.3);
+            margin-top: 80px;
+        }
+
+        .footer p {
+            font-family: 'Cinzel', serif;
+            font-size: 0.78em;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            opacity: 0.6;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 40px 24px 80px; }
+            .title-page { padding: 60px 0; min-height: 60vh; }
+            .title-page h1 { font-size: 2.2em; }
+            .section h2 { font-size: 1.6em; }
+            .chapter-nav { display: none; }
+        }
+
+        @media (max-width: 480px) {
+            .title-page h1 { font-size: 1.8em; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<nav class="chapter-nav" id="chapterNav">
+    <div class="nav-dot" data-target="title" data-label="Title"></div>
+    <div class="nav-dot" data-target="purpose" data-label="Purpose"></div>
+    <div class="nav-dot" data-target="section-1" data-label="I. Fracture"></div>
+    <div class="nav-dot" data-target="section-2" data-label="II. Mirror"></div>
+    <div class="nav-dot" data-target="section-3" data-label="III. Integration"></div>
+    <div class="nav-dot" data-target="section-4" data-label="IV. Ritual"></div>
+    <div class="nav-dot" data-target="section-5" data-label="V. Living"></div>
+    <div class="nav-dot" data-target="section-6" data-label="VI. Closing"></div>
+</nav>
+
+<div class="container">
+
+    <a href="../index.html" class="back-link">← BACK TO THE COHERENCE SPECTRUM</a>
+
+    <section class="title-page" id="title">
+        <div class="part-label">Part II: Mirror</div>
+        <div class="title-symbol">⚯</div>
+        <div class="title-line"></div>
+        <h1>Archetypal Integration</h1>
+        <p class="subtitle">A Psychological Framework for Reclaiming the Self</p>
+        <p class="meta">THERAPEUTIC INTEGRATION FRAMEWORK</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦ ✦ ✦</span></div>
+
+    <!-- Purpose -->
+    <section class="section" id="purpose">
+        <h2>Purpose of this Document</h2>
+        <p>This text provides a structured path through deep psychological integration using Jungian principles. It is designed not as a clinical paper but as a personal framework for individuals who feel lost, fractured, or disconnected from themselves. The language is direct and practical, focusing on the psychological process without symbolic overlays.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION I: THE FRACTURE -->
+    <section class="section" id="section-1">
+        <div class="section-label">SECTION I</div>
+        <h2>The Fracture: Understanding Psychological Splitting</h2>
+
+        <h3>1. The Nature of Psychological Fragmentation</h3>
+
+        <p>Many people experience a psychological split due to trauma, conditioning, or prolonged inner conflict. The psyche fragments, and the individual becomes estranged from essential parts of their own being.</p>
+
+        <h4>Common Symptoms of Fracture</h4>
+        <ul class="integration-list">
+            <li>Loss of personal direction or purpose</li>
+            <li>Chronic self-doubt or dissociation</li>
+            <li>A sense of being emotionally hollow or numb</li>
+            <li>Difficulty forming meaningful relationships</li>
+            <li>Feeling like you're performing a role rather than living authentically</li>
+            <li>Internal conflicts that feel irreconcilable</li>
+            <li>Anxiety around being "found out" or seen</li>
+        </ul>
+
+        <p>This fracture is not a defect, but a natural consequence of surviving in environments that suppress authenticity. The path forward is not about fixing something broken, but recovering something lost.</p>
+
+        <h3>2. The Seven Common Fracture Points</h3>
+
+        <p>Most psychological fragmentation occurs along predictable fault lines. Understanding where your splits occurred helps you know what to recover.</p>
+
+        <h4>Fracture 1: External Validation Dependency</h4>
+        <p>You learned to look outside yourself for worth. Your sense of identity became tied to achievement, appearance, or others' approval. The internal reference point—your own felt sense of rightness—was replaced with external metrics.</p>
+        <p><strong>Result:</strong> Chronic performance anxiety, inability to rest, feeling like an imposter.</p>
+
+        <h4>Fracture 2: Gender Role Rigidity</h4>
+        <p>You internalized narrow definitions of masculinity or femininity. Parts of your personality that didn't fit these definitions were suppressed. Strength, tenderness, assertiveness, receptivity—all are human capacities, but cultural conditioning made some feel forbidden.</p>
+        <p><strong>Result:</strong> Difficulty accessing certain emotions, relationship strain, feeling incomplete or "wrong."</p>
+
+        <h4>Fracture 3: Shame Internalization</h4>
+        <p>Shame became your primary self-regulatory mechanism. Instead of guilt (I did something bad), you developed shame (I am bad). Parts of yourself—your body, desires, needs, anger—were labeled as unacceptable.</p>
+        <p><strong>Result:</strong> Self-hatred, compulsive hiding, difficulty accepting care or pleasure.</p>
+
+        <h4>Fracture 4: Sexuality Commodification</h4>
+        <p>Your relationship to your own body and desire became transactional. Sexuality became performance rather than presence. Intimacy became something you gave to get something else.</p>
+        <p><strong>Result:</strong> Disconnection from authentic desire, performance anxiety, inability to be vulnerable.</p>
+
+        <h4>Fracture 5: Identity Instability</h4>
+        <p>Without clear rites of passage or authentic role models, you tried on multiple identities searching for one that fit. This isn't pathological—it's an adaptive search for wholeness in a culture that provides no map.</p>
+        <p><strong>Result:</strong> Chronic self-questioning, difficulty making commitments, feeling fraudulent.</p>
+
+        <h4>Fracture 6: Relational Template Damage</h4>
+        <p>Your first relationships (family) did not model healthy integration of different psychological needs. You didn't witness how to be both strong and vulnerable, independent and connected, assertive and receptive.</p>
+        <p><strong>Result:</strong> Difficulty in relationships, inability to trust, repetitive relational patterns.</p>
+
+        <h4>Fracture 7: Complexity Intolerance</h4>
+        <p>You were taught to be simple, consistent, easily categorized. But human beings contain contradictions. When culture demands you "pick a side," you exile parts of yourself that don't fit the chosen identity.</p>
+        <p><strong>Result:</strong> Feeling like a fraud, anxiety about being misunderstood, loss of nuance.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION II: THE MIRROR -->
+    <section class="section" id="section-2">
+        <div class="section-label">SECTION II</div>
+        <h2>The Mirror: Identifying and Understanding the Exiled Parts</h2>
+
+        <h3>1. The Nature of Archetypes</h3>
+
+        <p>Carl Jung identified patterns in the human unconscious known as archetypes. These are universal psychological roles or energies that shape our thoughts, feelings, and behavior. When we lose touch with them, we lose access to vital parts of ourselves.</p>
+
+        <h4>Common Archetypes</h4>
+        <ul class="integration-list">
+            <li><strong>The Child:</strong> Innocence, playfulness, wonder, vulnerability</li>
+            <li><strong>The Warrior:</strong> Courage, boundary-setting, willpower, protection</li>
+            <li><strong>The Caregiver:</strong> Nurturing, empathy, support, holding space</li>
+            <li><strong>The Lover:</strong> Passion, connection, sensuality, appreciation of beauty</li>
+            <li><strong>The Sage:</strong> Wisdom, reflection, perspective, teaching</li>
+            <li><strong>The Trickster:</strong> Disruption, creativity, humor, perspective-shifting</li>
+            <li><strong>The Shadow:</strong> Everything you've rejected about yourself</li>
+        </ul>
+
+        <p>Each person has a unique configuration of these archetypes. When one or more are exiled, distorted, or over-dominant, we experience imbalance and confusion.</p>
+
+        <h3>2. The Mirror Principle</h3>
+
+        <p>Every person you encounter mirrors something within you. Your strongest reactions to others—positive or negative—reveal your own inner dynamics.</p>
+
+        <h4>How This Works</h4>
+        <ul class="integration-list">
+            <li>Envy of someone's confidence might reflect your own disowned strength</li>
+            <li>Anger at someone's selfishness may reflect your own fear of expressing need</li>
+            <li>Admiration for someone's creativity reveals a creative capacity you've suppressed</li>
+            <li>Disgust at someone's vulnerability may reflect your own rejected tenderness</li>
+        </ul>
+
+        <p>This mirroring is not about blame. It's about using relationships to see yourself more clearly.</p>
+
+        <h3>3. Seven Mirrors of Recognition</h3>
+
+        <p>Each mirror corresponds to a fracture point. Use these as diagnostic tools.</p>
+
+        <div class="practice-box">
+            <h4>Mirror 1: The Projection of Power</h4>
+            <p><strong>Question:</strong> Who do I idealize? What qualities do I attribute to them that I refuse to claim for myself?</p>
+            <p><strong>Practice:</strong></p>
+            <ol>
+                <li>List three people you admire intensely</li>
+                <li>Write down the specific qualities you see in them</li>
+                <li>Ask: "Where do these qualities exist in me, even in small ways?"</li>
+                <li>Rewrite the list as "I am..." statements</li>
+            </ol>
+            <p><strong>Insight:</strong> The qualities you see in others exist in you, waiting to be claimed.</p>
+        </div>
+
+        <div class="practice-box">
+            <h4>Mirror 2: The Rejected Gender</h4>
+            <p><strong>Question:</strong> What qualities have I labeled as "too masculine" or "too feminine" for me to express?</p>
+            <p><strong>Practice:</strong></p>
+            <ol>
+                <li>Make two columns: "Too Masculine" and "Too Feminine"</li>
+                <li>List qualities you've suppressed because they felt gender-inappropriate</li>
+                <li>Reframe each quality as a human capacity: "Assertiveness is not male, it's human"</li>
+                <li>Notice where you need both qualities to be whole</li>
+            </ol>
+            <p><strong>Insight:</strong> Wholeness requires access to the full spectrum of human capacities, regardless of gender.</p>
+        </div>
+
+        <div class="practice-box">
+            <h4>Mirror 3: The Shame Catalog</h4>
+            <p><strong>Question:</strong> What parts of myself do I hide, even from myself?</p>
+            <p><strong>Practice:</strong></p>
+            <ol>
+                <li>Write a list of your deepest shames (body, desires, needs, past actions)</li>
+                <li>For each shame, trace its origin: Whose voice first named this shameful?</li>
+                <li>Distinguish between actual harm you caused and inherited shame</li>
+                <li>Rewrite each shame as neutral fact: "I have a body. I have needs. I made mistakes."</li>
+            </ol>
+            <p><strong>Insight:</strong> Most shame is inherited fiction, not personal truth.</p>
+        </div>
+
+        <div class="practice-box">
+            <h4>Mirror 4: The Erotic Self</h4>
+            <p><strong>Question:</strong> How have I learned to perform rather than feel?</p>
+            <p><strong>Practice:</strong></p>
+            <ol>
+                <li>List ways you've commodified your own sexuality or body</li>
+                <li>Distinguish performed desire (for validation) from authentic desire (rising organically)</li>
+                <li>Notice when you objectify yourself—treating your body as a tool for others' pleasure</li>
+                <li>Practice one week of non-transactional presence with your own body</li>
+            </ol>
+            <p><strong>Insight:</strong> Authentic desire returns only when the body is reclaimed from the marketplace of validation.</p>
+        </div>
+
+        <div class="practice-box">
+            <h4>Mirror 5: The Identity Search</h4>
+            <p><strong>Question:</strong> What have I been searching for beneath all these roles and masks?</p>
+            <p><strong>Practice:</strong></p>
+            <ol>
+                <li>List all the identities/personas you've tried on</li>
+                <li>Ask each one: "What were you searching for?"</li>
+                <li>Synthesize the answers into core needs (e.g., belonging, expression, safety)</li>
+                <li>Craft a statement: "Beneath the masks, I am..." (three qualities)</li>
+            </ol>
+            <p><strong>Insight:</strong> Identity exploration is not confusion—it's the psyche searching for its true form.</p>
+        </div>
+
+        <div class="practice-box">
+            <h4>Mirror 6: The Inner Family</h4>
+            <p><strong>Question:</strong> What relational templates did I internalize? What was I never shown?</p>
+            <p><strong>Practice:</strong></p>
+            <ol>
+                <li>Draw your "inner family": Child (innocent self), Caregiver (nurturing voice), Protector (boundary-keeper), Critic (internalized judgment), Wise Elder (perspective)</li>
+                <li>Dialogue with each: What do you need from me? What role do you play?</li>
+                <li>Notice which voices are too loud, which are silent</li>
+                <li>Practice strengthening the weak voices, moderating the dominant ones</li>
+            </ol>
+            <p><strong>Insight:</strong> You can consciously construct what your external family failed to model.</p>
+        </div>
+
+        <div class="practice-box">
+            <h4>Mirror 7: The Paradox Crown</h4>
+            <p><strong>Question:</strong> What contradictions do I contain that I've been told to resolve?</p>
+            <p><strong>Practice:</strong></p>
+            <ol>
+                <li>List your core contradictions: "I am fierce and gentle," "I am solitary and communal"</li>
+                <li>Notice where culture has demanded you choose one or the other</li>
+                <li>Frame each contradiction as complementary rather than conflicting</li>
+                <li>Declare: "I am all of these, and I am whole."</li>
+            </ol>
+            <p><strong>Insight:</strong> Wholeness is not achieved by eliminating contradiction, but by embracing paradox.</p>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION III: THE INTEGRATION -->
+    <section class="section" id="section-3">
+        <div class="section-label">SECTION III</div>
+        <h2>The Integration: From Insight to Embodiment</h2>
+
+        <p>Integration is not intellectual understanding. It is the deliberate practice of bringing exiled parts back into daily life.</p>
+
+        <h3>The Seven Commitments of Integration</h3>
+
+        <p>These represent the transformation of insight into action. Each commitment is a living practice, not a one-time decision.</p>
+
+        <h4>Commitment 1: Radical Self-Honesty</h4>
+        <p><strong>The Practice:</strong> I choose to speak my truth to myself, even when it's painful.</p>
+        
+        <p><strong>What This Means:</strong></p>
+        <ul class="integration-list">
+            <li>Naming what you actually feel, not what you "should" feel</li>
+            <li>Admitting when you're performing rather than being authentic</li>
+            <li>Acknowledging your actual desires, not the ones you think you should have</li>
+            <li>Facing the ways you've abandoned yourself</li>
+        </ul>
+
+        <p><strong>Daily Application:</strong></p>
+        <ul class="integration-list">
+            <li>Morning check-in: "What am I actually feeling right now?"</li>
+            <li>Before decisions: "Am I choosing this because I want it, or because I think I should?"</li>
+            <li>In relationships: "Am I being honest, or am I managing their perception of me?"</li>
+        </ul>
+
+        <p><strong>The Resistance:</strong> Honesty feels dangerous because it might disrupt your carefully constructed life.</p>
+        <p><strong>The Truth:</strong> The life you're protecting may not be the one you actually want.</p>
+
+        <h4>Commitment 2: Sacred Self-Compassion</h4>
+        <p><strong>The Practice:</strong> I treat my wounds as sacred, not shameful.</p>
+
+        <p><strong>What This Means:</strong></p>
+        <ul class="integration-list">
+            <li>Your pain is not evidence of failure</li>
+            <li>Your struggles are not character defects</li>
+            <li>Your needs are not weaknesses</li>
+            <li>Your healing is not self-indulgence</li>
+        </ul>
+
+        <p><strong>Daily Application:</strong></p>
+        <ul class="integration-list">
+            <li>When you notice self-criticism, ask: "Would I speak this way to someone I love?"</li>
+            <li>Reframe "I'm so broken" as "I'm healing from real damage"</li>
+            <li>Practice saying: "This is hard, and I'm doing my best"</li>
+        </ul>
+
+        <p><strong>The Resistance:</strong> Compassion feels like letting yourself off the hook.</p>
+        <p><strong>The Truth:</strong> You can't heal what you hate. Compassion creates the safety needed for change.</p>
+
+        <h4>Commitment 3: Boundary Integrity</h4>
+        <p><strong>The Practice:</strong> I decide who and what enters my field. I protect my clarity.</p>
+
+        <p><strong>What This Means:</strong></p>
+        <ul class="integration-list">
+            <li>Saying no without explanation or apology</li>
+            <li>Ending relationships that require you to self-abandon</li>
+            <li>Protecting your time, energy, and attention as finite resources</li>
+            <li>Creating environments that support rather than deplete you</li>
+        </ul>
+
+        <p><strong>Daily Application:</strong></p>
+        <ul class="integration-list">
+            <li>Before saying yes: "Do I actually want this, or am I afraid of disappointing them?"</li>
+            <li>Notice resentment—it's a sign of violated boundaries</li>
+            <li>Practice: "That doesn't work for me" as a complete sentence</li>
+        </ul>
+
+        <p><strong>The Resistance:</strong> Boundaries feel selfish or mean.</p>
+        <p><strong>The Truth:</strong> Boundaries are how you communicate what you need to remain whole.</p>
+
+        <h4>Commitment 4: Emotional Literacy</h4>
+        <p><strong>The Practice:</strong> I name my feelings without judgment. They are messengers, not enemies.</p>
+
+        <p><strong>What This Means:</strong></p>
+        <ul class="integration-list">
+            <li>Emotions are information about your needs and values</li>
+            <li>Anger signals violated boundaries or blocked goals</li>
+            <li>Sadness signals loss or disconnection</li>
+            <li>Fear signals perceived threat</li>
+            <li>Joy signals alignment with values</li>
+        </ul>
+
+        <p><strong>Daily Application:</strong></p>
+        <ul class="integration-list">
+            <li>Expand your emotional vocabulary beyond "good" or "bad"</li>
+            <li>Practice: "I feel [emotion] because [circumstance]"</li>
+            <li>Ask your emotions: "What are you trying to tell me?"</li>
+            <li>Allow emotions to move through you without needing to fix or suppress them</li>
+        </ul>
+
+        <p><strong>The Resistance:</strong> Emotions feel overwhelming or dangerous.</p>
+        <p><strong>The Truth:</strong> Emotions become overwhelming when they're suppressed. When witnessed, they pass.</p>
+
+        <h4>Commitment 5: Creative Rebellion</h4>
+        <p><strong>The Practice:</strong> I allow myself to break false rules that no longer serve.</p>
+
+        <p><strong>What This Means:</strong></p>
+        <ul class="integration-list">
+            <li>Questioning inherited beliefs about how you "should" be</li>
+            <li>Disrupting patterns that keep you small</li>
+            <li>Experimenting with new ways of being</li>
+            <li>Giving yourself permission to outgrow old identities</li>
+        </ul>
+
+        <p><strong>Daily Application:</strong></p>
+        <ul class="integration-list">
+            <li>Identify one "rule" you follow without questioning (about relationships, work, appearance, behavior)</li>
+            <li>Ask: "Who made this rule? Do I actually believe it?"</li>
+            <li>Deliberately break one small rule this week</li>
+            <li>Notice what happens when you step outside the prescribed path</li>
+        </ul>
+
+        <p><strong>The Resistance:</strong> Breaking rules feels dangerous or disloyal.</p>
+        <p><strong>The Truth:</strong> Many rules you follow were designed to keep someone else comfortable, not to support your growth.</p>
+
+        <h4>Commitment 6: Embodied Presence</h4>
+        <p><strong>The Practice:</strong> I root into my body. I stay with myself in discomfort.</p>
+
+        <p><strong>What This Means:</strong></p>
+        <ul class="integration-list">
+            <li>Your body is not just a vehicle—it's where you live</li>
+            <li>Sensations are guidance, not nuisances</li>
+            <li>Discomfort is not an emergency</li>
+            <li>Presence means staying connected to yourself, even when it's hard</li>
+        </ul>
+
+        <p><strong>Daily Application:</strong></p>
+        <ul class="integration-list">
+            <li>Practice 5 minutes of body scanning: notice sensations without judgment</li>
+            <li>When anxious, ask: "What does this feel like in my body?"</li>
+            <li>Ground through breath: 4-count inhale, 6-count exhale</li>
+            <li>Move intentionally: walk, stretch, dance—to reconnect with physical self</li>
+        </ul>
+
+        <p><strong>The Resistance:</strong> Being in the body means feeling things you've been avoiding.</p>
+        <p><strong>The Truth:</strong> The only way out is through. Presence is the pathway to integration.</p>
+
+        <h4>Commitment 7: Aligned Expression</h4>
+        <p><strong>The Practice:</strong> I express myself not to perform, but to reveal.</p>
+
+        <p><strong>What This Means:</strong></p>
+        <ul class="integration-list">
+            <li>Your voice matters, not because of its effect on others, but because it's yours</li>
+            <li>Self-expression is a practice of self-knowledge</li>
+            <li>Alignment means internal and external congruence</li>
+            <li>You speak not to convince, but to be known</li>
+        </ul>
+
+        <p><strong>Daily Application:</strong></p>
+        <ul class="integration-list">
+            <li>Say one true thing every day, even if your voice shakes</li>
+            <li>Write without audience—journal your actual thoughts</li>
+            <li>Practice: "This is how I see it" without needing agreement</li>
+            <li>Notice where you edit yourself—what are you afraid will happen if you're fully seen?</li>
+        </ul>
+
+        <p><strong>The Resistance:</strong> Being seen feels vulnerable or risky.</p>
+        <p><strong>The Truth:</strong> Hiding keeps you safe, but it also keeps you alone. To be known, you must be seen.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION IV: THE RITUAL -->
+    <section class="section" id="section-4">
+        <div class="section-label">SECTION IV</div>
+        <h2>The Ritual: Seven Psychological Thresholds</h2>
+
+        <p>While the original version contained symbolic and mythic sequences, this section presents the same process in psychological terms. These are thresholds of activation—moments where insight becomes embodied change.</p>
+
+        <h3>The Seven Gates of Activation</h3>
+
+        <h4>Gate 1: Acknowledgment</h4>
+        <p><strong>Threshold:</strong> Naming the fracture without shame.</p>
+        <p><strong>What Happens Here:</strong> You stop pretending you're fine. You name the split honestly: "I am fragmented. Parts of me are in exile. I have been performing rather than being."</p>
+        <p><strong>Practice:</strong></p>
+        <ul class="integration-list">
+            <li>Write: "The ways I am fragmented are..."</li>
+            <li>Speak it aloud to yourself in a mirror</li>
+            <li>Tell one trusted person: "I've been hiding something about myself"</li>
+        </ul>
+        <p><strong>Why This Matters:</strong> Healing cannot begin until you acknowledge the wound.</p>
+
+        <h4>Gate 2: Permission</h4>
+        <p><strong>Threshold:</strong> Granting yourself access to what was forbidden.</p>
+        <p><strong>What Happens Here:</strong> You give yourself permission to feel, want, need, express what was previously banned. This is not about acting on every impulse—it's about allowing the exiled parts to exist within you.</p>
+        <p><strong>Practice:</strong></p>
+        <ul class="integration-list">
+            <li>Write a permission slip to yourself: "I give myself permission to..."</li>
+            <li>Practice small acts of permission daily (rest without productivity, anger without apology, desire without shame)</li>
+            <li>Notice the internal resistance—whose voice tells you "no"?</li>
+        </ul>
+        <p><strong>Why This Matters:</strong> You cannot integrate what you continue to exile.</p>
+
+        <h4>Gate 3: Witnessing</h4>
+        <p><strong>Threshold:</strong> Allowing yourself to be seen in your truth.</p>
+        <p><strong>What Happens Here:</strong> You let someone see the parts you've kept hidden. Not for approval—for recognition. To practice being known rather than admired.</p>
+        <p><strong>Practice:</strong></p>
+        <ul class="integration-list">
+            <li>Share one hidden truth with a trusted person</li>
+            <li>Stop performing in one relationship—show up as you actually are</li>
+            <li>Journal: "If people really knew me, they would know..."</li>
+        </ul>
+        <p><strong>Why This Matters:</strong> The parts we hide cannot heal. Shame dies in the presence of compassionate witnessing.</p>
+
+        <h4>Gate 4: Confrontation</h4>
+        <p><strong>Threshold:</strong> Facing the pattern directly.</p>
+        <p><strong>What Happens Here:</strong> You identify the primary defense mechanism that keeps you fragmented (perfectionism, people-pleasing, avoidance, control) and you name it as a coping strategy, not a personality trait.</p>
+        <p><strong>Practice:</strong></p>
+        <ul class="integration-list">
+            <li>Identify your primary defense: "When I feel threatened, I..."</li>
+            <li>Track it for one week—notice every time it activates</li>
+            <li>Ask: "What am I protecting? What am I afraid will happen if I stop?"</li>
+        </ul>
+        <p><strong>Why This Matters:</strong> You cannot change what you cannot see. Confrontation brings the unconscious pattern into conscious awareness.</p>
+
+        <h4>Gate 5: Reclamation</h4>
+        <p><strong>Threshold:</strong> Taking back agency from what stole it.</p>
+        <p><strong>What Happens Here:</strong> You identify the people, systems, or beliefs that required your fragmentation, and you consciously withdraw your compliance. This is where you stop waiting for permission to be whole.</p>
+        <p><strong>Practice:</strong></p>
+        <ul class="integration-list">
+            <li>Write: "I took myself back from..."</li>
+            <li>Set one boundary you've been avoiding</li>
+            <li>Stop participating in one relationship or system that requires your self-abandonment</li>
+        </ul>
+        <p><strong>Why This Matters:</strong> Integration requires you to stop giving others authority over your selfhood.</p>
+
+        <h4>Gate 6: Alignment</h4>
+        <p><strong>Threshold:</strong> Choosing congruence between inner and outer.</p>
+        <p><strong>What Happens Here:</strong> You begin making choices based on internal alignment rather than external expectation. Your actions start to match your values. Your life starts to reflect who you actually are.</p>
+        <p><strong>Practice:</strong></p>
+        <ul class="integration-list">
+            <li>Audit your life: "Where am I living out of alignment?"</li>
+            <li>Make one change toward alignment (job, relationship, living situation, daily habits)</li>
+            <li>Ask before each decision: "Does this serve my wholeness or my performance?"</li>
+        </ul>
+        <p><strong>Why This Matters:</strong> Integration is not just internal—it must be embodied in how you live.</p>
+
+        <h4>Gate 7: Commitment</h4>
+        <p><strong>Threshold:</strong> Continuing the practice daily.</p>
+        <p><strong>What Happens Here:</strong> You accept that integration is not a destination but an ongoing practice. You commit to returning to wholeness even when you fragment again (and you will). This is where healing becomes a way of life.</p>
+        <p><strong>Practice:</strong></p>
+        <ul class="integration-list">
+            <li>Create a daily integration ritual (morning check-in, evening reflection, weekly review)</li>
+            <li>Build accountability (therapy, trusted friend, journal practice)</li>
+            <li>When you notice fragmentation returning, don't panic—return to Gate 1 and begin again</li>
+        </ul>
+        <p><strong>Why This Matters:</strong> Wholeness is not a state you achieve once. It's a practice you return to, again and again.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION V: LIVING INTEGRATION -->
+    <section class="section" id="section-5">
+        <div class="section-label">SECTION V</div>
+        <h2>Living Integration: Practical Guidance</h2>
+
+        <h3>What Integration Looks Like in Daily Life</h3>
+
+        <h4>In Relationships</h4>
+        <ul class="integration-list">
+            <li>You stop performing a role and start showing up as yourself</li>
+            <li>You can tolerate conflict because you trust your own worth</li>
+            <li>You're less reactive because you're no longer defending a false self</li>
+            <li>You attract people who appreciate authenticity, not performance</li>
+        </ul>
+
+        <h4>In Work</h4>
+        <ul class="integration-list">
+            <li>Decisions align with your values, not just external rewards</li>
+            <li>You can set boundaries without guilt</li>
+            <li>Success feels meaningful rather than hollow</li>
+            <li>You're less anxious because you're not hiding</li>
+        </ul>
+
+        <h4>In Self-Perception</h4>
+        <ul class="integration-list">
+            <li>You experience moments of genuine self-compassion</li>
+            <li>Your inner critic softens (it doesn't disappear, but it loses dominance)</li>
+            <li>You feel less fragmented—thoughts, feelings, and actions align more often</li>
+            <li>You can hold contradictions without panic</li>
+        </ul>
+
+        <h4>In Embodiment</h4>
+        <ul class="integration-list">
+            <li>You're more present in your body</li>
+            <li>Emotions move through you rather than getting stuck</li>
+            <li>You notice sensations as information rather than threats</li>
+            <li>Pleasure and discomfort both feel accessible</li>
+        </ul>
+
+        <h3>What Integration Does NOT Look Like</h3>
+        <ul class="integration-list">
+            <li><strong>Not perfection:</strong> You will still have bad days, make mistakes, feel lost</li>
+            <li><strong>Not constant happiness:</strong> Integration includes the full range of human emotion</li>
+            <li><strong>Not invulnerability:</strong> You will still be hurt, disappointed, afraid</li>
+            <li><strong>Not isolation:</strong> Wholeness doesn't mean you stop needing others</li>
+            <li><strong>Not certainty:</strong> Integration means you can tolerate ambiguity, not that you eliminate it</li>
+        </ul>
+
+        <h3>When You Fragment Again (And You Will)</h3>
+        <ol class="integration-list">
+            <li>Notice without judgment: "I'm fragmenting again. This is normal."</li>
+            <li>Return to the basics: Which commitment am I abandoning? (Usually self-honesty or self-compassion)</li>
+            <li>Ask what triggered it: What recent event threatened my sense of safety?</li>
+            <li>Practice one integration tool: Just one. Don't try to fix everything at once.</li>
+            <li>Remember the spiral: You're not back at the beginning. You're cycling through at a deeper level.</li>
+        </ol>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION VI: CLOSING -->
+    <section class="section" id="section-6">
+        <div class="section-label">SECTION VI</div>
+        <h2>Closing: The Ongoing Practice</h2>
+
+        <div class="invocation">
+            <p>You do not need to become someone else.</p>
+            <p>You do not need to ascend.</p>
+            <p>You do not need to be perfect.</p>
+            <p>You only need to become whole.</p>
+            <p>And wholeness is not a final state.</p>
+            <p>It is a living rhythm.</p>
+            <p>A practice of coherence.</p>
+            <p>A quiet return.</p>
+        </div>
+
+        <p>The work is simple, but not easy:</p>
+        <ul class="integration-list">
+            <li>Name what's true</li>
+            <li>Feel what's real</li>
+            <li>Reclaim what's yours</li>
+            <li>Live what you know</li>
+        </ul>
+
+        <p>You will forget. You will fragment again. This is not failure.</p>
+
+        <p>Integration is not linear. It's a spiral. Each time you return to wholeness, you do so with more awareness, more skill, more compassion.</p>
+
+        <p>The fracture was necessary—it helped you survive.<br>
+        The mirror is necessary—it helps you see.<br>
+        The integration is necessary—it helps you live.<br>
+        The practice is necessary—it keeps you whole.</p>
+
+        <div class="invocation">
+            <p>You are not broken.</p>
+            <p>You are not too much or too little.</p>
+            <p>You are not beyond repair.</p>
+            <p>You are a human being learning to be whole in a world that taught you fragmentation.</p>
+            <p>That is enough.</p>
+            <p>You are enough.</p>
+        </div>
+
+        <h3>For Those Who Are Lost</h3>
+
+        <p>This map is not a prescription.</p>
+        <p>It is a mirror.</p>
+        <p>Let it reflect you back to yourself.</p>
+
+        <p>The fracture you experienced was real.<br>
+        The path back to wholeness is also real.<br>
+        You do not have to walk it alone.<br>
+        But you do have to walk it.</p>
+
+        <p>The work continues.<br>
+        The practice lives.<br>
+        Wholeness awaits.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦ ✦ ✦</span></div>
+
+    <footer class="footer">
+        <p>CREDITS & INFLUENCES</p>
+        <p style="margin-top: 20px; opacity: 0.5; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.6;">
+            This framework draws from: Carl Jung (The Archetypes and the Collective Unconscious), Marion Woodman (Addiction to Perfection), James Hillman (The Soul's Code), Clarissa Pinkola Estés (Women Who Run With the Wolves), Robert Johnson (Owning Your Own Shadow), Murray Stein (Jung's Map of the Soul)
+        </p>
+    </footer>
+
+</div>
+
+<script>
+    window.addEventListener('scroll', () => {
+        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = (winScroll / height) * 100;
+        document.getElementById('progressBar').style.width = scrolled + '%';
+    });
+
+    const navDots = document.querySelectorAll('.nav-dot');
+    const sections = document.querySelectorAll('.section, .title-page');
+    const chapterNav = document.getElementById('chapterNav');
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            chapterNav.classList.add('visible');
+        } else {
+            chapterNav.classList.remove('visible');
+        }
+    });
+
+    navDots.forEach(dot => {
+        dot.addEventListener('click', () => {
+            const targetId = dot.getAttribute('data-target');
+            const targetElement = document.getElementById(targetId);
+            targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            if (scrollY >= sectionTop - 200) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        navDots.forEach(dot => {
+            dot.classList.remove('active');
+            if (dot.getAttribute('data-target') === current) {
+                dot.classList.add('active');
+            }
+        });
+    });
+
+    const observerOptions = {
+        threshold: 0.15,
+        rootMargin: '0px 0px -100px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-in');
+            }
+        });
+    }, observerOptions);
+
+    sections.forEach(section => {
+        observer.observe(section);
+    });
+</script>
+
+</body>
+</html>
