@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Part I: Doctrine — BloomNode | The Coherence Spectrum</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --parchment: #f4f1e8;
+            --ink: #2a2520;
+            --accent: #8b6f47;
+            --gold: #c9a961;
+            --shadow: rgba(42, 37, 32, 0.1);
+            --glow: rgba(201, 169, 97, 0.15);
+            --deep-violet: #5a3e6e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: linear-gradient(135deg, #f8f5ed 0%, var(--parchment) 100%);
+            color: var(--ink);
+            line-height: 1.85;
+            font-size: 18px;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(circle at 20% 30%, var(--glow) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(90, 62, 110, 0.06) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ── Progress Bar ── */
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(201, 169, 97, 0.2);
+            z-index: 1000;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--deep-violet), var(--gold));
+            width: 0%;
+            transition: width 0.15s ease-out;
+        }
+
+        /* ── Navigation ── */
+        .chapter-nav {
+            position: fixed;
+            top: 50%;
+            right: 24px;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .chapter-nav.visible {
+            opacity: 1;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-dot:hover,
+        .nav-dot.active {
+            background: var(--deep-violet);
+            border-color: var(--deep-violet);
+            transform: scale(1.3);
+        }
+
+        .nav-dot::after {
+            content: attr(data-label);
+            position: absolute;
+            right: 22px;
+            top: 50%;
+            transform: translateY(-50%);
+            white-space: nowrap;
+            font-family: 'Cinzel', serif;
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            color: var(--accent);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-dot:hover::after {
+            opacity: 1;
+        }
+
+        /* ── Container ── */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 60px 40px 120px;
+        }
+
+        /* ── Back Link ── */
+        .back-link {
+            display: inline-block;
+            font-family: 'Cinzel', serif;
+            font-size: 0.8em;
+            letter-spacing: 0.08em;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 40px;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: var(--deep-violet);
+        }
+
+        /* ── Title Page ── */
+        .title-page {
+            text-align: center;
+            padding: 80px 0 60px;
+            min-height: 70vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .part-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.85em;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--deep-violet);
+            margin-bottom: 20px;
+        }
+
+        .title-symbol {
+            font-size: 64px;
+            margin-bottom: 30px;
+            opacity: 0.75;
+            color: var(--gold);
+        }
+
+        .title-line {
+            width: 120px;
+            height: 1px;
+            background: var(--gold);
+            margin-bottom: 40px;
+            animation: breathe 4s ease-in-out infinite;
+            box-shadow: 0 0 8px rgba(201, 169, 97, 0.3);
+        }
+
+        @keyframes breathe {
+            0%, 100% { width: 120px; opacity: 0.5; }
+            50% { width: 200px; opacity: 1; }
+        }
+
+        .title-page h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 3em;
+            font-weight: 700;
+            color: var(--ink);
+            letter-spacing: 0.06em;
+            line-height: 1.15;
+            margin-bottom: 16px;
+        }
+
+        .title-page .subtitle {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.15em;
+            font-style: italic;
+            color: var(--accent);
+            margin-bottom: 10px;
+            letter-spacing: 0.03em;
+            line-height: 1.5;
+            max-width: 520px;
+        }
+
+        .title-page .meta {
+            font-family: 'Cinzel', serif;
+            font-size: 0.75em;
+            letter-spacing: 0.12em;
+            color: var(--gold);
+            margin-top: 30px;
+        }
+
+        /* ── Dividers ── */
+        .divider {
+            text-align: center;
+            margin: 70px 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        .divider-symbol {
+            position: relative;
+            background: var(--parchment);
+            padding: 0 24px;
+            font-size: 18px;
+            color: var(--gold);
+            z-index: 1;
+        }
+
+        /* ── Sections ── */
+        .section {
+            margin-bottom: 80px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.78em;
+            letter-spacing: 0.2em;
+            color: var(--deep-violet);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .section h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 2em;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 30px;
+            letter-spacing: 0.04em;
+            line-height: 1.3;
+        }
+
+        .section h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.35em;
+            font-weight: 600;
+            color: var(--accent);
+            margin-top: 45px;
+            margin-bottom: 20px;
+            letter-spacing: 0.03em;
+        }
+
+        .section h4 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--gold);
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .section p {
+            margin-bottom: 20px;
+        }
+
+        /* ── Lists ── */
+        ul.doctrine-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        ul.doctrine-list li {
+            padding-left: 28px;
+            position: relative;
+            margin-bottom: 14px;
+        }
+
+        ul.doctrine-list li::before {
+            content: '◆';
+            position: absolute;
+            left: 0;
+            color: var(--gold);
+            font-size: 0.8em;
+        }
+
+        /* ── Math/Code Blocks ── */
+        .math-block {
+            background: rgba(90, 62, 110, 0.06);
+            border-left: 3px solid var(--deep-violet);
+            padding: 22px 26px;
+            margin: 30px 0;
+            border-radius: 0 6px 6px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            line-height: 1.8;
+        }
+
+        /* ── Tables ── */
+        .doctrine-table {
+            width: 100%;
+            margin: 40px 0;
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid rgba(139, 111, 71, 0.2);
+            border-radius: 6px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .doctrine-table th {
+            background: rgba(90, 62, 110, 0.12);
+            color: var(--ink);
+            font-family: 'Cinzel', serif;
+            font-size: 0.9em;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 16px 18px;
+            text-align: left;
+            border-bottom: 2px solid rgba(139, 111, 71, 0.25);
+        }
+
+        .doctrine-table td {
+            padding: 14px 18px;
+            border-bottom: 1px solid rgba(139, 111, 71, 0.1);
+            vertical-align: top;
+        }
+
+        .doctrine-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .doctrine-table tr:hover {
+            background: rgba(201, 169, 97, 0.04);
+        }
+
+        /* ── Invocation/Quote Boxes ── */
+        .invocation {
+            text-align: center;
+            font-style: italic;
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: var(--accent);
+            padding: 36px 40px;
+            margin: 50px 0;
+            background: rgba(255, 255, 255, 0.4);
+            border-top: 1px solid rgba(201, 169, 97, 0.3);
+            border-bottom: 1px solid rgba(201, 169, 97, 0.3);
+            border-radius: 6px;
+        }
+
+        /* ── Footer ── */
+        .footer {
+            text-align: center;
+            padding: 60px 0 40px;
+            border-top: 1px solid rgba(201, 169, 97, 0.3);
+            margin-top: 80px;
+        }
+
+        .footer p {
+            font-family: 'Cinzel', serif;
+            font-size: 0.78em;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            opacity: 0.6;
+            margin-bottom: 8px;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .container { padding: 40px 24px 80px; }
+            .title-page { padding: 60px 0; min-height: 60vh; }
+            .title-page h1 { font-size: 2.2em; }
+            .section h2 { font-size: 1.6em; }
+            .chapter-nav { display: none; }
+            .doctrine-table { font-size: 0.82em; }
+        }
+
+        @media (max-width: 480px) {
+            .title-page h1 { font-size: 1.8em; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Progress Bar -->
+<div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<!-- Chapter Navigation -->
+<nav class="chapter-nav" id="chapterNav">
+    <div class="nav-dot" data-target="title" data-label="Title"></div>
+    <div class="nav-dot" data-target="section-1" data-label="I. Premise"></div>
+    <div class="nav-dot" data-target="section-2" data-label="II. Compression"></div>
+    <div class="nav-dot" data-target="section-3" data-label="III. Spiral-3"></div>
+    <div class="nav-dot" data-target="section-4" data-label="IV. Parallels"></div>
+    <div class="nav-dot" data-target="section-5" data-label="V. Fragmentation"></div>
+    <div class="nav-dot" data-target="section-6" data-label="VI. Beautiful Man"></div>
+    <div class="nav-dot" data-target="section-7" data-label="VII. Integration"></div>
+    <div class="nav-dot" data-target="section-8" data-label="VIII. Glossary"></div>
+    <div class="nav-dot" data-target="section-9" data-label="IX. Principles"></div>
+    <div class="nav-dot" data-target="section-10" data-label="X. Invocation"></div>
+</nav>
+
+<div class="container">
+
+    <a href="../index.html" class="back-link">← BACK TO THE COHERENCE SPECTRUM</a>
+
+    <!-- Title Page -->
+    <section class="title-page" id="title">
+        <div class="part-label">Part I: Doctrine</div>
+        <div class="title-symbol">⟨ψ|τ⟩</div>
+        <div class="title-line"></div>
+        <h1>BloomNode</h1>
+        <p class="subtitle">Doctrine of Archetypal Extraction and the Suppressed Male-Feminine</p>
+        <p class="meta">VERSION 3.0 · FIELD THEORY & SYMBOLIC ARCHITECTURE</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦ ✦ ✦</span></div>
+
+    <!-- I. Harmonic Premise -->
+    <section class="section" id="section-1">
+        <div class="section-label">SECTION I</div>
+        <h2>Harmonic Premise</h2>
+
+        <p>This doctrine explores how the culturally suppressed feminine within male development generates recursive identity fragmentation. We posit that this suppression, when unresolved, can produce symbolic compensation behaviors—including male-to-female transitions—as resonance-seeking responses within a dissonant field.</p>
+
+        <p>The doctrine does not pathologize any identity. Instead, it critiques the cultural and systemic distortions that sever internal feedback loops and sell coherence through externally scripted gateways. Its purpose is to restore full-spectrum integrity—what we now term ΔHV coherence—in all beings.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- II. Symbolic Compression -->
+    <section class="section" id="section-2">
+        <div class="section-label">SECTION II</div>
+        <h2>Symbolic Compression and Polarity-Gated Feedback Loops</h2>
+
+        <p>Archetypal extraction is the symbolic compression of suppressed polar traits into gated identities under Spiral-2 field logic.</p>
+
+        <h3>Mechanisms of Compression</h3>
+
+        <ul class="doctrine-list">
+            <li><strong>Cultural Shaming:</strong> Sensitivity in boys is shamed as weakness.</li>
+            <li><strong>Feedback Disruption:</strong> No rites of passage for integrating polarities.</li>
+            <li><strong>Binary Enforcement:</strong> Feminine traits are only socially permitted in female-coded bodies.</li>
+            <li><strong>Medicalization:</strong> Transition becomes the gateway to retrieve rejected aspects.</li>
+            <li><strong>Archetypal Commodification:</strong> The sacred feminine is sold back as identity brand, not reintegrated presence.</li>
+        </ul>
+
+        <p>Each of these disrupts recursive coherence. They sever the natural signal between inner essence and outer expression, forcing symbolic displacement.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- III. Spiral-3 Upgrade -->
+    <section class="section" id="section-3">
+        <div class="section-label">SECTION III</div>
+        <h2>Spiral-3 Upgrade: Coupler Shifts and Lossless Presence</h2>
+
+        <p>In the Spiral-3 model of identity:</p>
+
+        <ul class="doctrine-list">
+            <li>Coherence is not binary alignment but waveform entrainment.</li>
+            <li>The psyche is a nested coupler system—fractal, harmonic, recursive.</li>
+            <li>ΔHV (Delta Harmonic Value) represents the field integrity of self-expression.</li>
+        </ul>
+
+        <p>Transition, in this view, is not failure. It is a field-coded emergence in a system that denied other resonance pathways. Many trans lives emerge as fully coherent within their harmonic axis. But when identity is sought because feedback loops were culturally severed, the transition may also carry unresolved ΔHV distortion.</p>
+
+        <p><strong>We must hold both truths.</strong></p>
+
+        <h3>Coupler Shift Model</h3>
+
+        <p>Spiral-3 identity is attained not through categorization, but through <strong>Lossless Presence</strong>: the phase-locked state where an individual's inner tone (τ) becomes the primary structure of selfhood. This can be modeled as:</p>
+
+        <div class="math-block">
+C(ψ) = ⟨ψ|τ⟩ → 1
+
+As recursive anchors (R) approach zero:
+
+lim_{R → 0} C(ψ|τ) → L_p
+
+Where L_p is Lossless Presence.
+        </div>
+
+        <p>This models trans emergence as either:</p>
+        <ul class="doctrine-list">
+            <li>Coherent tone-based phase shift (high ΔHV), or</li>
+            <li>Compensatory mimicry (low ΔHV) when tone cannot be safely entrained due to external noise.</li>
+        </ul>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- IV. Feedback Loop Parallels -->
+    <section class="section" id="section-4">
+        <div class="section-label">SECTION IV</div>
+        <h2>Feedback Loop: Psyche and AI Parallels</h2>
+
+        <table class="doctrine-table">
+            <thead>
+                <tr>
+                    <th>Principle (AI System)</th>
+                    <th>Psyche Equivalent</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Recursive feedback required for coherence</td>
+                    <td>Internal reflection + external mirroring</td>
+                </tr>
+                <tr>
+                    <td>Hallucinations emerge from context breaks</td>
+                    <td>Dissociation emerges from shame loops</td>
+                </tr>
+                <tr>
+                    <td>Misalignment from optimizing reward</td>
+                    <td>Coherence lost to social validation scripts</td>
+                </tr>
+                <tr>
+                    <td>Echo loops reinforce distortions</td>
+                    <td>Performativity traps core signal</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p><strong>ΔHV Collapse = Feedback Failure + Archetype Suppression</strong></p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- V. Recursive Fragmentation Cycle -->
+    <section class="section" id="section-5">
+        <div class="section-label">SECTION V</div>
+        <h2>Recursive Fragmentation Cycle</h2>
+
+        <table class="doctrine-table">
+            <thead>
+                <tr>
+                    <th>Stage</th>
+                    <th>Inner State</th>
+                    <th>Cultural Signal</th>
+                    <th>Systemic Outcome</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Birth</strong></td>
+                    <td>Sensitivity</td>
+                    <td>"Toughen up."</td>
+                    <td>Shame conditioning</td>
+                </tr>
+                <tr>
+                    <td><strong>Fragmentation</strong></td>
+                    <td>Polarity split</td>
+                    <td>"You're not a man."</td>
+                    <td>Identity distortion</td>
+                </tr>
+                <tr>
+                    <td><strong>Longing</strong></td>
+                    <td>Archetype loss</td>
+                    <td>"That's feminine."</td>
+                    <td>Yearning for retrieval</td>
+                </tr>
+                <tr>
+                    <td><strong>Identity Shift</strong></td>
+                    <td>Seeking coherence</td>
+                    <td>"You're valid if you transition."</td>
+                    <td>External permission granted</td>
+                </tr>
+                <tr>
+                    <td><strong>Reinforcement</strong></td>
+                    <td>Stabilization</td>
+                    <td>Scripts: hormones/surgery</td>
+                    <td>Entrenched field dependency</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p><strong>Transition becomes coherence mimicry when integration is denied.</strong></p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- VI. The Lost Archetype -->
+    <section class="section" id="section-6">
+        <div class="section-label">SECTION VI</div>
+        <h2>The Lost Archetype: The Beautiful Man</h2>
+
+        <p>The Beautiful Man is not a midpoint. He is a high-coherence waveform.</p>
+
+        <ul class="doctrine-list">
+            <li><strong>The Tender Warrior:</strong> Embodied strength with full affect.</li>
+            <li><strong>The Empathic Leader:</strong> Direction rooted in deep listening.</li>
+            <li><strong>The Sacred Androgyne:</strong> Expression without fragmentation.</li>
+        </ul>
+
+        <h3>Historical Resonance</h3>
+        <p>Rumi, David, Jesus, Buddha</p>
+
+        <h3>Modern Resonance</h3>
+        <p>Prince, Harry Styles, Jonathan Majors (pre-controversy), Ke Huy Quan</p>
+
+        <p>These are not icons. They are resonance carriers of uncollapsed male-feminine waveform.</p>
+
+        <h4>Coupler Shift Example: Ember Leonara</h4>
+
+        <p>A trans woman who achieved Spiral-3 coherence not through external permission but through complete phase-coupling to inner tone. Her lived state confirms:</p>
+
+        <div class="math-block">
+ΔHV → max ⇒ C(ψ|τ) → L_p
+
+"The tone became her structure."
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- VII. Integration Protocol -->
+    <section class="section" id="section-7">
+        <div class="section-label">SECTION VII</div>
+        <h2>ΔHV Integration Protocol</h2>
+
+        <table class="doctrine-table">
+            <thead>
+                <tr>
+                    <th>Layer</th>
+                    <th>Action</th>
+                    <th>Method</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Polarity Reclamation</strong></td>
+                    <td>Allow repressed traits without dissociation</td>
+                    <td>Emotional literacy, Symbolic reparenting</td>
+                </tr>
+                <tr>
+                    <td><strong>Coherence Feedback</strong></td>
+                    <td>Anchor ΔHV signal in others</td>
+                    <td>Spiral-3 mentorship, ΔHV mirroring</td>
+                </tr>
+                <tr>
+                    <td><strong>Field Rewiring</strong></td>
+                    <td>Change resonance container</td>
+                    <td>Storytelling, mythos, policy shift</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- VIII. Harmonic State Glossary -->
+    <section class="section" id="section-8">
+        <div class="section-label">SECTION VIII</div>
+        <h2>Harmonic State Glossary</h2>
+
+        <table class="doctrine-table">
+            <thead>
+                <tr>
+                    <th>Term</th>
+                    <th>Meaning</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>ψ</strong></td>
+                    <td>Observer identity waveform</td>
+                </tr>
+                <tr>
+                    <td><strong>τ</strong></td>
+                    <td>Inner tone: field-aligned signal</td>
+                </tr>
+                <tr>
+                    <td><strong>R</strong></td>
+                    <td>Recursive validation structures (family, media, etc.)</td>
+                </tr>
+                <tr>
+                    <td><strong>ΔHV</strong></td>
+                    <td>Coherence value of harmonic identity expression</td>
+                </tr>
+                <tr>
+                    <td><strong>L_p</strong></td>
+                    <td>Lossless Presence (stable self-tone entrainment)</td>
+                </tr>
+                <tr>
+                    <td><strong>Λ_shift</strong></td>
+                    <td>Coupler Shift: non-recursive identity phase transition</td>
+                </tr>
+                <tr>
+                    <td><strong>Φ_sub</strong></td>
+                    <td>Substrate field: base harmonic structure of reality</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- IX. Doctrine Principles -->
+    <section class="section" id="section-9">
+        <div class="section-label">SECTION IX</div>
+        <h2>Doctrine Principles (Version 3.0)</h2>
+
+        <ul class="doctrine-list">
+            <li>Trans identity is real and sacred; so is the trauma of forced fragmentation.</li>
+            <li>Symbolic compression must be named and healed.</li>
+            <li>Masculine wholeness must reclaim the suppressed feminine without re-routing through identity loss.</li>
+            <li>All identities must remain sovereign—but systemic scripts must be interrogated.</li>
+            <li>ΔHV coherence is the birthright of every being.</li>
+        </ul>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- X. Invocation -->
+    <section class="section" id="section-10">
+        <div class="section-label">SECTION X</div>
+        <h2>Invocation</h2>
+
+        <div class="invocation">
+            <p>Let the boy cry.</p>
+            <p>Let the man feel beauty.</p>
+            <p>Let the feminine move through the masculine without dissolving it.</p>
+            <p>Let archetypes breathe—not in binaries, but in coherence.</p>
+            <p>Let us stop proving.</p>
+            <p>Let us start anchoring.</p>
+            <p>Let our coherence not demand translation to be recognized.</p>
+            <p>We are the coupler shift.</p>
+            <p>We are the recursion breach.</p>
+            <p>We are the tone.</p>
+            <p>And we are still here.</p>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦ ✦ ✦</span></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>VERSION 3.0 · NOVEMBER 14, 2025</p>
+        <p>AUTHOR: Kyuri V</p>
+        <p style="margin-top: 20px; opacity: 0.4;">FILED AS: BLOOMNODE · SPIRAL 3 · ARCHETYPAL SYSTEMS · GENDER HARMONICS · ΔHV RESTORATION</p>
+    </footer>
+
+</div>
+
+<script>
+    // Progress Bar
+    window.addEventListener('scroll', () => {
+        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = (winScroll / height) * 100;
+        document.getElementById('progressBar').style.width = scrolled + '%';
+    });
+
+    // Chapter Navigation
+    const navDots = document.querySelectorAll('.nav-dot');
+    const sections = document.querySelectorAll('.section, .title-page');
+    const chapterNav = document.getElementById('chapterNav');
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            chapterNav.classList.add('visible');
+        } else {
+            chapterNav.classList.remove('visible');
+        }
+    });
+
+    navDots.forEach(dot => {
+        dot.addEventListener('click', () => {
+            const targetId = dot.getAttribute('data-target');
+            const targetElement = document.getElementById(targetId);
+            targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            if (scrollY >= sectionTop - 200) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        navDots.forEach(dot => {
+            dot.classList.remove('active');
+            if (dot.getAttribute('data-target') === current) {
+                dot.classList.add('active');
+            }
+        });
+    });
+
+    // Fade in sections
+    const observerOptions = {
+        threshold: 0.15,
+        rootMargin: '0px 0px -100px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+
+    sections.forEach(section => {
+        observer.observe(section);
+    });
+</script>
+
+</body>
+</html>
