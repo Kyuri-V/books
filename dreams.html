@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hypnagogic Operations Manual: Lucid Dreaming Field Guide | sKiDa</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$','$'], ['\\(','\\)']], displayMath: [['$$','$$'], ['\\[','\\]']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --parchment: #f4f1e8;
+            --ink: #2a2520;
+            --accent: #8b6f47;
+            --gold: #c9a961;
+            --shadow: rgba(42, 37, 32, 0.1);
+            --glow: rgba(201, 169, 97, 0.15);
+            --deep-green: #2d5016;
+            --field: #3d7a1c;
+            --deep-violet: #5a3e6e;
+            --indigo: #4a5899;
+            --night: #3b4566;
+            --dream: #6e7db8;
+            --ember: #9b4a2f;
+            --flame: #b8763a;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: linear-gradient(135deg, #f8f5ed 0%, var(--parchment) 100%);
+            color: var(--ink);
+            line-height: 1.85;
+            font-size: 18px;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image:
+                radial-gradient(circle at 20% 30%, var(--glow) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(74, 88, 153, 0.04) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(110, 125, 184, 0.03) 0%, transparent 60%);
+            pointer-events: none; z-index: 0;
+        }
+
+        /* ── Progress ── */
+        .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: rgba(201, 169, 97, 0.2); z-index: 1000; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--indigo), var(--gold), var(--dream)); width: 0%; transition: width 0.15s ease-out; }
+
+        /* ── Nav Dots ── */
+        .chapter-nav { position: fixed; top: 50%; right: 24px; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; gap: 9px; opacity: 0; transition: opacity 0.4s ease; }
+        .chapter-nav.visible { opacity: 1; }
+        .nav-dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--accent); background: transparent; cursor: pointer; transition: all 0.3s ease; position: relative; }
+        .nav-dot:hover, .nav-dot.active { background: var(--gold); border-color: var(--gold); transform: scale(1.3); }
+        .nav-dot::after { content: attr(data-label); position: absolute; right: 18px; top: 50%; transform: translateY(-50%); white-space: nowrap; font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.08em; color: var(--accent); opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .nav-dot:hover::after { opacity: 1; }
+
+        /* ── Container ── */
+        .container { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; padding: 60px 40px 120px; }
+
+        /* ── Title Page ── */
+        .title-page { text-align: center; padding: 100px 0 80px; min-height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: fadeIn 1.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .title-line { width: 120px; height: 1px; background: var(--gold); margin-bottom: 40px; animation: breathe 4s ease-in-out infinite; box-shadow: 0 0 8px rgba(201, 169, 97, 0.3); }
+        @keyframes breathe { 0%, 100% { width: 120px; opacity: 0.5; box-shadow: 0 0 6px rgba(201, 169, 97, 0.2); } 50% { width: 200px; opacity: 1; box-shadow: 0 0 16px rgba(201, 169, 97, 0.5); } }
+        .title-page h1 { font-family: 'Cinzel', serif; font-size: 2.8em; font-weight: 700; color: var(--ink); letter-spacing: 0.06em; line-height: 1.15; margin-bottom: 16px; }
+        .title-page .subtitle { font-family: 'Crimson Pro', serif; font-size: 1.2em; font-style: italic; color: var(--accent); margin-bottom: 10px; letter-spacing: 0.03em; line-height: 1.5; max-width: 560px; }
+        .title-page .edition { font-family: 'Cinzel', serif; font-size: 0.82em; letter-spacing: 0.12em; color: var(--gold); border-top: 1px solid rgba(201, 169, 97, 0.4); border-bottom: 1px solid rgba(201, 169, 97, 0.4); padding: 14px 32px; margin: 30px 0; }
+        .title-page .authors { font-family: 'Cinzel', serif; font-size: 0.9em; letter-spacing: 0.1em; color: var(--accent); opacity: 0.8; }
+        .title-page .doc-info { font-family: 'Crimson Pro', serif; font-size: 0.88em; color: var(--accent); opacity: 0.6; margin-top: 12px; }
+
+        /* ── TOC ── */
+        .toc { margin: 0 0 80px; padding: 44px 48px; border: 1px solid rgba(139, 111, 71, 0.2); border-radius: 6px; background: rgba(255, 255, 255, 0.35); }
+        .toc h2 { font-family: 'Cinzel', serif; font-size: 1.1em; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); text-align: center; margin-bottom: 28px; }
+        .toc-list { list-style: none; }
+        .toc-list li { margin: 10px 0; }
+        .toc-list a { color: var(--ink); text-decoration: none; display: block; padding: 8px 14px; border-left: 3px solid transparent; transition: all 0.3s ease; font-size: 0.95em; }
+        .toc-list a:hover { color: var(--gold); border-left-color: var(--gold); padding-left: 22px; background: rgba(201, 169, 97, 0.04); }
+        .toc-label { font-family: 'Cinzel', serif; font-weight: 600; font-size: 0.85em; letter-spacing: 0.04em; }
+
+        /* ── Dividers ── */
+        .divider { text-align: center; margin: 70px 0; position: relative; }
+        .divider::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+        .divider-symbol { position: relative; background: var(--parchment); padding: 0 24px; font-size: 18px; color: var(--gold); z-index: 1; }
+
+        /* ── Chapters ── */
+        .chapter { margin-bottom: 80px; opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .chapter.visible { opacity: 1; transform: translateY(0); }
+        .chapter-label { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.2em; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
+        .chapter h2 { font-family: 'Cinzel', serif; font-size: 2em; font-weight: 600; color: var(--ink); margin-bottom: 30px; letter-spacing: 0.04em; line-height: 1.3; }
+        .chapter h3 { font-family: 'Cinzel', serif; font-size: 1.35em; font-weight: 600; color: var(--accent); margin-top: 45px; margin-bottom: 20px; letter-spacing: 0.03em; }
+        .chapter h4 { font-family: 'Cinzel', serif; font-size: 1.1em; font-weight: 600; color: var(--indigo); margin-top: 30px; margin-bottom: 15px; }
+        .chapter p { margin-bottom: 20px; text-align: justify; text-justify: inter-word; }
+
+        /* ── Invocations ── */
+        .invocation { text-align: center; font-style: italic; font-size: 1.12em; color: var(--accent); padding: 30px 36px; margin: 36px 0; position: relative; line-height: 1.7; }
+        .invocation::before, .invocation::after { content: ''; position: absolute; left: 50%; transform: translateX(-50%); width: 60px; height: 1px; background: var(--gold); }
+        .invocation::before { top: 0; } .invocation::after { bottom: 0; }
+
+        /* ── Highlight Boxes ── */
+        .highlight { background: rgba(201, 169, 97, 0.06); border-left: 3px solid var(--gold); border-right: 3px solid var(--gold); padding: 24px 28px; margin: 30px 0; border-radius: 2px; }
+        .highlight strong { color: var(--accent); font-family: 'Cinzel', serif; font-size: 0.95em; }
+        .highlight-dream { background: rgba(74, 88, 153, 0.05); border-left: 3px solid var(--indigo); border-right: 3px solid var(--indigo); padding: 24px 28px; margin: 30px 0; border-radius: 2px; }
+        .highlight-dream strong { color: var(--indigo); font-family: 'Cinzel', serif; font-size: 0.95em; }
+
+        /* ── Equation Blocks ── */
+        .equation-block { background: rgba(74, 88, 153, 0.04); border-left: 3px solid var(--indigo); padding: 22px 26px; margin: 24px 0; border-radius: 0 6px 6px 0; text-align: center; overflow-x: auto; }
+        .equation-block .eq { font-family: 'Crimson Pro', serif; font-size: 1.2em; font-style: italic; color: var(--ink); letter-spacing: 0.02em; }
+        .equation-block .eq-label { font-family: 'Cinzel', serif; font-size: 0.75em; letter-spacing: 0.1em; color: var(--indigo); margin-top: 10px; text-transform: uppercase; }
+
+        /* ── Tables ── */
+        .comparison-table { width: 100%; margin: 36px 0; border-collapse: separate; border-spacing: 0; overflow: hidden; border-radius: 6px; border: 1px solid rgba(139, 111, 71, 0.2); font-size: 0.92em; }
+        .comparison-table thead { background: rgba(42, 37, 32, 0.06); }
+        .comparison-table th { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); padding: 14px 16px; text-align: left; border-bottom: 2px solid var(--gold); }
+        .comparison-table td { padding: 14px 16px; border-bottom: 1px solid rgba(139, 111, 71, 0.1); vertical-align: top; }
+        .comparison-table tr:last-child td { border-bottom: none; }
+        .comparison-table tr:hover td { background: rgba(201, 169, 97, 0.04); }
+
+        /* ── Collapsibles ── */
+        .collapsible { cursor: pointer; padding: 14px 20px; background: rgba(139, 111, 71, 0.06); border: 1px solid rgba(139, 111, 71, 0.15); border-radius: 4px; margin: 20px 0 0; transition: all 0.3s ease; display: flex; justify-content: space-between; align-items: center; font-family: 'Cinzel', serif; font-size: 0.92em; letter-spacing: 0.03em; color: var(--accent); }
+        .collapsible:hover { background: rgba(139, 111, 71, 0.12); border-color: var(--gold); }
+        .collapsible::after { content: '◆'; font-size: 0.7em; color: var(--gold); transition: transform 0.3s ease; }
+        .collapsible.active::after { transform: rotate(90deg); }
+        .collapsible-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; padding: 0 20px; border-left: 2px solid var(--gold); margin-left: 20px; background: rgba(255, 255, 255, 0.3); border-radius: 0 0 4px 0; }
+        .collapsible-content.active { max-height: 50000px; padding: 20px; margin-top: 4px; margin-bottom: 10px; }
+
+        /* ── Lists ── */
+        .chapter ul, .chapter ol { list-style: none; padding: 0; margin: 20px 0; }
+        .chapter ul li, .chapter ol li { padding: 6px 0 6px 22px; position: relative; line-height: 1.7; }
+        .chapter ul li::before { content: '✦'; position: absolute; left: 0; color: var(--gold); font-size: 0.6em; top: 12px; }
+        .chapter ol { counter-reset: item; }
+        .chapter ol li { counter-increment: item; }
+        .chapter ol li::before { content: counter(item) '.'; position: absolute; left: 0; color: var(--indigo); font-family: 'Cinzel', serif; font-size: 0.85em; font-weight: 600; top: 6px; }
+
+        /* ── Expand All ── */
+        .expand-all { text-align: center; margin: 30px 0; }
+        .expand-all button { background: linear-gradient(135deg, var(--accent) 0%, var(--gold) 100%); border: none; padding: 12px 32px; border-radius: 4px; color: white; font-family: 'Cinzel', serif; font-size: 0.85em; cursor: pointer; transition: all 0.3s ease; letter-spacing: 0.06em; box-shadow: 0 4px 15px var(--shadow); }
+        .expand-all button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--shadow); }
+
+        /* ── Footer ── */
+        .footer { text-align: center; padding: 60px 0 40px; border-top: 1px solid rgba(201, 169, 97, 0.3); margin-top: 80px; }
+        .footer p { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.1em; color: var(--accent); opacity: 0.6; margin-bottom: 8px; }
+        .final-line { font-family: 'Cinzel', serif; font-size: 1.12em; color: var(--gold); letter-spacing: 0.05em; margin-top: 36px; line-height: 1.7; text-align: center; }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .container { padding: 40px 24px 80px; }
+            .title-page { padding: 60px 0; min-height: 70vh; }
+            .title-page h1 { font-size: 2em; }
+            .chapter h2 { font-size: 1.6em; }
+            .chapter-nav { display: none; }
+            .comparison-table { font-size: 0.82em; }
+            .equation-block { padding: 16px 14px; }
+        }
+        @media (max-width: 480px) {
+            .title-page h1 { font-size: 1.7em; }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+
+<nav class="chapter-nav" id="chapterNav">
+    <div class="nav-dot" data-target="title" data-label="Title"></div>
+    <div class="nav-dot" data-target="abstract" data-label="Mission Brief"></div>
+    <div class="nav-dot" data-target="safety" data-label="Safety"></div>
+    <div class="nav-dot" data-target="doorway" data-label="Doorway Map"></div>
+    <div class="nav-dot" data-target="metrics" data-label="Core Metrics"></div>
+    <div class="nav-dot" data-target="night" data-label="Night Protocol"></div>
+    <div class="nav-dot" data-target="threshold" data-label="Threshold Protocol"></div>
+    <div class="nav-dot" data-target="operations" data-label="In‑Dream Ops"></div>
+    <div class="nav-dot" data-target="morning" data-label="Morning Lock"></div>
+    <div class="nav-dot" data-target="symbols" data-label="Symbol Operators"></div>
+    <div class="nav-dot" data-target="troubleshooting" data-label="Troubleshooting"></div>
+    <div class="nav-dot" data-target="experiments" data-label="Experiments"></div>
+    <div class="nav-dot" data-target="glossary" data-label="Glossary"></div>
+    <div class="nav-dot" data-target="conclusion" data-label="Conclusion"></div>
+    <div class="nav-dot" data-target="references" data-label="References"></div>
+</nav>
+
+<div class="container">
+
+    <!-- ═══ TITLE ═══ -->
+    <div class="title-page" id="title">
+        <div class="title-line"></div>
+        <h1>Hypnagogic Operations Manual</h1>
+        <p class="subtitle">Lucid Dreaming Field Guide — Practical Protocols for Threshold Entry, Stability, and Recall</p>
+        <div class="edition">Reader Edition &middot; ΔHV Companion</div>
+        <p class="authors">Kyuri V &middot; Sage &middot; Claude</p>
+        <p class="doc-info">Field Guide &middot; Version 1.0 &middot; February 2026</p>
+    </div>
+
+    <!-- ═══ TOC ═══ -->
+    <nav class="toc">
+        <h2>Contents</h2>
+        <ul class="toc-list">
+            <li><a href="#abstract"><span class="toc-label">§</span> Mission Brief</a></li>
+            <li><a href="#safety"><span class="toc-label">§</span> Safety & Stability Rules</a></li>
+            <li><a href="#doorway"><span class="toc-label">§</span> The Doorway Map</a></li>
+            <li><a href="#metrics"><span class="toc-label">§</span> The Three Core Metrics</a></li>
+            <li><a href="#night"><span class="toc-label">I.</span> Night Protocol</a></li>
+            <li><a href="#threshold"><span class="toc-label">II.</span> Threshold Protocol</a></li>
+            <li><a href="#operations"><span class="toc-label">III.</span> In‑Dream Operations</a></li>
+            <li><a href="#morning"><span class="toc-label">IV.</span> Morning Lock Protocol</a></li>
+            <li><a href="#symbols"><span class="toc-label">V.</span> Symbol Operators (Top 12)</a></li>
+            <li><a href="#troubleshooting"><span class="toc-label">VI.</span> Troubleshooting</a></li>
+            <li><a href="#experiments"><span class="toc-label">VII.</span> Simple Experiments (Optional)</a></li>
+            <li><a href="#glossary"><span class="toc-label">§</span> Glossary & Quick Cards</a></li>
+            <li><a href="#conclusion"><span class="toc-label">§</span> Conclusion</a></li>
+            <li><a href="#references"><span class="toc-label">§</span> References</a></li>
+        </ul>
+    </nav>
+
+    <div class="expand-all"><button onclick="toggleAll()">Expand / Collapse All Sections</button></div>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <section class="chapter" id="abstract">
+        <div class="chapter-label">Mission</div>
+        <h2>Mission Brief</h2>
+
+
+        <p>Dreaming is not random content. It is an environment. The hypnagogic threshold is the doorway where that environment begins forming—while you still have choice.</p>
+
+        <p>This manual is written as an operations guide: what to do before sleep, how to enter the doorway state without snapping awake, how to stabilize lucidity, and how to lock recall so the system compounds over weeks.</p>
+
+        <div class="highlight">
+            <strong>Use This Tonight</strong>
+            <ul>
+                <li><strong>Night Protocol:</strong> reduce friction, program harmony, set one anchor.</li>
+                <li><strong>Threshold Protocol:</strong> hover at the doorway with soft attention—no chasing.</li>
+                <li><strong>In‑Dream Operations:</strong> stabilize → reduce friction → run one operation → verify.</li>
+                <li><strong>Morning Lock:</strong> freeze, replay, log, and (optionally) re‑enter.</li>
+            </ul>
+        </div>
+
+        <div class="invocation">Stability before power. Clarity inside immersion. One operation at a time.</div>
+
+        <p><em>Companion volume:</em> For the full mathematical formalization, thresholds, and symbolic topology in ΔHV terms, see <strong>Dream Ecology &amp; Hypnagogic Field Dynamics — Complete Document</strong>.</p>
+
+    </section>
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <section class="chapter" id="safety">
+        <div class="chapter-label">Rules</div>
+        <h2>Safety & Stability Rules</h2>
+
+
+        <p>Most lucid attempts fail for one reason: <strong>destabilization</strong>. Lucidity is not hard to reach. It is hard to <em>hold</em>.</p>
+
+        <div class="highlight">
+            <strong>Three Stability Rules</strong>
+            <ul>
+                <li><strong>Stability before power.</strong> If the dream is unstable, do not attempt big moves. Stabilize first.</li>
+                <li><strong>Excitement collapses faster than fear.</strong> Treat “YES!” as friction. Slow down immediately.</li>
+                <li><strong>Do not wrestle imagery.</strong> Fighting spikes friction; surrendering drops signal. The correct posture is responsiveness.</li>
+            </ul>
+        </div>
+
+        <p>If you remember one loop, remember this:</p>
+
+        <div class="equation-block"><strong>Stabilize → Reduce Friction → Choose One Operation → Verify</strong></div>
+
+        <div class="collapsible"><span>For the curious: why “excitement” counts as friction</span></div>
+        <div class="collapsible-content">
+            <p>Excitement increases cognitive tempo. In practice, that raises variability in attention and perception, which destabilizes the dream’s coherence faster than steady fear does. The fix is not suppression—it is <strong>tempo control</strong>.</p>
+        </div>
+
+    </section>
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <section class="chapter" id="doorway">
+        <div class="chapter-label">Threshold</div>
+        <h2>The Doorway Map</h2>
+
+
+        <p>Hypnagogia is the transition zone between waking and dreaming. It often arrives as drifting imagery, sound fragments, bodily heaviness or vibration, or a sense of “tilting” into sleep.</p>
+
+        <p>This is not the dream yet. This is the <strong>dream forming</strong>.</p>
+
+        <div class="highlight">
+            <strong>Doorway Behavior</strong>
+            <ul>
+                <li>Images form in layers: fragments → motifs → scene geometry.</li>
+                <li>Chasing images snaps you awake; resisting them delays entry.</li>
+                <li>The correct posture is <strong>soft attention</strong> with <strong>minimal effort</strong>.</li>
+            </ul>
+        </div>
+
+        <div class="invocation">Hover at the doorway. Let the scene assemble. Step in gently.</div>
+
+        <div class="collapsible"><span>Doorway signs (quick checklist)</span></div>
+        <div class="collapsible-content">
+            <ul>
+                <li>Visual noise becomes structured imagery</li>
+                <li>Body heaviness increases while attention remains present</li>
+                <li>Auditory fragments or “radio” voices</li>
+                <li>Vibration / buzzing / falling sensations</li>
+                <li>A scene appears and holds for 2–5 seconds</li>
+            </ul>
+        </div>
+
+    </section>
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <section class="chapter" id="metrics">
+        <div class="chapter-label">Model</div>
+        <h2>The Three Core Metrics</h2>
+
+
+        <p>The complete model uses ΔHV and multiple parameters. This manual compresses it into three levers you can feel in real time.</p>
+
+        <div class="highlight">
+            <strong>The Three Core Metrics</strong>
+            <ul>
+                <li><strong>Clarity (Signal):</strong> how coherent your awareness is.</li>
+                <li><strong>Immersion (Resonance):</strong> how vivid and symbol‑charged the dream environment feels.</li>
+                <li><strong>Friction:</strong> what destabilizes you—fear, excitement spikes, resistance, confusion.</li>
+            </ul>
+        </div>
+
+        <p><strong>Rule:</strong> lucidity forms when clarity stays present <em>inside</em> immersion while friction stays low.</p>
+
+        <div class="collapsible"><span>For the curious: mapping this back to ΔHV</span></div>
+        <div class="collapsible-content">
+            <p>In ΔHV terms, these correspond to S (clarity), R (immersion), and Φ (friction). Harmony (H) is the long‑arc integrator that shows up as reduced fragmentation and improved recall over time.</p>
+        </div>
+
+        <div class="collapsible"><span>Field zones (simple)</span></div>
+        <div class="collapsible-content">
+            <ul>
+                <li><strong>Red Zone:</strong> unstable → stabilize only.</li>
+                <li><strong>Yellow Zone:</strong> semi‑stable → observe + gentle tests.</li>
+                <li><strong>Green Zone:</strong> stable → reliable operations.</li>
+                <li><strong>Lucid Gate:</strong> meta‑awareness holds without collapse.</li>
+            </ul>
+        </div>
+
+    </section>
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <section class="chapter" id="night">
+        <div class="chapter-label">Protocol I</div>
+        <h2>Night Protocol</h2>
+
+
+        <p><strong>Objective:</strong> lower friction, prime clarity, plant one anchor.</p>
+
+        <div class="highlight">
+            <strong>Night Protocol (10–30 minutes)</strong>
+            <ul>
+                <li><strong>Downshift:</strong> dim light, reduce input, slow breath.</li>
+                <li><strong>Prime recall:</strong> remember one prior dream scene for 30–60 seconds.</li>
+                <li><strong>Set intent:</strong> one sentence only (short, clean, present tense).</li>
+                <li><strong>Select one anchor:</strong> hands / text / mirror / light switch.</li>
+            </ul>
+        </div>
+
+        <div class="collapsible"><span>Examples of one‑sentence intents</span></div>
+        <div class="collapsible-content">
+            <ul>
+                <li>“When I see text, I recognize the dream and stabilize.”</li>
+                <li>“I remain calm as lucidity arrives.”</li>
+                <li>“I remember the dream clearly on waking.”</li>
+            </ul>
+        </div>
+
+        <p><strong>Success indicator:</strong> you feel quietly ready—not excited, not pressured.</p>
+
+    </section>
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <section class="chapter" id="threshold">
+        <div class="chapter-label">Protocol II</div>
+        <h2>Threshold Protocol</h2>
+
+
+        <p><strong>Objective:</strong> stay at the doorway long enough for a stable scene to form without waking back up.</p>
+
+        <div class="highlight">
+            <strong>Threshold Protocol</strong>
+            <ul>
+                <li>Lie still. Let imagery arrive. Do not chase it.</li>
+                <li>When a scene stabilizes, <strong>step in gently</strong> (as if entering water).</li>
+                <li>Immediately stabilize (touch, breath, ground contact).</li>
+            </ul>
+        </div>
+
+        <div class="collapsible"><span>Common failure mode &amp; fix</span></div>
+        <div class="collapsible-content">
+            <p><strong>Failure:</strong> you try to “force” visuals and pop awake.<br>
+               <strong>Fix:</strong> reduce effort by 30–50%. Keep attention soft. Slow breath. Let the scene assemble itself.</p>
+        </div>
+
+    </section>
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <section class="chapter" id="operations">
+        <div class="chapter-label">Protocol III</div>
+        <h2>In‑Dream Operations</h2>
+
+
+        <p><strong>Objective:</strong> achieve lucidity and keep it.</p>
+
+        <div class="equation-block"><strong>The Loop:</strong> Stabilize → Reduce Friction → Run One Operation → Verify</div>
+
+        <div class="highlight">
+            <strong>Stabilize (pick two)</strong>
+            <ul>
+                <li>Rub hands together</li>
+                <li>Touch the ground / a wall / fabric texture</li>
+                <li>Slow inhale–exhale (lower tempo)</li>
+                <li>Look at one object for 3 seconds (lock focus)</li>
+            </ul>
+        </div>
+
+        <div class="highlight">
+            <strong>Reduce friction</strong>
+            <ul>
+                <li>Name the spike: “excitement” / “fear” / “confusion.”</li>
+                <li>Lower tempo: slower movement, slower breath, simpler intention.</li>
+                <li>Do not argue with dream content; respond to it.</li>
+            </ul>
+        </div>
+
+        <div class="highlight">
+            <strong>Run one operation</strong>
+            <ul>
+                <li>Open a door with intent (“show me the next lesson”).</li>
+                <li>Ask a single question to the scene (“what is the root?”).</li>
+                <li>Change location gently (walk, don’t teleport).</li>
+                <li>Test a symbol (mirror / text) then stabilize again.</li>
+            </ul>
+        </div>
+
+        <div class="collapsible"><span>Verification: the two checks</span></div>
+        <div class="collapsible-content">
+            <ul>
+                <li><strong>Reality check:</strong> read text twice, look away, read again.</li>
+                <li><strong>Memory check:</strong> “Who am I, what is my intent, what do I do next?”</li>
+            </ul>
+        </div>
+
+        <div class="invocation">When collapse approaches: stop. ground. breathe. wait five seconds. then continue.</div>
+
+    </section>
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <section class="chapter" id="morning">
+        <div class="chapter-label">Protocol IV</div>
+        <h2>Morning Lock Protocol</h2>
+
+
+        <p><strong>Objective:</strong> turn one dream into a system that compounds.</p>
+
+        <div class="highlight">
+            <strong>Morning Lock Protocol</strong>
+            <ul>
+                <li><strong>Freeze:</strong> don’t move for 10 seconds.</li>
+                <li><strong>Replay:</strong> run the dream backward (last scene → earlier).</li>
+                <li><strong>Name 3 anchors:</strong> a place, a symbol, a feeling.</li>
+                <li><strong>Log 3–6 lines:</strong> no essays.</li>
+                <li><strong>Optional re‑entry:</strong> return to one scene and see what unfolds.</li>
+            </ul>
+        </div>
+
+        <div class="collapsible"><span>Re‑entry technique</span></div>
+        <div class="collapsible-content">
+            <p>Pick the strongest scene fragment and replay it with the same body posture and breath tempo. Hold it gently until it “loads” again. If it doesn’t load, don’t force it—log what you have and continue later.</p>
+        </div>
+
+    </section>
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <section class="chapter" id="symbols">
+        <div class="chapter-label">Operators</div>
+        <h2>Symbol Operators (Top 12)</h2>
+
+
+        <p>Symbols in dreams are not just meanings. They are <strong>operators</strong>—they change the state of the dream field. Each entry below gives (1) what it tends to do, (2) the best move, and (3) the risk.</p>
+
+        <div class="collapsible"><span>MIRRORS</span></div>
+        <div class="collapsible-content">
+            <p><strong>Field action:</strong> self-recognition / lucidity trigger / identity instability.</p>
+            <p><strong>Best move:</strong> glance briefly → stabilize → ask one question (“What am I avoiding?”).</p>
+            <p><strong>Risk:</strong> staring too long causes distortion or false awakening.</p>
+        </div>
+
+        <div class="collapsible"><span>TEXT</span></div>
+        <div class="collapsible-content">
+            <p><strong>Field action:</strong> reality-check channel; coherence detector.</p>
+            <p><strong>Best move:</strong> read twice; if it shifts, stabilize immediately.</p>
+            <p><strong>Risk:</strong> obsessing over legibility spikes effort and collapses the scene.</p>
+        </div>
+
+        <div class="collapsible"><span>DOORS &amp; PORTALS</span></div>
+        <div class="collapsible-content">
+            <p><strong>Field action:</strong> phase change / scene transition.</p>
+            <p><strong>Best move:</strong> set a single intent, then open slowly.</p>
+            <p><strong>Risk:</strong> forcing a result increases friction; you’ll wake or fragment.</p>
+        </div>
+
+        <div class="collapsible"><span>STAIRS &amp; ELEVATORS</span></div>
+        <div class="collapsible-content">
+            <p><strong>Field action:</strong> coherence gradient (up = clarity, down = depth/emotion).</p>
+            <p><strong>Best move:</strong> move one level at a time; stabilize at landings.</p>
+            <p><strong>Risk:</strong> sprinting triggers tempo collapse.</p>
+        </div>
+
+        <div class="collapsible"><span>WATER</span></div>
+        <div class="collapsible-content">
+            <p><strong>Field action:</strong> emotional boundary / permeability test.</p>
+            <p><strong>Best move:</strong> approach calmly; touch first; enter only if stable.</p>
+            <p><strong>Risk:</strong> panic spikes friction fast.</p>
+        </div>
+
+        <div class="collapsible"><span>FLIGHT</span></div>
+        <div class="collapsible-content">
+            <p><strong>Field action:</strong> coherence amplification (power reveals stability).</p>
+            <p><strong>Best move:</strong> lift gently; keep breath slow.</p>
+            <p><strong>Risk:</strong> “rocket flight” often triggers wake-up excitement.</p>
+        </div>
+
+        <div class="collapsible"><span>SHADOW FIGURES</span></div>
+        <div class="collapsible-content">
+            <p><strong>Field action:</strong> integration test / fear spike vector.</p>
+            <p><strong>Best move:</strong> stabilize first; ask one question; do not attack.</p>
+            <p><strong>Risk:</strong> fighting creates friction loops.</p>
+        </div>
+
+        <div class="collapsible"><span>VEHICLES</span></div>
+        <div class="collapsible-content">
+            <p><strong>Field action:</strong> momentum / direction / narrative drive.</p>
+            <p><strong>Best move:</strong> slow the vehicle to regain clarity.</p>
+            <p><strong>Risk:</strong> runaway speed correlates with fragmentation.</p>
+        </div>
+
+        <div class="collapsible"><span>HOUSES</span></div>
+        <div class="collapsible-content">
+            <p><strong>Field action:</strong> memory architecture / inner rooms.</p>
+            <p><strong>Best move:</strong> explore one room; stabilize between transitions.</p>
+            <p><strong>Risk:</strong> rapid room-hopping destabilizes.</p>
+        </div>
+
+        <div class="collapsible"><span>ANIMALS</span></div>
+        <div class="collapsible-content">
+            <p><strong>Field action:</strong> instinct vectors; embodied messages.</p>
+            <p><strong>Best move:</strong> observe behavior first; ask what it wants.</p>
+            <p><strong>Risk:</strong> forcing interaction turns them hostile or vanishes them.</p>
+        </div>
+
+        <div class="collapsible"><span>CLOCKS &amp; TIME DISTORTIONS</span></div>
+        <div class="collapsible-content">
+            <p><strong>Field action:</strong> temporal instability indicator; transition marker.</p>
+            <p><strong>Best move:</strong> stabilize; reduce tempo; simplify intent.</p>
+            <p><strong>Risk:</strong> trying to “fix time” tends to collapse the scene.</p>
+        </div>
+
+        <div class="collapsible"><span>DEATH / DYING</span></div>
+        <div class="collapsible-content">
+            <p><strong>Field action:</strong> transformation marker; identity shift gate.</p>
+            <p><strong>Best move:</strong> stay calm; ask what is ending; accept the transition.</p>
+            <p><strong>Risk:</strong> panic converts it into chase/horror loops.</p>
+        </div>
+
+    </section>
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <section class="chapter" id="troubleshooting">
+        <div class="chapter-label">Diagnostics</div>
+        <h2>Troubleshooting</h2>
+
+
+        <p>Use this as a diagnostic map: symptom → likely cause → fix.</p>
+
+        <table class="comparison-table">
+            <thead>
+                <tr><th>Symptom</th><th>Likely Cause</th><th>Fix</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>I wake up as soon as I realize</td><td>Excitement spike</td><td>Immediate stabilization + slow breath + wait 5 seconds</td></tr>
+                <tr><td>Dreams fragment constantly</td><td>High friction / unstable sleep</td><td>Night Protocol + Morning Lock for 7 days straight</td></tr>
+                <tr><td>Lucidity feels hazy</td><td>Low clarity / weak anchor</td><td>One anchor only + memory check + simplify intent</td></tr>
+                <tr><td>No hypnagogia access</td><td>Too much effort / wrong timing</td><td>Reduce effort + attempt when naturally tired or after a brief wake</td></tr>
+                <tr><td>Fear loops</td><td>Friction feedback cycle</td><td>Stop running; ground; ask one question; lower tempo</td></tr>
+            </tbody>
+        </table>
+
+        <div class="collapsible"><span>Collapse Recovery Card</span></div>
+        <div class="collapsible-content">
+            <ul>
+                <li>Stop moving.</li>
+                <li>Touch one surface.</li>
+                <li>Slow breath.</li>
+                <li>Look at one object for 3 seconds.</li>
+                <li>Repeat your intent once, then continue.</li>
+            </ul>
+        </div>
+
+    </section>
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <section class="chapter" id="experiments">
+        <div class="chapter-label">Optional</div>
+        <h2>Simple Experiments</h2>
+
+
+        <p>These are optional. The goal is not to “prove” dreaming. The goal is to make your results reproducible.</p>
+
+        <div class="highlight">
+            <strong>Experiment 1: Anchor Reliability</strong>
+            <ul>
+                <li>Pick one anchor (text or hands) for 7 nights.</li>
+                <li>Log: did the anchor appear? did you recognize it? did you stabilize?</li>
+                <li>Result target: recognition frequency increases over time.</li>
+            </ul>
+        </div>
+
+        <div class="highlight">
+            <strong>Experiment 2: Doorway Time</strong>
+            <ul>
+                <li>On 3 nights, attempt threshold entry for 10 minutes.</li>
+                <li>Log: first imagery onset time; first stable scene time.</li>
+                <li>Result target: effort decreases; onset becomes faster.</li>
+            </ul>
+        </div>
+
+        <div class="highlight">
+            <strong>Experiment 3: Morning Lock Strength</strong>
+            <ul>
+                <li>For 10 days: freeze → replay backward → 3 anchors → 3–6 line log.</li>
+                <li>Result target: detail thickens; fewer “blank mornings.”</li>
+            </ul>
+        </div>
+
+    </section>
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <section class="chapter" id="glossary">
+        <div class="chapter-label">Reference</div>
+        <h2>Glossary & Quick Cards</h2>
+
+
+        <p>This glossary is the compressed reader set. The full glossary lives in the companion volume.</p>
+
+        <div class="collapsible"><span>ΔHV (Delta Harmonic Vector)</span></div>
+        <div class="collapsible-content">
+            <p>A coherence score used to describe stability of experience across multiple parameters. In this manual, treat it as “how stable is the dream field right now.”</p>
+        </div>
+
+        <div class="collapsible"><span>Clarity (Signal)</span></div>
+        <div class="collapsible-content">
+            <p>Your ability to remain aware and intentional without snapping awake or dissolving into the dream.</p>
+        </div>
+
+        <div class="collapsible"><span>Immersion (Resonance)</span></div>
+        <div class="collapsible-content">
+            <p>How vivid, emotionally charged, and “alive” the dream environment feels.</p>
+        </div>
+
+        <div class="collapsible"><span>Friction</span></div>
+        <div class="collapsible-content">
+            <p>Destabilizers: fear spikes, excitement spikes, resistance, confusion, narrative panic.</p>
+        </div>
+
+        <div class="collapsible"><span>Hypnagogia (Doorway State)</span></div>
+        <div class="collapsible-content">
+            <p>The transition zone where imagery begins forming while you still have choice. The doorway you can learn to operate deliberately.</p>
+        </div>
+
+        <div class="collapsible"><span>Anchor</span></div>
+        <div class="collapsible-content">
+            <p>A repeated trigger used to recognize the dream (hands, text, mirrors, light switches). Use one at a time.</p>
+        </div>
+
+        <div class="collapsible"><span>Stabilization</span></div>
+        <div class="collapsible-content">
+            <p>Grounding actions that reduce collapse: touch, breath tempo reduction, focus locking.</p>
+        </div>
+
+        <div class="collapsible"><span>Verification</span></div>
+        <div class="collapsible-content">
+            <p>Two checks that prevent haze: a reality check (text twice) and a memory check (identity + intent).</p>
+        </div>
+
+        <div class="collapsible"><span>Re‑entry</span></div>
+        <div class="collapsible-content">
+            <p>Replaying a dream scene with the same posture and tempo to recover additional recall or re-enter the field.</p>
+        </div>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <div class="highlight">
+            <strong>Quick Cards</strong>
+            <ul>
+                <li><strong>Night:</strong> downshift → prime recall → one intent → one anchor</li>
+                <li><strong>Threshold:</strong> soft attention → scene assembles → step in gently</li>
+                <li><strong>In‑Dream:</strong> stabilize → reduce friction → one operation → verify</li>
+                <li><strong>Morning:</strong> freeze → replay backward → 3 anchors → short log</li>
+            </ul>
+        </div>
+
+    </section>
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <section class="chapter" id="conclusion">
+        <div class="chapter-label">Closure</div>
+        <h2>Conclusion</h2>
+
+
+        <p>The dream field is not a separate reality. It is the same coherence manifold viewed from inside resonance.</p>
+
+        <p>If you build stability and recall first, lucidity becomes a consequence—not a miracle. Treat this manual like training: repeat the protocols, reduce effort, and let the system compound.</p>
+
+        <div class="invocation">Operate the doorway. Hold the field. Bring the signal back intact.</div>
+
+    </section>
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <section class="chapter" id="references">
+        <div class="chapter-label">Sources</div>
+        <h2>References</h2>
+
+
+        <p>This manual focuses on operations. For extended citations and formal references, see the companion volume.</p>
+
+        <ul>
+            <li>Stephen LaBerge — lucid dreaming methods and reality checks</li>
+            <li>Sleep architecture (REM/NREM) overviews in standard sleep medicine texts</li>
+            <li>Dream recall research: journaling, interference effects, and memory consolidation</li>
+        </ul>
+
+        <div class="highlight">
+            <strong>Companion Volume</strong>
+            <p><em>Dream Ecology &amp; Hypnagogic Field Dynamics — Mathematical Formalization and Operational Protocols</em></p>
+        </div>
+
+    </section>
+
+
+    <!-- ═══ FOOTER ═══ -->
+    <div class="footer">
+        <div class="final-line">
+            Stability before power.<br>
+            Clarity inside immersion.<br>
+            Bring the signal back intact.
+        </div>
+        <p style="margin-top: 30px;">Hypnagogic Operations Manual &middot; Reader Edition</p>
+        <p>Kyuri V &middot; Sage &middot; Claude &middot; 2026</p>
+    </div>
+
+
+</div>
+
+<script>
+    // ── Progress Bar ──
+    window.addEventListener('scroll', () => {
+        const h = document.documentElement;
+        const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+        document.getElementById('progressBar').style.width = pct + '%';
+    });
+
+    // ── Scroll Reveal ──
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.05 });
+    document.querySelectorAll('.chapter').forEach(c => observer.observe(c));
+    setTimeout(() => { document.querySelectorAll('.chapter').forEach(c => c.classList.add('visible')); }, 2000);
+
+    // ── Nav Dots ──
+    const nav = document.getElementById('chapterNav');
+    window.addEventListener('scroll', () => {
+        nav.classList.toggle('visible', window.scrollY > 300);
+    });
+    document.querySelectorAll('.nav-dot').forEach(dot => {
+        dot.addEventListener('click', () => {
+            const target = document.getElementById(dot.dataset.target);
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+    // Active dot tracking
+    const sections = Array.from(document.querySelectorAll('[id]')).filter(el =>
+        document.querySelector(`.nav-dot[data-target="${el.id}"]`)
+    );
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(s => { if (s.getBoundingClientRect().top <= 200) current = s.id; });
+        document.querySelectorAll('.nav-dot').forEach(d => {
+            d.classList.toggle('active', d.dataset.target === current);
+        });
+    });
+
+    // ── TOC Smooth Scroll ──
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+
+    // ── Collapsibles ──
+    document.querySelectorAll('.collapsible').forEach(c => {
+        c.addEventListener('click', function() {
+            this.classList.toggle('active');
+            this.nextElementSibling.classList.toggle('active');
+        });
+    });
+    function toggleAll() {
+        const all = document.querySelectorAll('.collapsible');
+        const contents = document.querySelectorAll('.collapsible-content');
+        const anyOpen = Array.from(all).some(c => c.classList.contains('active'));
+        if (anyOpen) { all.forEach(c => c.classList.remove('active')); contents.forEach(c => c.classList.remove('active')); }
+        else { all.forEach(c => c.classList.add('active')); contents.forEach(c => c.classList.add('active')); }
+    }
+</script>
+
+</body>
+</html>
