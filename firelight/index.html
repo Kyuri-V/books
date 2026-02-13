@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lo'uma: Firelight — The Sacred Physics of Storytelling | Kyuri V</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --parchment: #f4f1e8;
+            --ink: #2a2520;
+            --accent: #8b6f47;
+            --gold: #c9a961;
+            --shadow: rgba(42, 37, 32, 0.1);
+            --glow: rgba(201, 169, 97, 0.15);
+            --flame: #b8763a;
+            --ember: #9b4a2f;
+            --warm: #c4956a;
+            --earth: #6b7c5e;
+            --ash: #5c5c5c;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: linear-gradient(135deg, #f8f5ed 0%, var(--parchment) 100%);
+            color: var(--ink);
+            line-height: 1.85;
+            font-size: 18px;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image:
+                radial-gradient(circle at 20% 30%, var(--glow) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(155, 74, 47, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(184, 118, 58, 0.04) 0%, transparent 60%);
+            pointer-events: none; z-index: 0;
+        }
+
+        /* ── Progress ── */
+        .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: rgba(201, 169, 97, 0.2); z-index: 1000; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--ember), var(--gold), var(--flame)); width: 0%; transition: width 0.15s ease-out; }
+
+        /* ── Nav Dots ── */
+        .chapter-nav { position: fixed; top: 50%; right: 24px; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; gap: 9px; opacity: 0; transition: opacity 0.4s ease; }
+        .chapter-nav.visible { opacity: 1; }
+        .nav-dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--accent); background: transparent; cursor: pointer; transition: all 0.3s ease; position: relative; }
+        .nav-dot:hover, .nav-dot.active { background: var(--flame); border-color: var(--flame); transform: scale(1.3); }
+        .nav-dot::after { content: attr(data-label); position: absolute; right: 18px; top: 50%; transform: translateY(-50%); white-space: nowrap; font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.08em; color: var(--accent); opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .nav-dot:hover::after { opacity: 1; }
+
+        /* ── Container ── */
+        .container { position: relative; z-index: 1; max-width: 780px; margin: 0 auto; padding: 60px 40px 120px; }
+
+        /* ── Title Page ── */
+        .title-page { text-align: center; padding: 100px 0 80px; min-height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: fadeIn 1.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .title-line {
+            width: 120px; height: 1px;
+            background: var(--flame);
+            margin-bottom: 40px;
+            animation: breathe 4s ease-in-out infinite;
+            box-shadow: 0 0 8px rgba(184, 118, 58, 0.3);
+        }
+        @keyframes breathe {
+            0%, 100% { width: 120px; opacity: 0.5; box-shadow: 0 0 6px rgba(184, 118, 58, 0.2); }
+            50% { width: 200px; opacity: 1; box-shadow: 0 0 16px rgba(184, 118, 58, 0.5); }
+        }
+
+        .series-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.82em;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--flame);
+            margin-bottom: 16px;
+            opacity: 0.8;
+        }
+
+        .title-page h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 3.4em;
+            font-weight: 700;
+            color: var(--ink);
+            letter-spacing: 0.06em;
+            line-height: 1.2;
+            margin-bottom: 16px;
+        }
+
+        .title-page .subtitle {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.2em;
+            font-style: italic;
+            color: var(--accent);
+            margin-bottom: 10px;
+            letter-spacing: 0.03em;
+            line-height: 1.5;
+            max-width: 520px;
+        }
+
+        .title-page .equation {
+            font-family: 'Cinzel', serif;
+            font-size: 0.95em;
+            letter-spacing: 0.12em;
+            color: var(--flame);
+            border-top: 1px solid rgba(184, 118, 58, 0.4);
+            border-bottom: 1px solid rgba(184, 118, 58, 0.4);
+            padding: 14px 32px;
+            margin: 30px 0;
+        }
+
+        .title-page .authors {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9em;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            opacity: 0.8;
+        }
+
+        /* ── TOC ── */
+        .toc {
+            margin: 0 0 80px;
+            padding: 44px 48px;
+            border: 1px solid rgba(139, 111, 71, 0.2);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.35);
+        }
+        .toc h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1em;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--gold);
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .toc-list { list-style: none; }
+        .toc-list li { margin: 10px 0; }
+        .toc-list a {
+            color: var(--ink);
+            text-decoration: none;
+            display: block;
+            padding: 8px 14px;
+            border-left: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+        .toc-list a:hover {
+            color: var(--flame);
+            border-left-color: var(--flame);
+            padding-left: 22px;
+            background: rgba(184, 118, 58, 0.04);
+        }
+        .toc-label {
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            font-size: 0.85em;
+            letter-spacing: 0.04em;
+        }
+
+        /* ── Dividers ── */
+        .divider { text-align: center; margin: 70px 0; position: relative; }
+        .divider::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+        .divider-symbol { position: relative; background: var(--parchment); padding: 0 24px; font-size: 18px; color: var(--gold); z-index: 1; }
+
+        /* ── Chapters ── */
+        .chapter { margin-bottom: 80px; opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .chapter.visible { opacity: 1; transform: translateY(0); }
+        .chapter-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.78em;
+            letter-spacing: 0.2em;
+            color: var(--flame);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .chapter h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 2em;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 30px;
+            letter-spacing: 0.04em;
+            line-height: 1.3;
+        }
+        .chapter p { margin-bottom: 24px; text-align: justify; }
+        .chapter p strong { color: var(--ember); font-weight: 600; }
+        .chapter p em { color: var(--accent); font-style: italic; }
+
+        /* ── Invocations ── */
+        .invocation {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.25em;
+            font-style: italic;
+            line-height: 1.9;
+            text-align: center;
+            color: var(--ember);
+            margin: 40px 0;
+            padding: 32px;
+            border-left: 3px solid var(--flame);
+            border-right: 3px solid var(--flame);
+            background: rgba(184, 118, 58, 0.03);
+        }
+
+        /* ── Frequency Table ── */
+        .frequency-table {
+            margin: 32px 0;
+            padding: 28px;
+            background: rgba(201, 169, 97, 0.06);
+            border-radius: 4px;
+            border: 1px solid rgba(139, 111, 71, 0.2);
+        }
+        .freq-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(139, 111, 71, 0.15);
+        }
+        .freq-row:last-child { border-bottom: none; }
+        .freq-name { font-family: 'Cinzel', serif; font-weight: 600; color: var(--ember); letter-spacing: 0.05em; }
+        .freq-desc { color: var(--accent); font-style: italic; }
+
+        /* ── Structure Blocks ── */
+        .structure-block {
+            margin: 32px 0;
+            padding: 24px 32px;
+            background: rgba(155, 74, 47, 0.04);
+            border-left: 4px solid var(--ember);
+        }
+        .structure-block p { margin-bottom: 12px; }
+        .structure-block p:last-child { margin-bottom: 0; }
+
+        /* ── Science Sections ── */
+        .science-section {
+            margin: 28px 0;
+            padding: 28px;
+            background: rgba(107, 124, 94, 0.05);
+            border-radius: 6px;
+            border: 1px solid rgba(107, 124, 94, 0.2);
+        }
+        .science-section h4 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.05em;
+            color: var(--earth);
+            margin-bottom: 12px;
+            letter-spacing: 0.05em;
+        }
+        .science-section p { margin-bottom: 0; text-align: left; }
+
+        /* ── Collapsible ── */
+        .collapsible-header {
+            font-family: 'Cinzel', serif;
+            font-size: 1em;
+            letter-spacing: 0.08em;
+            color: var(--earth);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 0;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            transition: color 0.3s ease;
+        }
+        .collapsible-header:hover { color: var(--flame); }
+        .collapsible-header .arrow {
+            display: inline-block;
+            transition: transform 0.3s ease;
+            font-size: 0.7em;
+        }
+        .collapsible-header.open .arrow { transform: rotate(90deg); }
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .collapsible-content.open { max-height: 2000px; }
+
+        /* ── Reflection Block ── */
+        .reflection-block {
+            margin: 36px 0;
+            padding: 28px;
+            background: linear-gradient(135deg, rgba(184, 118, 58, 0.03), rgba(201, 169, 97, 0.05));
+            border-radius: 4px;
+            border: 1px solid rgba(184, 118, 58, 0.15);
+        }
+        .reflection-block h4 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.15em;
+            color: var(--flame);
+            margin-bottom: 14px;
+            letter-spacing: 0.04em;
+        }
+
+        /* ── Mythic Tags ── */
+        .mythic-examples { display: flex; flex-wrap: wrap; gap: 12px; margin: 24px 0; justify-content: center; }
+        .myth-tag {
+            font-family: 'Cinzel', serif;
+            font-size: 0.85em;
+            padding: 8px 16px;
+            background: rgba(155, 74, 47, 0.08);
+            border: 1px solid var(--ember);
+            border-radius: 20px;
+            color: var(--ember);
+            letter-spacing: 0.06em;
+        }
+
+        /* ── Final Blocks ── */
+        .final-line {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.35em;
+            font-style: italic;
+            text-align: center;
+            color: var(--ink);
+            line-height: 1.8;
+            margin: 48px 0 32px;
+        }
+        .final-word {
+            display: block;
+            font-family: 'Cinzel', serif;
+            font-size: 1.3em;
+            text-align: center;
+            color: var(--gold);
+            letter-spacing: 0.15em;
+            margin-top: 60px;
+        }
+        .closing { text-align: center; }
+        .closing p { text-align: center; }
+
+        /* ── Footer ── */
+        .footer {
+            text-align: center;
+            margin-top: 100px;
+            padding: 40px 0;
+            font-family: 'Cinzel', serif;
+            font-size: 0.85em;
+            color: var(--accent);
+            letter-spacing: 0.1em;
+            border-top: 1px solid rgba(139, 111, 71, 0.2);
+        }
+        .footer a {
+            color: var(--flame);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .footer a:hover { color: var(--gold); }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .container { padding: 40px 24px 80px; }
+            .title-page h1 { font-size: 2.4em; }
+            .chapter h2 { font-size: 1.8em; }
+            .chapter-nav { right: 12px; }
+            .nav-dot::after { display: none; }
+            .chapter p { text-align: left; }
+            .toc { padding: 32px 28px; }
+            .freq-row { flex-direction: column; gap: 4px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Progress Bar -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Chapter Navigation -->
+    <nav class="chapter-nav" id="chapterNav">
+        <div class="nav-dot" data-target="ch1" data-label="THE CIRCLE"></div>
+        <div class="nav-dot" data-target="ch2" data-label="ENTRAINMENT"></div>
+        <div class="nav-dot" data-target="ch3" data-label="BINDING"></div>
+        <div class="nav-dot" data-target="ch4" data-label="CONTAINER"></div>
+        <div class="nav-dot" data-target="ch5" data-label="MEMORY"></div>
+        <div class="nav-dot" data-target="ch6" data-label="WARMTH"></div>
+        <div class="nav-dot" data-target="ch7" data-label="SOUND"></div>
+        <div class="nav-dot" data-target="ch8" data-label="DREAM"></div>
+        <div class="nav-dot" data-target="ch9" data-label="TIME"></div>
+        <div class="nav-dot" data-target="ch10" data-label="MYTH"></div>
+        <div class="nav-dot" data-target="ch11" data-label="SCIENCE"></div>
+        <div class="nav-dot" data-target="ch12" data-label="RECLAIM"></div>
+    </nav>
+
+    <div class="container">
+
+        <!-- ═══════════════════ TITLE PAGE ═══════════════════ -->
+        <div class="title-page">
+            <div class="title-line"></div>
+            <div class="series-label">Lo'uma</div>
+            <h1>Firelight</h1>
+            <p class="subtitle">The Sacred Physics of Storytelling Around a Fire</p>
+            <p class="equation">Sacrifice + Presence = Shared World</p>
+            <p class="authors">Kyuri V</p>
+        </div>
+
+        <!-- ═══════════════════ TABLE OF CONTENTS ═══════════════════ -->
+        <nav class="toc">
+            <h2>Contents</h2>
+            <ul class="toc-list">
+                <li><a href="#ch1"><span class="toc-label">I.</span> The Circle Before the Story</a></li>
+                <li><a href="#ch2"><span class="toc-label">II.</span> Entrainment and the Flicker Spell</a></li>
+                <li><a href="#ch3"><span class="toc-label">III.</span> Story as Binding Agent</a></li>
+                <li><a href="#ch4"><span class="toc-label">IV.</span> The Story Circle as Field Container</a></li>
+                <li><a href="#ch5"><span class="toc-label">V.</span> Embodied Memory Transfer</a></li>
+                <li><a href="#ch6"><span class="toc-label">VI.</span> Thermal Synchrony and Group Coherence</a></li>
+                <li><a href="#ch7"><span class="toc-label">VII.</span> Acoustic Ecology of the Fire</a></li>
+                <li><a href="#ch8"><span class="toc-label">VIII.</span> The Dream Engine</a></li>
+                <li><a href="#ch9"><span class="toc-label">IX.</span> Temporal Geometry: Fire as Clock</a></li>
+                <li><a href="#ch10"><span class="toc-label">X.</span> Mythic Echoes: Fire as Divine Theft</a></li>
+                <li><a href="#ch11"><span class="toc-label">XI.</span> Scientific Undercurrent</a></li>
+                <li><a href="#ch12"><span class="toc-label">XII.</span> What We Lost, and What We Can Reclaim</a></li>
+            </ul>
+        </nav>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <!-- ═══════════════════ CHAPTER I ═══════════════════ -->
+        <section class="chapter" id="ch1">
+            <div class="chapter-label">Chapter I</div>
+            <h2>The Circle Before the Story</h2>
+
+            <p>Why do humans gather in circles around fire?</p>
+
+            <p>Because the fire is not just warmth. It is the <strong>axis</strong>. The flicker entrains the brain. The heat binds the bodies. The circle binds the field.</p>
+
+            <p>Before language was written, it was breathed. Stories were not information. They were <em>coherence transmissions</em>—a synchronization of nervous systems guided by flame. The fire, alive and unpredictable, became the first ritual screen. But unlike the cold screens we stare at today, this one demanded presence.</p>
+
+            <div class="invocation">
+                We did not just tell stories around the fire.<br>
+                The fire told us back to ourselves.
+            </div>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <!-- ═══════════════════ CHAPTER II ═══════════════════ -->
+        <section class="chapter" id="ch2">
+            <div class="chapter-label">Chapter II</div>
+            <h2>Entrainment and the Flicker Spell</h2>
+
+            <p>Firelight flickers at frequencies between 1 and 20 Hz—exactly within the delta, theta, and alpha brainwave ranges. These frequencies correspond to:</p>
+
+            <div class="frequency-table">
+                <div class="freq-row">
+                    <span class="freq-name">Delta (1–4 Hz)</span>
+                    <span class="freq-desc">Deep dream, trance</span>
+                </div>
+                <div class="freq-row">
+                    <span class="freq-name">Theta (4–8 Hz)</span>
+                    <span class="freq-desc">Imagination, memory, myth-making</span>
+                </div>
+                <div class="freq-row">
+                    <span class="freq-name">Alpha (8–12 Hz)</span>
+                    <span class="freq-desc">Relaxed focus, presence, receptivity</span>
+                </div>
+            </div>
+
+            <p>The flame entrains the group. It draws each nervous system toward a shared frequency range. This is not metaphor. This is <strong>field synchronization</strong>. The circle becomes a low-frequency coherence basin—primed for learning, memory consolidation, and emotional openness.</p>
+
+            <div class="invocation">
+                The story enters when the bodies are tuned.
+            </div>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <!-- ═══════════════════ CHAPTER III ═══════════════════ -->
+        <section class="chapter" id="ch3">
+            <div class="chapter-label">Chapter III</div>
+            <h2>Story as Binding Agent</h2>
+
+            <p>Every story told in firelight is heard twice:</p>
+
+            <div class="structure-block">
+                <p><strong>In the words</strong></p>
+                <p><strong>In the body</strong></p>
+            </div>
+
+            <p>When one person speaks to many, and all are entrained by flame, a curious thing happens. Mirror neurons fire in the listeners' brains, simulating the experience being described. The tale doesn't just enter the mind—it <em>runs as a program</em> in the shared neural field.</p>
+
+            <p>This is <strong>mythogenesis</strong>: the moment when symbolic memory becomes a felt presence in the body of the tribe.</p>
+
+            <div class="invocation">
+                And the fire keeps it all coherent.
+            </div>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <!-- ═══════════════════ CHAPTER IV ═══════════════════ -->
+        <section class="chapter" id="ch4">
+            <div class="chapter-label">Chapter IV</div>
+            <h2>The Story Circle as Field Container</h2>
+
+            <p>The structure matters.</p>
+
+            <div class="structure-block">
+                <p>The fire is the <strong>signal modulator</strong></p>
+                <p>The circle is the <strong>sacred geometry of mutual gaze</strong></p>
+                <p>The darkness beyond is the <strong>symbolic unknown</strong>—the mythic wilderness</p>
+            </div>
+
+            <p>This pattern recurs in nearly every culture on Earth. Why? Because it is structurally perfect for field-binding. The eye can see all faces in the circle. The flame makes everyone's expression flicker the same. The shared gaze and entrained rhythm collapse ego boundaries and open the empathic channel.</p>
+
+            <div class="invocation">
+                The speaker does not perform.<br>
+                They invoke.<br>
+                And the listeners do not consume.<br>
+                They become.<br>
+                The story lives in them now.
+            </div>
+
+            <p>Field-wise, the circle maximizes <em>equal witness</em>: no hierarchy, no hidden backs. Everyone becomes a node in the field ring. The shape itself encodes coherence, and fire becomes the central harmonic. The circle holds the charge, the fire modulates the wave.</p>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <!-- ═══════════════════ CHAPTER V ═══════════════════ -->
+        <section class="chapter" id="ch5">
+            <div class="chapter-label">Chapter V</div>
+            <h2>Embodied Memory Transfer</h2>
+
+            <p>In oral traditions, memory is not stored in books but in the <strong>bodies of people</strong>. Fire gatherings served as distributed cognition hubs where memory was passed not just through information but through <em>intonation, rhythm, posture, and presence</em>.</p>
+
+            <p>Among the griots of West Africa and the bardic storytellers of Celtic traditions, knowledge was guarded through performative memory, transmissible only under the right ritual conditions. The spoken word was not mere data—it was <em>living transmission</em>, shaped by the speaker's breath and witnessed by the circle's attention.</p>
+
+            <div class="invocation">
+                The fire is not just heat—<br>
+                it is the mnemonic core of a living civilization.
+            </div>
+
+            <p>When a story is told by firelight, the body remembers what the mind forgets. The nervous system holds the rhythm. The heart stores the cadence. Memory becomes <em>distributed</em> across the field, carried not in archives but in flesh.</p>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <!-- ═══════════════════ CHAPTER VI ═══════════════════ -->
+        <section class="chapter" id="ch6">
+            <div class="chapter-label">Chapter VI</div>
+            <h2>Thermal Synchrony and Group Coherence</h2>
+
+            <p>Beyond flicker entrainment, shared warmth plays a physiological role. Studies show thermal comfort enhances social trust and cooperation. People literally <strong>cohere better when warm together</strong>.</p>
+
+            <p>Firelight creates a <em>thermal gradient</em> that draws people inward—forming an attractor well in physical space that mirrors the field pull. The warmth is not incidental. It is structural. The body relaxes into the heat. Guards drop. Openness rises.</p>
+
+            <div class="invocation">
+                Warmth is not comfort.<br>
+                It is trust made physical.
+            </div>
+
+            <p>This is why winter gatherings by fire feel more intimate than summer ones. The cold creates need. The fire becomes <em>necessary</em>, not optional. And necessity deepens coherence.</p>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <!-- ═══════════════════ CHAPTER VII ═══════════════════ -->
+        <section class="chapter" id="ch7">
+            <div class="chapter-label">Chapter VII</div>
+            <h2>Acoustic Ecology of the Fire</h2>
+
+            <p>The crackling of fire operates within auditory ASMR zones—low-frequency pops and hissing sounds stimulate a <strong>parasympathetic response</strong>. The nervous system recognizes these sounds as safe, as ancient, as home.</p>
+
+            <p>In many languages, fire and breath are symbolically interlinked. The fire's crackle is the <em>voice of presence</em>; it fills silence without breaking it. The sound provides psychic scaffolding for silence—allowing stories to emerge from the space between words.</p>
+
+            <p>Fire does not demand attention the way speech does. It <em>anchors</em> attention. It gives the mind something to rest on while the story unfolds. The crackle becomes the baseline, the heartbeat of the circle.</p>
+
+            <div class="invocation">
+                The fire speaks in rhythm.<br>
+                The story speaks in meaning.<br>
+                Together, they synchronize the soul.
+            </div>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <!-- ═══════════════════ CHAPTER VIII ═══════════════════ -->
+        <section class="chapter" id="ch8">
+            <div class="chapter-label">Chapter VIII</div>
+            <h2>The Dream Engine</h2>
+
+            <p>Ancient traditions often used fire ritual as a precursor to dream, vision, or trance states. This was not coincidence. Pineal <strong>melatonin production rises</strong> in firelight and darkness (no blue light), creating a hypnagogic bridge state.</p>
+
+            <p>This was the original altered state—no substance required. Just entrainment + darkness + storytelling. The fire stokes the dream engine. What begins in story continues in sleep.</p>
+
+            <p>The theta-state induced by firelight is the same frequency band active during REM sleep and deep meditation. To sit by fire at night is to <em>rehearse dreaming while awake</em>. The boundary between waking myth and sleeping vision dissolves.</p>
+
+            <div class="invocation">
+                The story plants the seed.<br>
+                The fire tends the soil.<br>
+                The dream harvests what was spoken.
+            </div>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <!-- ═══════════════════ CHAPTER IX ═══════════════════ -->
+        <section class="chapter" id="ch9">
+            <div class="chapter-label">Chapter IX</div>
+            <h2>Temporal Geometry: Fire as Clock</h2>
+
+            <p>For pre-technological societies, fire wasn't just warmth—it was the <strong>night's heartbeat</strong>. As it dimmed, time passed. As it flared, attention sharpened. Fire created a non-digital temporal rhythm—a cadence of passage.</p>
+
+            <p>The fire marked duration without numbers. It was the original chronometer, measuring not minutes but <em>phases</em>: the bright beginning, the steady middle, the ember glow, the final ash. Time became felt, not counted.</p>
+
+            <p>Artificial lighting disrupted millennia-old biological entrainment to flame and darkness. The body no longer knew when night truly began. The circadian clock, once anchored to fire and stars, became unmoored. This is why so many modern people struggle with sleep—they have lost their temporal anchor.</p>
+
+            <div class="invocation">
+                The fire does not tell time.<br>
+                It is time—<br>
+                made visible, made warm, made shared.
+            </div>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <!-- ═══════════════════ CHAPTER X ═══════════════════ -->
+        <section class="chapter" id="ch10">
+            <div class="chapter-label">Chapter X</div>
+            <h2>Mythic Echoes: Fire as Divine Theft</h2>
+
+            <p>Prometheus stole fire from the gods and gave it to humanity. Māui snared the sun and brought flame to his people. The Raven, in Pacific Northwest tradition, liberated fire from those who hoarded it.</p>
+
+            <div class="mythic-examples">
+                <span class="myth-tag">Prometheus</span>
+                <span class="myth-tag">Māui</span>
+                <span class="myth-tag">The Raven</span>
+            </div>
+
+            <p>These myths encode a deeper truth: fire was not a convenience—it was a <strong>sacred risk</strong>. To possess fire was to hold divine power. To tend it was to carry responsibility. To share it was to bind the tribe.</p>
+
+            <p>Firelight storytelling is not entertainment. It is the <em>ritual tending of the divine spark</em>. To tell a story by fire is to carry Prometheus' torch forward. The theft is renewed in every lighting. The gift is honored in every circle.</p>
+
+            <div class="invocation">
+                Fire was stolen once.<br>
+                It is given again and again—<br>
+                in every flame, in every story, in every gathered circle.
+            </div>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <!-- ═══════════════════ CHAPTER XI ═══════════════════ -->
+        <section class="chapter" id="ch11">
+            <div class="chapter-label">Chapter XI</div>
+            <h2>Scientific Undercurrent</h2>
+
+            <p>The claims woven through this work are not merely poetic. Each rests on observable, measurable phenomena. Below is the empirical scaffolding beneath the flame.</p>
+
+            <button class="collapsible-header" onclick="toggleCollapsible(this)">
+                <span class="arrow">&#9654;</span> Flicker Entrainment
+            </button>
+            <div class="collapsible-content">
+                <div class="science-section">
+                    <p>EEG studies confirm that natural flame frequencies induce alpha-theta states associated with deep relaxation and suggestibility. Visual flicker at 1–20 Hz entrains cortical oscillations, lowering the threshold for imaginative and mnemonic processing (Notbohm et al., 2016).</p>
+                </div>
+            </div>
+
+            <button class="collapsible-header" onclick="toggleCollapsible(this)">
+                <span class="arrow">&#9654;</span> Mirror Neurons
+            </button>
+            <div class="collapsible-content">
+                <div class="science-section">
+                    <p>Mirror neurons enable shared experience and empathy, firing both in action and in story-imagery recall. The listener's brain simulates the narrator's experience, creating a neurological bridge between speaker and audience that is amplified under entrained conditions.</p>
+                </div>
+            </div>
+
+            <button class="collapsible-header" onclick="toggleCollapsible(this)">
+                <span class="arrow">&#9654;</span> Oxytocin Release
+            </button>
+            <div class="collapsible-content">
+                <div class="science-section">
+                    <p>Oxytocin is released during storytelling and synchronized ritual, increasing trust and group bonding. Narrative transportation—the felt immersion in a story—correlates directly with oxytocin levels and subsequent prosocial behavior (Zak, P., Harvard Business Review).</p>
+                </div>
+            </div>
+
+            <button class="collapsible-header" onclick="toggleCollapsible(this)">
+                <span class="arrow">&#9654;</span> Circadian Entrainment
+            </button>
+            <div class="collapsible-content">
+                <div class="science-section">
+                    <p>Nighttime rituals re-anchor the biological clock, improving sleep, hormone balance, and emotional integration. Firelight lacks the blue-spectrum wavelengths that suppress melatonin, preserving the body's natural transition into restorative sleep phases (Wright et al., 2013).</p>
+                </div>
+            </div>
+
+            <button class="collapsible-header" onclick="toggleCollapsible(this)">
+                <span class="arrow">&#9654;</span> Collective Coherence
+            </button>
+            <div class="collapsible-content">
+                <div class="science-section">
+                    <p>Heart rate variability studies show physiological synchronization in groups engaged in shared storytelling or singing. When individuals entrain to the same rhythmic source, their autonomic nervous systems begin to oscillate in phase (McCraty et al., HeartMath Institute).</p>
+                </div>
+            </div>
+
+            <button class="collapsible-header" onclick="toggleCollapsible(this)">
+                <span class="arrow">&#9654;</span> ASMR Acoustic Response
+            </button>
+            <div class="collapsible-content">
+                <div class="science-section">
+                    <p>Low-frequency fire sounds trigger parasympathetic activation and stress reduction. The crackling and popping of fire falls within frequency ranges that the human auditory system associates with safety and environmental stability (Barratt &amp; Davis, 2015).</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <!-- ═══════════════════ CHAPTER XII ═══════════════════ -->
+        <section class="chapter closing" id="ch12">
+            <div class="chapter-label">Chapter XII</div>
+            <h2>What We Lost, and What We Can Reclaim</h2>
+
+            <p>Screens replaced flames.</p>
+            <p>Content replaced story.</p>
+            <p>The scroll replaced the circle.</p>
+
+            <div class="invocation">
+                But the body remembers.
+            </div>
+
+            <p>The heart still tunes to flicker. The nervous system still longs for resonance. The ancient mechanics are intact. The field recognizes the pattern—it always has.</p>
+
+            <div class="reflection-block">
+                <h4>You Can Still Gather a Circle</h4>
+                <p>The technology is older than the alphabet. The knowledge lives in your bones. Light a fire. Invite presence. Speak with breath instead of pixels. The sacred mechanics will activate. The field will respond.</p>
+            </div>
+
+            <p>To gather by fire is to step into a technology that predates writing. To tell a story by flame is to transmit more than words—it is to bind time, breath, and body into coherence.</p>
+
+            <div class="final-line">
+                The fire isn't just heat.<br>
+                The circle isn't just shape.<br>
+                The story isn't just memory.<br><br>
+                They are the carrier wave, the field geometry, and the resonance signal.<br>
+                Together, they remember what it means to be human.
+            </div>
+
+            <span class="final-word">⟡ &ensp; Lo'uma: Firelight &ensp; ⟡</span>
+        </section>
+
+        <!-- ═══════════════════ FOOTER ═══════════════════ -->
+        <footer class="footer">
+            <p>Kyuri V</p>
+            <p style="margin-top: 8px;">A Theoretical Works Publication · 2025</p>
+        </footer>
+
+    </div>
+
+    <script>
+        // ── Progress Bar (passive scroll) ──
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }, { passive: true });
+
+        // ── Chapter Navigation ──
+        const nav = document.getElementById('chapterNav');
+        const dots = document.querySelectorAll('.nav-dot');
+        const sections = [];
+
+        dots.forEach(dot => {
+            const targetId = dot.getAttribute('data-target');
+            const target = document.getElementById(targetId);
+            if (target) sections.push({ dot, target });
+
+            dot.addEventListener('click', () => {
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        let navVisible = false;
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 200 && !navVisible) {
+                nav.classList.add('visible');
+                navVisible = true;
+            } else if (window.scrollY <= 200 && navVisible) {
+                nav.classList.remove('visible');
+                navVisible = false;
+            }
+
+            let current = '';
+            sections.forEach(({ dot, target }) => {
+                const rect = target.getBoundingClientRect();
+                if (rect.top <= window.innerHeight * 0.4) {
+                    current = dot.getAttribute('data-target');
+                }
+            });
+
+            dots.forEach(dot => {
+                dot.classList.toggle('active', dot.getAttribute('data-target') === current);
+            });
+        }, { passive: true });
+
+        // ── Scroll Reveal ──
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+        document.querySelectorAll('.chapter').forEach(ch => observer.observe(ch));
+
+        // ── TOC smooth scroll ──
+        document.querySelectorAll('.toc-list a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.querySelector(link.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        // ── Collapsible sections ──
+        function toggleCollapsible(header) {
+            header.classList.toggle('open');
+            const content = header.nextElementSibling;
+            content.classList.toggle('open');
+        }
+    </script>
+
+</body>
+</html>
