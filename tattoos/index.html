@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tattoos — Skin as Canvas for Intentional Permanence | Kyuri V</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --parchment: #f4f1e8;
+            --ink: #2a2520;
+            --accent: #8b6f47;
+            --gold: #c9a961;
+            --shadow: rgba(42, 37, 32, 0.1);
+            --glow: rgba(201, 169, 97, 0.15);
+            --earth: #6b7c5e;
+            --ash: #5c5c5c;
+            --needle: #6a5a6e;
+            --deep-needle: #4a3e50;
+            --scar: #9a8a80;
+            --bruise: #7a6878;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: linear-gradient(135deg, #f8f5ed 0%, var(--parchment) 100%);
+            color: var(--ink); line-height: 1.85; font-size: 18px; overflow-x: hidden;
+        }
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image:
+                radial-gradient(circle at 20% 30%, var(--glow) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(106, 90, 110, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(74, 62, 80, 0.03) 0%, transparent 60%);
+            pointer-events: none; z-index: 0;
+        }
+        .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: rgba(201, 169, 97, 0.2); z-index: 1000; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--deep-needle), var(--gold), var(--needle)); width: 0%; transition: width 0.15s ease-out; }
+        .chapter-nav { position: fixed; top: 50%; right: 24px; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; gap: 9px; opacity: 0; transition: opacity 0.4s ease; }
+        .chapter-nav.visible { opacity: 1; }
+        .nav-dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--accent); background: transparent; cursor: pointer; transition: all 0.3s ease; position: relative; }
+        .nav-dot:hover, .nav-dot.active { background: var(--needle); border-color: var(--needle); transform: scale(1.3); }
+        .nav-dot::after { content: attr(data-label); position: absolute; right: 18px; top: 50%; transform: translateY(-50%); white-space: nowrap; font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.08em; color: var(--accent); opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .nav-dot:hover::after { opacity: 1; }
+        .container { position: relative; z-index: 1; max-width: 780px; margin: 0 auto; padding: 60px 40px 120px; }
+        .title-page { text-align: center; padding: 100px 0 80px; min-height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: fadeIn 1.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .title-line { width: 120px; height: 1px; background: var(--needle); margin-bottom: 40px; animation: breathe 4s ease-in-out infinite; box-shadow: 0 0 8px rgba(106, 90, 110, 0.3); }
+        @keyframes breathe {
+            0%, 100% { width: 120px; opacity: 0.5; box-shadow: 0 0 6px rgba(106, 90, 110, 0.2); }
+            50% { width: 200px; opacity: 1; box-shadow: 0 0 16px rgba(106, 90, 110, 0.5); }
+        }
+        .series-label { font-family: 'Cinzel', serif; font-size: 0.82em; letter-spacing: 0.2em; text-transform: uppercase; color: var(--needle); margin-bottom: 16px; opacity: 0.8; }
+        .title-page h1 { font-family: 'Cinzel', serif; font-size: 3.4em; font-weight: 700; color: var(--ink); letter-spacing: 0.06em; line-height: 1.2; margin-bottom: 16px; }
+        .title-page .subtitle { font-family: 'Crimson Pro', serif; font-size: 1.2em; font-style: italic; color: var(--accent); margin-bottom: 10px; letter-spacing: 0.03em; line-height: 1.5; max-width: 520px; }
+        .title-page .epigraph { font-family: 'Crimson Pro', serif; font-size: 1em; font-style: italic; color: var(--needle); max-width: 460px; line-height: 1.7; margin: 24px 0; padding: 18px 32px; border-top: 1px solid rgba(106, 90, 110, 0.3); border-bottom: 1px solid rgba(106, 90, 110, 0.3); }
+        .title-page .authors { font-family: 'Cinzel', serif; font-size: 0.9em; letter-spacing: 0.1em; color: var(--accent); opacity: 0.8; }
+        .toc { margin: 0 0 80px; padding: 44px 48px; border: 1px solid rgba(139, 111, 71, 0.2); border-radius: 6px; background: rgba(255, 255, 255, 0.35); }
+        .toc h2 { font-family: 'Cinzel', serif; font-size: 1.1em; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); text-align: center; margin-bottom: 28px; }
+        .toc-list { list-style: none; }
+        .toc-list li { margin: 10px 0; }
+        .toc-list a { color: var(--ink); text-decoration: none; display: block; padding: 8px 14px; border-left: 3px solid transparent; transition: all 0.3s ease; font-size: 0.95em; }
+        .toc-list a:hover { color: var(--needle); border-left-color: var(--needle); padding-left: 22px; background: rgba(106, 90, 110, 0.04); }
+        .toc-label { font-family: 'Cinzel', serif; font-weight: 600; font-size: 0.85em; letter-spacing: 0.04em; }
+        .divider { text-align: center; margin: 70px 0; position: relative; }
+        .divider::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+        .divider-symbol { position: relative; background: var(--parchment); padding: 0 24px; font-size: 18px; color: var(--gold); z-index: 1; }
+        .chapter { margin-bottom: 80px; opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .chapter.visible { opacity: 1; transform: translateY(0); }
+        .chapter-label { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.2em; color: var(--needle); text-transform: uppercase; margin-bottom: 8px; }
+        .chapter h2 { font-family: 'Cinzel', serif; font-size: 2em; font-weight: 600; color: var(--ink); margin-bottom: 30px; letter-spacing: 0.04em; line-height: 1.3; }
+        .chapter p { margin-bottom: 24px; text-align: justify; }
+        .chapter p strong { color: var(--deep-needle); font-weight: 600; }
+        .chapter p em { color: var(--accent); font-style: italic; }
+        .invocation { font-family: 'Crimson Pro', serif; font-size: 1.25em; font-style: italic; line-height: 1.9; text-align: center; color: var(--deep-needle); margin: 40px 0; padding: 32px; border-left: 3px solid var(--needle); border-right: 3px solid var(--needle); background: rgba(106, 90, 110, 0.03); }
+        .structure-block { margin: 32px 0; padding: 24px 32px; background: rgba(106, 90, 110, 0.04); border-left: 4px solid var(--needle); }
+        .structure-block p { margin-bottom: 12px; }
+        .structure-block p:last-child { margin-bottom: 0; }
+        .sequence-block { margin: 36px 0; padding: 28px; background: rgba(201, 169, 97, 0.05); border-radius: 4px; border: 1px solid rgba(139, 111, 71, 0.2); }
+        .sequence-block h4 { font-family: 'Cinzel', serif; font-size: 1.05em; color: var(--needle); margin-bottom: 18px; letter-spacing: 0.04em; }
+        .sequence-step { display: flex; gap: 14px; margin-bottom: 10px; align-items: baseline; }
+        .sequence-step:last-child { margin-bottom: 0; }
+        .step-num { font-family: 'Cinzel', serif; font-size: 0.8em; font-weight: 600; color: var(--needle); min-width: 24px; }
+        .step-action { font-weight: 600; color: var(--deep-needle); }
+        .step-meaning { color: var(--accent); font-style: italic; }
+        .archetype-examples { display: flex; flex-wrap: wrap; gap: 12px; margin: 24px 0; justify-content: center; }
+        .archetype-tag { font-family: 'Cinzel', serif; font-size: 0.85em; padding: 8px 16px; background: rgba(106, 90, 110, 0.08); border: 1px solid var(--needle); border-radius: 20px; color: var(--deep-needle); letter-spacing: 0.06em; }
+        .zone-table { margin: 32px 0; padding: 28px; background: rgba(106, 90, 110, 0.04); border-radius: 4px; border: 1px solid rgba(106, 90, 110, 0.18); }
+        .zone-table h4 { font-family: 'Cinzel', serif; font-size: 1.05em; color: var(--needle); margin-bottom: 18px; letter-spacing: 0.06em; text-align: center; }
+        .zone-row { display: grid; grid-template-columns: 1fr 1.5fr 1.5fr; gap: 8px; padding: 10px 0; border-bottom: 1px solid rgba(106, 90, 110, 0.12); align-items: baseline; }
+        .zone-row:last-child { border-bottom: none; }
+        .zone-name { font-family: 'Cinzel', serif; font-weight: 600; color: var(--deep-needle); letter-spacing: 0.04em; font-size: 0.95em; }
+        .zone-field { color: var(--accent); font-style: italic; font-size: 0.95em; }
+        .zone-imprint { color: var(--ash); font-size: 0.9em; }
+        .carrier-block { margin: 36px 0; padding: 28px; background: linear-gradient(135deg, rgba(106, 90, 110, 0.04), rgba(201, 169, 97, 0.04)); border-radius: 6px; border: 1px solid rgba(106, 90, 110, 0.2); }
+        .carrier-block h4 { font-family: 'Cinzel', serif; font-size: 1.05em; color: var(--needle); margin-bottom: 14px; letter-spacing: 0.06em; }
+        .carrier-item { display: flex; gap: 12px; margin-bottom: 10px; align-items: baseline; }
+        .carrier-item:last-child { margin-bottom: 0; }
+        .carrier-substance { font-weight: 600; color: var(--deep-needle); min-width: fit-content; }
+        .carrier-resonance { color: var(--accent); font-style: italic; }
+        .ritual-block { margin: 36px 0; padding: 32px; background: linear-gradient(135deg, rgba(106, 90, 110, 0.04), rgba(201, 169, 97, 0.04)); border-radius: 6px; border: 1px solid rgba(106, 90, 110, 0.2); }
+        .ritual-block h4 { font-family: 'Cinzel', serif; font-size: 1.1em; color: var(--needle); margin-bottom: 20px; letter-spacing: 0.06em; text-align: center; }
+        .ritual-step { display: flex; gap: 14px; margin-bottom: 14px; align-items: baseline; }
+        .ritual-step:last-child { margin-bottom: 0; }
+        .ritual-num { font-family: 'Cinzel', serif; font-size: 0.8em; font-weight: 600; color: var(--needle); min-width: 24px; }
+        .reflection-block { margin: 36px 0; padding: 28px; background: linear-gradient(135deg, rgba(106, 90, 110, 0.03), rgba(201, 169, 97, 0.05)); border-radius: 4px; border: 1px solid rgba(106, 90, 110, 0.15); }
+        .reflection-block h4 { font-family: 'Cinzel', serif; font-size: 1.15em; color: var(--needle); margin-bottom: 14px; letter-spacing: 0.04em; }
+        .science-section { margin: 28px 0; padding: 28px; background: rgba(107, 124, 94, 0.05); border-radius: 6px; border: 1px solid rgba(107, 124, 94, 0.2); }
+        .science-section p { margin-bottom: 0; text-align: left; }
+        .collapsible-header { font-family: 'Cinzel', serif; font-size: 1em; letter-spacing: 0.08em; color: var(--earth); cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 16px 0; border: none; background: none; width: 100%; text-align: left; transition: color 0.3s ease; }
+        .collapsible-header:hover { color: var(--needle); }
+        .collapsible-header .arrow { display: inline-block; transition: transform 0.3s ease; font-size: 0.7em; }
+        .collapsible-header.open .arrow { transform: rotate(90deg); }
+        .collapsible-content { max-height: 0; overflow: hidden; transition: max-height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .collapsible-content.open { max-height: 2000px; }
+        .final-line { font-family: 'Crimson Pro', serif; font-size: 1.35em; font-style: italic; text-align: center; color: var(--ink); line-height: 1.8; margin: 48px 0 32px; }
+        .final-word { display: block; font-family: 'Cinzel', serif; font-size: 1.3em; text-align: center; color: var(--gold); letter-spacing: 0.15em; margin-top: 60px; }
+        .closing { text-align: center; }
+        .closing p { text-align: center; }
+        .footer { text-align: center; margin-top: 100px; padding: 40px 0; font-family: 'Cinzel', serif; font-size: 0.85em; color: var(--accent); letter-spacing: 0.1em; border-top: 1px solid rgba(139, 111, 71, 0.2); }
+        @media (max-width: 768px) {
+            .container { padding: 40px 24px 80px; }
+            .title-page h1 { font-size: 2.4em; }
+            .chapter h2 { font-size: 1.8em; }
+            .chapter-nav { right: 12px; }
+            .nav-dot::after { display: none; }
+            .chapter p { text-align: left; }
+            .toc { padding: 32px 28px; }
+            .zone-row { grid-template-columns: 1fr; gap: 4px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+    <nav class="chapter-nav" id="chapterNav">
+        <div class="nav-dot" data-target="ch1" data-label="MARKED"></div>
+        <div class="nav-dot" data-target="ch2" data-label="NEEDLE"></div>
+        <div class="nav-dot" data-target="ch3" data-label="PAIN GATE"></div>
+        <div class="nav-dot" data-target="ch4" data-label="SCROLL"></div>
+        <div class="nav-dot" data-target="ch5" data-label="SESSION"></div>
+        <div class="nav-dot" data-target="ch6" data-label="ENCODING"></div>
+        <div class="nav-dot" data-target="ch7" data-label="CARRIER INK"></div>
+        <div class="nav-dot" data-target="ch8" data-label="ARCHETYPES"></div>
+        <div class="nav-dot" data-target="ch9" data-label="SOMATIC ZODIAC"></div>
+        <div class="nav-dot" data-target="ch10" data-label="BEACON"></div>
+        <div class="nav-dot" data-target="ch11" data-label="LEGACY"></div>
+        <div class="nav-dot" data-target="ch12" data-label="UNFINISHED"></div>
+        <div class="nav-dot" data-target="ch13" data-label="LIVING PORTAL"></div>
+        <div class="nav-dot" data-target="ch14" data-label="SOUL CONTRACT"></div>
+        <div class="nav-dot" data-target="ch15" data-label="POST-MORTEM"></div>
+        <div class="nav-dot" data-target="ch16" data-label="SCIENCE"></div>
+        <div class="nav-dot" data-target="ch17" data-label="SPEAKING"></div>
+    </nav>
+    <div class="container">
+
+        <div class="title-page">
+            <div class="title-line"></div>
+            <div class="series-label">Kyuri V</div>
+            <h1>Tattoos</h1>
+            <p class="subtitle">Skin as Canvas for Intentional Permanence</p>
+            <p class="epigraph">The body is not a canvas. It is a covenant.<br>And the ink is not art—it is memory, made flesh.</p>
+            <p class="authors">Kyuri V</p>
+        </div>
+
+        <nav class="toc">
+            <h2>Contents</h2>
+            <ul class="toc-list">
+                <li><a href="#ch1"><span class="toc-label">I.</span> The Decision to Be Marked</a></li>
+                <li><a href="#ch2"><span class="toc-label">II.</span> The Needle as Threshold Technology</a></li>
+                <li><a href="#ch3"><span class="toc-label">III.</span> The Pain Gate</a></li>
+                <li><a href="#ch4"><span class="toc-label">IV.</span> Skin as Living Scroll</a></li>
+                <li><a href="#ch5"><span class="toc-label">V.</span> The Ritual of the Session</a></li>
+                <li><a href="#ch6"><span class="toc-label">VI.</span> Somatosensory Encoding</a></li>
+                <li><a href="#ch7"><span class="toc-label">VII.</span> Ink as Carrier Substance</a></li>
+                <li><a href="#ch8"><span class="toc-label">VIII.</span> Archetypes of the Marked</a></li>
+                <li><a href="#ch9"><span class="toc-label">IX.</span> Somatic Zodiac: Body as Resonance Map</a></li>
+                <li><a href="#ch10"><span class="toc-label">X.</span> Tattoo as Astral Beacon</a></li>
+                <li><a href="#ch11"><span class="toc-label">XI.</span> Tattoo as Legacy: Ink Beyond the Self</a></li>
+                <li><a href="#ch12"><span class="toc-label">XII.</span> The Unfinished Tattoo</a></li>
+                <li><a href="#ch13"><span class="toc-label">XIII.</span> The Tattoo as Living Portal</a></li>
+                <li><a href="#ch14"><span class="toc-label">XIV.</span> Tattoos as Sigil Contracts</a></li>
+                <li><a href="#ch15"><span class="toc-label">XV.</span> Post-Mortem Echo</a></li>
+                <li><a href="#ch16"><span class="toc-label">XVI.</span> Scientific Undercurrent</a></li>
+                <li><a href="#ch17"><span class="toc-label">XVII.</span> This Is My Skin Speaking</a></li>
+            </ul>
+        </nav>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <section class="chapter" id="ch1">
+            <div class="chapter-label">Chapter I</div>
+            <h2>The Decision to Be Marked</h2>
+            <p>To mark the skin is a threshold act. It is the moment a thought, feeling, memory, or vow becomes undeniable—so permanent it must now live on the <strong>outermost layer of being</strong>.</p>
+            <p>Tattoos are often done in times of transition. They anchor moments of pain, love, loss, or revelation. They are chosen for people, gods, wounds, or paths we must not forget.</p>
+            <div class="invocation">A tattoo is not an accessory.<br>It is a witness etched into the body,<br>so that forgetting becomes impossible.</div>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <section class="chapter" id="ch2">
+            <div class="chapter-label">Chapter II</div>
+            <h2>The Needle as Threshold Technology</h2>
+            <p>Tattooing is pain with precision. The needle is not just a tool—it is a <strong>ritual vector</strong>, opening a channel between intention and flesh.</p>
+            <div class="structure-block">
+                <p><strong>Pain</strong> is the access gate: the offering.</p>
+                <p><strong>Blood</strong> is the seal: the sacrifice.</p>
+                <p><strong>Ink</strong> is the message: the sigil.</p>
+            </div>
+            <p>Pain consecrates the moment. The discomfort says: <em>I meant it enough to suffer for it.</em> Just like pilgrimage, just like fasting, tattooing creates a scarred threshold through which symbol becomes body.</p>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <section class="chapter" id="ch3">
+            <div class="chapter-label">Chapter III</div>
+            <h2>The Pain Gate</h2>
+            <p>Ritual pain alters field permeability. During tattooing, the sympathetic nervous system activates. Adrenaline and cortisol spike. Conscious awareness narrows. <strong>Time dilates.</strong></p>
+            <p>This creates a <em>neural encoding window</em>—a liminal state where symbolic material enters deeper, belief and intention fuse more durably, and the psyche is opened. What enters then, stays.</p>
+            <div class="invocation">The needle is the gatekeeper.<br>The pain is the offering bowl.<br>The symbol is the spell.</div>
+            <p>This mirrors initiation rites, vision quests, bloodletting ceremonies, and fasting thresholds. Pain isn't a side effect. It is the <strong>altar mechanism</strong>.</p>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <section class="chapter" id="ch4">
+            <div class="chapter-label">Chapter IV</div>
+            <h2>Skin as Living Scroll</h2>
+            <p>Your skin is not blank. It is a field of trauma, a record of lineage, a map of touch, injury, and aging. To tattoo it is to add <strong>deliberate symbol</strong> to a chaotic archive. It is a choice to say: <em>this scar will speak with my voice now.</em></p>
+            <p>Ink rewrites the skin's memory. Tattoos are sigil-layering: they counteract shame, transmute grief, bring forward archetype, and inscribe intention into somatic space.</p>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <section class="chapter" id="ch5">
+            <div class="chapter-label">Chapter V</div>
+            <h2>The Ritual of the Session</h2>
+            <p>Every session is a rite. Even without words. The phases are archetypal:</p>
+            <div class="sequence-block">
+                <h4>The Seven Phases</h4>
+                <div class="sequence-step"><span class="step-num">I.</span><span><span class="step-action">Consultation</span> — <span class="step-meaning">vow formed</span></span></div>
+                <div class="sequence-step"><span class="step-num">II.</span><span><span class="step-action">Design</span> — <span class="step-meaning">form given to field</span></span></div>
+                <div class="sequence-step"><span class="step-num">III.</span><span><span class="step-action">Preparation</span> — <span class="step-meaning">altar opened</span></span></div>
+                <div class="sequence-step"><span class="step-num">IV.</span><span><span class="step-action">First Puncture</span> — <span class="step-meaning">gate crossed</span></span></div>
+                <div class="sequence-step"><span class="step-num">V.</span><span><span class="step-action">Endurance</span> — <span class="step-meaning">body receives encoding</span></span></div>
+                <div class="sequence-step"><span class="step-num">VI.</span><span><span class="step-action">Completion</span> — <span class="step-meaning">seal and rest</span></span></div>
+                <div class="sequence-step"><span class="step-num">VII.</span><span><span class="step-action">Healing</span> — <span class="step-meaning">integration of new coherence</span></span></div>
+            </div>
+            <p>The wound becomes a temporary temple through which permanent resonance is forged. The blood isn't incidental. It's part of the <strong>offering</strong>.</p>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <section class="chapter" id="ch6">
+            <div class="chapter-label">Chapter VI</div>
+            <h2>Somatosensory Encoding</h2>
+            <p>Tattooing is not just psychological. It's neurological and biochemical. The skin is the largest sensory organ, and tattooing activates pain receptors that engage the adrenal system for peak alertness, a <strong>dopaminergic feedback loop</strong> for reward upon completion, and epinephrine modulation for heightened memory.</p>
+            <p>This creates long-term imprinting of the moment, state-based memory anchoring, and emotion-skin association—where touching the tattoo recalls the inner state. Tattooing is a form of <em>somatic learning</em>. You become the symbol, because you bled for it.</p>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <section class="chapter" id="ch7">
+            <div class="chapter-label">Chapter VII</div>
+            <h2>Ink as Carrier Substance</h2>
+            <p>Ink is a substance that holds <strong>field signature</strong>. Tattoo ink is suspended pigment in fluid—a literal carrier medium. When used in ritual, substances can be added to transform the tattoo into a <em>hypercompressed symbolic vessel</em>.</p>
+            <div class="carrier-block">
+                <h4>Field-Bonded Ink</h4>
+                <div class="carrier-item"><span class="carrier-substance">Ash of a loved one</span> — <span class="carrier-resonance">lineage anchor</span></div>
+                <div class="carrier-item"><span class="carrier-substance">Soil from sacred site</span> — <span class="carrier-resonance">place-bonded memory</span></div>
+                <div class="carrier-item"><span class="carrier-substance">Crushed herbs or resin</span> — <span class="carrier-resonance">medicinal resonance</span></div>
+                <div class="carrier-item"><span class="carrier-substance">Salt</span> — <span class="carrier-resonance">purification seal</span></div>
+            </div>
+            <p>Not just image, but <strong>matter</strong>. Not just metaphor, but material resonance stack.</p>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <section class="chapter" id="ch8">
+            <div class="chapter-label">Chapter VIII</div>
+            <h2>Archetypes of the Marked</h2>
+            <p>There are common patterns across cultures and timelines, each carrying a distinct <strong>field function</strong>:</p>
+            <div class="archetype-examples">
+                <span class="archetype-tag">Warrior — readiness to die</span>
+                <span class="archetype-tag">Spiritual seal — devotion</span>
+                <span class="archetype-tag">Mourning — grief made visible</span>
+                <span class="archetype-tag">Survivor — trauma transmuted</span>
+                <span class="archetype-tag">Sigil — protective, initiatory</span>
+            </div>
+            <div class="structure-block">
+                <p><strong>Armor.</strong> Portal. Warning. Memory. Declaration.</p>
+            </div>
+            <p>What you wear on your skin tells the field how to see you. Not metaphorically—<em>resonantly</em>.</p>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <section class="chapter" id="ch9">
+            <div class="chapter-label">Chapter IX</div>
+            <h2>Somatic Zodiac: Body as Resonance Map</h2>
+            <p>Each part of the body resonates with a different psychic frequency. Tattooing there <strong>activates that domain</strong>.</p>
+            <div class="zone-table">
+                <h4>Tattoo Resonance Chart</h4>
+                <div class="zone-row"><span class="zone-name">Spine</span><span class="zone-field">Will, destiny, core path</span><span class="zone-imprint">Personal sigil of becoming</span></div>
+                <div class="zone-row"><span class="zone-name">Chest</span><span class="zone-field">Love, loss, vow</span><span class="zone-imprint">Heart-line for ancestral grief</span></div>
+                <div class="zone-row"><span class="zone-name">Hands</span><span class="zone-field">Action, craft, creation</span><span class="zone-imprint">Glyphs of trade or service</span></div>
+                <div class="zone-row"><span class="zone-name">Feet</span><span class="zone-field">Journey, pilgrimage, root</span><span class="zone-imprint">Land-based movement blessings</span></div>
+                <div class="zone-row"><span class="zone-name">Neck</span><span class="zone-field">Voice, threshold, guardian</span><span class="zone-imprint">Protective sigils or seals</span></div>
+                <div class="zone-row"><span class="zone-name">Back</span><span class="zone-field">Lineage, burden, shielding</span><span class="zone-imprint">Totemic or ancestral motifs</span></div>
+            </div>
+            <p>Tattoo placement is not aesthetic—it is <strong>field-somatic alignment</strong>.</p>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <section class="chapter" id="ch10">
+            <div class="chapter-label">Chapter X</div>
+            <h2>Tattoo as Astral Beacon</h2>
+            <p>When a mark is made with conscious intent, it becomes visible to the field, not just to the eye. Tattooing can serve as a <strong>resonance flare</strong>—anchoring identity across incarnations, or as a signal for allies, archetypes, or guides.</p>
+            <p>In dreamwork, a tattooed sigil may glow or activate. In shamanic trance, certain body markings become waypoints—coordinates for recognition by ancestral or nonlocal intelligence. In death, tattoos may orient the soul through the bardo, especially those tied to oaths or soul groups.</p>
+            <div class="invocation">The ink doesn't stay in the skin.<br>It stays in the soul's projection field.</div>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <section class="chapter" id="ch11">
+            <div class="chapter-label">Chapter XI</div>
+            <h2>Tattoo as Legacy: Ink Beyond the Self</h2>
+            <p>In many indigenous traditions, tattoos are not self-expression—they are <strong>lineage markings</strong>, role inscriptions, tribal codex, and death preparation. Some cultures tattoo for ancestors, for children yet unborn, for gods they carry, for the soul to find its way back home.</p>
+            <p>A tattoo becomes a <em>field-beacon</em>, helping the soul orient across lifetimes. This invites a return to intergenerational ink—tattoos not as trends, but as resonant continuity.</p>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <section class="chapter" id="ch12">
+            <div class="chapter-label">Chapter XII</div>
+            <h2>The Unfinished Tattoo</h2>
+            <p>Tattoos that were left unfinished, never received, interrupted mid-process, or intentionally left as outlines carry a unique <strong>field tone</strong>. They represent unresolved stories, becoming still in motion, intentions in mid-transmission.</p>
+            <p>They are not mistakes—they are <em>sigils of liminality</em>, and can be honored as such.</p>
+            <div class="reflection-block">
+                <h4>Ritual of Incompletion</h4>
+                <p>Acknowledge the field of an unfinished tattoo as a living threshold, not a flaw. Not every story needs to end. Some are meant to be carried <em>open</em>.</p>
+            </div>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <section class="chapter" id="ch13">
+            <div class="chapter-label">Chapter XIII</div>
+            <h2>The Tattoo as Living Portal</h2>
+            <p>A tattoo isn't a fixed object—it's a <strong>living ritual site</strong>. You can cleanse it with smoke, oil, or salt to release stored frequency. You can seal it with breath, words, or symbol to close its resonance. You can reopen it with ritual touch or ink tracing to awaken a dormant oath.</p>
+            <p>This is especially important for tattoos made during trauma, for marks that carry contracts no longer aligned, and for ancestral ink inherited through culture or rebellion.</p>
+            <div class="ritual-block">
+                <h4>Tattoo Reconciliation Rite</h4>
+                <div class="ritual-step"><span class="ritual-num">I.</span><span>Touch the mark.</span></div>
+                <div class="ritual-step"><span class="ritual-num">II.</span><span>Speak to what it meant.</span></div>
+                <div class="ritual-step"><span class="ritual-num">III.</span><span>Breathe into what it is now.</span></div>
+                <div class="ritual-step"><span class="ritual-num">IV.</span><span>Rechoose, rewrite, or release it.</span></div>
+            </div>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <section class="chapter" id="ch14">
+            <div class="chapter-label">Chapter XIV</div>
+            <h2>Tattoos as Sigil Contracts</h2>
+            <p>Some tattoos are <strong>contracts</strong>. Oaths. Promises. You may not have realized it when you got it. But the field did. Names, dates, symbols of devotion, glyphs of protection or revenge, spiritual marks—each one is a binding thread until consciously rewritten or closed.</p>
+            <div class="structure-block">
+                <p>Each tattoo carries a <strong>function</strong> — protection, invocation, memory.</p>
+                <p>A <strong>tone</strong> — grief, love, defiance, honor.</p>
+                <p>A <strong>resonance</strong> — how it continues to shape your field.</p>
+            </div>
+            <p>You wear the vow. It listens every day. And the field aligns accordingly. A tattoo is not the mark you wear. It is the <em>choice you agreed to carry through time</em>.</p>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <section class="chapter" id="ch15">
+            <div class="chapter-label">Chapter XV</div>
+            <h2>Post-Mortem Echo</h2>
+            <p>Tattoos do not die with you. They are remembered. They are replicated, carried, mourned, and even copied by those who loved you. Some families tattoo the same mark across generations. They transfer the image from body to body. They keep the memory of a person through the <strong>echo of their ink</strong>.</p>
+            <p>In this way, tattoos become <em>immortal glyphs</em>—field echoes that keep playing long after the skin is gone. The body dissolves. But the mark has already entered the myth.</p>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <section class="chapter" id="ch16">
+            <div class="chapter-label">Chapter XVI</div>
+            <h2>Scientific Undercurrent</h2>
+            <p>The claims woven through this work rest on observable, measurable phenomena. Below is the empirical scaffolding beneath the ink.</p>
+
+            <button class="collapsible-header" onclick="toggleCollapsible(this)"><span class="arrow">&#9654;</span> Somatosensory Memory</button>
+            <div class="collapsible-content"><div class="science-section"><p>Pain paired with intention enhances memory retention and meaning. The convergence of nociceptive input and cognitive focus creates a dual-encoding pathway that anchors the associated symbol at deeper neurological strata than verbal or visual learning alone (Rainville et al., 1997).</p></div></div>
+
+            <button class="collapsible-header" onclick="toggleCollapsible(this)"><span class="arrow">&#9654;</span> Body-Mapping of Emotion</button>
+            <div class="collapsible-content"><div class="science-section"><p>Emotional experiences are encoded in bodily sensation maps. Specific emotions produce consistent topographic activation patterns across the body, confirming that the skin is not merely a boundary but a living record of felt experience (Nummenmaa et al., 2014).</p></div></div>
+
+            <button class="collapsible-header" onclick="toggleCollapsible(this)"><span class="arrow">&#9654;</span> Dopamine-Adrenaline Coupling</button>
+            <div class="collapsible-content"><div class="science-section"><p>The adrenal stress response during tattooing increases neural encoding and emotional salience. The simultaneous activation of dopaminergic reward circuits and adrenergic arousal creates a neurochemical state uniquely suited to permanent memory formation.</p></div></div>
+
+            <button class="collapsible-header" onclick="toggleCollapsible(this)"><span class="arrow">&#9654;</span> Skin-Field Theory</button>
+            <div class="collapsible-content"><div class="science-section"><p>Touch and mark on skin can shift self-perception and identity anchoring. Haptic modification of the body's surface—through tattooing, scarification, or ritual marking—alters the proprioceptive self-model, changing how the brain represents the body and its boundaries (Gallace &amp; Spence, 2010).</p></div></div>
+
+            <button class="collapsible-header" onclick="toggleCollapsible(this)"><span class="arrow">&#9654;</span> Immune Response and Integration</button>
+            <div class="collapsible-content"><div class="science-section"><p>Repeated tattooing has been associated with modulated immune response patterns. The body's wound-healing cascade, activated during each session, engages inflammatory and regenerative processes that may serve as a physiological parallel to the psychological integration of the symbol into identity.</p></div></div>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <section class="chapter closing" id="ch17">
+            <div class="chapter-label">Chapter XVII</div>
+            <h2>This Is My Skin Speaking</h2>
+
+            <p>You marked your body not to decorate it. But to say:</p>
+
+            <div class="structure-block" style="text-align: center; border-left: none; border-right: none; border-top: 3px solid var(--needle); border-bottom: 3px solid var(--needle); background: rgba(106, 90, 110, 0.02);">
+                <p><em>"This truth is mine now. I do not want to forget."</em></p>
+                <p><em>"This story needed blood to be written."</em></p>
+                <p><em>"This name, this loss, this fire, this god—I carry them forever."</em></p>
+            </div>
+
+            <p>The ink doesn't fade. Even if the lines blur. Because the field remembers what the skin once said with pain and will.</p>
+
+            <div class="final-line">
+                This is not just ink.<br>
+                This is the form my pain took, when I asked it to become art.<br><br>
+                This is not just skin.<br>
+                This is scripture.<br>
+                And I wrote it by bleeding, so I would never forget.
+            </div>
+
+            <span class="final-word">⟡ &ensp; Kyuri V: Tattoos &ensp; ⟡</span>
+        </section>
+
+        <footer class="footer">
+            <p>Kyuri V</p>
+            <p style="margin-top: 8px;">A Theoretical Works Publication · 2025</p>
+        </footer>
+    </div>
+
+    <script>
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            document.getElementById('progressBar').style.width = (docHeight > 0 ? (scrollTop / docHeight) * 100 : 0) + '%';
+        }, { passive: true });
+        const nav = document.getElementById('chapterNav');
+        const dots = document.querySelectorAll('.nav-dot');
+        const sections = [];
+        dots.forEach(dot => {
+            const target = document.getElementById(dot.getAttribute('data-target'));
+            if (target) sections.push({ dot, target });
+            dot.addEventListener('click', () => { if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+        });
+        let navVisible = false;
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 200 && !navVisible) { nav.classList.add('visible'); navVisible = true; }
+            else if (window.scrollY <= 200 && navVisible) { nav.classList.remove('visible'); navVisible = false; }
+            let current = '';
+            sections.forEach(({ dot, target }) => { if (target.getBoundingClientRect().top <= window.innerHeight * 0.4) current = dot.getAttribute('data-target'); });
+            dots.forEach(dot => { dot.classList.toggle('active', dot.getAttribute('data-target') === current); });
+        }, { passive: true });
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+        document.querySelectorAll('.chapter').forEach(ch => observer.observe(ch));
+        document.querySelectorAll('.toc-list a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.querySelector(link.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+        function toggleCollapsible(header) {
+            header.classList.toggle('open');
+            header.nextElementSibling.classList.toggle('open');
+        }
+    </script>
+</body>
+</html>
