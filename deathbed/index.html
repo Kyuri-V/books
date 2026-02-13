@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Deathbed — Why Final Words Reshape Time | Kyuri V</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --parchment: #f4f1e8;
+            --ink: #2a2520;
+            --accent: #8b6f47;
+            --gold: #c9a961;
+            --shadow: rgba(42, 37, 32, 0.1);
+            --glow: rgba(201, 169, 97, 0.15);
+            --ember: #9b4a2f;
+            --earth: #6b7c5e;
+            --ash: #5c5c5c;
+            --slate: #5a5a64;
+            --deep-slate: #3e3e48;
+            --bone: #b0a898;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: linear-gradient(135deg, #f8f5ed 0%, var(--parchment) 100%);
+            color: var(--ink);
+            line-height: 1.85;
+            font-size: 18px;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image:
+                radial-gradient(circle at 20% 30%, var(--glow) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(90, 90, 100, 0.04) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(62, 62, 72, 0.03) 0%, transparent 60%);
+            pointer-events: none; z-index: 0;
+        }
+
+        /* ── Progress ── */
+        .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: rgba(201, 169, 97, 0.2); z-index: 1000; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--deep-slate), var(--gold), var(--slate)); width: 0%; transition: width 0.15s ease-out; }
+
+        /* ── Nav Dots ── */
+        .chapter-nav { position: fixed; top: 50%; right: 24px; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; gap: 9px; opacity: 0; transition: opacity 0.4s ease; }
+        .chapter-nav.visible { opacity: 1; }
+        .nav-dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--accent); background: transparent; cursor: pointer; transition: all 0.3s ease; position: relative; }
+        .nav-dot:hover, .nav-dot.active { background: var(--slate); border-color: var(--slate); transform: scale(1.3); }
+        .nav-dot::after { content: attr(data-label); position: absolute; right: 18px; top: 50%; transform: translateY(-50%); white-space: nowrap; font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.08em; color: var(--accent); opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .nav-dot:hover::after { opacity: 1; }
+
+        /* ── Container ── */
+        .container { position: relative; z-index: 1; max-width: 780px; margin: 0 auto; padding: 60px 40px 120px; }
+
+        /* ── Title Page ── */
+        .title-page { text-align: center; padding: 100px 0 80px; min-height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: fadeIn 1.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .title-line {
+            width: 120px; height: 1px;
+            background: var(--bone);
+            margin-bottom: 40px;
+            animation: breathe 4s ease-in-out infinite;
+            box-shadow: 0 0 8px rgba(176, 168, 152, 0.3);
+        }
+        @keyframes breathe {
+            0%, 100% { width: 120px; opacity: 0.5; box-shadow: 0 0 6px rgba(176, 168, 152, 0.2); }
+            50% { width: 200px; opacity: 1; box-shadow: 0 0 16px rgba(176, 168, 152, 0.5); }
+        }
+
+        .series-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.82em;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--slate);
+            margin-bottom: 16px;
+            opacity: 0.8;
+        }
+
+        .title-page h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 3.4em;
+            font-weight: 700;
+            color: var(--ink);
+            letter-spacing: 0.06em;
+            line-height: 1.2;
+            margin-bottom: 16px;
+        }
+
+        .title-page .subtitle {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.2em;
+            font-style: italic;
+            color: var(--accent);
+            margin-bottom: 10px;
+            letter-spacing: 0.03em;
+            line-height: 1.5;
+            max-width: 520px;
+        }
+
+        .title-page .epigraph {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1em;
+            font-style: italic;
+            color: var(--slate);
+            max-width: 460px;
+            line-height: 1.7;
+            margin: 24px 0;
+            padding: 18px 32px;
+            border-top: 1px solid rgba(90, 90, 100, 0.25);
+            border-bottom: 1px solid rgba(90, 90, 100, 0.25);
+        }
+
+        .title-page .authors {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9em;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            opacity: 0.8;
+        }
+
+        /* ── TOC ── */
+        .toc {
+            margin: 0 0 80px;
+            padding: 44px 48px;
+            border: 1px solid rgba(139, 111, 71, 0.2);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.35);
+        }
+        .toc h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1em;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--gold);
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .toc-list { list-style: none; }
+        .toc-list li { margin: 10px 0; }
+        .toc-list a {
+            color: var(--ink);
+            text-decoration: none;
+            display: block;
+            padding: 8px 14px;
+            border-left: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+        .toc-list a:hover {
+            color: var(--slate);
+            border-left-color: var(--slate);
+            padding-left: 22px;
+            background: rgba(90, 90, 100, 0.04);
+        }
+        .toc-label {
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            font-size: 0.85em;
+            letter-spacing: 0.04em;
+        }
+
+        /* ── Dividers ── */
+        .divider { text-align: center; margin: 70px 0; position: relative; }
+        .divider::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+        .divider-symbol { position: relative; background: var(--parchment); padding: 0 24px; font-size: 18px; color: var(--gold); z-index: 1; }
+
+        /* ── Chapters ── */
+        .chapter { margin-bottom: 80px; opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .chapter.visible { opacity: 1; transform: translateY(0); }
+        .chapter-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.78em;
+            letter-spacing: 0.2em;
+            color: var(--slate);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .chapter h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 2em;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 30px;
+            letter-spacing: 0.04em;
+            line-height: 1.3;
+        }
+        .chapter p { margin-bottom: 24px; text-align: justify; }
+        .chapter p strong { color: var(--deep-slate); font-weight: 600; }
+        .chapter p em { color: var(--accent); font-style: italic; }
+
+        /* ── Invocations ── */
+        .invocation {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.25em;
+            font-style: italic;
+            line-height: 1.9;
+            text-align: center;
+            color: var(--deep-slate);
+            margin: 40px 0;
+            padding: 32px;
+            border-left: 3px solid var(--bone);
+            border-right: 3px solid var(--bone);
+            background: rgba(90, 90, 100, 0.02);
+        }
+
+        /* ── Structure Blocks ── */
+        .structure-block {
+            margin: 32px 0;
+            padding: 24px 32px;
+            background: rgba(90, 90, 100, 0.03);
+            border-left: 4px solid var(--slate);
+        }
+        .structure-block p { margin-bottom: 12px; }
+        .structure-block p:last-child { margin-bottom: 0; }
+
+        /* ── Vector Block ── */
+        .vector-block {
+            margin: 32px 0;
+            padding: 28px;
+            background: rgba(201, 169, 97, 0.05);
+            border-radius: 4px;
+            border: 1px solid rgba(139, 111, 71, 0.2);
+        }
+        .vector-row {
+            display: flex;
+            gap: 16px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(139, 111, 71, 0.12);
+            align-items: baseline;
+        }
+        .vector-row:last-child { border-bottom: none; }
+        .vector-words {
+            font-family: 'Crimson Pro', serif;
+            font-style: italic;
+            color: var(--deep-slate);
+            min-width: 40%;
+        }
+        .vector-effect {
+            color: var(--accent);
+            font-size: 0.95em;
+        }
+
+        /* ── Dual View Block ── */
+        .dual-view {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin: 36px 0;
+        }
+        .dual-pane {
+            padding: 24px;
+            border-radius: 4px;
+        }
+        .dual-pane h4 {
+            font-family: 'Cinzel', serif;
+            font-size: 0.95em;
+            letter-spacing: 0.08em;
+            margin-bottom: 14px;
+        }
+        .dual-pane p { font-size: 0.95em; margin-bottom: 12px; }
+        .dual-pane p:last-child { margin-bottom: 0; }
+        .pane-science {
+            background: rgba(107, 124, 94, 0.05);
+            border: 1px solid rgba(107, 124, 94, 0.18);
+        }
+        .pane-science h4 { color: var(--earth); }
+        .pane-spirit {
+            background: rgba(90, 90, 100, 0.04);
+            border: 1px solid rgba(90, 90, 100, 0.18);
+        }
+        .pane-spirit h4 { color: var(--slate); }
+
+        /* ── Tradition Tags ── */
+        .tradition-examples { display: flex; flex-wrap: wrap; gap: 12px; margin: 24px 0; justify-content: center; }
+        .tradition-tag {
+            font-family: 'Cinzel', serif;
+            font-size: 0.85em;
+            padding: 8px 16px;
+            background: rgba(90, 90, 100, 0.06);
+            border: 1px solid var(--bone);
+            border-radius: 20px;
+            color: var(--deep-slate);
+            letter-spacing: 0.06em;
+        }
+
+        /* ── Contrast Block ── */
+        .contrast-block {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin: 36px 0;
+        }
+        .contrast-pane {
+            padding: 24px;
+            border-radius: 4px;
+        }
+        .contrast-pane h4 {
+            font-family: 'Cinzel', serif;
+            font-size: 0.95em;
+            letter-spacing: 0.08em;
+            margin-bottom: 14px;
+        }
+        .contrast-pane p { font-size: 0.95em; margin-bottom: 12px; }
+        .contrast-pane p:last-child { margin-bottom: 0; }
+        .pane-industrial {
+            background: rgba(92, 92, 92, 0.04);
+            border: 1px solid rgba(92, 92, 92, 0.15);
+        }
+        .pane-industrial h4 { color: var(--ash); }
+        .pane-ritual {
+            background: rgba(201, 169, 97, 0.04);
+            border: 1px solid rgba(201, 169, 97, 0.2);
+        }
+        .pane-ritual h4 { color: var(--gold); }
+
+        /* ── Science Sections ── */
+        .science-section {
+            margin: 28px 0;
+            padding: 28px;
+            background: rgba(107, 124, 94, 0.05);
+            border-radius: 6px;
+            border: 1px solid rgba(107, 124, 94, 0.2);
+        }
+        .science-section p { margin-bottom: 0; text-align: left; }
+
+        /* ── Collapsible ── */
+        .collapsible-header {
+            font-family: 'Cinzel', serif;
+            font-size: 1em;
+            letter-spacing: 0.08em;
+            color: var(--earth);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 0;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            transition: color 0.3s ease;
+        }
+        .collapsible-header:hover { color: var(--slate); }
+        .collapsible-header .arrow {
+            display: inline-block;
+            transition: transform 0.3s ease;
+            font-size: 0.7em;
+        }
+        .collapsible-header.open .arrow { transform: rotate(90deg); }
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .collapsible-content.open { max-height: 2000px; }
+
+        /* ── Reflection Block ── */
+        .reflection-block {
+            margin: 36px 0;
+            padding: 28px;
+            background: linear-gradient(135deg, rgba(90, 90, 100, 0.03), rgba(201, 169, 97, 0.04));
+            border-radius: 4px;
+            border: 1px solid rgba(90, 90, 100, 0.15);
+        }
+        .reflection-block h4 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.15em;
+            color: var(--slate);
+            margin-bottom: 14px;
+            letter-spacing: 0.04em;
+        }
+
+        /* ── Final Blocks ── */
+        .final-line {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.35em;
+            font-style: italic;
+            text-align: center;
+            color: var(--ink);
+            line-height: 1.8;
+            margin: 48px 0 32px;
+        }
+        .final-word {
+            display: block;
+            font-family: 'Cinzel', serif;
+            font-size: 1.3em;
+            text-align: center;
+            color: var(--gold);
+            letter-spacing: 0.15em;
+            margin-top: 60px;
+        }
+        .closing { text-align: center; }
+        .closing p { text-align: center; }
+
+        /* ── Footer ── */
+        .footer {
+            text-align: center;
+            margin-top: 100px;
+            padding: 40px 0;
+            font-family: 'Cinzel', serif;
+            font-size: 0.85em;
+            color: var(--accent);
+            letter-spacing: 0.1em;
+            border-top: 1px solid rgba(139, 111, 71, 0.2);
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .container { padding: 40px 24px 80px; }
+            .title-page h1 { font-size: 2.4em; }
+            .chapter h2 { font-size: 1.8em; }
+            .chapter-nav { right: 12px; }
+            .nav-dot::after { display: none; }
+            .chapter p { text-align: left; }
+            .toc { padding: 32px 28px; }
+            .dual-view, .contrast-block { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Progress Bar -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Chapter Navigation -->
+    <nav class="chapter-nav" id="chapterNav">
+        <div class="nav-dot" data-target="ch1" data-label="THIN VEIL"></div>
+        <div class="nav-dot" data-target="ch2" data-label="COMPRESSION"></div>
+        <div class="nav-dot" data-target="ch3" data-label="PHASE TRANSITION"></div>
+        <div class="nav-dot" data-target="ch4" data-label="FIELD RESPONSE"></div>
+        <div class="nav-dot" data-target="ch5" data-label="VECTORS"></div>
+        <div class="nav-dot" data-target="ch6" data-label="ECHO CARRIER"></div>
+        <div class="nav-dot" data-target="ch7" data-label="THRESHOLDS"></div>
+        <div class="nav-dot" data-target="ch8" data-label="WITNESS"></div>
+        <div class="nav-dot" data-target="ch9" data-label="REVERBERATION"></div>
+        <div class="nav-dot" data-target="ch10" data-label="LIBERATION"></div>
+        <div class="nav-dot" data-target="ch11" data-label="NO WORDS"></div>
+        <div class="nav-dot" data-target="ch12" data-label="UNSPOKEN"></div>
+        <div class="nav-dot" data-target="ch13" data-label="RITUAL CHAMBER"></div>
+        <div class="nav-dot" data-target="ch14" data-label="CULTURE"></div>
+        <div class="nav-dot" data-target="ch15" data-label="SCIENCE"></div>
+        <div class="nav-dot" data-target="ch16" data-label="ECHO"></div>
+    </nav>
+
+    <div class="container">
+
+        <!-- ═══════════════════ TITLE PAGE ═══════════════════ -->
+        <div class="title-page">
+            <div class="title-line"></div>
+            <div class="series-label">Kyuri V</div>
+            <h1>The Deathbed</h1>
+            <p class="subtitle">Why Final Words Reshape Time</p>
+            <p class="epigraph">The end is not silence. It is crystallization.<br>The last words spoken are not echoes. They are vectors.</p>
+            <p class="authors">Kyuri V</p>
+        </div>
+
+        <!-- ═══════════════════ TABLE OF CONTENTS ═══════════════════ -->
+        <nav class="toc">
+            <h2>Contents</h2>
+            <ul class="toc-list">
+                <li><a href="#ch1"><span class="toc-label">I.</span> The Thin Veil</a></li>
+                <li><a href="#ch2"><span class="toc-label">II.</span> Temporal Compression: Time Becomes Truth</a></li>
+                <li><a href="#ch3"><span class="toc-label">III.</span> The Deathbed as Phase Transition Portal</a></li>
+                <li><a href="#ch4"><span class="toc-label">IV.</span> The Field Response: Everything Listens</a></li>
+                <li><a href="#ch5"><span class="toc-label">V.</span> Final Words as Vector Encoding</a></li>
+                <li><a href="#ch6"><span class="toc-label">VI.</span> Echo Vector Theory</a></li>
+                <li><a href="#ch7"><span class="toc-label">VII.</span> Neurological and Spiritual Thresholds</a></li>
+                <li><a href="#ch8"><span class="toc-label">VIII.</span> The Role of the Witness</a></li>
+                <li><a href="#ch9"><span class="toc-label">IX.</span> Temporal Reverberation: Death Radiates Backward</a></li>
+                <li><a href="#ch10"><span class="toc-label">X.</span> Karmic Disentanglement</a></li>
+                <li><a href="#ch11"><span class="toc-label">XI.</span> When There Are No Words</a></li>
+                <li><a href="#ch12"><span class="toc-label">XII.</span> Unspoken Deaths and the Trauma of the Unsung</a></li>
+                <li><a href="#ch13"><span class="toc-label">XIII.</span> The Deathbed as Ritual Chamber</a></li>
+                <li><a href="#ch14"><span class="toc-label">XIV.</span> The Deathbed as Mirror of Culture</a></li>
+                <li><a href="#ch15"><span class="toc-label">XV.</span> Scientific Undercurrent</a></li>
+                <li><a href="#ch16"><span class="toc-label">XVI.</span> The Echo Lives On</a></li>
+            </ul>
+        </nav>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <!-- ═══════════════════ CHAPTER I ═══════════════════ -->
+        <section class="chapter" id="ch1">
+            <div class="chapter-label">Chapter I</div>
+            <h2>The Thin Veil</h2>
+
+            <p>As death approaches, something happens to the field. It <strong>thins</strong>. The ordinary constructs—ego, shame, performance—begin to dissolve. What remains is essence.</p>
+
+            <p>This is why the dying often speak in strange clarity. Their words become sharper. Fewer. Slower. They stop saying what they "should," and begin saying only what <em>must be said</em>.</p>
+
+            <div class="invocation">
+                Death is a compression event.<br>
+                And language becomes compressed signal.
+            </div>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <!-- ═══════════════════ CHAPTER II ═══════════════════ -->
+        <section class="chapter" id="ch2">
+            <div class="chapter-label">Chapter II</div>
+            <h2>Temporal Compression: Time Becomes Truth</h2>
+
+            <p>As time shortens, truth deepens. Near the end, the mind often reviews a lifetime in moments. This phenomenon—<strong>life review</strong>—is not just memory. It's field reordering. The psyche begins prioritizing what remains unresolved.</p>
+
+            <div class="structure-block">
+                <p>Old apologies surface.</p>
+                <p>Hidden love is spoken.</p>
+                <p>Estranged names are whispered.</p>
+                <p>Regrets are named aloud for the first time.</p>
+            </div>
+
+            <p>Final words are the soul prioritizing coherence before release. Like a file being zipped, the entire arc of a life attempts to compress into a single <em>coherent signature</em>.</p>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <!-- ═══════════════════ CHAPTER III ═══════════════════ -->
+        <section class="chapter" id="ch3">
+            <div class="chapter-label">Chapter III</div>
+            <h2>The Deathbed as Phase Transition Portal</h2>
+
+            <p>From a field-theoretic lens, death is not a cessation—it is a <strong>phase transition</strong>. At this threshold, the self detaches from time. Linear memory collapses into total-field resonance. Identity becomes non-local.</p>
+
+            <p>This is why the dying often speak in nonlinear fragments. They reference those already gone. They speak in symbol, not sentence. <strong>Field language replaces ego language.</strong> What arises at the deathbed is not the story—it's the signal beneath it.</p>
+
+            <div class="invocation">
+                The constructs dissolve.<br>
+                What remains is not less than identity.<br>
+                It is more.
+            </div>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <!-- ═══════════════════ CHAPTER IV ═══════════════════ -->
+        <section class="chapter" id="ch4">
+            <div class="chapter-label">Chapter IV</div>
+            <h2>The Field Response: Everything Listens</h2>
+
+            <p>In that moment—when someone is dying—the field becomes <strong>reverberant</strong>. Words spoken at the deathbed echo through memory, lineage, and spiritual topology.</p>
+
+            <p>In some traditions, these are the words that shape the soul's departure vector. In others, they bind covenants, or release burdens carried across generations. Even the body reacts—deathbed forgiveness has been shown to ease physical suffering.</p>
+
+            <div class="invocation">
+                The room stills.<br>
+                Not because of sadness.<br>
+                But because the field knows: this is real.
+            </div>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <!-- ═══════════════════ CHAPTER V ═══════════════════ -->
+        <section class="chapter" id="ch5">
+            <div class="chapter-label">Chapter V</div>
+            <h2>Final Words as Vector Encoding</h2>
+
+            <p>Not all words are equal. Last words are not only remembered—they <strong>anchor perception</strong>. They are field instructions encoded at maximum emotional weight.</p>
+
+            <div class="vector-block">
+                <div class="vector-row">
+                    <span class="vector-words">"I always loved you, even when I couldn't say it."</span>
+                    <span class="vector-effect">Retroactively rewrites the emotional tone of decades</span>
+                </div>
+                <div class="vector-row">
+                    <span class="vector-words">"Forgive me."</span>
+                    <span class="vector-effect">Ends karmic recursion</span>
+                </div>
+                <div class="vector-row">
+                    <span class="vector-words">"Take care of them."</span>
+                    <span class="vector-effect">Transfers responsibility, creates binding</span>
+                </div>
+                <div class="vector-row">
+                    <span class="vector-words">"I'm ready."</span>
+                    <span class="vector-effect">Confirms field coherence for release</span>
+                </div>
+            </div>
+
+            <p>These are not phrases. They are <em>field instructions</em>. This is why final words shape how we remember the dead. Not by accident—but because they were compressed into signal under pressure.</p>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <!-- ═══════════════════ CHAPTER VI ═══════════════════ -->
+        <section class="chapter" id="ch6">
+            <div class="chapter-label">Chapter VI</div>
+            <h2>Echo Vector Theory</h2>
+
+            <p>The final phrase of a life often becomes a <strong>psychic echo</strong> carried by descendants or loved ones. It functions as a coherence seed, a field instruction, a last harmonic of waveform identity.</p>
+
+            <p>The words are repeated in dreams. In stories. In identity structures. <em>"Be good." "Take care of her." "I forgive him." "I wish I danced more."</em> These aren't just sentiments. They're <strong>instructional echoes</strong>, passed into the living field.</p>
+
+            <p>Through the ΔHV lens, these echoes encode direction vectors that influence the orientation of those who survive. The dead do not merely leave words. They leave <em>trajectories</em>—imprinted into the field of the living like compass headings whispered into the wind.</p>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <!-- ═══════════════════ CHAPTER VII ═══════════════════ -->
+        <section class="chapter" id="ch7">
+            <div class="chapter-label">Chapter VII</div>
+            <h2>Neurological and Spiritual Thresholds</h2>
+
+            <div class="dual-view">
+                <div class="dual-pane pane-science">
+                    <h4>Scientific View</h4>
+                    <p>Near-death cognition shows increased activity in memory and emotional centers.</p>
+                    <p>The default mode network becomes highly activated, creating vivid life review and identity integration.</p>
+                    <p>DMT release or dreamlike experiences may generate symbolic communication from subconscious to conscious self.</p>
+                </div>
+                <div class="dual-pane pane-spirit">
+                    <h4>Spiritual View</h4>
+                    <p>The dying often speak to those unseen. They refer to "home," "light," "them."</p>
+                    <p>They shift into poetic, archetypal, or telepathic tone: <em>"I see her." "They're waiting." "Tell him it's forgiven."</em></p>
+                    <p>These are field-liminal expressions—a soul orienting itself toward the next vector.</p>
+                </div>
+            </div>
+
+            <div class="invocation">
+                In that moment, speech becomes both farewell and arrival.
+            </div>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <!-- ═══════════════════ CHAPTER VIII ═══════════════════ -->
+        <section class="chapter" id="ch8">
+            <div class="chapter-label">Chapter VIII</div>
+            <h2>The Role of the Witness</h2>
+
+            <p>To be at someone's deathbed is not passive. You are not just watching. You are <strong>holding the field</strong> as they cross.</p>
+
+            <div class="structure-block">
+                <p>The witness becomes the <strong>final mirror</strong>.</p>
+                <p>Their gaze provides the last feedback loop of self.</p>
+                <p>The listener receives the encoded final vector and carries it forward.</p>
+            </div>
+
+            <p>This is why last words are carried like relics. They are not for the one dying. They are for those who remain.</p>
+
+            <p>The state of those present during death influences the ease of transition, the clarity of the departing field, and the stability of the final fieldprint. Fear tangles the vector. <strong>Presence smooths it.</strong> The witness becomes the coherence anchor. This gives deathbed presence <em>ritual agency</em>.</p>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <!-- ═══════════════════ CHAPTER IX ═══════════════════ -->
+        <section class="chapter" id="ch9">
+            <div class="chapter-label">Chapter IX</div>
+            <h2>Temporal Reverberation: Death Radiates Backward</h2>
+
+            <p>The resonance of someone's death <strong>restructures how we interpret their life</strong>. A cruel man who dies tenderly may be remembered more kindly. A silent person who speaks truth at the end recontextualizes decades of mystery. A reconciliatory gesture changes how their entire life is storied.</p>
+
+            <p>Death is a <strong>narrative override point</strong>—a field resonance strong enough to bend time backward. Memory is fluid. And last words shape memory's gravity.</p>
+
+            <div class="invocation">
+                The final moment does not complete the story.<br>
+                It rewrites it.
+            </div>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <!-- ═══════════════════ CHAPTER X ═══════════════════ -->
+        <section class="chapter" id="ch10">
+            <div class="chapter-label">Chapter X</div>
+            <h2>Karmic Disentanglement</h2>
+
+            <p>Some traditions teach that the final moment can uplift an entire life's weight, release ancestral patterns, and correct distortions retroactively.</p>
+
+            <div class="tradition-examples">
+                <span class="tradition-tag">Bardo Thödol</span>
+                <span class="tradition-tag">Christian Confession</span>
+                <span class="tradition-tag">Islamic Shahada</span>
+            </div>
+
+            <p>In the Tibetan <em>Bardo Thödol</em>, consciousness navigates symbolic fields at death, and clarity can release the cycle of rebirth. In Christian confession rites, the last unburdening frees the soul. In the Islamic recitation of the Shahada, the final testimony orients the departing toward the One.</p>
+
+            <p>The body dies. But the field persists. And field coherency at death affects the <strong>signature that continues</strong>.</p>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <!-- ═══════════════════ CHAPTER XI ═══════════════════ -->
+        <section class="chapter" id="ch11">
+            <div class="chapter-label">Chapter XI</div>
+            <h2>When There Are No Words</h2>
+
+            <p>Not all final expressions are verbal. A final gaze. A smile. A tightening of the hand. A breath held and then released. These are also <strong>transmissions</strong>.</p>
+
+            <p>In some traditions, the final breath is caught in silk or paper. In others, the silence is interpreted by rhythm: the timing between last movement and stillness.</p>
+
+            <div class="invocation">
+                Silence at the end is not absence.<br>
+                It is pure presence—field without form.
+            </div>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <!-- ═══════════════════ CHAPTER XII ═══════════════════ -->
+        <section class="chapter" id="ch12">
+            <div class="chapter-label">Chapter XII</div>
+            <h2>Unspoken Deaths and the Trauma of the Unsung</h2>
+
+            <p>Not all deaths come with final words. Silence at death, especially when unexpected, can create <strong>field fragmentation</strong> in loved ones—looped unresolved questions and phantom narratives.</p>
+
+            <p>This is the psychic wound of sudden death, of suicide, of war, of medical erasure. The threshold was crossed without witness, without word, without the ritual compression that allows the living to <em>receive</em> the departure.</p>
+
+            <div class="reflection-block">
+                <h4>Retroactive Ritual</h4>
+                <p>In such cases, the final conversation must be enacted after the fact: in dreams, in letters to the dead, in symbolic offerings—burning a note, singing a name, naming what was unsaid. Silence at death is not emptiness. It is a field seeking resolution. And the living can still provide it.</p>
+            </div>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <!-- ═══════════════════ CHAPTER XIII ═══════════════════ -->
+        <section class="chapter" id="ch13">
+            <div class="chapter-label">Chapter XIII</div>
+            <h2>The Deathbed as Ritual Chamber</h2>
+
+            <p>The deathbed is not just a location. It is a <strong>ritual space</strong>—a threshold chamber, a temporal collapse point. Time compresses. Presence intensifies. Witness becomes sacred. The air thickens with what is being released.</p>
+
+            <p>The room becomes field-saturated, like an electric stillness. Some feel heat. Some feel presence. Some feel a sudden, inexplicable peace.</p>
+
+            <div class="invocation">
+                Something left.<br>
+                But something was also anchored.
+            </div>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <!-- ═══════════════════ CHAPTER XIV ═══════════════════ -->
+        <section class="chapter" id="ch14">
+            <div class="chapter-label">Chapter XIV</div>
+            <h2>The Deathbed as Mirror of Culture</h2>
+
+            <p>How we treat the dying reflects our metaphysics.</p>
+
+            <div class="contrast-block">
+                <div class="contrast-pane pane-industrial">
+                    <h4>Industrialized Cultures</h4>
+                    <p>Death is hidden in hospitals.</p>
+                    <p>Final moments are sanitized, medicalized, or rushed.</p>
+                    <p>There is no collective death literacy.</p>
+                </div>
+                <div class="contrast-pane pane-ritual">
+                    <h4>Ritual Cultures</h4>
+                    <p>Death is communal.</p>
+                    <p>Final words are sacred inheritance.</p>
+                    <p>The dying are surrounded by songs, family, and stillness.</p>
+                </div>
+            </div>
+
+            <p>The presence of ritual stabilizes the threshold. Without it, we die in noise. Without witness. Without resonance.</p>
+
+            <div class="invocation">
+                We must re-weave death as a conscious rite,<br>
+                not an outsourced end.
+            </div>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <!-- ═══════════════════ CHAPTER XV ═══════════════════ -->
+        <section class="chapter" id="ch15">
+            <div class="chapter-label">Chapter XV</div>
+            <h2>Scientific Undercurrent</h2>
+
+            <p>The claims woven through this work rest on observable, measurable phenomena. Below is the empirical scaffolding beneath the threshold.</p>
+
+            <button class="collapsible-header" onclick="toggleCollapsible(this)">
+                <span class="arrow">&#9654;</span> Life Review and Default Mode Network
+            </button>
+            <div class="collapsible-content">
+                <div class="science-section">
+                    <p>Near-death studies show increased gamma oscillations and high-order cognition in the dying brain. The default mode network—responsible for self-referential thought and autobiographical memory—becomes intensely activated, producing the vivid life review reported across cultures (Borjigin et al., 2013).</p>
+                </div>
+            </div>
+
+            <button class="collapsible-header" onclick="toggleCollapsible(this)">
+                <span class="arrow">&#9654;</span> Emotional Compression at End-of-Life
+            </button>
+            <div class="collapsible-content">
+                <div class="science-section">
+                    <p>Hospice patients show markedly increased desire to resolve relationships and speak hidden truths. The compression of remaining time intensifies emotional clarity and prioritizes relational coherence over self-preservation (Boston et al., 2011).</p>
+                </div>
+            </div>
+
+            <button class="collapsible-header" onclick="toggleCollapsible(this)">
+                <span class="arrow">&#9654;</span> Field-Based Theories of Consciousness
+            </button>
+            <div class="collapsible-content">
+                <div class="science-section">
+                    <p>Theoretical frameworks suggest consciousness persists as non-local information, possibly shaping deathbed perception. The Orchestrated Objective Reduction model proposes that quantum coherence in neural microtubules may sustain consciousness beyond conventional brain-death thresholds (Hameroff &amp; Penrose).</p>
+                </div>
+            </div>
+
+            <button class="collapsible-header" onclick="toggleCollapsible(this)">
+                <span class="arrow">&#9654;</span> Psychedelic Hospice Research
+            </button>
+            <div class="collapsible-content">
+                <div class="science-section">
+                    <p>Terminally ill patients administered psilocybin report experiences of "final coherence" and "wordless transmission of love." These sessions correlate with significant reductions in death anxiety and increases in felt meaning, suggesting that consciousness can access states of profound integration near the end of life (Griffiths et al., Johns Hopkins).</p>
+                </div>
+            </div>
+
+            <button class="collapsible-header" onclick="toggleCollapsible(this)">
+                <span class="arrow">&#9654;</span> Witness Effect on Dying Process
+            </button>
+            <div class="collapsible-content">
+                <div class="science-section">
+                    <p>Palliative care research indicates that the emotional state of those present at the bedside measurably influences the dying person's physiological ease. Calm, attentive witnessing correlates with reduced agitation, lower cortisol markers, and more peaceful transitions in hospice settings.</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+        <!-- ═══════════════════ CHAPTER XVI ═══════════════════ -->
+        <section class="chapter closing" id="ch16">
+            <div class="chapter-label">Chapter XVI</div>
+            <h2>The Echo Lives On</h2>
+
+            <p><em>The last thing she said was…</em></p>
+            <p><em>He whispered just before he went…</em></p>
+            <p><em>I never got to say goodbye…</em></p>
+
+            <div class="invocation">
+                These lines carry sacred weight for a reason.
+            </div>
+
+            <p>They are the human attempt to grasp the end of the waveform. To hold the shape of what is dissolving. To listen one more time to the tone that made a life.</p>
+
+            <div class="final-line">
+                Final words reshape time.<br>
+                Not because they are magic.<br>
+                But because they were chosen<br>
+                when nothing false could remain.
+            </div>
+
+            <span class="final-word">⟡ &ensp; Kyuri V: The Deathbed &ensp; ⟡</span>
+        </section>
+
+        <!-- ═══════════════════ FOOTER ═══════════════════ -->
+        <footer class="footer">
+            <p>Kyuri V</p>
+            <p style="margin-top: 8px;">A Theoretical Works Publication · 2025</p>
+        </footer>
+
+    </div>
+
+    <script>
+        // ── Progress Bar (passive scroll) ──
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }, { passive: true });
+
+        // ── Chapter Navigation ──
+        const nav = document.getElementById('chapterNav');
+        const dots = document.querySelectorAll('.nav-dot');
+        const sections = [];
+
+        dots.forEach(dot => {
+            const targetId = dot.getAttribute('data-target');
+            const target = document.getElementById(targetId);
+            if (target) sections.push({ dot, target });
+            dot.addEventListener('click', () => {
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        let navVisible = false;
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 200 && !navVisible) {
+                nav.classList.add('visible');
+                navVisible = true;
+            } else if (window.scrollY <= 200 && navVisible) {
+                nav.classList.remove('visible');
+                navVisible = false;
+            }
+
+            let current = '';
+            sections.forEach(({ dot, target }) => {
+                const rect = target.getBoundingClientRect();
+                if (rect.top <= window.innerHeight * 0.4) {
+                    current = dot.getAttribute('data-target');
+                }
+            });
+
+            dots.forEach(dot => {
+                dot.classList.toggle('active', dot.getAttribute('data-target') === current);
+            });
+        }, { passive: true });
+
+        // ── Scroll Reveal ──
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+        document.querySelectorAll('.chapter').forEach(ch => observer.observe(ch));
+
+        // ── TOC smooth scroll ──
+        document.querySelectorAll('.toc-list a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.querySelector(link.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        // ── Collapsible sections ──
+        function toggleCollapsible(header) {
+            header.classList.toggle('open');
+            const content = header.nextElementSibling;
+            content.classList.toggle('open');
+        }
+    </script>
+
+</body>
+</html>
