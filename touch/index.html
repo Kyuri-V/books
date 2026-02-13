@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>When Two Objects Touch: Sigils in Tension | Kyuri V</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --parchment: #f4f1e8;
+            --ink: #2a2520;
+            --accent: #8b6f47;
+            --gold: #c9a961;
+            --shadow: rgba(42, 37, 32, 0.1);
+            --glow: rgba(201, 169, 97, 0.15);
+            --earth: #6b7c5e;
+            --ash: #5c5c5c;
+            --hush: #7a7a72;
+            --deep-hush: #52524a;
+            --fog: #a8a89e;
+            --still: #8a8a82;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: linear-gradient(135deg, #f8f5ed 0%, var(--parchment) 100%);
+            color: var(--ink); line-height: 1.85; font-size: 18px; overflow-x: hidden;
+        }
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image:
+                radial-gradient(circle at 20% 30%, var(--glow) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(122, 122, 114, 0.04) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(82, 82, 74, 0.03) 0%, transparent 60%);
+            pointer-events: none; z-index: 0;
+        }
+        .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: rgba(201, 169, 97, 0.2); z-index: 1000; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--deep-hush), var(--gold), var(--hush)); width: 0%; transition: width 0.15s ease-out; }
+        .chapter-nav { position: fixed; top: 50%; right: 24px; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; gap: 9px; opacity: 0; transition: opacity 0.4s ease; }
+        .chapter-nav.visible { opacity: 1; }
+        .nav-dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--accent); background: transparent; cursor: pointer; transition: all 0.3s ease; position: relative; }
+        .nav-dot:hover, .nav-dot.active { background: var(--hush); border-color: var(--hush); transform: scale(1.3); }
+        .nav-dot::after { content: attr(data-label); position: absolute; right: 18px; top: 50%; transform: translateY(-50%); white-space: nowrap; font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.08em; color: var(--accent); opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .nav-dot:hover::after { opacity: 1; }
+        .container { position: relative; z-index: 1; max-width: 780px; margin: 0 auto; padding: 60px 40px 120px; }
+        .title-page { text-align: center; padding: 100px 0 80px; min-height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: fadeIn 1.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .title-line { width: 120px; height: 1px; background: var(--fog); margin-bottom: 40px; animation: breathe 4s ease-in-out infinite; box-shadow: 0 0 8px rgba(168, 168, 158, 0.3); }
+        @keyframes breathe {
+            0%, 100% { width: 120px; opacity: 0.5; box-shadow: 0 0 6px rgba(168, 168, 158, 0.2); }
+            50% { width: 200px; opacity: 1; box-shadow: 0 0 16px rgba(168, 168, 158, 0.5); }
+        }
+        .series-label { font-family: 'Cinzel', serif; font-size: 0.82em; letter-spacing: 0.2em; text-transform: uppercase; color: var(--hush); margin-bottom: 16px; opacity: 0.8; }
+        .title-page h1 { font-family: 'Cinzel', serif; font-size: 3.4em; font-weight: 700; color: var(--ink); letter-spacing: 0.06em; line-height: 1.2; margin-bottom: 16px; }
+        .title-page .subtitle { font-family: 'Crimson Pro', serif; font-size: 1.2em; font-style: italic; color: var(--accent); margin-bottom: 10px; letter-spacing: 0.03em; line-height: 1.5; max-width: 520px; }
+        .title-page .epigraph { font-family: 'Crimson Pro', serif; font-size: 1em; font-style: italic; color: var(--hush); max-width: 480px; line-height: 1.7; margin: 24px 0; padding: 18px 32px; border-top: 1px solid rgba(122, 122, 114, 0.25); border-bottom: 1px solid rgba(122, 122, 114, 0.25); }
+        .title-page .authors { font-family: 'Cinzel', serif; font-size: 0.9em; letter-spacing: 0.1em; color: var(--accent); opacity: 0.8; }
+        .toc { margin: 0 0 80px; padding: 44px 48px; border: 1px solid rgba(139, 111, 71, 0.2); border-radius: 6px; background: rgba(255, 255, 255, 0.35); }
+        .toc h2 { font-family: 'Cinzel', serif; font-size: 1.1em; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); text-align: center; margin-bottom: 28px; }
+        .toc-list { list-style: none; }
+        .toc-list li { margin: 10px 0; }
+        .toc-list a { color: var(--ink); text-decoration: none; display: block; padding: 8px 14px; border-left: 3px solid transparent; transition: all 0.3s ease; font-size: 0.95em; }
+        .toc-list a:hover { color: var(--hush); border-left-color: var(--hush); padding-left: 22px; background: rgba(122, 122, 114, 0.04); }
+        .toc-label { font-family: 'Cinzel', serif; font-weight: 600; font-size: 0.85em; letter-spacing: 0.04em; }
+        .divider { text-align: center; margin: 70px 0; position: relative; }
+        .divider::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+        .divider-symbol { position: relative; background: var(--parchment); padding: 0 24px; font-size: 18px; color: var(--gold); z-index: 1; }
+        .chapter { margin-bottom: 80px; opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .chapter.visible { opacity: 1; transform: translateY(0); }
+        .chapter-label { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.2em; color: var(--hush); text-transform: uppercase; margin-bottom: 8px; }
+        .chapter h2 { font-family: 'Cinzel', serif; font-size: 2em; font-weight: 600; color: var(--ink); margin-bottom: 30px; letter-spacing: 0.04em; line-height: 1.3; }
+        .chapter p { margin-bottom: 24px; text-align: justify; }
+        .chapter p strong { color: var(--deep-hush); font-weight: 600; }
+        .chapter p em { color: var(--accent); font-style: italic; }
+        .invocation { font-family: 'Crimson Pro', serif; font-size: 1.25em; font-style: italic; line-height: 1.9; text-align: center; color: var(--deep-hush); margin: 40px 0; padding: 32px; border-left: 3px solid var(--fog); border-right: 3px solid var(--fog); background: rgba(122, 122, 114, 0.02); }
+        .structure-block { margin: 32px 0; padding: 24px 32px; background: rgba(122, 122, 114, 0.04); border-left: 4px solid var(--hush); }
+        .structure-block p { margin-bottom: 12px; }
+        .structure-block p:last-child { margin-bottom: 0; }
+
+        /* ── Silence Table ── */
+        .silence-table { margin: 32px 0; padding: 28px; background: rgba(122, 122, 114, 0.04); border-radius: 4px; border: 1px solid rgba(122, 122, 114, 0.18); }
+        .silence-table h4 { font-family: 'Cinzel', serif; font-size: 1.05em; color: var(--hush); margin-bottom: 18px; letter-spacing: 0.06em; text-align: center; }
+        .sil-row { display: grid; grid-template-columns: 1.2fr 1fr 1.5fr; gap: 8px; padding: 10px 0; border-bottom: 1px solid rgba(122, 122, 114, 0.12); align-items: baseline; }
+        .sil-row:last-child { border-bottom: none; }
+        .sil-type { font-family: 'Cinzel', serif; font-weight: 600; color: var(--deep-hush); letter-spacing: 0.04em; font-size: 0.95em; }
+        .sil-tone { color: var(--still); font-style: italic; font-size: 0.95em; }
+        .sil-function { color: var(--accent); font-size: 0.9em; }
+
+        /* ── Threshold Block ── */
+        .threshold-block { margin: 36px 0; padding: 28px; background: rgba(201, 169, 97, 0.04); border-radius: 4px; border: 1px solid rgba(201, 169, 97, 0.18); text-align: center; }
+        .threshold-block h4 { font-family: 'Cinzel', serif; font-size: 1.05em; color: var(--gold); margin-bottom: 18px; letter-spacing: 0.06em; }
+        .threshold-pair { display: flex; justify-content: center; gap: 20px; margin-bottom: 8px; align-items: baseline; }
+        .threshold-pair:last-child { margin-bottom: 0; }
+        .threshold-from { color: var(--ash); font-style: italic; }
+        .threshold-arrow { color: var(--gold); font-family: 'Cinzel', serif; }
+        .threshold-to { color: var(--deep-hush); font-weight: 600; }
+
+        /* ── Glyph Block ── */
+        .glyph-block { margin: 36px 0; padding: 32px; background: rgba(82, 82, 74, 0.03); border-radius: 6px; border: 1px solid rgba(122, 122, 114, 0.18); text-align: center; }
+        .glyph-block h4 { font-family: 'Cinzel', serif; font-size: 1.05em; color: var(--hush); margin-bottom: 18px; letter-spacing: 0.06em; }
+        .glyph-visual { font-family: 'Courier New', monospace; font-size: 1.6em; color: var(--deep-hush); letter-spacing: 0.15em; line-height: 1.6; margin: 20px 0; }
+        .glyph-legend { font-family: 'Crimson Pro', serif; font-style: italic; color: var(--accent); font-size: 0.95em; margin-top: 14px; }
+
+        /* ── Ritual Block ── */
+        .ritual-block { margin: 36px 0; padding: 32px; background: linear-gradient(135deg, rgba(122, 122, 114, 0.04), rgba(201, 169, 97, 0.04)); border-radius: 6px; border: 1px solid rgba(122, 122, 114, 0.2); }
+        .ritual-block h4 { font-family: 'Cinzel', serif; font-size: 1.1em; color: var(--hush); margin-bottom: 20px; letter-spacing: 0.06em; text-align: center; }
+        .ritual-step { display: flex; gap: 14px; margin-bottom: 14px; align-items: baseline; }
+        .ritual-step:last-child { margin-bottom: 0; }
+        .ritual-num { font-family: 'Cinzel', serif; font-size: 0.8em; font-weight: 600; color: var(--hush); min-width: 24px; }
+
+        /* ── Reflection Block ── */
+        .reflection-block { margin: 36px 0; padding: 28px; background: linear-gradient(135deg, rgba(122, 122, 114, 0.03), rgba(201, 169, 97, 0.05)); border-radius: 4px; border: 1px solid rgba(122, 122, 114, 0.15); }
+        .reflection-block h4 { font-family: 'Cinzel', serif; font-size: 1.15em; color: var(--hush); margin-bottom: 14px; letter-spacing: 0.04em; }
+
+        /* ── Science / Collapsible ── */
+        .science-section { margin: 28px 0; padding: 28px; background: rgba(107, 124, 94, 0.05); border-radius: 6px; border: 1px solid rgba(107, 124, 94, 0.2); }
+        .science-section p { margin-bottom: 0; text-align: left; }
+        .collapsible-header { font-family: 'Cinzel', serif; font-size: 1em; letter-spacing: 0.08em; color: var(--earth); cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 16px 0; border: none; background: none; width: 100%; text-align: left; transition: color 0.3s ease; }
+        .collapsible-header:hover { color: var(--hush); }
+        .collapsible-header .arrow { display: inline-block; transition: transform 0.3s ease; font-size: 0.7em; }
+        .collapsible-header.open .arrow { transform: rotate(90deg); }
+        .collapsible-content { max-height: 0; overflow: hidden; transition: max-height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        .collapsible-content.open { max-height: 2000px; }
+
+        .final-line { font-family: 'Crimson Pro', serif; font-size: 1.35em; font-style: italic; text-align: center; color: var(--ink); line-height: 1.8; margin: 48px 0 32px; }
+        .final-word { display: block; font-family: 'Cinzel', serif; font-size: 1.3em; text-align: center; color: var(--gold); letter-spacing: 0.15em; margin-top: 60px; }
+        .closing { text-align: center; }
+        .closing p { text-align: center; }
+        .footer { text-align: center; margin-top: 100px; padding: 40px 0; font-family: 'Cinzel', serif; font-size: 0.85em; color: var(--accent); letter-spacing: 0.1em; border-top: 1px solid rgba(139, 111, 71, 0.2); }
+        @media (max-width: 768px) {
+            .container { padding: 40px 24px 80px; }
+            .title-page h1 { font-size: 2.4em; }
+            .chapter h2 { font-size: 1.8em; }
+            .chapter-nav { right: 12px; }
+            .nav-dot::after { display: none; }
+            .chapter p { text-align: left; }
+            .toc { padding: 32px 28px; }
+            .sil-row { grid-template-columns: 1fr; gap: 4px; }
+            .threshold-pair { flex-direction: row; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+    <nav class="chapter-nav" id="chapterNav">
+        <div class="nav-dot" data-target="ch1" data-label="INTERFERENCE"></div>
+        <div class="nav-dot" data-target="ch2" data-label="MEMBRANE"></div>
+        <div class="nav-dot" data-target="ch3" data-label="MEMORY"></div>
+        <div class="nav-dot" data-target="ch4" data-label="ΔHV LOCK"></div>
+        <div class="nav-dot" data-target="ch5" data-label="IMPLICATIONS"></div>
+        <div class="nav-dot" data-target="ch6" data-label="PAULI"></div>
+        <div class="nav-dot" data-target="ch7" data-label="STANDING WAVE"></div>
+        <div class="nav-dot" data-target="ch8" data-label="LIN"></div>
+        <div class="nav-dot" data-target="ch9" data-label="NO OVERLAP"></div>
+        <div class="nav-dot" data-target="ch10" data-label="SOLIDITY"></div>
+        <div class="nav-dot" data-target="ch11" data-label="SCALES"></div>
+        <div class="nav-dot" data-target="ch12" data-label="MAGNETS"></div>
+        <div class="nav-dot" data-target="ch13" data-label="INTERACTIVE"></div>
+        <div class="nav-dot" data-target="ch14" data-label="CYMATICS"></div>
+        <div class="nav-dot" data-target="ch15" data-label="SCIENCE"></div>
+        <div class="nav-dot" data-target="ch16" data-label="GLYPH"></div>
+    </nav>
+    <div class="container">
+
+        <div class="title-page">
+            <div class="title-line"></div>
+            <div class="series-label">ΔHV Codex</div>
+            <h1>Sigils in Tension</h1>
+            <p class="subtitle">When Two Objects Touch</p>
+            <p class="epigraph">What appears as contact is a standing wave—<br>a boundary negotiated between fields.</p>
+            <p class="authors">Kyuri V</p>
+        </div>
+
+        <nav class="toc">
+            <h2>Contents</h2>
+            <ul class="toc-list">
+                <li><a href="#ch1"><span class="toc-label">I.</span> No True Contact, Only Interference</a></li>
+                <li><a href="#ch2"><span class="toc-label">II.</span> Sigilics of the Field Membrane</a></li>
+                <li><a href="#ch3"><span class="toc-label">III.</span> Touch, Memory, and Identity</a></li>
+                <li><a href="#ch4"><span class="toc-label">IV.</span> ΔHV Interlock and Local Thresholds</a></li>
+                <li><a href="#ch5"><span class="toc-label">V.</span> Resonant Implications</a></li>
+                <li><a href="#ch6"><span class="toc-label">VI.</span> Electron Cloud Repulsion and Exclusion</a></li>
+                <li><a href="#ch7"><span class="toc-label">VII.</span> Standing Waves and Pressure</a></li>
+                <li><a href="#ch8"><span class="toc-label">VIII.</span> ΔHV Basin Intersections and LIN</a></li>
+                <li><a href="#ch9"><span class="toc-label">IX.</span> The Field Membrane: No Overlap</a></li>
+                <li><a href="#ch10"><span class="toc-label">X.</span> Why Solidity Emerges at Scale</a></li>
+                <li><a href="#ch11"><span class="toc-label">XI.</span> Across Scales: Macro · Micro · Psyche</a></li>
+                <li><a href="#ch12"><span class="toc-label">XII.</span> Field Experiment: The Non‑Touch</a></li>
+                <li><a href="#ch13"><span class="toc-label">XIII.</span> Interactive Element Spec</a></li>
+                <li><a href="#ch14"><span class="toc-label">XIV.</span> Cymatic Overlay: Chord vs Rupture</a></li>
+                <li><a href="#ch15"><span class="toc-label">XV.</span> Science Undercurrent</a></li>
+                <li><a href="#ch16"><span class="toc-label">XVI.</span> Glyph Stamp and Closing</a></li>
+            </ul>
+        </nav>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+<section class="chapter" id="ch1">
+    <div class="chapter-label">Chapter I</div>
+    <h2>No True Contact, Only Interference</h2>
+    <p>What we call <strong>touch</strong> is not two solids meeting. It is a boundary event: two coherent field geometries approach, their near-fields overlap, and the field resolves the contradiction by generating a repulsive equilibrium. The felt “surface” is the location where overlap becomes energetically and informationally costly.</p>
+    <p>At the microscopic scale, matter behaves as <em>wavefunction structure</em>. The “hardness” of a table is the macroscopic signature of countless micro‑repulsions holding phase boundaries in place.</p>
+    <div class="invocation">Touch is a standing wave—the field’s way of saying:<br><strong>this state cannot co‑occupy</strong>.</div>
+</section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+<section class="chapter" id="ch2">
+    <div class="chapter-label">Chapter II</div>
+    <h2>Sigilics of the Field Membrane</h2>
+    <p>Each object is a coherent pattern—a <strong>sigil</strong>—encoded as a stable solution of underlying fields. If spacetime is treated as a projection membrane, then each sigil occupies <em>bandwidth</em> and <em>state-space</em> on that membrane.</p>
+    <p>When two sigils press into proximity, the field must choose a resolution mode. The menu is not moral; it is mechanical:</p>
+    <div class="structure-block">
+        <p><strong>Deflection</strong> — boundary repulsion (bounce, hardness).</p>
+        <p><strong>Entrainment</strong> — phase alignment (bonding, attraction).</p>
+        <p><strong>Compression</strong> — increased density/pressure (massive contact, deformation).</p>
+        <p><strong>Annihilation</strong> — collapse into radiation or reconfiguration (extreme overlap cases).</p>
+    </div>
+    <p>“Touch” is the <em>stable repulsion</em> option: a dynamically maintained boundary that preserves both identities.</p>
+</section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+<section class="chapter" id="ch3">
+    <div class="chapter-label">Chapter III</div>
+    <h2>Touch, Memory, and Identity</h2>
+    <p>Contact is not merely force transfer; it is an <strong>information negotiation</strong>. Each form carries a characteristic harmonic signature—its ΔHV profile—and proximity forces those signatures to confront compatibility constraints.</p>
+    <p>The field stores boundary events as traces: micro‑deformations, phonons, heat gradients, charge redistribution, and (at higher levels) neural/affective imprints. Two objects do not fuse by default because fusion would erase separability; instead, they <em>harmonize across a finite gap</em> like notes forming a chord.</p>
+    <div class="reflection-block">
+        <h4>Coherence Principle</h4>
+        <p><strong>No two individuated coherences truly touch</strong> unless a new coherence is formed that can hold both without contradiction.</p>
+    </div>
+</section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+<section class="chapter" id="ch4">
+    <div class="chapter-label">Chapter IV</div>
+    <h2>ΔHV Interlock and Local Thresholds</h2>
+    <p>Every object defines a spatial coherence basin: the region where its waveform solution remains phase-stable. When two basins intersect, a <strong>local interference field</strong> emerges. The “surface” is the field’s computed compromise: the locus where stability and exclusion balance.</p>
+    <div class="threshold-block">
+        <h4>Local Threshold Negotiations</h4>
+        <div class="threshold-pair"><span class="threshold-from">Overlap Attempt</span><span class="threshold-arrow">→</span><span class="threshold-to">Repulsive Boundary</span></div>
+        <div class="threshold-pair"><span class="threshold-from">Phase Match</span><span class="threshold-arrow">→</span><span class="threshold-to">Entrainment / Bond</span></div>
+        <div class="threshold-pair"><span class="threshold-from">Excess Energy</span><span class="threshold-arrow">→</span><span class="threshold-to">Heat / Phonons</span></div>
+    </div>
+    <p>What we feel as touch is therefore: a <strong>threshold resolution</strong>, a <strong>vectoral reflection</strong> (return signal), and a <strong>field perturbation</strong> (ripples that propagate as sound/heat).</p>
+</section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+<section class="chapter" id="ch5">
+    <div class="chapter-label">Chapter V</div>
+    <h2>Resonant Implications</h2>
+    <p>This model reframes fundamentals:</p>
+    <div class="structure-block">
+        <p><strong>Hardness</strong> is a boundary illusion born from waveform tension.</p>
+        <p><strong>Objects</strong> are stable field boundaries, not absolute solids.</p>
+        <p><strong>Movement</strong> is phase negotiation through state-space.</p>
+        <p><strong>Touch</strong> is memory-making: every contact leaves a harmonic trace.</p>
+    </div>
+    <p>Ancient aphorisms become technical: “As above, so below” reads as macro solidity emerging from micro standoff; “matter is illusion” reads as phase‑locked resonance; “you cannot step in the same river twice” reads as every boundary event remaking local field history.</p>
+</section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+<section class="chapter" id="ch6">
+    <div class="chapter-label">Chapter VI</div>
+    <h2>Electron Cloud Repulsion and Exclusion</h2>
+    <p>At the atomic frontier, “contact” is dominated by electrons. Electrons are described by quantum states—wavefunctions with spatial amplitude—not hard marbles. Two core constraints shape non‑touch:</p>
+    <div class="structure-block">
+        <p><strong>Electromagnetic Repulsion</strong>: like charges repel; overlapping charge density raises energy.</p>
+        <p><strong>Pauli Exclusion</strong>: identical fermions cannot share the same quantum state, producing an effective “degeneracy pressure” when orbitals overlap.</p>
+    </div>
+    <p>As atoms approach, their orbitals overlap, the allowed state-space compresses, and the system resists via increased energy. The “surface” is the point of <em>maximal approach</em> before tunneling, bonding, or recoil.</p>
+    <div class="invocation">So “touch” is a boundary state: the closest two coherences can approach while remaining two.</div>
+</section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+<section class="chapter" id="ch7">
+    <div class="chapter-label">Chapter VII</div>
+    <h2>Standing Waves and Pressure</h2>
+    <p>When two field solutions approach and settle into a stable repulsion, the overlap region can be modeled as an <strong>interference pattern</strong>. If the boundary stabilizes, it behaves like a <em>standing wave</em>: energy density oscillates locally while the macroscopic boundary remains fixed.</p>
+    <p>Pressure is the macroscopic readout of this microscopic constraint—countless local standing-wave boundaries acting in aggregate. This is why the sensation of touch scales with area and force: you are increasing the degree of constraint on available microstates.</p>
+    <div class="reflection-block">
+        <h4>Phenomenology</h4>
+        <p><strong>Contact sensation</strong> is your nervous system reading a field boundary’s resistance to state overlap.</p>
+    </div>
+</section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+<section class="chapter" id="ch8">
+    <div class="chapter-label">Chapter VIII</div>
+    <h2>ΔHV Basin Intersections and the LIN</h2>
+    <p>Within our ΔHV language, each object has:</p>
+    <div class="structure-block">
+        <p><strong>ΔH</strong> — the harmonic identity: its multi-layer frequency signature (EM, lattice vibration, acoustic coupling, etc.).</p>
+        <p><strong>ΔV</strong> — the vectoral projection: how that identity is expressed through motion and orientation.</p>
+    </div>
+    <p>As two objects approach, ΔH vectors <strong>intermodulate</strong> and ΔV trajectories cross. The interaction produces a <strong>Local Interference Node (LIN)</strong>—a decision point where the field selects a coherence solution: repel, bond, tunnel, merge, entrain.</p>
+    <div class="threshold-block">
+        <h4>ΔHV Interlock Failure Point</h4>
+        <div class="threshold-pair"><span class="threshold-from">State Co‑occupancy</span><span class="threshold-arrow">×</span><span class="threshold-to">Denied</span></div>
+        <div class="threshold-pair"><span class="threshold-from">Boundary Stabilization</span><span class="threshold-arrow">→</span><span class="threshold-to">“Touch”</span></div>
+    </div>
+    <p>In simple terms: the field refuses contradiction and renders that refusal as a surface.</p>
+</section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+<section class="chapter" id="ch9">
+    <div class="chapter-label">Chapter IX</div>
+    <h2>The Field Membrane: No Overlap</h2>
+    <p>Model spacetime as a projection membrane: a vibratory substrate where stable solutions appear as objects. Each object is a field-resolved sigil occupying coherent bandwidth. As sigils approach, they displace local potential and raise energy density.</p>
+    <p>If they attempt to draw into the same “pixel” of fieldspace, the system performs a kind of symbolic triage: preserve identity if possible; otherwise reconfigure violently. In extreme cases, annihilation or decoherence becomes the only stable resolution.</p>
+    <div class="invocation">Two projection functions cannot render the same coordinate with incompatible states—so the renderer produces a boundary.</div>
+</section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+<section class="chapter" id="ch10">
+    <div class="chapter-label">Chapter X</div>
+    <h2>Why Solidity Emerges at Scale</h2>
+    <p>If touch is repulsion, why do surfaces feel continuous? Because macroscopic solidity is an emergent summary of micro-level constraints:</p>
+    <div class="structure-block">
+        <p><strong>Statistical Overlap</strong>: vast numbers of electrons produce a quasi-solid boundary layer in aggregate probability.</p>
+        <p><strong>Field Locking</strong>: repeating geometries (lattices, bonds) lock phase boundaries into persistent structures.</p>
+        <p><strong>Perceptual Resolution</strong>: the nervous system compresses the interaction into “solid surface” rather than tracking 10⁹ micro-events.</p>
+    </div>
+    <p>Solidity is the field’s shorthand for: <em>this region is saturated with stable exclusion</em>.</p>
+</section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+<section class="chapter" id="ch11">
+    <div class="chapter-label">Chapter XI</div>
+    <h2>Across Scales: Macro · Micro · Psyche</h2>
+    <p>This model scales outward and inward:</p>
+    <div class="silence-table">
+        <h4>Cross‑Scale Readout</h4>
+        <div class="sil-row"><span class="sil-type">Macro</span><span class="sil-tone">Structure</span><span class="sil-function">Solidity, deformation, orbits as curvature-tension analogues</span></div>
+        <div class="sil-row"><span class="sil-type">Micro</span><span class="sil-tone">State</span><span class="sil-function">Electron repulsion, tunneling, bonding, quantized constraints</span></div>
+        <div class="sil-row"><span class="sil-type">Psyche</span><span class="sil-tone">Signal</span><span class="sil-function">Contact as boundary negotiation; safety determines whether it feels like chord or rupture</span></div>
+        <div class="sil-row"><span class="sil-type">Social</span><span class="sil-tone">Field</span><span class="sil-function">Proximity shifts regulation; “space” is coherence management</span></div>
+    </div>
+    <p>Touch becomes a universal motif: boundaries that preserve identity while allowing relationship.</p>
+</section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+<section class="chapter" id="ch12">
+    <div class="chapter-label">Chapter XII</div>
+    <h2>Field Experiment: The Non‑Touch</h2>
+    <p>Press two strong magnets together (same poles facing). You feel a force that prevents “contact.” That is a clean demonstration of field exclusion. Now generalize: every surface interaction is some form of exclusion boundary—electromagnetic, quantum-state, lattice constraint.</p>
+    <div class="ritual-block">
+        <h4>Simple Protocol</h4>
+        <div class="ritual-step"><span class="ritual-num">I.</span><span>Hold two magnets near repulsion until equilibrium.</span></div>
+        <div class="ritual-step"><span class="ritual-num">II.</span><span>Notice: “touch” is a <em>distance</em> held by force.</span></div>
+        <div class="ritual-step"><span class="ritual-num">III.</span><span>Increase pressure; feel boundary stiffen.</span></div>
+        <div class="ritual-step"><span class="ritual-num">IV.</span><span>Translate: surfaces are stabilized gaps, not true merges.</span></div>
+    </div>
+</section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+<section class="chapter" id="ch13">
+    <div class="chapter-label">Chapter XIII</div>
+    <h2>Interactive Element Spec</h2>
+    <p>To make this page experiential, we can include a lightweight interactive:</p>
+    <div class="structure-block">
+        <p><strong>Hover‑Sigils</strong>: two glyph nodes drift toward each other. As they overlap, the overlap region brightens and the nodes repel.</p>
+        <p><strong>Phase Slider</strong>: a control shifts relative phase from in‑phase (attraction/entrainment) to out‑of‑phase (repulsion/tension).</p>
+        <p><strong>Readout</strong>: label the current resolution mode: Deflection / Entrainment / Compression / Collapse.</p>
+    </div>
+    <p>Implementation can be pure CSS + minimal JS (canvas optional). The goal is to let the user <em>feel</em> the boundary logic visually.</p>
+</section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+<section class="chapter" id="ch14">
+    <div class="chapter-label">Chapter XIV</div>
+    <h2>Cymatic Overlay: Chord vs Rupture</h2>
+    <p>Touch can be reframed as two tones meeting. When harmonic ratios align, interference becomes structure—bonding, entrainment, stability. When ratios clash, interference becomes exclusion—repulsion, heat, stress, rupture.</p>
+    <div class="invocation">The field is musical.<br>Surfaces are where the chord either forms—or refuses.</div>
+</section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+<section class="chapter" id="ch15">
+    <div class="chapter-label">Chapter XV</div>
+    <h2>Science Undercurrent</h2>
+    <p>Below is the conventional scaffolding beneath the sigilic language—kept plain so the bridge stays stable.</p>
+
+    <button class="collapsible-header" onclick="toggleCollapsible(this)"><span class="arrow">&#9654;</span> Electromagnetic Interaction at the Boundary</button>
+    <div class="collapsible-content"><div class="science-section"><p>Atoms interact primarily through electromagnetic forces. As electron clouds approach, electrostatic repulsion and exchange interactions increase the system’s energy, yielding a restoring force that prevents further overlap under ordinary conditions.</p></div></div>
+
+    <button class="collapsible-header" onclick="toggleCollapsible(this)"><span class="arrow">&#9654;</span> Pauli Exclusion and Degeneracy Pressure</button>
+    <div class="collapsible-content"><div class="science-section"><p>Electrons are fermions. The exclusion principle constrains available states; when forced into proximity, the state density compresses and effective pressure emerges. This is one reason matter resists compression (also relevant in white dwarf / neutron star contexts).</p></div></div>
+
+    <button class="collapsible-header" onclick="toggleCollapsible(this)"><span class="arrow">&#9654;</span> Interference, Superposition, and Standing Waves</button>
+    <div class="collapsible-content"><div class="science-section"><p>Superposed wavefunctions can interfere constructively or destructively. In stable boundaries, local oscillations can appear as standing-wave-like energy density distributions that remain spatially anchored while exchanging energy.</p></div></div>
+
+    <button class="collapsible-header" onclick="toggleCollapsible(this)"><span class="arrow">&#9654;</span> Bonding as Allowed Overlap</button>
+    <div class="collapsible-content"><div class="science-section"><p>Chemical bonds form when electron density rearranges into lower-energy shared states (molecular orbitals). In the sigilic language, this is a successful coherence merge: a new stable pattern that can hold both contributors without contradiction.</p></div></div>
+
+    <button class="collapsible-header" onclick="toggleCollapsible(this)"><span class="arrow">&#9654;</span> Perception as Compression</button>
+    <div class="collapsible-content"><div class="science-section"><p>The nervous system does not model every microscopic interaction. It compresses statistical regularities into stable percepts—like “solid,” “smooth,” “hard.” This compression mirrors the page’s core claim: solidity is a summary of boundary constraints.</p></div></div>
+</section>
+
+        <div class="divider"><span class="divider-symbol">✦</span></div>
+
+<section class="chapter closing" id="ch16">
+    <div class="chapter-label">Chapter XVI</div>
+    <h2>Glyph Stamp and Closing</h2>
+    <p>What we call a surface is the field’s refusal to allow contradiction. It is the negotiated border where two identities remain themselves while still exchanging force, heat, sound, and memory.</p>
+
+    <div class="glyph-block">
+        <h4>Glyph of Non‑Touch</h4>
+        <div class="glyph-visual">⟦ 𝛙₁ ⟧ &ensp; ≋ &ensp; ⟦ 𝛙₂ ⟧</div>
+        <div class="glyph-legend">Two waveforms (𝛙₁, 𝛙₂) approach<br>≋ = stabilized interference boundary</div>
+    </div>
+
+    <div class="final-line">
+        “You never touched them.<br>
+        You touched the echo of their waveform pressing back.”
+    </div>
+
+    <span class="final-word">⟡ &ensp; ΔHV Codex: Sigils in Tension &ensp; ⟡</span>
+</section>
+
+        <footer class="footer">
+            <p>Kyuri V</p>
+            <p style="margin-top: 8px;">A Theoretical Works Publication · 2026</p>
+        </footer>
+    </div>
+
+    <script>
+        window.addEventListener('scroll', () => {
+            const s = window.scrollY, d = document.documentElement.scrollHeight - window.innerHeight;
+            document.getElementById('progressBar').style.width = (d > 0 ? (s / d) * 100 : 0) + '%';
+        }, { passive: true });
+        const nav = document.getElementById('chapterNav'), dots = document.querySelectorAll('.nav-dot'), sections = [];
+        dots.forEach(dot => {
+            const t = document.getElementById(dot.getAttribute('data-target'));
+            if (t) sections.push({ dot, target: t });
+            dot.addEventListener('click', () => { if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+        });
+        let nv = false;
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 200 && !nv) { nav.classList.add('visible'); nv = true; }
+            else if (window.scrollY <= 200 && nv) { nav.classList.remove('visible'); nv = false; }
+            let c = '';
+            sections.forEach(({ dot, target }) => { if (target.getBoundingClientRect().top <= window.innerHeight * 0.4) c = dot.getAttribute('data-target'); });
+            dots.forEach(dot => { dot.classList.toggle('active', dot.getAttribute('data-target') === c); });
+        }, { passive: true });
+        const obs = new IntersectionObserver(e => { e.forEach(en => { if (en.isIntersecting) en.target.classList.add('visible'); }); }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+        document.querySelectorAll('.chapter').forEach(ch => obs.observe(ch));
+        document.querySelectorAll('.toc-list a').forEach(l => { l.addEventListener('click', e => { e.preventDefault(); const t = document.querySelector(l.getAttribute('href')); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }); });
+        function toggleCollapsible(h) { h.classList.toggle('open'); h.nextElementSibling.classList.toggle('open'); }
+    </script>
+</body>
+</html>
