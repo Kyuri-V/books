@@ -143,6 +143,11 @@
     </style>
 </head>
 <body>
+        <div class="expand-all">
+  <button type="button" onclick="window.location.href='https://kyuri-v.github.io/books/'">
+    ⟵ Back to Theoretical Works
+  </button>
+</div>
     <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
     <nav class="chapter-nav" id="chapterNav">
         <div class="nav-dot" data-target="ch1" data-label="THRESHOLD"></div>
@@ -167,7 +172,7 @@
 
         <div class="title-page">
             <div class="title-line"></div>
-            <div class="series-label">Kyuri V</div>
+            <div class="series-label"></div>
             <h1>The Embrace</h1>
             <p class="subtitle">How the Nervous System Prays</p>
             <p class="epigraph">The body does not lie. It remembers how to hold<br>before it remembers how to speak.<br>When two nervous systems meet in trust,<br>something ancient reawakens.</p>
@@ -435,7 +440,10 @@
 
             <span class="final-word">⟡ &ensp; Kyuri V: The Embrace &ensp; ⟡</span>
         </section>
-
+/* ── Expand All ── */
+.expand-all { text-align: center; margin: 30px 0; }
+.expand-all button { background: linear-gradient(135deg, var(--accent) 0%, var(--gold) 100%); border: none; padding: 12px 32px; border-radius: 4px; color: white; font-family: 'Cinzel', serif; font-size: 0.85em; cursor: pointer; transition: all 0.3s ease; letter-spacing: 0.06em; box-shadow: 0 4px 15px var(--shadow); }
+.expand-all button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--shadow); }
         <footer class="footer">
             <p>Kyuri V</p>
             <p style="margin-top: 8px;">A Theoretical Works Publication · 2025</p>
