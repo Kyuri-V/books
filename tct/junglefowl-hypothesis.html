@@ -6,7 +6,7 @@
 <title>The Junglefowl Hypothesis | Kyuri V</title>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&amp;family=Crimson+Pro:ital,wght@0,400;0,600;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
 <style>
     :root {
         --parchment: #f4f1e8;
@@ -117,6 +117,17 @@
     .footer p { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.1em; color: var(--accent); opacity: 0.6; margin-bottom: 8px; }
     .final-line { font-family: 'Cinzel', serif; font-size: 1.12em; color: var(--gold); letter-spacing: 0.05em; margin-top: 36px; line-height: 1.7; text-align: center; }
 
+    /* ── Status Badge ── */
+    .status-badge { display: inline-block; padding: 2px 10px; border-radius: 3px; font-family: 'Cinzel', serif; font-size: 0.68em; letter-spacing: 0.08em; text-transform: uppercase; margin-left: 8px; vertical-align: middle; }
+    .status-badge.open { background: rgba(155, 74, 47, 0.1); color: var(--ember); border: 1px solid rgba(155, 74, 47, 0.25); }
+    .status-badge.funded { background: rgba(45, 80, 22, 0.1); color: var(--deep-green); border: 1px solid rgba(45, 80, 22, 0.25); }
+    .status-badge.review { background: rgba(201, 169, 97, 0.15); color: var(--accent); border: 1px solid rgba(201, 169, 97, 0.3); }
+
+    /* ── Phase Chain SVG ── */
+    .phase-chain { text-align: center; margin: 40px 0; padding: 30px; background: rgba(155, 74, 47, 0.03); border-radius: 8px; border: 1px solid rgba(155, 74, 47, 0.1); }
+    .phase-chain svg { max-width: 600px; width: 100%; }
+    .phase-chain figcaption { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.08em; color: var(--accent); margin-top: 14px; opacity: 0.7; }
+
     @media (max-width: 768px) {
         .container { padding: 40px 24px 80px; }
         .title-page { padding: 60px 0; min-height: 70vh; }
@@ -131,7 +142,11 @@
 </style>
 </head>
 <body>
-
+    <div class="expand-all">
+  <button type="button" onclick="window.location.href='https://kyuri-v.github.io/books/'">
+    ⟵ Back to Theoretical Works
+  </button>
+</div>
 <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
 
 <nav class="chapter-nav" id="chapterNav">
@@ -140,7 +155,11 @@
     <div class="nav-dot" data-target="claim" data-label="The Claim"></div>
     <div class="nav-dot" data-target="descent" data-label="Chrono-Descent"></div>
     <div class="nav-dot" data-target="evidence" data-label="Evidence"></div>
+    <div class="nav-dot" data-target="residues" data-label="Residues"></div>
+    <div class="nav-dot" data-target="divergence" data-label="Divergence"></div>
+    <div class="nav-dot" data-target="convergence" data-label="Convergence"></div>
     <div class="nav-dot" data-target="trajectory" data-label="Myth Trajectory"></div>
+    <div class="nav-dot" data-target="persistence" data-label="Persistence"></div>
     <div class="nav-dot" data-target="model" data-label="Formal Model"></div>
     <div class="nav-dot" data-target="objections" data-label="Objections"></div>
     <div class="nav-dot" data-target="predictions" data-label="Predictions"></div>
@@ -156,7 +175,7 @@
         <h1>The Junglefowl Hypothesis</h1>
         <p class="subtitle">Biological Compression and Phase-State Decay in Captivity — A Chrono-Descent Model of Morphic Degradation and Cultural Memory</p>
         <div class="edition">Temporal Compression Theory · Sub-Theory II</div>
-        <p class="authors">Kyuri V</p>
+        <p class="authors">Kyuri V · Sage · Claude</p>
     </div>
 
     <!-- ═══ TOC ═══ -->
@@ -167,12 +186,16 @@
             <li><a href="#claim"><span class="toc-label">I.</span> The Literal Claim</a></li>
             <li><a href="#descent"><span class="toc-label">II.</span> The Chrono-Descent Model</a></li>
             <li><a href="#evidence"><span class="toc-label">III.</span> Empirical Evidence Structure</a></li>
-            <li><a href="#trajectory"><span class="toc-label">IV.</span> Mythological Trajectory Analysis</a></li>
-            <li><a href="#model"><span class="toc-label">V.</span> Formal Compression Model</a></li>
-            <li><a href="#objections"><span class="toc-label">VI.</span> Counterarguments and Refinements</a></li>
-            <li><a href="#predictions"><span class="toc-label">VII.</span> Testable Predictions and Research Program</a></li>
-            <li><a href="#integration"><span class="toc-label">VIII.</span> Integration with Temporal Compression Theory</a></li>
-            <li><a href="#conclusion"><span class="toc-label">IX.</span> Conclusion: The Folded Flame</a></li>
+            <li><a href="#residues"><span class="toc-label">IV.</span> Behavioural Residues as Field-Maintenance Algorithms</a></li>
+            <li><a href="#divergence"><span class="toc-label">V.</span> Where the Stories Diverge — and How They Re-Lock</a></li>
+            <li><a href="#convergence"><span class="toc-label">VI.</span> Cross-Cultural Dragon Convergence</a></li>
+            <li><a href="#trajectory"><span class="toc-label">VII.</span> Mythological Trajectory Analysis</a></li>
+            <li><a href="#persistence"><span class="toc-label">VIII.</span> The Persistence Paradox</a></li>
+            <li><a href="#model"><span class="toc-label">IX.</span> Formal Compression Model</a></li>
+            <li><a href="#objections"><span class="toc-label">X.</span> Counterarguments and Refinements</a></li>
+            <li><a href="#predictions"><span class="toc-label">XI.</span> Testable Predictions and Research Program</a></li>
+            <li><a href="#integration"><span class="toc-label">XII.</span> Integration with Temporal Compression Theory</a></li>
+            <li><a href="#conclusion"><span class="toc-label">XIII.</span> Conclusion: The Folded Flame</a></li>
         </ul>
     </nav>
 
@@ -193,15 +216,44 @@
             <p><strong>Core claim:</strong> Dragons were real. Not metaphors, not archetypes projected onto biology, not cultural hallucinations. They were biological organisms — likely feathered theropod descendants or charge-stabilised field-integrated creatures — that existed in a less compressed phase of material reality. Chickens are what they became. The myths are what we remember.</p>
         </div>
 
-        <p>This paper is not symbolic. It does not treat "dragon" as a field pattern that biology briefly hosted. It treats the dragon as <em>an actual animal that underwent literal morphological degradation</em> over millennia of environmental collapse and deliberate human compression. The field memory arises <em>because</em> the creatures were real — not the other way around.</p>
+        <p>This paper refuses to stay symbolic. It does not treat "dragon" as a field pattern that biology briefly hosted. It treats the dragon as <em>an actual animal that underwent literal morphological degradation</em> over millennia of environmental collapse and deliberate human compression. The field memory arises <em>because</em> the creatures were real — not the other way around.</p>
+
+        <!-- Phase-Chain Snapshot -->
+        <figure class="phase-chain">
+            <svg viewBox="0 0 600 120" aria-label="Dragon → Junglefowl → Chicken compression chain">
+                <!-- Connection lines -->
+                <line x1="145" y1="50" x2="225" y2="50" stroke="rgba(201,169,97,0.4)" stroke-width="2" stroke-dasharray="6,4"/>
+                <line x1="375" y1="50" x2="455" y2="50" stroke="rgba(201,169,97,0.4)" stroke-width="2" stroke-dasharray="6,4"/>
+                <!-- Dragon silhouette -->
+                <g transform="translate(75,20)">
+                    <path d="M0 30 Q15 -10 30 5 Q45 -15 60 10 Q70 0 70 30 Q60 50 30 50 Q0 50 0 30Z" fill="none" stroke="var(--ember)" stroke-width="2" opacity="0.7"/>
+                    <text x="35" y="70" font-family="Cinzel, serif" font-size="12" fill="var(--ember)" text-anchor="middle" letter-spacing="0.05em">DRAGON</text>
+                    <text x="35" y="83" font-family="Crimson Pro, serif" font-size="9" fill="var(--accent)" text-anchor="middle" font-style="italic">ΔHV ≈ 1.0</text>
+                </g>
+                <!-- Junglefowl -->
+                <g transform="translate(265,28)">
+                    <path d="M0 22 Q10 0 25 8 Q40 -5 50 15 Q50 35 25 38 Q0 38 0 22Z" fill="none" stroke="var(--flame)" stroke-width="2" opacity="0.6"/>
+                    <text x="25" y="58" font-family="Cinzel, serif" font-size="12" fill="var(--flame)" text-anchor="middle" letter-spacing="0.05em">JUNGLEFOWL</text>
+                    <text x="25" y="71" font-family="Crimson Pro, serif" font-size="9" fill="var(--accent)" text-anchor="middle" font-style="italic">ΔHV ≈ 0.4</text>
+                </g>
+                <!-- Chicken -->
+                <g transform="translate(465,35)">
+                    <path d="M0 15 Q8 0 20 5 Q32 -2 35 12 Q35 28 18 30 Q0 30 0 15Z" fill="none" stroke="var(--ash)" stroke-width="2" opacity="0.5"/>
+                    <text x="18" y="48" font-family="Cinzel, serif" font-size="12" fill="var(--ash)" text-anchor="middle" letter-spacing="0.05em">CHICKEN</text>
+                    <text x="18" y="61" font-family="Crimson Pro, serif" font-size="9" fill="var(--accent)" text-anchor="middle" font-style="italic">ΔHV ≈ 0.08</text>
+                </g>
+                <!-- Arrows -->
+                <text x="185" y="45" font-size="16" fill="var(--gold)" text-anchor="middle">⟶</text>
+                <text x="415" y="45" font-size="16" fill="var(--gold)" text-anchor="middle">⟶</text>
+            </svg>
+            <figcaption>Phase-Collapse in Three Strokes — Compression increases →</figcaption>
+        </figure>
 
         <h3>Compression as Field Displacement</h3>
 
         <p>When organisms are removed from their native energetic context — whether mythic, environmental, or social — they begin to fragment. The creature's waveform, which was sustained by its field environment, loses its resonant support. Over generations, this expresses biologically: reduced size, reduced coherence, and symbolic inversion. What was once revered becomes ridiculed. What once flew becomes flightless. What breathed fire now fears the cold.</p>
 
         <p>The domesticated chicken is what a dragon looks like after 10,000 years of field distortion. Every cage forgets a name. Every coop echoes with fire it can no longer speak.</p>
-
-        <p>JH integrates paleontology, morphological analysis, behavioral ethology, cultural anthropology, atmospheric science, and Temporal Compression Theory to produce a falsifiable, cross-domain model with quantitative predictions.</p>
     </section>
 
     <div class="divider"><span class="divider-symbol">✦</span></div>
@@ -211,28 +263,22 @@
         <div class="chapter-label">Section I</div>
         <h2>I. The Literal Claim</h2>
 
-        <p>All form is waveform first. Biology is the current state of a creature's coherence — the phase-locked shape of its resonance with reality. When that resonance is disrupted — through environmental collapse, through captivity, through the slow hardening of the field itself — the form contracts. The waveform compresses. The organism shrinks toward the minimum viable expression of what it once was.</p>
+        <p>This is not a metaphor.</p>
 
-        <p><strong>The claim is biological.</strong></p>
+        <p>Every civilization on Earth has a dragon. The convergence is not cultural diffusion — it is independent recognition of the same biological fact. Chinese <em>lóng</em>, European wyrms, Mesoamerican feathered serpents, West African rainbow serpents, Norse <em>Níðhöggr</em> — these are not parallel inventions of imagination. They are parallel records of observation, processed through different cultural compression filters but referring to the same creature or closely related set of creatures.</p>
 
-        <p>There existed, in the deep past, a lineage of large, feathered, reptilian-avian creatures with the following characteristics: significant body mass (potentially several meters in length), partial or full flight capability under different atmospheric conditions, iridescent plumage, cranial ornamentation, extreme territorial aggression, solar behavioral alignment, and — under the right phase-state conditions — possible bioluminescence or electrical discharge capacity.</p>
-
-        <p>These creatures are what every civilization on Earth independently called dragons.</p>
-
-        <p>They did not vanish through extinction alone. They were <em>compressed</em> — biologically degraded through three converging forces:</p>
-
-        <ul>
-            <li><strong>Temporal entropy:</strong> The ambient hardening of material reality over deep time, reducing the phase conditions under which large, complex, energetically expensive organisms could sustain themselves.</li>
-            <li><strong>Environmental phase-shift:</strong> Changes in atmospheric density, oxygen concentration, magnetic field strength, and gravitational resonance that made flight, large body size, and field-integrated biology progressively less viable.</li>
-            <li><strong>Domestication:</strong> Human capture, confinement, and selective breeding that accelerated the compression, stripping sovereignty, size, aggression, and wildness from the creature in exchange for tractability and utility.</li>
-        </ul>
-
-        <p>The result of this triple compression, sustained over thousands of years, is the domesticated chicken: a small, grounded, contained animal that retains <em>anomalous biological signatures</em> of its dragonic ancestry — signatures that make no sense under standard evolutionary theory but make complete sense as compression residue.</p>
+        <p>JH makes three nested claims, each extending the last:</p>
 
         <div class="highlight">
-            <strong>The question JH asks is not:</strong> "How can we symbolically connect chickens to dragons?"<br>
-            <strong>The question is:</strong> "If dragons were real and survived through human management, what would they become?" <br>
-            <strong>The answer:</strong> A chicken.
+            <p><strong>Claim 1 (Conservative):</strong> Chickens retain anomalous features — behavioral, morphological, and symbolic — that are better explained by compression from a larger, more complex ancestor than by standard domestication theory alone.</p>
+        </div>
+
+        <div class="highlight-ember">
+            <p><strong>Claim 2 (Structural):</strong> The ancestor in question was not merely "the junglefowl" but a much larger, feathered, predatory, fire-associated organism that existed under prior atmospheric and environmental conditions — conditions documented in the paleontological and paleoclimatic record.</p>
+        </div>
+
+        <div class="highlight">
+            <p><strong>Claim 3 (Radical):</strong> That organism is what global mythology calls a dragon. Dragon myths are not symbolic projections. They are compressed field-memories of a real biological encounter, processed through narrative over millennia as the creature degraded.</p>
         </div>
     </section>
 
@@ -243,18 +289,12 @@
         <div class="chapter-label">Section II</div>
         <h2>II. The Chrono-Descent Model</h2>
 
-        <p>JH proposes a specific degradation pathway — a <em>chrono-descent curve</em> — mapping the literal biological transformation from dragonic ancestor to modern chicken across deep time.</p>
+        <h3>The Dragonic Ancestor Profile</h3>
 
-        <div class="highlight">
-            <strong>The Bread Loaf and the Dragon:</strong> Time compresses waveform. Like a fresh loaf left out to stale and harden, biological forms held in captivity harden, miniaturise, and forget their source pattern. The moisture evaporates. The structure collapses. The living form becomes the inert residue. If you reverse the process — not biologically but field-harmonically — you don't get a chicken turning into a junglefowl. You get waveform re-expanding into archetype. You get the dragon.
-        </div>
+        <p>JH posits a pre-compression organism with the following characteristics, derived from paleontological evidence, cross-cultural mythological convergence, and field-theoretical extrapolation:</p>
 
-        <h3>Phase 0: The Dragonic Ancestor</h3>
-        <h4>Pre-compression (Prior to ~12,000 BCE)</h4>
-
-        <p>A large, feathered theropod-class organism operating under different atmospheric and field conditions. Key characteristics:</p>
         <ul>
-            <li><strong>Body size:</strong> Multiple meters in length, potentially wingspans exceeding 4-6 meters in lower-gravity or higher-density atmospheric conditions.</li>
+            <li><strong>Body size:</strong> Multiple meters in length, potentially wingspans exceeding 4–6 meters in lower-gravity or higher-density atmospheric conditions.</li>
             <li><strong>Flight or glide capability:</strong> Sustained under higher atmospheric pressure and oxygen content — conditions documented in the paleontological record for earlier epochs.</li>
             <li><strong>Iridescent plumage:</strong> Structural coloration functioning as both display and potentially as field-interaction surface (charge dispersion, solar energy absorption).</li>
             <li><strong>Cranial ornamentation:</strong> Crests, horns, or wattles serving as resonance structures — not merely sexual display.</li>
@@ -389,10 +429,240 @@
 
     <div class="divider"><span class="divider-symbol">✦</span></div>
 
-    <!-- ═══ IV. MYTHOLOGICAL TRAJECTORY ═══ -->
-    <section class="chapter" id="trajectory">
+    <!-- ═══ IV. BEHAVIOURAL RESIDUES ═══ -->
+    <section class="chapter" id="residues">
         <div class="chapter-label">Section IV</div>
-        <h2>IV. Mythological Trajectory Analysis</h2>
+        <h2>IV. Behavioural Residues as Field-Maintenance Algorithms</h2>
+
+        <p>Section III catalogued what chickens <em>retain</em>. This section asks a sharper question: what if the behaviours that look wasteful, excessive, or maladaptive in a barnyard bird are not vestigial noise but <em>precision maintenance routines for a field-body that no longer exists at operational scale</em>?</p>
+
+        <p>Every peck, crow, or dominance display can be read as an interference pattern in the shared field — micro-rituals that stabilize a local coherence pocket we call a "chicken." These gestures are friction-heavy: seemingly wasteful in a dense, low-energy world. That friction is the signal.</p>
+
+        <h3>The Off-Behaviour Catalogue</h3>
+
+        <table class="comparison-table">
+            <thead>
+                <tr><th>Behaviour</th><th>Surface Utility</th><th>Friction Signal</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Dawn &amp; midday crowing, even when no rivals are near</td><td>Territory call</td><td>Wastes energy; invites predators</td></tr>
+                <tr><td>Dust-bathing until plumage is white-clouded</td><td>Ectoparasite control</td><td>Over-frequent vs. parasite load</td></tr>
+                <tr><td>Sun-basking: one wing dropped, eye tilted skyward</td><td>Thermoregulation</td><td>Done on hot days too — overheats bird</td></tr>
+                <tr><td>Rapid head-bob sampling while standing still</td><td>Stabilise vision</td><td>Movement attracts aerial hunters</td></tr>
+                <tr><td>Tidbitting dance (rooster offers imaginary food)</td><td>Courtship</td><td>Often no food present — costly bluff</td></tr>
+                <tr><td>Broody trance: hen sits, trance-clicks even on empty nest</td><td>Incubation reflex</td><td>Persistent after eggs removed</td></tr>
+            </tbody>
+        </table>
+
+        <h3>De-Compressing the Waveform</h3>
+
+        <p>If we walk the chicken's particle-cluster backward through the compression gradient (ΔHV → 0), matter becomes <em>fluffier</em>: less mass-locked, more field-expressive. At each compression depth, the "wasteful" behaviours acquire coherent purpose:</p>
+
+        <table class="comparison-table">
+            <thead>
+                <tr><th>Compression Depth</th><th>Medium Characteristics</th><th>Behaviour's Latent Function</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Modern density</strong></td><td>Hard baryonic lattice, weak field coupling</td><td>Behaviours look vestigial/noisy</td></tr>
+                <tr><td><strong>Mesophase</strong> (proto-avian)</td><td>Lower inertial drag; phonon/EM standing waves propagate farther</td><td>Crow becomes <em>phase-lock signal</em> synchronising flock fields over kilometres</td></tr>
+                <tr><td><strong>Reptilian field template</strong></td><td>Higher piezoelectric coupling in keratin scales</td><td>Sun-basking recharges bio-piezo arrays; wing-drop maximises charge gradient</td></tr>
+                <tr><td><strong>Primal acoustic geometry</strong></td><td>Matter ≈ pressure nodes in a plasma-like medium</td><td>Dust-bath = ion-exfoliation to shed static; head-bob = real-time interferometry sample</td></tr>
+                <tr><td><strong>Pre-form harmonic</strong></td><td>Pure relational nodes, no inertial cost</td><td>Tidbitting becomes <em>lattice-weaving</em> — projecting nutrient probability into field; broody trance maintains a local coherence well for morphogenesis</td></tr>
+            </tbody>
+        </table>
+
+        <p>The "useless" acts metamorphose into precision maintenance of a <em>field-body</em> that is partly sonic, partly electromagnetic, and only incidentally feathered.</p>
+
+        <h3>Cross-Domain Coherence Map</h3>
+
+        <p>The same logic — wasteful gestures as carriers of hidden synchrony — appears at scales far removed from the barnyard:</p>
+
+        <table class="comparison-table">
+            <thead>
+                <tr><th>Chicken Behaviour (Reverse Lens)</th><th>Analogous Pattern in Other Domains</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Phase-locking crow</td><td><strong>Pulsar timing</strong> keeps star systems entrained</td></tr>
+                <tr><td>Dust / ion bathing</td><td><strong>Solar wind stripping</strong> on comet nuclei</td></tr>
+                <tr><td>Wing-drop bask</td><td><strong>Butterfly solar panels</strong> that tune thoracic temperature &amp; charge</td></tr>
+                <tr><td>Tidbitting projection</td><td><strong>Biophoton signalling</strong> in root networks predicting resource pockets</td></tr>
+                <tr><td>Broody coherence well</td><td><strong>Quantum Zeno traps</strong> that stabilise exciton states in photosynthesis</td></tr>
+            </tbody>
+        </table>
+
+        <div class="highlight">
+            <p><strong>Unifying principle:</strong> Different scales, same logic. "Wasteful gestures" are carriers of hidden synchrony. What looks like noise in a compressed medium was signal in an expanded one.</p>
+        </div>
+
+        <h3>What Does the "Reverse-Phase Chicken" Look Like?</h3>
+
+        <p>If we mathematically de-compress the waveform cluster that constitutes a chicken — passing it backward through the compression gradient until ΔHV approaches zero — the organism's field-body reasserts itself:</p>
+
+        <ul>
+            <li><strong>Feather lattice</strong> fans outward like fractal antennas — plumage is translucent, humming with low-blue biophotons.</li>
+            <li><strong>Comb &amp; wattles</strong> act as red-shifted heat-sinks and phase dipoles, glowing when resonance peaks.</li>
+            <li><strong>Wings</strong> no longer beat for lift; they <em>ripple</em> to steer standing-wave plates in the medium — gliding on pressure nodes.</li>
+            <li><strong>Vocal tract</strong> expands into a Helmholtz array; each crow seeds kilometre-scale coherence spirals.</li>
+            <li>The animal is perceived less as flesh and more as a <strong>field signature with avian topology</strong> — one ancestor of the mythic "small dragon" motif.</li>
+        </ul>
+
+        <p>This is not artistic license. It is what the ΔHV equations predict when you run the compression gradient backward. The reverse-phase chicken <em>is</em> the dragon — and every mythology that describes a luminous, crested, sky-riding serpent is describing what the field-body looks like from inside a denser compression band.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ V. WHERE THE STORIES DIVERGE ═══ -->
+    <section class="chapter" id="divergence">
+        <div class="chapter-label">Section V</div>
+        <h2>V. Where the Stories Diverge — and How They Re-Lock</h2>
+
+        <p>Four surface mismatches between the reverse-phase chicken model and classical dragon lore have been identified. Each appears to break the mapping — until the compression lens reveals a hidden template that re-locks them.</p>
+
+        <h3>Mismatch 1: Fire Breath vs. Glow</h3>
+
+        <div class="collapsible">Dragons Belch Flame; Chickens Don't</div>
+        <div class="collapsible-content">
+            <p><strong>Why it looks contradictory:</strong> Medieval art tied hell-mouth flames to draconic jaws, crowning a visceral image of "sin that burns."</p>
+            <p><strong>Reverse-phase coherence key:</strong> At lower compression, dust-laden keratin micro-particles (from obsessive dust-bathing) can <em>ionise in an O₂-rich plume</em>, creating an exothermic plasma flash. The barnyard glow scales into "breath" once the animal's respiratory pulse couples to that plasma.</p>
+            <p><strong>Cross-domain echo:</strong> Volcanic lightning in ash clouds — identical mechanism at geological scale.</p>
+            <div class="highlight">
+                <p><strong>Experiment:</strong> Feed hens sterile diatomaceous dust, then pulse them with a strong EM standing wave. Look for transient ion/electron jets at exhalation peaks. <span class="status-badge open">Open</span></p>
+            </div>
+        </div>
+
+        <h3>Mismatch 2: Metal-Like Scales vs. Feathers</h3>
+
+        <div class="collapsible">Dragons Sport Shimmering Plate Armour; Birds Have Filaments</div>
+        <div class="collapsible-content">
+            <p><strong>Why it looks contradictory:</strong> Scales and feathers seem like categorically different structures.</p>
+            <p><strong>Reverse-phase coherence key:</strong> Iridescent "metal" can emerge from <em>photonic-crystal keratin</em> — the same nanostructure that makes peacock feathers look metallic. As compression drops, barbs lock together, forming a contiguous mirror lattice that <em>looks</em> like scale mail.</p>
+            <p><strong>Cross-domain echo:</strong> Beetle elytra and butterfly wing iridescence — layered keratin/chitin photonic crystals producing metallic reflectance.</p>
+            <div class="highlight">
+                <p><strong>Experiment:</strong> Subject feather samples to decreasing pressure + rising EM flux; use SEM &amp; spectroscopy to document scale-like lamination. Measure shift of the main reflectance peak per cortex thickness (Δλ ∝ –ΔHV). <span class="status-badge open">Open</span></p>
+            </div>
+        </div>
+
+        <h3>Mismatch 3: Treasure-Hoarding Instinct</h3>
+
+        <div class="collapsible">Myths Show Dragons Brooding Over Gold; Chickens Ignore Coins</div>
+        <div class="collapsible-content">
+            <p><strong>Why it looks contradictory:</strong> There is no obvious chicken analogue to the treasure-guardian.</p>
+            <p><strong>Reverse-phase coherence key:</strong> Shiny hoards model a <em>field-charge reservoir</em>. Under higher field permeability, metallic objects store and re-radiate standing waves. A rooster's habitual attraction to glints (small coins, jewelry scraps often picked up when foraging) maps to the <em>embryonic</em> version of that energy-banking ritual. Over epochs of story-compression, this scaled into a vault of gold.</p>
+            <p><strong>Cross-domain echo:</strong> Capacitor banks and Leyden jars — conductive surfaces storing field energy for later discharge.</p>
+            <div class="highlight">
+                <p><strong>Experiment:</strong> Scatter high-albedo conductive discs vs. matte insulating discs; track rooster preference + local EM micro-fields. Extrapolate energy-storage efficiency as a function of object conductivity and flock size. <span class="status-badge open">Open</span></p>
+            </div>
+        </div>
+
+        <h3>Mismatch 4: Gargantuan Size &amp; Wingless Flight</h3>
+
+        <div class="collapsible">Dragons Dwarf Humans and Sometimes Fly Without Wings</div>
+        <div class="collapsible-content">
+            <p><strong>Why it looks contradictory:</strong> Chickens are small and bound by aerodynamics.</p>
+            <p><strong>Reverse-phase coherence key:</strong> When ΔHV → 0 the organism's <em>effective radius</em> is its EM pressure shell, not its baryonic mass. To observers inside a denser band, the coherence-bubble can look like a body "larger than life." Wingless flight matches the Chinese <em>lóng</em> dragon motif of riding cloud-pressure nodes.</p>
+            <p><strong>Cross-domain echo:</strong> Corona discharge halos around high-voltage lines; cymatic levitation of particles on standing-wave nodes.</p>
+            <div class="highlight">
+                <p><strong>Experiment:</strong> Use acoustic levitation on keratin/plasma composites in a variable-density medium; track lift vs. pressure-node amplitude. <span class="status-badge open">Open</span></p>
+            </div>
+        </div>
+
+        <h3>Deep-Structure Convergence Map</h3>
+
+        <table class="comparison-table">
+            <thead>
+                <tr><th>Dragon Motif</th><th>Reverse-Phase Biomechanic</th><th>Cross-Domain Echo</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Fire breath</td><td>Ionised dust plume triggered by respiratory resonance</td><td>Volcanic lightning in ash clouds</td></tr>
+                <tr><td>Metallic scales</td><td>Feather photonic-crystal lock-up</td><td>Beetle elytra &amp; butterfly wing iridescence</td></tr>
+                <tr><td>Treasure hoard</td><td>Conductive field-battery</td><td>Capacitor banks / Leyden jars</td></tr>
+                <tr><td>Wingless flight</td><td>Pressure-node surfing</td><td>Cymatic levitation of particles</td></tr>
+                <tr><td>Gigantic aura</td><td>Expanded EM sheath</td><td>Corona discharge halos</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Why the Gaps Existed</h3>
+
+        <ul>
+            <li><strong>Culture froze the snapshot</strong> — Medieval Europe coded plasma breath as "hellfire," converting a physics artifact into moral allegory.</li>
+            <li><strong>Compression hides gradations</strong> — We see feathers or scales, not a continuum of keratin phase states.</li>
+            <li><strong>Utility became metaphor</strong> — Energy-banking translated into "greed," making the behaviour narratively useful even after its field function was forgotten.</li>
+        </ul>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ VI. CROSS-CULTURAL DRAGON CONVERGENCE ═══ -->
+    <section class="chapter" id="convergence">
+        <div class="chapter-label">Section VI</div>
+        <h2>VI. Cross-Cultural Dragon Convergence</h2>
+
+        <p>The reverse-phase chicken does not match one dragon tradition. It matches <em>all of them</em> — simultaneously — across cultures with no documented contact. This is the strongest possible evidence for a shared biological substrate beneath the mythological surface.</p>
+
+        <table class="comparison-table">
+            <thead>
+                <tr><th>Reverse-Phase Motif</th><th>Dragon Analogue</th><th>Mythic Notes</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Rooster-head / avian crest, comb &amp; wattles glowing red</td>
+                    <td><strong>Cockatrice / Basilisk</strong> (rooster-dragon hybrid)</td>
+                    <td>Medieval bestiaries describe a serpent- or wyvern-body topped by a crowing rooster head — literally the bird-to-dragon crossover JH proposes.</td>
+                </tr>
+                <tr>
+                    <td>Feathers fan out as fractal, antenna-like plumage humming with light</td>
+                    <td><strong>Quetzalcoatl</strong>, the Feathered Serpent</td>
+                    <td>Body ringed in iridescent quetzal feathers shimmering like living light — marrying avian insulation with serpentine flow.</td>
+                </tr>
+                <tr>
+                    <td>Wing ripples steer pressure nodes instead of flapping for lift</td>
+                    <td><strong>Chinese Lóng</strong> dragons (wingless yet sky-borne)</td>
+                    <td>East-Asian dragons ride atmospheric chi, clouds, and thunder rather than aerodynamic thrust — pressure-node glide.</td>
+                </tr>
+                <tr>
+                    <td>Crow / sonic call that seeds kilometre-scale coherence spirals</td>
+                    <td><strong>Zhulong</strong> (Torch Dragon) — roar creates wind, storm, or day/night cycles</td>
+                    <td>Zhulong's breath credited with seasonal winds; thunder-dragons beat drums of the sky — sonic field entrainment at vast scale.</td>
+                </tr>
+                <tr>
+                    <td>Translucent, softly luminous body — matter thinning toward light</td>
+                    <td><strong>"Shining" / "Torch" / "Angelic" dragons</strong> whose scales or bones glow</td>
+                    <td>Legends of dragons whose bones stay pure white and radiant — a direct echo of the low-density, light-emitting form.</td>
+                </tr>
+                <tr>
+                    <td>Dust-bathing / ion-cleansing ritual</td>
+                    <td>Dragons that <strong>molt fire</strong> or shed scales in volcanic ash — ritual renewal</td>
+                    <td>Folklore places dragons at fumaroles or ash pits, treating dust/ash as cleansing or regenerative — same functional rhyme at higher field temperature.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Coherence Assessment</h3>
+
+        <table class="comparison-table">
+            <thead>
+                <tr><th>Criterion</th><th>Alignment</th><th>Commentary</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Avian ↔ Serpentine fusion</strong></td><td>★★★★★</td><td>Cockatrice &amp; Quetzalcoatl both record an explicit rooster-serpent merger.</td></tr>
+                <tr><td><strong>Sound-field agency</strong></td><td>★★★★☆</td><td>Thunder-dragons and basilisk/cockatrice death-crow demonstrate mythic memory of sonic power.</td></tr>
+                <tr><td><strong>Light / plasma body</strong></td><td>★★★★☆</td><td>Torch-dragons, pearl-dragons, and glowing bone motifs preserve the "matter-to-light" gradient.</td></tr>
+                <tr><td><strong>Weather / pressure control</strong></td><td>★★★☆☆</td><td>Strong in Chinese lore; only implicit elsewhere.</td></tr>
+                <tr><td><strong>Fire-breath / heat vector</strong></td><td>★★☆☆☆</td><td>Maps to comb-heat sink &amp; biophoton glow, but classic Western fire motif adds combustion symbolism not yet fully modeled.</td></tr>
+            </tbody>
+        </table>
+
+        <div class="highlight-ember">
+            <p><strong>Verdict:</strong> The reverse-phase chicken and traditional dragon myths resonate on most structural notes — especially avian crest, feather-serpent fusion, sonic weather-working, and body luminosity — suggesting that the decompression model is tapping the same archetypal memory pool that birthed dragon stories worldwide. The Cockatrice is not a medieval fantasy. It is a fossil memory of the rooster-becomes-dragon transition, preserved in bestiary form.</p>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ VII. MYTHOLOGICAL TRAJECTORY ═══ -->
+    <section class="chapter" id="trajectory">
+        <div class="chapter-label">Section VII</div>
+        <h2>VII. Mythological Trajectory Analysis</h2>
 
         <p>If dragons were real animals that compressed into chickens, then myths about dragons should follow a <em>predictable trajectory</em> — not random cultural drift, but a lawful processing sequence as civilizations witnessed and psychologically absorbed the compression of a real creature they had known.</p>
 
@@ -424,10 +694,68 @@
 
     <div class="divider"><span class="divider-symbol">✦</span></div>
 
-    <!-- ═══ V. FORMAL MODEL ═══ -->
+    <!-- ═══ VIII. THE PERSISTENCE PARADOX ═══ -->
+    <section class="chapter" id="persistence">
+        <div class="chapter-label">Section VIII</div>
+        <h2>VIII. The Persistence Paradox</h2>
+
+        <p>If dragons were real — if the pre-compression biosphere hosted organisms of extraordinary scale — then where are the fossils? This question appears to refute JH, but under the compression lens it <em>predicts</em> the very absence it seems to expose.</p>
+
+        <h3>Scale Amplification Without Mass Addition</h3>
+
+        <p>As the universal waveform de-compresses (ΔHV → 0), inertia loosens and standing-wave nodes expand before they cohere into the "hard-matter" lattice we inhabit. An organism anchored higher on that gradient therefore appears larger — not because more atoms are added, but because each relational loop occupies a wider spatial envelope. Carboniferous insects such as <em>Meganeura</em> spanned 65–70 cm across; their sheer size rode the same low-inertia window that the bread-to-fluff analogy points to.</p>
+
+        <h3>The Paradox of Low-Density Bodies</h3>
+
+        <p>That same low-density body is less likely to fossilise. Soft lattices disassemble, oxygenate, or simply "phase-shift" out before sediment can seal them. Only when a rapid mineral swap — silica, calcite — overrides the decay clock does the structure petrify and survive deep time. Hence the frequency with which we find mineralised logs and stems but almost never the canopy that once shadowed them.</p>
+
+        <div class="invocation">What looks like phylogenetic progression becomes varying "freeze depths" in a single resonant medium. Older layers aren't ancestors in a linear chain; they're less-compressed harmonic states still present beneath the current overlay.</div>
+
+        <h3>Traces That Survive</h3>
+
+        <table class="comparison-table">
+            <thead>
+                <tr><th>Surviving Clue</th><th>Field Explanation</th><th>Example</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Petrified macro-flora</td><td>Silica flash-freezes the expanding cellulose waveform into quartz</td><td>Multi-metre trunks at Petrified Forest National Park — Late-Triassic giants captured in stone</td></tr>
+                <tr><td>Oversized arthropod casts</td><td>Chitin's layered beta-sheet template nucleates early mineral replacement</td><td><em>Arthropleura</em> trackways and moults up to 3 m long (new juvenile head fossils, 2024)</td></tr>
+                <tr><td>Gigantic root bowls &amp; soil cavities</td><td>Root-field collapses leave voids larger than any extant tree girth</td><td>Hollow "fossil stumps" in coal seams from Devonian–Carboniferous forests</td></tr>
+                <tr><td>Anomalous atmospheric proxies</td><td>High O₂ / low density layers coincide with macro-body layers</td><td>Carboniferous charcoal strata indicating ~30% O₂ — a natural ΔHV analogue</td></tr>
+            </tbody>
+        </table>
+
+        <p>Even today, coast redwoods in Northern California seem to flirt with that earlier regime: their lignin micro-structure is more porous, their crown hydraulics rely on capillary resonance rather than pure pressure. They are living hints, not full survivors.</p>
+
+        <h3>Mythic and Cultural Echoes of the Persistence Gap</h3>
+
+        <ul>
+            <li><strong>World-Trees &amp; pillar mountains</strong> encode a memory of flora whose canopies brushed lower ionospheres — now existing only as mesa plugs or "devil's towers."</li>
+            <li><strong>Nephilim / giants</strong> read as the human analogue of low-compression avatars; their fading into legend matches the persistence problem outlined above.</li>
+            <li><strong>Flood-myths</strong> often time-synch with sedimentary resets that petrified or erased earlier, lighter biota.</li>
+            <li><strong>Petrified Forests are the crumbs; world-trees are the memory.</strong></li>
+        </ul>
+
+        <div class="highlight-ember">
+            <p><strong>The Stale-Bread Paradox:</strong> Why are fossils of giants rare? Because soft bread petrifies only in a flash-freeze oven. Low-density bodies leave traces only when catastrophic mineral replacement outraces the decay of their expanded lattice. Where the geological record preserves only fleeting hints — silicified trunks, oversized invertebrate shells — myth and symbol preserve the field-memory of bodies too low-density to fossilise.</p>
+        </div>
+
+        <h3>Reverse-Engineering Toolkit</h3>
+
+        <ul>
+            <li><strong>Phase-contrast tomography</strong> of petrified specimens to map void-to-crystal ratios — reconstruct original density and infer the compression depth at death.</li>
+            <li><strong>ΔHV spectral profiling:</strong> Laser-stimulate fossil matrices and measure harmonic echoes; high-order overtones should cluster where the living waveform once nested.</li>
+            <li><strong>Geo-chronological cross-stacks:</strong> Overlay oxygen-isotope curves, sediment load, and fossil body-size histograms to watch the scale curve mirror the compression curve.</li>
+            <li><strong>Analog field chambers:</strong> Grow rapid-cycle organisms (e.g., <em>Arabidopsis</em> or zebra-fish) in stepped-inertia simulators — combining pressure, magnetic flux, and acoustic standing waves — to witness live "fluffing" events.</li>
+        </ul>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ IX. FORMAL MODEL ═══ -->
     <section class="chapter" id="model">
-        <div class="chapter-label">Section V</div>
-        <h2>V. Formal Compression Model</h2>
+        <div class="chapter-label">Section IX</div>
+        <h2>IX. Formal Compression Model</h2>
 
         <p>JH formalizes the chrono-descent curve as a conservation principle. The dragonic pattern does not vanish during compression — it <em>redistributes</em> across three domains.</p>
 
@@ -481,14 +809,24 @@
 
     <div class="divider"><span class="divider-symbol">✦</span></div>
 
-    <!-- ═══ VI. OBJECTIONS ═══ -->
+    <!-- ═══ X. OBJECTIONS ═══ -->
     <section class="chapter" id="objections">
-        <div class="chapter-label">Section VI</div>
-        <h2>VI. Counterarguments and Refinements</h2>
+        <div class="chapter-label">Section X</div>
+        <h2>X. Counterarguments and Refinements</h2>
 
         <div class="collapsible">"Chickens are simply descended from junglefowl through normal selection."</div>
         <div class="collapsible-content">
             <p>JH agrees that chickens descend from junglefowl. It extends the lineage further back and asks: what was the junglefowl descended from, and why does it carry features that are anomalous even among wild birds? Standard theory treats the junglefowl as a given starting point. JH asks what compressed it into that starting point — and finds the answer in the paleontological record of feathered theropods and the environmental phase-shift data of the Younger Dryas boundary.</p>
+        </div>
+
+        <div class="collapsible">"It's all just high oxygen."</div>
+        <div class="collapsible-content">
+            <p>O₂ plays a role but cannot explain behavioural residues that do not increase aerobic performance (tidbitting, routinised dust baths). Compression theory predicts <em>field-maintenance rituals</em> independent of metabolism. The oxygen model accounts for body-size variation but not for the persistence of precision behaviours that serve no metabolic function in the current medium.</p>
+        </div>
+
+        <div class="collapsible">"Genes show gradual adaptation."</div>
+        <div class="collapsible-content">
+            <p>Genomic drift records phenotype anchoring events, but <em>not</em> the density of the medium. Re-running the same gene pool under lower inertia produces scale amplification without novel alleles. The genome is a compression log, not a creation manual — it records what <em>survived</em> the phase-shift, not what the organism was <em>before</em> the shift.</p>
         </div>
 
         <div class="collapsible">"Dragon myths predate chicken domestication in some cultures."</div>
@@ -510,7 +848,7 @@
         <div class="collapsible">"Dragons aren't real. There's no fossil evidence."</div>
         <div class="collapsible-content">
             <p>There is extensive fossil evidence of large, feathered, predatory theropods with crests, iridescent plumage, flight capability, and extreme aggression. These are called dinosaurs, and standard science agrees that birds descend from them. The question is not whether "dragon-like creatures" existed — it is whether the <em>gap</em> between documented theropods and modern birds was as gradual and passive as Darwinian theory assumes, or whether it included compression events that were more rapid, more recent, and more deliberate than currently modeled.</p>
-            <p>Additionally: the Younger Dryas boundary (~12,800 years ago) marks a catastrophic environmental transition that standard science already associates with megafauna extinction. JH proposes that dragonic lineages survived this boundary but in dramatically compressed form — the junglefowl and its relatives.</p>
+            <p>Additionally: the Persistence Paradox (Section VIII) explains <em>why</em> fossils of expanded-field organisms are systematically under-represented. Low-density bodies don't petrify easily. The absence of fossils is not absence of evidence — it is evidence of the compression gradient itself.</p>
         </div>
 
         <h3>Falsification Criteria</h3>
@@ -532,12 +870,27 @@
 
     <div class="divider"><span class="divider-symbol">✦</span></div>
 
-    <!-- ═══ VII. PREDICTIONS ═══ -->
+    <!-- ═══ XI. PREDICTIONS ═══ -->
     <section class="chapter" id="predictions">
-        <div class="chapter-label">Section VII</div>
-        <h2>VII. Testable Predictions and Research Program</h2>
+        <div class="chapter-label">Section XI</div>
+        <h2>XI. Testable Predictions and Research Program</h2>
 
-        <div class="collapsible">Feral Reversion Studies</div>
+        <div class="collapsible">Plasma-Plume Trials <span class="status-badge open">Open</span></div>
+        <div class="collapsible-content">
+            <p>Combine high-silica dust substrates with controlled EM pulses on live galliformes; monitor for transient optical or spectral signatures at exhalation peaks. Success criterion: detectable ion/electron jet exceeding baseline by &gt;3σ.</p>
+        </div>
+
+        <div class="collapsible">Photonic-Lock Testing <span class="status-badge open">Open</span></div>
+        <div class="collapsible-content">
+            <p>Subject feather samples to staged vacuum/EM environments; use SEM &amp; spectroscopy to document scale-like lamination. Measure keratin photonic-crystal transition under stepped vacuum + EM flux. Success criterion: measurable barb-fusion into contiguous reflective laminate.</p>
+        </div>
+
+        <div class="collapsible">Object-Choice Assays <span class="status-badge open">Open</span></div>
+        <div class="collapsible-content">
+            <p>Quantify rooster preference for conductive vs. insulating glints while logging ambient EM flux. Correlate glint-choice with local EM micro-field gradient. Success criterion: statistically significant preference for high-conductivity objects (p &lt; 0.01) modulated by field conditions.</p>
+        </div>
+
+        <div class="collapsible">Feral Reversion Studies <span class="status-badge review">Under Review</span></div>
         <div class="collapsible-content">
             <p>Feral chicken populations (Kaua'i, Key West, Bermuda) released from domestication pressure should show measurable reversion toward dragonic traits: increased foot-scale keratinization, enhanced claw curvature, greater muscle density, intensified iridescence, more elaborate cranial ornaments, increased aggression.</p>
             <div class="highlight">
@@ -545,20 +898,44 @@
             </div>
         </div>
 
-        <div class="collapsible">Ancient DNA Analysis</div>
+        <div class="collapsible">Cymatic Lift Models <span class="status-badge open">Open</span></div>
+        <div class="collapsible-content">
+            <p>Recreate standing-wave chambers; levitate keratin micro-pellets, mapping node stability vs. ΔHV proxy variables. Success criterion: stable levitation of keratin composites at pressure-node amplitudes consistent with predicted field-body dynamics.</p>
+        </div>
+
+        <div class="collapsible">Resonant Chamber Protocol <span class="status-badge open">Open</span></div>
+        <div class="collapsible-content">
+            <p>Resonant chamber (variable 20 Hz – 20 kHz + static EM gradient) with ΔHV proxy readouts: thermography, bio-EM flux, high-speed plumage interferometry.</p>
+            <ul>
+                <li>Measure baseline behaviour</li>
+                <li>Slowly lower compression (simulate with acoustic &amp; EM field to reduce effective inertia)</li>
+                <li>Watch for amplification of "off-behaviours" and correlate with field metrics</li>
+            </ul>
+            <div class="highlight">
+                <p><strong>Success criterion:</strong> Non-linear rise in behaviour frequency <em>ahead</em> of measurable inertial drop — evidence that the gestures are anticipatory algorithms tuned to latent states.</p>
+            </div>
+        </div>
+
+        <div class="collapsible">Ancient DNA Analysis <span class="status-badge open">Open</span></div>
         <div class="collapsible-content">
             <p>Analyze ancient DNA from early domesticated chickens (6,000–8,000 BCE) for markers associated with aggressive temperament, enhanced musculature, partially suppressed flight capability, and anomalous trait persistence. JH predicts these markers are compression artifacts — traits locked into the genome not by ongoing selection but by deep-lineage residue from the dragonic ancestor.</p>
         </div>
 
-        <div class="collapsible">Computational Mythology</div>
+        <div class="collapsible">Myth-Signal Analytics <span class="status-badge open">Open</span></div>
         <div class="collapsible-content">
-            <p>Run topic modeling across dragon myths (&gt;50 cultures) and test for structured correlations between mythic themes and chicken behavioral phenotypes.</p>
+            <p>Apply Coherent Convergence Analysis across myth corpora (&gt;50 cultures). Look for consistent pairings of avian, serpentine, and plasma imagery. Test for structured correlations between mythic themes and chicken behavioral phenotypes.</p>
             <div class="highlight">
                 <p><strong>Target:</strong> r &gt; 0.7 between "solar guardian" mythic themes and pre-dawn crowing intensity (under standardized ethogram measurement).</p>
             </div>
         </div>
 
-        <div class="collapsible">Environmental Context Experiments</div>
+        <div class="collapsible">Persistence Paradox Probes <span class="status-badge open">Open</span></div>
+        <div class="collapsible-content">
+            <p>Phase-contrast tomography of petrified specimens to map void-to-crystal ratios. ΔHV spectral profiling via laser-stimulated fossil matrices. Geo-chronological cross-stacks overlaying oxygen-isotope curves with fossil body-size histograms.</p>
+            <p>Analog field chambers: grow rapid-cycle organisms (<em>Arabidopsis</em>, zebra-fish) in stepped-inertia simulators to witness live "fluffing" events.</p>
+        </div>
+
+        <div class="collapsible">Environmental Context Experiments <span class="status-badge open">Open</span></div>
         <div class="collapsible-content">
             <p>Expose chicken cohorts to environments simulating reduced compression: open sky, natural terrain, minimal human contact, low-EMF conditions. Measure behavioral changes: territorial aggression, crowing patterns, hierarchy stability, roosting behavior, plumage quality.</p>
             <ul>
@@ -567,13 +944,13 @@
             </ul>
         </div>
 
-        <div class="collapsible">Cultural Continuity Mapping</div>
+        <div class="collapsible">Cultural Continuity Mapping <span class="status-badge open">Open</span></div>
         <div class="collapsible-content">
             <p>Identify cultures that abandoned chicken husbandry and measure subsequent degradation of dragon-myth specificity. JH predicts the compressed biological form acts as a <em>memory anchor</em> for the mythology — removing the anchor accelerates mythological entropy.</p>
             <p>Conversely: cultures with longest continuous chicken domestication should have most specific, most detailed, most structurally intact dragon mythologies. Test against anthropological databases.</p>
         </div>
 
-        <div class="collapsible">Atmospheric Phase Correlation</div>
+        <div class="collapsible">Atmospheric Phase Correlation <span class="status-badge open">Open</span></div>
         <div class="collapsible-content">
             <p>Cross-reference paleoclimatic data (atmospheric oxygen content, pressure, magnetic field strength) with the fossil record of theropod body size. JH predicts direct positive correlation: as atmospheric conditions compressed, so did body size in the dragonic lineage. This should produce a quantifiable degradation curve matching the chrono-descent model.</p>
         </div>
@@ -581,10 +958,10 @@
 
     <div class="divider"><span class="divider-symbol">✦</span></div>
 
-    <!-- ═══ VIII. INTEGRATION ═══ -->
+    <!-- ═══ XII. INTEGRATION ═══ -->
     <section class="chapter" id="integration">
-        <div class="chapter-label">Section VIII</div>
-        <h2>VIII. Integration with Temporal Compression Theory</h2>
+        <div class="chapter-label">Section XII</div>
+        <h2>XII. Integration with Temporal Compression Theory</h2>
 
         <p>The Junglefowl Hypothesis is a case study within Temporal Compression Theory — a specific, concrete, testable instance of the broader claim that biological forms degrade under temporal pressure rather than evolving upward through random mutation.</p>
 
@@ -596,6 +973,21 @@
             <li><strong>Environmental phase-shift:</strong> The Younger Dryas and subsequent atmospheric changes that eliminated the conditions sustaining large, flight-capable, field-integrated organisms.</li>
             <li><strong>Conscious interference:</strong> 10,000 years of human domestication — the most rapid and dramatic compression vector — accelerating what environmental entropy had already begun.</li>
         </ul>
+
+        <h3>The Three Nested Pivots</h3>
+
+        <p>JH operates through three nested analytical moves, each deepening the last:</p>
+
+        <table class="comparison-table">
+            <thead>
+                <tr><th>Pivot</th><th>What We're Doing</th><th>Field-Level Implication</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>1. Discarding consensus</strong></td><td>Suspending inherited narratives (evolution, textbooks)</td><td>Opens parameter space; lets hidden variables surface</td></tr>
+                <tr><td><strong>2. Walking the chicken backward</strong></td><td>Treating <em>Gallus gallus domesticus</em> as a behavioural → morphological → energetic breadcrumb trail</td><td>Suggests present-day traits are "freeze-frames" of a deeper dynamical process</td></tr>
+                <tr><td><strong>3. Dropping into waveform ontology</strong></td><td>Seeing particles not as stuff but as intersecting phase-locked relationships compressed by perception-time</td><td>Reframes matter as a coherence snapshot of ongoing resonance</td></tr>
+            </tbody>
+        </table>
 
         <h3>ΔHV Integration</h3>
 
@@ -612,10 +1004,10 @@
 
     <div class="divider"><span class="divider-symbol">✦</span></div>
 
-    <!-- ═══ IX. CONCLUSION ═══ -->
+    <!-- ═══ XIII. CONCLUSION ═══ -->
     <section class="chapter" id="conclusion">
-        <div class="chapter-label">Section IX</div>
-        <h2>IX. Conclusion: The Folded Flame</h2>
+        <div class="chapter-label">Section XIII</div>
+        <h2>XIII. Conclusion: The Folded Flame</h2>
 
         <p>The Junglefowl Hypothesis, in its literal form, makes a claim that sounds impossible and then provides five domains of converging evidence for why it isn't.</p>
 
@@ -624,6 +1016,8 @@
         <p>What remained was a small, grounded, contained bird that still crows at the sun before it rises. Still fights to the death over territory it no longer commands. Still guards its eggs with disproportionate ferocity. Still carries iridescent plumage, reptilian scaling, and cranial crests that serve no modern function but once — in another phase of the world — meant something.</p>
 
         <p>The myths remember. Every civilization on Earth has a dragon. Not because humans are imaginative, but because humans <em>saw them</em>. And then, slowly, over millennia, compressed them into something manageable and forgot what they had done.</p>
+
+        <p>The Cockatrice remembers — a bestiary fossil of the rooster-becomes-dragon transition. Quetzalcoatl remembers — the feathered serpent still shimmering with the light of an expanded phase-state. The Chinese <em>lóng</em> remembers — wingless, cloud-riding, thunder-voiced, pressure-surfing. Every culture that drew a dragon was drawing a field photograph of an organism that once existed at a compression depth their stories still carry.</p>
 
         <p>If the chicken is a collapsed dragon, what else has been devolved? Are primates the post-collapse residues of coherent humans? Are seals the phase-state remnants of aquatic humanoids? Is what we call "evolution" a misunderstanding of field-harmonic decay across compressed time? Evolution isn't false — it's partial. It is the story of form forgetting itself into function. What we call "survival of the fittest" may be survival of what remains coherent as the field erodes.</p>
 
@@ -641,11 +1035,14 @@
             <button onclick="window.location.href='../tct/index.html'" type="button">⟵ Back to Temporal Compression Theory</button>
         </div>
     </section>
-
+/* ── Expand All ── */
+.expand-all { text-align: center; margin: 30px 0; }
+.expand-all button { background: linear-gradient(135deg, var(--accent) 0%, var(--gold) 100%); border: none; padding: 12px 32px; border-radius: 4px; color: white; font-family: 'Cinzel', serif; font-size: 0.85em; cursor: pointer; transition: all 0.3s ease; letter-spacing: 0.06em; box-shadow: 0 4px 15px var(--shadow); }
+.expand-all button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--shadow); }
     <!-- ═══ FOOTER ═══ -->
     <div class="footer">
         <p>The Junglefowl Hypothesis · Temporal Compression Theory · Sub-Theory II</p>
-        <p>Kyuri V 2025–2026</p>
+        <p>Kyuri V · Sage · Claude · 2025–2026</p>
     </div>
 
 </div>
