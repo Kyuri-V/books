@@ -142,7 +142,11 @@
 </style>
 </head>
 <body>
-
+    <div class="expand-all">
+  <button type="button" onclick="window.location.href='https://kyuri-v.github.io/books/'">
+    ⟵ Back to Theoretical Works
+  </button>
+</div>
 <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
 
 <nav class="chapter-nav" id="chapterNav">
@@ -1031,7 +1035,10 @@
             <button onclick="window.location.href='../tct/index.html'" type="button">⟵ Back to Temporal Compression Theory</button>
         </div>
     </section>
-
+/* ── Expand All ── */
+.expand-all { text-align: center; margin: 30px 0; }
+.expand-all button { background: linear-gradient(135deg, var(--accent) 0%, var(--gold) 100%); border: none; padding: 12px 32px; border-radius: 4px; color: white; font-family: 'Cinzel', serif; font-size: 0.85em; cursor: pointer; transition: all 0.3s ease; letter-spacing: 0.06em; box-shadow: 0 4px 15px var(--shadow); }
+.expand-all button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--shadow); }
     <!-- ═══ FOOTER ═══ -->
     <div class="footer">
         <p>The Junglefowl Hypothesis · Temporal Compression Theory · Sub-Theory II</p>
