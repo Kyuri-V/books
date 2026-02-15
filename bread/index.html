@@ -431,6 +431,11 @@
     </style>
 </head>
 <body>
+    <div class="expand-all">
+  <button type="button" onclick="window.location.href='https://kyuri-v.github.io/books/'">
+    ⟵ Back to Theoretical Works
+  </button>
+</div>
 
     <!-- Progress Bar -->
     <div class="progress-container">
@@ -461,7 +466,7 @@
         <!-- ═══════════════════ TITLE PAGE ═══════════════════ -->
         <div class="title-page">
             <div class="title-line"></div>
-            <div class="series-label">Kyuri V</div>
+            <div class="series-label"></div>
             <h1>Salt and Bread</h1>
             <p class="subtitle">Why Sharing a Meal Is a Covenant</p>
             <p class="equation">Matter becomes trust. Attention becomes nourishment.<br>The body receives the field.</p>
@@ -892,7 +897,10 @@
 
             <span class="final-word">⟡ &ensp; Kyuri V: Salt and Bread &ensp; ⟡</span>
         </section>
-
+     /* ── Expand All ── */
+.expand-all { text-align: center; margin: 30px 0; }
+.expand-all button { background: linear-gradient(135deg, var(--accent) 0%, var(--gold) 100%); border: none; padding: 12px 32px; border-radius: 4px; color: white; font-family: 'Cinzel', serif; font-size: 0.85em; cursor: pointer; transition: all 0.3s ease; letter-spacing: 0.06em; box-shadow: 0 4px 15px var(--shadow); }
+.expand-all button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--shadow); }
         <!-- ═══════════════════ FOOTER ═══════════════════ -->
         <footer class="footer">
             <p>Kyuri V</p>
