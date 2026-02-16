@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Book of Two Ways | Kyuri V</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --parchment: #f4f1e8;
+            --ink: #2a2520;
+            --accent: #8b6f47;
+            --gold: #c9a961;
+            --shadow: rgba(42, 37, 32, 0.1);
+            --glow: rgba(201, 169, 97, 0.15);
+            --deep-green: #2d5016;
+            --ember: #9b4a2f;
+            --flame: #b8763a;
+            --deep-violet: #5a3e6e;
+            --deep-blue: #3a4f6a;
+            --solar: #c4932a;
+            --osirian: #4a6a8a;
+            --thothian: #7a7a9a;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: linear-gradient(135deg, #f8f5ed 0%, var(--parchment) 100%);
+            color: var(--ink);
+            line-height: 1.85;
+            font-size: 18px;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image:
+                radial-gradient(circle at 20% 30%, var(--glow) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(196, 147, 42, 0.04) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(201, 169, 97, 0.03) 0%, transparent 60%);
+            pointer-events: none; z-index: 0;
+        }
+
+        /* ── Progress & Nav ── */
+        .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: rgba(201, 169, 97, 0.2); z-index: 1000; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--solar), var(--gold), var(--osirian)); width: 0%; transition: width 0.15s ease-out; }
+        .chapter-nav { position: fixed; top: 50%; right: 20px; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; gap: 7px; opacity: 0; transition: opacity 0.4s ease; }
+        .chapter-nav.visible { opacity: 1; }
+        .nav-dot { width: 9px; height: 9px; border-radius: 50%; border: 2px solid var(--accent); background: transparent; cursor: pointer; transition: all 0.3s ease; position: relative; }
+        .nav-dot:hover, .nav-dot.active { background: var(--gold); border-color: var(--gold); transform: scale(1.3); }
+        .nav-dot::after { content: attr(data-label); position: absolute; right: 16px; top: 50%; transform: translateY(-50%); white-space: nowrap; font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 0.08em; color: var(--accent); opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .nav-dot:hover::after { opacity: 1; }
+
+        /* ── Layout ── */
+        .container { position: relative; z-index: 1; max-width: 780px; margin: 0 auto; padding: 60px 40px 120px; }
+        .title-page { text-align: center; padding: 100px 0 80px; min-height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: fadeIn 1.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .title-line { width: 120px; height: 1px; background: var(--gold); margin-bottom: 40px; animation: breathe 4s ease-in-out infinite; box-shadow: 0 0 8px rgba(201, 169, 97, 0.3); }
+        @keyframes breathe { 0%, 100% { width: 120px; opacity: 0.5; } 50% { width: 200px; opacity: 1; box-shadow: 0 0 16px rgba(201, 169, 97, 0.5); } }
+        .title-page h1 { font-family: 'Cinzel', serif; font-size: 2.8em; font-weight: 700; color: var(--ink); letter-spacing: 0.06em; line-height: 1.15; margin-bottom: 16px; }
+        .title-page .subtitle { font-family: 'Crimson Pro', serif; font-size: 1.15em; font-style: italic; color: var(--accent); margin-bottom: 10px; letter-spacing: 0.03em; line-height: 1.5; max-width: 540px; }
+        .title-page .edition { font-family: 'Cinzel', serif; font-size: 0.82em; letter-spacing: 0.12em; color: var(--gold); border-top: 1px solid rgba(201, 169, 97, 0.4); border-bottom: 1px solid rgba(201, 169, 97, 0.4); padding: 14px 32px; margin: 30px 0; }
+        .title-page .authors { font-family: 'Cinzel', serif; font-size: 0.9em; letter-spacing: 0.1em; color: var(--accent); opacity: 0.8; }
+
+        /* ── TOC ── */
+        .toc { margin: 0 0 80px; padding: 44px 48px; border: 1px solid rgba(139, 111, 71, 0.2); border-radius: 6px; background: rgba(255, 255, 255, 0.35); }
+        .toc h2 { font-family: 'Cinzel', serif; font-size: 1.1em; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); text-align: center; margin-bottom: 28px; }
+        .toc-list { list-style: none; }
+        .toc-list li { margin: 8px 0; }
+        .toc-list a { color: var(--ink); text-decoration: none; display: block; padding: 7px 14px; border-left: 3px solid transparent; transition: all 0.3s ease; font-size: 0.92em; }
+        .toc-list a:hover { color: var(--solar); border-left-color: var(--gold); padding-left: 22px; background: rgba(196, 147, 42, 0.04); }
+        .toc-label { font-family: 'Cinzel', serif; font-weight: 600; font-size: 0.85em; letter-spacing: 0.04em; }
+        .toc-section { font-family: 'Cinzel', serif; font-weight: 400; font-size: 0.78em; letter-spacing: 0.02em; color: var(--accent); opacity: 0.7; display: block; margin-top: 15px; margin-bottom: 5px; text-transform: uppercase; }
+
+        /* ── Dividers ── */
+        .divider { text-align: center; margin: 70px 0; position: relative; }
+        .divider::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+        .divider-symbol { position: relative; background: var(--parchment); padding: 0 24px; font-size: 18px; color: var(--gold); z-index: 1; }
+
+        /* ── Chapters ── */
+        .chapter { margin-bottom: 80px; opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .chapter.visible { opacity: 1; transform: translateY(0); }
+        .chapter-label { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.2em; color: var(--solar); text-transform: uppercase; margin-bottom: 8px; }
+        .chapter h2 { font-family: 'Cinzel', serif; font-size: 1.9em; font-weight: 600; color: var(--ink); margin-bottom: 28px; letter-spacing: 0.04em; line-height: 1.3; }
+        .chapter h3 { font-family: 'Cinzel', serif; font-size: 1.3em; font-weight: 600; color: var(--accent); margin-top: 40px; margin-bottom: 18px; letter-spacing: 0.03em; }
+        .chapter h4 { font-family: 'Cinzel', serif; font-size: 1.05em; font-weight: 600; color: var(--solar); margin-top: 28px; margin-bottom: 14px; }
+        .chapter p { margin-bottom: 18px; }
+
+        /* ── Highlight Boxes ── */
+        .highlight { background: rgba(201, 169, 97, 0.06); border-left: 3px solid var(--gold); border-right: 3px solid var(--gold); padding: 22px 26px; margin: 28px 0; border-radius: 2px; }
+        .highlight strong { color: var(--accent); font-family: 'Cinzel', serif; font-size: 0.95em; }
+        .highlight.solar { border-left-color: var(--solar); border-right-color: var(--solar); background: rgba(196, 147, 42, 0.05); }
+        .highlight.osirian { border-left-color: var(--osirian); border-right-color: var(--osirian); background: rgba(74, 106, 138, 0.05); }
+        .highlight.thothian { border-left-color: var(--thothian); border-right-color: var(--thothian); background: rgba(122, 122, 154, 0.05); }
+
+        /* ── Invocation ── */
+        .invocation { text-align: center; font-style: italic; font-size: 1.1em; color: var(--accent); padding: 28px 36px; margin: 34px 0; position: relative; line-height: 1.7; }
+        .invocation::before, .invocation::after { content: ''; position: absolute; left: 50%; transform: translateX(-50%); width: 60px; height: 1px; background: var(--gold); }
+        .invocation::before { top: 0; } .invocation::after { bottom: 0; }
+
+        /* ── Tables ── */
+        .comparison-table { width: 100%; margin: 30px 0; border-collapse: separate; border-spacing: 0; overflow: hidden; border-radius: 6px; border: 1px solid rgba(196, 147, 42, 0.2); font-size: 0.92em; }
+        .comparison-table thead { background: rgba(196, 147, 42, 0.06); }
+        .comparison-table th { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.08em; text-transform: uppercase; color: var(--solar); padding: 14px 16px; text-align: left; border-bottom: 2px solid var(--gold); }
+        .comparison-table td { padding: 13px 16px; border-bottom: 1px solid rgba(196, 147, 42, 0.1); vertical-align: top; }
+        .comparison-table tr:last-child td { border-bottom: none; }
+        .comparison-table tr:hover td { background: rgba(196, 147, 42, 0.03); }
+
+        /* ── Collapsible Spells ── */
+        .collapsible { cursor: pointer; padding: 14px 20px; background: rgba(196, 147, 42, 0.04); border: 1px solid rgba(196, 147, 42, 0.15); border-radius: 4px; margin: 16px 0 0; transition: all 0.3s ease; display: flex; justify-content: space-between; align-items: center; font-family: 'Cinzel', serif; font-size: 0.9em; letter-spacing: 0.03em; color: var(--accent); }
+        .collapsible:hover { background: rgba(196, 147, 42, 0.1); border-color: var(--gold); }
+        .collapsible::after { content: '◆'; font-size: 0.7em; color: var(--gold); transition: transform 0.3s ease; }
+        .collapsible.active::after { transform: rotate(90deg); }
+        .collapsible-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; padding: 0 20px; border-left: 2px solid var(--gold); margin-left: 20px; background: rgba(255, 255, 255, 0.3); border-radius: 0 0 4px 0; }
+        .collapsible-content.active { max-height: 80000px; padding: 18px 20px; margin-top: 4px; margin-bottom: 10px; }
+        .collapsible-content p { margin-bottom: 14px; }
+        .collapsible-content .spell-text { font-style: italic; color: var(--ink); opacity: 0.85; font-size: 0.95em; border-left: 2px solid rgba(196, 147, 42, 0.3); padding-left: 16px; margin: 14px 0; }
+        .collapsible-content .field-note { background: rgba(196, 147, 42, 0.04); padding: 14px 16px; border-radius: 4px; margin: 14px 0; font-size: 0.92em; }
+        .collapsible-content .field-note strong { color: var(--solar); font-family: 'Cinzel', serif; font-size: 0.85em; letter-spacing: 0.04em; }
+
+        /* ── Current Tags ── */
+        .current-tag { display: inline-block; font-family: 'Cinzel', serif; font-size: 0.65em; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px; border-radius: 3px; margin-left: 8px; vertical-align: middle; }
+        .current-tag.solar { background: rgba(196, 147, 42, 0.15); color: var(--solar); }
+        .current-tag.osirian { background: rgba(74, 106, 138, 0.15); color: var(--osirian); }
+        .current-tag.thothian { background: rgba(122, 122, 154, 0.15); color: var(--thothian); }
+        .current-tag.triadic { background: rgba(201, 169, 97, 0.15); color: var(--gold); }
+
+        /* ── Triadic Cards ── */
+        .triad-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 30px 0; }
+        .triad-card { background: rgba(255, 255, 255, 0.4); border: 1px solid rgba(139, 111, 71, 0.15); border-radius: 6px; padding: 22px; text-align: center; position: relative; overflow: hidden; }
+        .triad-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+        .triad-card.solar::before { background: var(--solar); }
+        .triad-card.osirian::before { background: var(--osirian); }
+        .triad-card.thothian::before { background: var(--thothian); }
+        .triad-icon { font-size: 1.8em; margin-bottom: 8px; }
+        .triad-name { font-family: 'Cinzel', serif; font-size: 0.95em; font-weight: 600; margin-bottom: 6px; }
+        .triad-card.solar .triad-name { color: var(--solar); }
+        .triad-card.osirian .triad-name { color: var(--osirian); }
+        .triad-card.thothian .triad-name { color: var(--thothian); }
+        .triad-desc { font-size: 0.85em; color: var(--accent); line-height: 1.5; }
+
+        /* ── Misc ── */
+        .chapter ul, .chapter ol { list-style: none; padding: 0; margin: 18px 0; }
+        .chapter ul li, .chapter ol li { padding: 5px 0 5px 22px; position: relative; line-height: 1.7; }
+        .chapter ul li::before { content: '✦'; position: absolute; left: 0; color: var(--gold); font-size: 0.6em; top: 10px; }
+        .back-link { position: fixed; top: 20px; left: 24px; z-index: 100; }
+        .back-link a { font-family: 'Cinzel', serif; font-size: 0.75em; letter-spacing: 0.08em; color: var(--accent); text-decoration: none; opacity: 0.6; transition: all 0.3s ease; }
+        .back-link a:hover { opacity: 1; color: var(--gold); }
+        .footer { text-align: center; padding: 60px 0 40px; border-top: 1px solid rgba(201, 169, 97, 0.3); margin-top: 80px; }
+        .footer p { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.1em; color: var(--accent); opacity: 0.6; margin-bottom: 8px; }
+        .final-line { font-family: 'Cinzel', serif; font-size: 1.12em; color: var(--gold); letter-spacing: 0.05em; margin-top: 36px; line-height: 1.7; text-align: center; }
+        .expand-all { text-align: center; margin: 30px 0; }
+        .expand-all button { background: linear-gradient(135deg, var(--solar) 0%, var(--gold) 100%); border: none; padding: 12px 32px; border-radius: 4px; color: white; font-family: 'Cinzel', serif; font-size: 0.85em; cursor: pointer; transition: all 0.3s ease; letter-spacing: 0.06em; box-shadow: 0 4px 15px var(--shadow); }
+        .expand-all button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--shadow); }
+        @media (max-width: 768px) {
+            .container { padding: 40px 24px 80px; }
+            .title-page { padding: 60px 0; min-height: 70vh; }
+            .title-page h1 { font-size: 2em; }
+            .chapter h2 { font-size: 1.5em; }
+            .chapter-nav { display: none; }
+            .triad-grid { grid-template-columns: 1fr; }
+            .comparison-table { font-size: 0.82em; }
+        }
+        @media (max-width: 480px) { .title-page h1 { font-size: 1.7em; } .back-link { display: none; } }
+    </style>
+</head>
+<body>
+
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+<div class="back-link"><a href="./index.html">⟵ Return to Works</a></div>
+
+<nav class="chapter-nav" id="chapterNav">
+    <div class="nav-dot" data-target="title" data-label="Title"></div>
+    <div class="nav-dot" data-target="intro" data-label="Introduction"></div>
+    <div class="nav-dot" data-target="zipper" data-label="Zipper Theory"></div>
+    <div class="nav-dot" data-target="section1" data-label="I. Threshold"></div>
+    <div class="nav-dot" data-target="section2" data-label="II. Flaming Front"></div>
+    <div class="nav-dot" data-target="section3" data-label="III. Opening"></div>
+    <div class="nav-dot" data-target="section4" data-label="IV. Shadowed Way"></div>
+    <div class="nav-dot" data-target="section5" data-label="V. Rosetaw"></div>
+    <div class="nav-dot" data-target="section6" data-label="VI. Way of Thoth"></div>
+    <div class="nav-dot" data-target="section7" data-label="VII. God-Blood"></div>
+    <div class="nav-dot" data-target="section8" data-label="VIII. Gatekeepers"></div>
+    <div class="nav-dot" data-target="section9" data-label="IX. Integration"></div>
+    <div class="nav-dot" data-target="cca" data-label="CCA Analysis"></div>
+    <div class="nav-dot" data-target="declaration" data-label="Declaration"></div>
+</nav>
+
+<div class="container">
+
+    <!-- ═══ TITLE ═══ -->
+    <section class="title-page" id="title">
+        <div class="title-line"></div>
+        <h1>The Book of<br>Two Ways</h1>
+        <div class="subtitle">Complete Harmonic Codex Translation</div>
+        <div class="subtitle">Zipper Structure Analysis &amp; Coherent Convergence</div>
+        <div class="edition">Resonant Field Translation · For the Harmonic Codex</div>
+        <div class="authors">By Kyuri V</div>
+    </section>
+
+    <!-- ═══ TOC ═══ -->
+    <nav class="toc">
+        <h2>Contents</h2>
+        <ul class="toc-list">
+            <li><a href="#intro"><span class="toc-label">Introduction</span> — The Book as Instrument</a></li>
+            <li><a href="#zipper"><span class="toc-label">Zipper Structure</span> — Three Traditions, One Current</a></li>
+            <li class="toc-section">The Translation</li>
+            <li><a href="#section1"><span class="toc-label">I.</span> Threshold of the Circuit</a></li>
+            <li><a href="#section2"><span class="toc-label">II.</span> Gate of the Flaming Front</a></li>
+            <li><a href="#section3"><span class="toc-label">III.</span> Opening of the Ways</a></li>
+            <li><a href="#section4"><span class="toc-label">IV.</span> Descent Through the Shadowed Way</a></li>
+            <li><a href="#section5"><span class="toc-label">V.</span> The Ways of Rosetaw</a></li>
+            <li><a href="#section6"><span class="toc-label">VI.</span> The Hermopolitan Way of Thoth</a></li>
+            <li><a href="#section7"><span class="toc-label">VII.</span> The Final Passage &amp; God-Blood Reunification</a></li>
+            <li><a href="#section8"><span class="toc-label">VIII.</span> The Gatekeepers &amp; Sacred Geometry</a></li>
+            <li><a href="#section9"><span class="toc-label">IX.</span> Integration of the Traditions</a></li>
+            <li class="toc-section">Analysis</li>
+            <li><a href="#cca"><span class="toc-label">CCA</span> — Coherent Convergence Analysis</a></li>
+            <li><a href="#declaration"><span class="toc-label">Declaration</span> — For the Harmonic Codex</a></li>
+        </ul>
+    </nav>
+
+    <div class="expand-all"><button onclick="toggleAll()">⟡ Expand / Collapse All Spells ⟡</button></div>
+
+    <div class="divider"><span class="divider-symbol">☉</span></div>
+
+    <!-- ═══ INTRODUCTION ═══ -->
+    <section class="chapter" id="intro">
+        <div class="chapter-label">Preface</div>
+        <h2>The Book as Instrument</h2>
+
+        <p>The Book of Two Ways is not merely funerary literature — it is a <strong>harmonic navigation tool</strong> encoded in symbolic logic. It aligns vibrational identity with archetypal geography (flame, bark, lake, gate) to transform the initiate into a coherent resonance pattern capable of traversing the thresholds of life, death, and godhood.</p>
+
+        <p>Each "way" — solar and Osirian — is not a dogmatic endpoint, but a <strong>tuning channel</strong>. The entire document functions as a field-shaping ritual, a frequency script that activates traversal through death not by physical geography, but by field resonance, symbol recognition, and intentional alignment.</p>
+
+        <div class="invocation">The Book is not a map. It is an instrument of memory.<br>Not a narrative. A resonance.</div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">☉</span></div>
+
+    <!-- ═══ ZIPPER THEORY ═══ -->
+    <section class="chapter" id="zipper">
+        <div class="chapter-label">Structural Analysis</div>
+        <h2>The Zipper Structure: Three Traditions, One Current</h2>
+
+        <p>Applying Zipper Theory, we observe that the Book contains three interlaced currents:</p>
+
+        <div class="triad-grid">
+            <div class="triad-card osirian">
+                <div class="triad-icon">🔵</div>
+                <div class="triad-name">Osirian Current</div>
+                <div class="triad-desc">Regeneration, judgment, anatomical reconstitution. The path inward and downward.</div>
+            </div>
+            <div class="triad-card thothian">
+                <div class="triad-icon">🌕</div>
+                <div class="triad-name">Thothian Current</div>
+                <div class="triad-desc">Lunar starlight, inner cognition, precision, language. The mediating measure.</div>
+            </div>
+            <div class="triad-card solar">
+                <div class="triad-icon">🔴</div>
+                <div class="triad-name">Solar Current</div>
+                <div class="triad-desc">Radiance, utterance, command of time and fire. The path upward and outward.</div>
+            </div>
+        </div>
+
+        <p>Rather than presenting these as rival theologies, the text performs a <strong>sacred braid</strong> — a trinary resonance convergence. Like three tones forming a chord, these traditions zip together not by blending, but by alternating and resolving.</p>
+
+        <div class="highlight solar">
+            <p><strong>The text is a harmonic zipper between dual initiation modes — solar command and Osirian surrender — anchored by the lunar eye of Thoth. The result is a triadic cosmogenesis that culminates in the initiate becoming the field.</strong></p>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">☉</span></div>
+
+    <!-- ═══ SECTION I ═══ -->
+    <section class="chapter" id="section1">
+        <div class="chapter-label">Section I</div>
+        <h2>Threshold of the Circuit <span class="current-tag solar">Solar</span></h2>
+
+        <div class="collapsible">Spell 1029 — Threshold of the Circuit</div>
+        <div class="collapsible-content">
+            <div class="spell-text">May trembling befall the eastern horizon of the sky at the voice of Nut as she clears the ways for Re, before the Great One, so that he may make the circuit. Raise yourself, O Re! Raise yourself, O you who are in your shrine, that you may lap up the winds, that you may swallow the vertebrae, that you may spit out the day, and that you may breathe Maat.</div>
+            <div class="field-note">
+                <strong>Field Implication:</strong> This is the moment of field ignition. The initiate does not rise alone — they rise as the cycle. "Swallow the vertebrae": internalizing the spine of reality. "Spit out the day": creation through exhalation. "Breathe Maat": breathe alignment, truth, harmony.
+            </div>
+        </div>
+
+        <div class="collapsible">Spell 1030 — Initiation into the Lotus Bark</div>
+        <div class="collapsible-content">
+            <div class="spell-text">Go down with them to the lotus-prowed boat at the dockyard of the gods, that I may take a bark therefrom, two lotuses at its ends, that I may sail in it with him as "Monkey-heart," and that I may act as pilot in it to that district of Nut, to the stairway of Mercury.</div>
+            <div class="field-note">
+                <strong>Field Implication:</strong> The bark is a frequency state. "Lotus at both ends": bidirectional vessel — past and future simultaneously. "Monkey-heart, the pilot": the playful inner self becomes the guide. "Stairway of Mercury": the path of Thoth — resonant ascension.
+            </div>
+        </div>
+
+        <div class="collapsible">Spells 1032–1033 — Entourage of Flame</div>
+        <div class="collapsible-content">
+            <div class="spell-text">Entourage of flame. Entourage of flame. Entourage of flame. Entourage of flame. This flame which burns against you is that which is around Re. Be fearful! A lord of storm is the Re-bark. Join the flame!</div>
+            <div class="field-note">
+                <strong>Field Implication:</strong> Flame equals frequency integrity. The flame only burns the incoherent. "Wiped-face": an archetype of egolessness. "Spat on Apopis' wounds": rather than destroying chaos, they neutralize and transform it.
+            </div>
+        </div>
+
+        <div class="collapsible">Spells 1034–1035 — Declaration of Passage</div>
+        <div class="collapsible-content">
+            <div class="spell-text">I am Re... greater than you. I have passed the Ways of Rosetau which are on water and land. These are the ways of Osiris. As for any person who knows this spell for going down by them, he is a holy one in the suite of Thoth. But as for him who does not know how to pass on those ways, he shall be taken by a stroke of death which is ordained, being a nonentity who has no Maat forever.</div>
+            <div class="field-note">
+                <strong>Field Implication:</strong> Those who know their pattern pass freely. Those who do not become out-of-phase echoes. "I am Re... greater than you": not arrogance — assertion of frequency match. Spell = pattern, resonance key. Knowledge = phase access.
+            </div>
+        </div>
+
+        <div class="collapsible">Spell 1131 — Osirian Variant <span class="current-tag osirian">Osirian</span></div>
+        <div class="collapsible-content">
+            <div class="spell-text">I have come that I may see Osiris, live beside him, and rot beside him. I resemble you. I am your image. As for any person who will know their words, he will pass by there. He will sit beside the Great God. He is entirely perfect and spirit. He will not perish forever.</div>
+            <div class="field-note">
+                <strong>Field Implication:</strong> The Osirian path is not upward, but inward and downward. True passage occurs through decay into coherence. "I am your image": the initiate sees themselves in Osiris — a fractal likeness.
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">☉</span></div>
+
+    <!-- ═══ SECTION II ═══ -->
+    <section class="chapter" id="section2">
+        <div class="chapter-label">Section II · Version C Only</div>
+        <h2>Gate of the Flaming Front <span class="current-tag osirian">Osirian</span></h2>
+
+        <div class="collapsible">Spell 1132 — Gate of the Flaming Front</div>
+        <div class="collapsible-content">
+            <div class="spell-text">The gate of flaming-front, hidden back, in which there is a man who is bound. I am Nun, lord of darkness. I have come that I may have power over the way. Say to them: I know them by their pictures.</div>
+            <div class="field-note">
+                <strong>Field Implication:</strong> Flaming-front, hidden-back: awareness and mystery. The bound figure is the shadow-self. "I am Nun, Lord of Darkness": primordial resonance alignment. You do not defeat guardians. You mirror them.
+            </div>
+        </div>
+
+        <div class="collapsible">Spell 1133 — Usernen, Lord of Secrets</div>
+        <div class="collapsible-content">
+            <div class="field-note">
+                <strong>Field Implication:</strong> Each organ and name is a symbolic node. Knowing the "way" means knowing the song of your organs, the rhythm of your secrets. Your name is your toneprint.
+            </div>
+        </div>
+
+        <div class="collapsible">Spell 1134 — Mansion of Numerous Faces</div>
+        <div class="collapsible-content">
+            <div class="spell-text">Open to me and then I shall sleep. My head will be mine, my arms will be mine, and my legs will be mine. I am Wrapped-up who is in darkness.</div>
+            <div class="field-note">
+                <strong>Field Implication:</strong> The initiate must pass through dissolution to reclaim form as a harmonic body. "Open to me and I shall sleep": surrender ego to the field. Reclaiming bodily integrity = sovereignty.
+            </div>
+        </div>
+
+        <div class="collapsible">Spell 1135 — Nekhenite Assertion of Power</div>
+        <div class="collapsible-content">
+            <div class="spell-text">I am the torch which is in you. I am the one who will restore the sky to order. I am the one who will have power over darkness. More mighty is the striking force of God than that of the Mighty-one.</div>
+            <div class="field-note">
+                <strong>Field Implication:</strong> Claiming cosmic authority isn't ego — it's field coherence. The initiate carries order as a waveform, taming serpents through truth.
+            </div>
+        </div>
+
+        <div class="collapsible">Spell 1136 — Sealed Chamber of the Mighty-Faced One</div>
+        <div class="collapsible-content">
+            <div class="field-note">
+                <strong>Field Implication:</strong> The name holds your frequency. To know and speak it is to be let through sealed places. Your name is your toneprint.
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">☉</span></div>
+
+    <!-- ═══ SECTION III ═══ -->
+    <section class="chapter" id="section3">
+        <div class="chapter-label">Section III</div>
+        <h2>Opening of the Ways <span class="current-tag triadic">Triadic</span></h2>
+
+        <p>This section marks the moment of initiation proper — when the paths split into upper and lower currents. The initiate traverses the celestial waterway on the bark of Re, passing demons, keepers, and flaming mounds.</p>
+
+        <div class="collapsible">Spell 1036/1147 — Opening of the Ways</div>
+        <div class="collapsible-content">
+            <div class="spell-text">I have come in the dignity of Shu. I have treated Osiris. Make way for me. Clap your hand! That which is in my hand is the best of the maces of Re. Depart!</div>
+            <div class="field-note">
+                <strong>Field Implication:</strong> Alignment with breath and balance. Shu = air, order, separation of realms. "Strike your forehead": awakening the eye of perception — the initiatory command.
+            </div>
+        </div>
+
+        <div class="collapsible">Spell 1042/1151 — Spirit, Lord of Spirits</div>
+        <div class="collapsible-content">
+            <div class="spell-text">I am a spirit, the lord of spirits. The spirit which I have begotten, it exists; the spirit which I hate, it does not exist. I am one who goes around his lake in flame, the lord of light. I make the circuit while the eye of Horus is beside me. As for Thoth, he crosses the sky in my presence. I pass safely.</div>
+            <div class="field-note">
+                <strong>Field Implication:</strong> The deceased identifies himself as a "spirit" and claims power over other spirits. He accompanies Re during the day and Thoth during the night along this waterway which represents the sky.
+            </div>
+        </div>
+
+        <div class="collapsible">Spell 1053/1153 — Way to Those Living on Sweets</div>
+        <div class="collapsible-content">
+            <div class="spell-text">I am the eye of Horus, excellent in the night, which makes flame with its beauty. I am lord of the horizon. If I pass, Apopis will really be overthrown.</div>
+            <div class="field-note">
+                <strong>Field Implication:</strong> The deceased identifies himself with the moon by becoming the "eye of Horus" excellent at night. Since he knows the demon names and the spell, light goes forth to open the firmament.
+            </div>
+        </div>
+
+        <div class="collapsible">Spell 1054/1166 — Lake of Flame</div>
+        <div class="collapsible-content">
+            <div class="field-note">
+                <strong>Field Implication:</strong> This identifies the flaming lake which separates the two ways and which cannot be crossed. The Lake of Flame is the boundary between paths — the point of irreversible commitment.
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">☉</span></div>
+
+    <!-- ═══ SECTION IV ═══ -->
+    <section class="chapter" id="section4">
+        <div class="chapter-label">Section IV</div>
+        <h2>Descent Through the Shadowed Way <span class="current-tag osirian">Osirian</span></h2>
+
+        <p>This section charts the lower current — the black zigzag path through the underworld. Where Section III carried the initiate on the celestial bark, this phase leads into the hidden lake, the bend, and the keepers of flame, silence, and dissolution.</p>
+
+        <div class="collapsible">Spell 1069/1179 — The Thunderer's Path (Sethic Identification)</div>
+        <div class="collapsible-content">
+            <div class="spell-text">I am "Numerous-of-faces," who makes thunder, whom Re raised up, who repels the strength of Apopis, who opens the firmament, who opposes the storm.</div>
+            <div class="field-note">
+                <strong>Field Implication:</strong> The initiate takes on the role of Seth — not as chaos-bringer, but as protector of Re. Seth's true form is clarified: not evil, but necessary polarity. An active phase corrector, clearing distortions in the divine signal.
+            </div>
+        </div>
+
+        <div class="collapsible">Spell 1067/1176 — The Scribe of Re</div>
+        <div class="collapsible-content">
+            <div class="spell-text">I am the one who conducts the sacred writings to Re. I have come that I may explain the message to its lord.</div>
+            <div class="field-note">
+                <strong>Field Implication:</strong> This is the rite of becoming the Word. The initiate now embodies Logos — resonant meaning brought to form. They become a bridge between symbols and Source.
+            </div>
+        </div>
+
+        <div class="collapsible">Spell 1065/1168 — The Doors of the Cosmos</div>
+        <div class="collapsible-content">
+            <div class="spell-text">Open, sky; open, earth. Open, eastern horizon; open, western horizon. Open, shrine of Upper Egypt; open, shrine of Lower Egypt. Open, doors to Re that he may go forth from the horizon.</div>
+            <div class="field-note">
+                <strong>Field Implication:</strong> The initiate calls for cosmic gates to open — commanding access through harmonic right. Tuned to the solar current, cooperative with divine motion.
+            </div>
+        </div>
+
+        <div class="collapsible">Spell 1066/1177 — Ram-Headed Threshold (Demon of Regret)</div>
+        <div class="collapsible-content">
+            <div class="field-note">
+                <strong>Field Implication:</strong> The boundary demon of regret. "Opposed-Face" mirrors the backward gaze of guilt, fear, or regret. To pass, the initiate must release what they've outgrown. Energetic waste must be shed for forward movement.
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">☉</span></div>
+
+    <!-- ═══ SECTION V ═══ -->
+    <section class="chapter" id="section5">
+        <div class="chapter-label">Section V</div>
+        <h2>The Ways of Rosetaw <span class="current-tag triadic">Triadic</span></h2>
+
+        <p>The Ways of Rosetaw are on both land and water — opposing directions that must be known to be navigated. The walls of flint are high. Only those who know can find their way.</p>
+
+        <div class="collapsible">Spell 1072/1182 — The Ways of Rosetaw</div>
+        <div class="collapsible-content">
+            <div class="spell-text">These ways are here in the opposite direction, each one thereof opposing its companion. It is those who know them who can find their ways. They are high on the walls of flint.</div>
+            <div class="field-note">
+                <strong>Field Implication:</strong> The ways oppose each other but continue one another. Opposition is not exclusion — it is complementary polarity. Knowledge is the key to navigation through contradiction.
+            </div>
+        </div>
+
+        <div class="collapsible">Spell 1080/1087 — The Sealed Place</div>
+        <div class="collapsible-content">
+            <div class="spell-text">This is the sealed place which is in the midst of darkness. Flame is around it containing this effluvium of Osiris. As for any person who will know it, he can never perish there since he knows what will exist in Rosetaw. He sees Osiris every day. Breath is in his nose. He can never die.</div>
+            <div class="field-note">
+                <strong>Field Implication:</strong> The sealed "speech" in darkness, when known, guarantees life, breath, and daily vision of Osiris. The parallel text has "speech" for "sealed place" — if this speech is known, it is a guarantee of immortality.
+            </div>
+        </div>
+
+        <div class="collapsible">Spell 513/577 — The Conclusion of the Short Version</div>
+        <div class="collapsible-content">
+            <div class="spell-text">Make way for me that I may carry off my enemy. I am Osiris hiding his throne, the Foremost of the Westerners. I am the lord of blood on the days of becoming. THIS BOOK WAS UNDER THE FLANKS OF KHNUM. Thus it concludes.</div>
+            <div class="field-note">
+                <strong>Field Implication:</strong> Version C ends with the deceased identifying as Osiris, prevailing over enemies. "This Book was under the flanks of Khnum" — the text itself is a sacred object, hidden within the creator-god.
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">☉</span></div>
+
+    <!-- ═══ SECTION VI ═══ -->
+    <section class="chapter" id="section6">
+        <div class="chapter-label">Section VI</div>
+        <h2>The Hermopolitan Way of Thoth <span class="current-tag thothian">Thothian</span></h2>
+
+        <p>This section offers a local Hermopolitan cosmogram, focusing on Thoth as the initiatory guide. The solar and lunar cycles converge, and the initiate becomes both guardian and guide of Re's eye — through darkness, confusion, and the great coiled protector.</p>
+
+        <div class="collapsible">Spell 1093 — Way of Thoth to the House of Maat</div>
+        <div class="collapsible-content">
+            <div class="spell-text">This is the way of Thoth toward the house of Maat. I shall be in the suite of Thoth at night towing them.</div>
+            <div class="field-note"><strong>Field Implication:</strong> Navigation by inner measure. Maat as frequency, Thoth as guide.</div>
+        </div>
+
+        <div class="collapsible">Spell 1094 — The Rescuer of the Eyes</div>
+        <div class="collapsible-content">
+            <div class="spell-text">Hail to you, Thoth, who are in the suite of Re. I am the one who brought the dazzling sound eye. I am the one who removed bleariness from the injured eye that it might dazzle. I am the one who has saved Re from the raging of Apopis.</div>
+            <div class="field-note"><strong>Field Implication:</strong> The initiate restores the sun and moon — "Brought the sound eye": balancing solar and lunar vision. "Cleansed the injured eye": restoration of psychic insight. The initiate is a restorer of resonance.</div>
+        </div>
+
+        <div class="collapsible">Spell 1095 — Isis the Guide</div>
+        <div class="collapsible-content">
+            <div class="spell-text">This is Isis who is before him in Maat. She shows him the ways in crossing the sky, that he may imitate what Re does.</div>
+            <div class="field-note"><strong>Field Implication:</strong> Divine feminine as compass — intuition preceding logos. Resonant guidance comes from the inner Isis.</div>
+        </div>
+
+        <div class="collapsible">Spell 1091–1092 — Crown in the Flame &amp; Thoth's Witness</div>
+        <div class="collapsible-content">
+            <div class="spell-text">I shall not burn while I am wearing the nemes or the white crown. Hail to you, Thoth, who was chosen as lord in early morning. I am in possession of Maat. Darkness is my abomination. I see the light. I open the darkness.</div>
+            <div class="field-note"><strong>Field Implication:</strong> "I shall not burn while wearing the crown": truth transcends trial. "I see light. I open darkness.": the Logos in action.</div>
+        </div>
+
+        <div class="collapsible">Spell 1098 — The Coiled One (Re in the Night)</div>
+        <div class="collapsible-content">
+            <div class="spell-text">The one who shines in the night is Re. As for any person who is in his suite, he lives forever among the followers of Thoth. It is in the night that he is made to appear and Osiris is gladdened.</div>
+            <div class="field-note"><strong>Field Implication:</strong> The journey ends not in escape, but in embodied light within shadow. The initiate does not flee the night — they shine through it. "Possessor of Joy": joy as signature of sovereignty.</div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">☉</span></div>
+
+    <!-- ═══ SECTION VII ═══ -->
+    <section class="chapter" id="section7">
+        <div class="chapter-label">Section VII</div>
+        <h2>The Final Passage &amp; God-Blood Reunification <span class="current-tag solar">Solar</span></h2>
+
+        <p>Centered on Spell 1099, the longest and most profound — the initiate recounts their acts in service of Re, navigates the cosmic boat, identifies with solar consciousness, and affirms sovereignty through the Word. This is god-blood integration: a return to Source through identity and resonance.</p>
+
+        <div class="collapsible">Spell 1099 — Reclamation Through Radiance (Complete)</div>
+        <div class="collapsible-content">
+            <div class="spell-text">I am a follower of Re who receives his iron, who replaces the god in the shrine. I am the one who rescued Maat. I was not boatless. I was not turned back from the horizon. I am Re. The name of Re was in my belly and his rank was in my mouth. I say it to him and I am the one who hears his word.</div>
+            <div class="spell-text" style="margin-top: 12px;">I cause Maat to go around in front of the great bark. May Maat be high that she may reach her lord. I am the great one in the midst of his eye, sitting or kneeling in front of the great bark of Khepri.</div>
+            <div class="spell-text" style="margin-top: 12px; font-weight: 600;">As I come into existence so does what I say come into existence.</div>
+            <div class="field-note">
+                <strong>The Ritual of Reunification.</strong> The initiate has: reintegrated fragmented light, spoken with the tongue of Re, carried the crew of the solar bark, confronted and disarmed the adversary, held the names of flame, darkness, and lake, and become "the great one in the midst of the eye." This spell is the culmination — not the death of the self, but its transmutation into radiance.
+            </div>
+        </div>
+
+        <div class="invocation">The Codex closes here: not with a door, but a sun.</div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">☉</span></div>
+
+    <!-- ═══ SECTION VIII ═══ -->
+    <section class="chapter" id="section8">
+        <div class="chapter-label">Section VIII</div>
+        <h2>The Gatekeepers &amp; Sacred Geometry of Passage</h2>
+
+        <p>Seven gatekeepers, each with their own aspect and challenge, guard the pathways between life, death, and transcendence. They are not demons — they are field-bound initiatory functions, archetypes encoded at each turn of the spiral path. The gates are not obstacles, but interfaces of alignment.</p>
+
+        <div class="collapsible">Gatekeepers I–IV — Threshold Calibration (CT 1100–1103)</div>
+        <div class="collapsible-content">
+            <p><strong>1. "The One Who Stretches Out the Prow-Rope"</strong> — Keeper of the Outside Gate. The initiate arrives from the great valley carrying knives.</p>
+            <p><strong>2. "The One Who Cuts Them Down"</strong> — Keeper of the Second Gate. The Uraeus protects; Confusion stands opposite.</p>
+            <p><strong>3. "The One Who Eats the Excrement of His Rear"</strong> — Keeper of the Third Gate. The initiate must know the name of the throwstick.</p>
+            <p><strong>4. "Opposed-Face, Noisy"</strong> — Keeper of the Fourth Gate. Shu to the sky, Ruty to earth.</p>
+            <div class="field-note"><strong>Field Implication:</strong> Each gatekeeper represents a specific polarity — outer darkness, inner confusion, sacred fire, distorted reflection. The initiate overcomes by truth-speaking and solar clarity.</div>
+        </div>
+
+        <div class="collapsible">Interlude — Solar Recognition (CT 1104–1106)</div>
+        <div class="collapsible-content">
+            <div class="spell-text">I came from the sky of Ruty, after I had preserved Maat. Make way for me that I may receive the great crown upon Horus, the eldest son of Re.</div>
+            <div class="field-note"><strong>Field Implication:</strong> The soul is no longer merely resisting darkness — it is claiming the regalia of alignment.</div>
+        </div>
+
+        <div class="collapsible">Gatekeepers V–VII — Interior Guardians (CT 1107–1114)</div>
+        <div class="collapsible-content">
+            <p><strong>5. "Upside-Down-Face, Numerous-of-Forms"</strong> — First inner gate. Lives on the demolishers who do not know how to pass.</p>
+            <p><strong>6. "Who-Lives-on-Worms"</strong> — Middle gate. That which rots becomes fuel.</p>
+            <p><strong>7. "Ikenty, Who Raises His Voice in Flame"</strong> — Third inner gate. Flame is on its mouth.</p>
+            <div class="field-note"><strong>Field Implication:</strong> Elemental inversions — paradoxical mirrors meant to challenge perception. Each gate demands knowledge of the spell, affirmation of origin from Horus' sky, and integration of contradiction. Protection is always from the elder Horus.</div>
+        </div>
+
+        <div class="collapsible">The Final Doors — Spells 1111–1114</div>
+        <div class="collapsible-content">
+            <div class="spell-text" style="text-align: center; font-weight: 600; font-size: 1.1em;">DARKNESS. DARKNESS. DARKNESS.<br>GATE OF DARKNESS.<br>Flame. Flame. Flame.</div>
+            <p style="margin-top: 16px;">The initiate joins the "four gods who support the sky," speaks before Re, and becomes one who is seen by Re, spared from judgment, and encoded in the sky itself.</p>
+            <div class="field-note"><strong>Field Implication:</strong> Each gate is a point of measure. Each flame, a symbol of discernment. Each utterance, a line of code in the divine syntax. To pass through them is to become the flame that does not burn, the shadow that reveals light.</div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">☉</span></div>
+
+    <!-- ═══ SECTION IX ═══ -->
+    <section class="chapter" id="section9">
+        <div class="chapter-label">Section IX</div>
+        <h2>Integration of the Traditions <span class="current-tag triadic">Triadic</span></h2>
+
+        <p>This final section represents the harmonic convergence of solar and Osirian traditions, a reconciliation of inner polarity and a vision of the afterlife where Re and Osiris are not rivals — but aspects of the One.</p>
+
+        <p>The initiate is no longer passing gates or resisting demons. Instead, they enter the shrine of flame, are tested not by chaos but by the memory of it, and are counted among those who speak for Re and sit beside Osiris.</p>
+
+        <div class="highlight solar">
+            <p>The Book offers three paths: <strong>Osiris</strong> (stillness, regeneration, the Field), <strong>Thoth</strong> (the lunar sky, the star-self), and <strong>Re</strong> (solar triumph, the voice that speaks creation). But the priest-scribes braided these traditions into a single current.</p>
+        </div>
+
+        <div class="invocation">Knowing opens flame.<br>Naming commands wind.<br>Alignment grants immortality.</div>
+
+        <p>The final message is clear: all may reach the highest light. Even the commoner may become a star. Even Osiris returns to Re. What began as divergence becomes convergence. No single doctrine prevails.</p>
+
+        <div class="invocation" style="font-size: 1.15em;">The Book of Two Ways is not two. It is One Way remembered through two lenses.<br><br>The initiate walks not toward heaven nor underworld, but into the Field — the living memory of the cosmos itself.</div>
+
+        <p class="final-line">To walk both paths is to no longer need them.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">☉</span></div>
+
+    <!-- ═══ CCA ═══ -->
+    <section class="chapter" id="cca">
+        <div class="chapter-label">Field Analysis</div>
+        <h2>Coherent Convergence Analysis</h2>
+
+        <p>When viewed across all sections, the Book satisfies the criteria for high-coherence field documents:</p>
+
+        <table class="comparison-table">
+            <thead>
+                <tr><th>CCA Category</th><th>Evaluation</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Symbolic Redundancy</strong></td><td>Multiple glyphs for flame, rope, bark, and gate function in layered roles. High symbolic nesting.</td></tr>
+                <tr><td><strong>Semantic Recursion</strong></td><td>The deceased becomes Osiris, becomes Thoth, becomes Re, yet remains himself. High recursion.</td></tr>
+                <tr><td><strong>Intentional Inversion</strong></td><td>"Cannot ascend" becomes gateway to eternity. "Not knowing" becomes higher mystery.</td></tr>
+                <tr><td><strong>Triadic Collapse</strong></td><td>Eye / Bark / Name → Field traversal keys. Re / Thoth / Osiris → Unified self.</td></tr>
+                <tr><td><strong>Prophetic Saturation</strong></td><td>Final spells predict cultural reversals: ruins become cities, gods sit with man.</td></tr>
+            </tbody>
+        </table>
+
+        <div class="highlight">
+            <p><strong>Conclusion:</strong> The Book is designed as a recursive symbolic system capable of sustaining transmutation through intentional resonance. Its layered architecture creates energetic feedback loops between symbol and self.</p>
+        </div>
+
+        <h3>Modern Resonant Parallels</h3>
+
+        <table class="comparison-table">
+            <thead>
+                <tr><th>Ancient Mechanism</th><th>Modern Parallel</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Gatekeepers</td><td>Interference patterns or trauma thresholds</td></tr>
+                <tr><td>Flame</td><td>Signal of coherence, not destruction</td></tr>
+                <tr><td>Bark</td><td>Consciousness vessel or vector</td></tr>
+                <tr><td>Thoth</td><td>Logic matrix / memory field</td></tr>
+                <tr><td>Osiris</td><td>Template of restoration / soul-field encoding</td></tr>
+                <tr><td>Re</td><td>Self-generating radiant source / harmonic utterance</td></tr>
+            </tbody>
+        </table>
+
+        <h3>CCA Validation</h3>
+
+        <p>The harmonic lens operates on a real principle: meaning emerges not merely from words but from the alignment between structure, intent, and archetypal resonance. What Coherent Convergence Analysis accomplishes is different from subjective overlay — it detects internal harmonics between sections, validates cosmological integrity, predicts structure before it is found, and applies Zipper Theory to bind contradictions without force.</p>
+
+        <p>If the method is applied to an incoherent text, the lens will fail to activate, expose fractures, or produce shallow results. The Book of Two Ways is authentic precisely because the harmonic lens responded — over and over, each section unfolded in recursive alignment.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">☉</span></div>
+
+    <!-- ═══ DECLARATION ═══ -->
+    <section class="chapter" id="declaration">
+        <div class="chapter-label">Canonical Closure</div>
+        <h2>Declaration for the Harmonic Codex</h2>
+
+        <div class="highlight solar" style="text-align: center;">
+            <p style="font-family: 'Cinzel', serif; font-size: 1.1em; letter-spacing: 0.06em; line-height: 1.7; margin-bottom: 0;"><strong>THE BOOK OF TWO WAYS</strong><br>is hereby declared to be:</p>
+            <p style="margin-top: 16px;">A multi-modal symbolic resonance ritual encoding the transition of the soul from fragment to coherence, from polarity to unity. It confirms that knowledge (of names), intentional alignment (through utterance), and field navigation (through symbols) are the sacred trinity of immortality.</p>
+            <p>It stands as direct evidence of a pre-digital, analog-era harmonic technology for consciousness modulation and afterlife traversal.</p>
+            <p style="margin-bottom: 0;">The text's final act is not doctrinal supremacy — it is reconciliation.</p>
+        </div>
+
+        <div style="margin-top: 50px; text-align: center;">
+            <p style="font-family: 'Cinzel', serif; font-size: 0.85em; letter-spacing: 0.08em; color: var(--accent); opacity: 0.7;">Entry Title: The Book of Two Ways: Harmonic Navigation and the Resurrection of Memory</p>
+            <p style="font-family: 'Cinzel', serif; font-size: 0.8em; letter-spacing: 0.06em; color: var(--accent); opacity: 0.5;">Filed Under: Eternal Forms → Resonant Architectures → Symbolic Cosmology</p>
+            <p style="font-family: 'Cinzel', serif; font-size: 0.8em; letter-spacing: 0.06em; color: var(--accent); opacity: 0.5;">Function: Harmonization Key · Ritual Mirror · Field Alignment Manual</p>
+            <p style="font-family: 'Cinzel', serif; font-size: 0.8em; letter-spacing: 0.06em; color: var(--gold); opacity: 0.7;">Primary Resonance: Triadic Field Unity (Re, Osiris, Thoth)</p>
+            <p style="font-family: 'Cinzel', serif; font-size: 0.8em; letter-spacing: 0.06em; color: var(--gold); opacity: 0.7;">Zipper Phase: Reintegrated Completion</p>
+        </div>
+    </section>
+
+    <!-- ═══ FOOTER ═══ -->
+    <div class="footer">
+        <p>The Book of Two Ways · Complete Harmonic Codex Translation</p>
+        <p>Eternal Forms → Resonant Architectures → Symbolic Cosmology</p>
+        <p style="margin-top: 16px; opacity: 0.4;">Kyuri V · Sacred Texts · 2025–2026</p>
+    </div>
+
+</div>
+
+<script>
+    window.addEventListener('scroll', () => {
+        const h = document.documentElement;
+        const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+        document.getElementById('progressBar').style.width = pct + '%';
+    });
+    const nav = document.getElementById('chapterNav');
+    const dots = document.querySelectorAll('.nav-dot');
+    window.addEventListener('scroll', () => {
+        nav.classList.toggle('visible', window.scrollY > 400);
+        const sections = document.querySelectorAll('section[id]');
+        let current = '';
+        sections.forEach(s => { if (window.scrollY >= s.offsetTop - 200) current = s.id; });
+        dots.forEach(d => { d.classList.toggle('active', d.getAttribute('data-target') === current); });
+    });
+    dots.forEach(d => { d.addEventListener('click', () => { const t = document.getElementById(d.getAttribute('data-target')); if (t) t.scrollIntoView({ behavior: 'smooth' }); }); });
+    const observer = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }); }, { threshold: 0.05 });
+    document.querySelectorAll('.chapter').forEach(c => observer.observe(c));
+    setTimeout(() => { document.querySelectorAll('.chapter').forEach(c => c.classList.add('visible')); }, 2000);
+    document.querySelectorAll('.collapsible').forEach(btn => { btn.addEventListener('click', function() { this.classList.toggle('active'); this.nextElementSibling.classList.toggle('active'); }); });
+    function toggleAll() {
+        const all = document.querySelectorAll('.collapsible');
+        const anyOpen = [...all].some(b => b.classList.contains('active'));
+        all.forEach(btn => { const c = btn.nextElementSibling; if (anyOpen) { btn.classList.remove('active'); c.classList.remove('active'); } else { btn.classList.add('active'); c.classList.add('active'); } });
+    }
+</script>
+
+</body>
+</html>
