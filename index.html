@@ -24,6 +24,7 @@
             --earth: #6b5a3e;
             --needle: #4a5d4a;
             --brine: #4f6d7a;
+            --deep-teal: #2a6a6a;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -139,6 +140,12 @@
         .book-card.accent-needle:hover { border-color: var(--needle); }
         .book-card.accent-brine::before { background: var(--brine); }
         .book-card.accent-brine:hover { border-color: var(--brine); }
+        .book-card.accent-teal::before { background: var(--deep-teal); }
+        .book-card.accent-teal:hover { border-color: var(--deep-teal); }
+        .book-tag.teal { color: var(--deep-teal); }
+        .book-link.teal { border-color: var(--deep-teal); color: var(--deep-teal); }
+        .book-link.teal:hover { background: var(--deep-teal); color: var(--parchment); }
+        .section-label.friction { color: var(--deep-teal); }
 
         /* Tag color variants */
         .book-tag { font-family: 'Cinzel', serif; font-size: 0.68em; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; }
@@ -491,7 +498,36 @@
             </div>
         </div>
     </div>
+    
+<div class="divider"><span class="divider-symbol">✦</span></div>
 
+    <!-- ═══ FRICTION AS FEEDBACK ═══ -->
+    <div class="section-group" id="friction">
+        <div class="section-header">
+            <div class="section-label friction">Friction as Feedback</div>
+            <h2 class="section-title">The Signal and the Spiral</h2>
+            <p class="section-desc">A two-book investigation into friction as the fundamental feedback mechanism of resonant systems — what it does when it works, and what happens when it breaks.</p>
+        </div>
+
+        <div class="books-grid">
+            <div class="book-card accent-teal">
+                <div class="book-tag teal">Book I · Interaction &amp; Emergence</div>
+                <h2 class="book-title">Harmonic Reflection</h2>
+                <p class="book-subtitle">A Resonant Framework for Interaction, Rejection, and Emergence</p>
+                <p class="book-description">Born from a simple question — what really happens when a ball bounces off a wall? — this work reveals that nothing ever touches. Everything negotiates. Interactions are harmonic boundary events where fields test each other's frequencies and choose: resonate and merge, or reflect and repel. Introduces the Recursive Viability Function (RVF), Resonant Activation Quotient (RAQ), and Expanded Viability Function (Y), with cross-domain reinterpretation across physics, biology, and psychology. Establishes the foundational principle: friction is not resistance — it is feedback for re-alignment.</p>
+                <a href="./friction/harmonic-reflection.html" class="book-link teal">Read Harmonic Reflection ⟶</a>
+            </div>
+
+            <div class="book-card accent-teal">
+                <div class="book-tag teal">Book II · Recursive Failure</div>
+                <h2 class="book-title">The Infinite Ricochet Effect</h2>
+                <p class="book-subtitle">A Unified Theory of Recursive Failure in Resonant Systems</p>
+                <p class="book-description">The mirror companion to Harmonic Reflection. When friction is mistaken for input — when the bounce is recycled rather than read — systems enter a pathological attractor state of unbounded complexity without convergence. Formalizes the Ricochet Index, identifies the "forbidden spiral" attractor topology, maps manifestations across trauma, AI hallucination, phase desynchronization, and belief crystallization, and proposes intervention through the Null Reset protocol. Integrates with ΔHV Theory as a specific mode of drift saturation.</p>
+                <a href="./friction/infinite-ricochet.html" class="book-link teal">Read The Infinite Ricochet Effect ⟶</a>
+            </div>
+        </div>
+    </div>
+    
     <div class="divider"><span class="divider-symbol">✦</span></div>
 
     <!-- ═══ III. COSMOLOGY & COMPRESSION ═══ -->
