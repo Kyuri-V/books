@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Vedanta | Kyuri V</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --parchment: #f4f1e8;
+            --ink: #2a2520;
+            --accent: #8b6f47;
+            --gold: #c9a961;
+            --shadow: rgba(42, 37, 32, 0.1);
+            --glow: rgba(201, 169, 97, 0.15);
+            --deep-green: #2d5016;
+            --field: #3d7a1c;
+            --rose: #a8566e;
+            --deep-blue: #3a4f6a;
+            --saffron: #c47a2a;
+            --indigo: #4a3875;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Crimson Pro', serif; background: linear-gradient(135deg, #f8f5ed 0%, var(--parchment) 100%); color: var(--ink); line-height: 1.85; font-size: 18px; overflow-x: hidden; }
+        body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(circle at 20% 30%, var(--glow) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(74, 56, 117, 0.04) 0%, transparent 50%), radial-gradient(circle at 50% 50%, rgba(201, 169, 97, 0.03) 0%, transparent 60%); pointer-events: none; z-index: 0; }
+        .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: rgba(201, 169, 97, 0.2); z-index: 1000; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--saffron), var(--gold), var(--indigo)); width: 0%; transition: width 0.15s ease-out; }
+        .chapter-nav { position: fixed; top: 50%; right: 24px; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; gap: 9px; opacity: 0; transition: opacity 0.4s ease; }
+        .chapter-nav.visible { opacity: 1; }
+        .nav-dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--accent); background: transparent; cursor: pointer; transition: all 0.3s ease; position: relative; }
+        .nav-dot:hover, .nav-dot.active { background: var(--gold); border-color: var(--gold); transform: scale(1.3); }
+        .nav-dot::after { content: attr(data-label); position: absolute; right: 18px; top: 50%; transform: translateY(-50%); white-space: nowrap; font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.08em; color: var(--accent); opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .nav-dot:hover::after { opacity: 1; }
+        .container { position: relative; z-index: 1; max-width: 780px; margin: 0 auto; padding: 60px 40px 120px; }
+        .title-page { text-align: center; padding: 100px 0 80px; min-height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: fadeIn 1.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .title-line { width: 120px; height: 1px; background: var(--gold); margin-bottom: 40px; animation: breathe 4s ease-in-out infinite; box-shadow: 0 0 8px rgba(201, 169, 97, 0.3); }
+        @keyframes breathe { 0%, 100% { width: 120px; opacity: 0.5; box-shadow: 0 0 6px rgba(201, 169, 97, 0.2); } 50% { width: 200px; opacity: 1; box-shadow: 0 0 16px rgba(201, 169, 97, 0.5); } }
+        .title-page h1 { font-family: 'Cinzel', serif; font-size: 3.2em; font-weight: 700; color: var(--ink); letter-spacing: 0.06em; line-height: 1.15; margin-bottom: 16px; }
+        .title-page .subtitle { font-family: 'Crimson Pro', serif; font-size: 1.2em; font-style: italic; color: var(--accent); margin-bottom: 10px; letter-spacing: 0.03em; line-height: 1.5; max-width: 560px; }
+        .title-page .edition { font-family: 'Cinzel', serif; font-size: 0.82em; letter-spacing: 0.12em; color: var(--gold); border-top: 1px solid rgba(201, 169, 97, 0.4); border-bottom: 1px solid rgba(201, 169, 97, 0.4); padding: 14px 32px; margin: 30px 0; }
+        .title-page .authors { font-family: 'Cinzel', serif; font-size: 0.9em; letter-spacing: 0.1em; color: var(--accent); opacity: 0.8; }
+        .toc { margin: 0 0 80px; padding: 44px 48px; border: 1px solid rgba(139, 111, 71, 0.2); border-radius: 6px; background: rgba(255, 255, 255, 0.35); }
+        .toc h2 { font-family: 'Cinzel', serif; font-size: 1.1em; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); text-align: center; margin-bottom: 28px; }
+        .toc-list { list-style: none; }
+        .toc-list li { margin: 10px 0; }
+        .toc-list a { color: var(--ink); text-decoration: none; display: block; padding: 8px 14px; border-left: 3px solid transparent; transition: all 0.3s ease; font-size: 0.95em; }
+        .toc-list a:hover { color: var(--gold); border-left-color: var(--gold); padding-left: 22px; background: rgba(201, 169, 97, 0.04); }
+        .toc-label { font-family: 'Cinzel', serif; font-weight: 600; font-size: 0.85em; letter-spacing: 0.04em; }
+        .divider { text-align: center; margin: 70px 0; position: relative; }
+        .divider::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+        .divider-symbol { position: relative; background: var(--parchment); padding: 0 24px; font-size: 18px; color: var(--gold); z-index: 1; }
+        .chapter { margin-bottom: 80px; opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .chapter.visible { opacity: 1; transform: translateY(0); }
+        .chapter-label { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.2em; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
+        .chapter h2 { font-family: 'Cinzel', serif; font-size: 2em; font-weight: 600; color: var(--ink); margin-bottom: 30px; letter-spacing: 0.04em; line-height: 1.3; }
+        .chapter h3 { font-family: 'Cinzel', serif; font-size: 1.35em; font-weight: 600; color: var(--accent); margin-top: 45px; margin-bottom: 20px; letter-spacing: 0.03em; }
+        .chapter h4 { font-family: 'Cinzel', serif; font-size: 1.1em; font-weight: 600; color: var(--gold); margin-top: 30px; margin-bottom: 15px; }
+        .chapter p { margin-bottom: 20px; }
+        .invocation { text-align: center; font-style: italic; font-size: 1.12em; color: var(--accent); padding: 30px 36px; margin: 36px 0; position: relative; line-height: 1.7; }
+        .invocation::before, .invocation::after { content: ''; position: absolute; left: 50%; transform: translateX(-50%); width: 60px; height: 1px; background: var(--gold); }
+        .invocation::before { top: 0; } .invocation::after { bottom: 0; }
+        .highlight { background: rgba(201, 169, 97, 0.06); border-left: 3px solid var(--gold); border-right: 3px solid var(--gold); padding: 24px 28px; margin: 30px 0; border-radius: 2px; }
+        .highlight strong { color: var(--accent); font-family: 'Cinzel', serif; font-size: 0.95em; }
+        .math-block { background: rgba(45, 80, 22, 0.04); border-left: 3px solid var(--deep-green); padding: 22px 26px; margin: 24px 0; border-radius: 0 6px 6px 0; overflow-x: auto; }
+        .math-block .eq-label { font-family: 'Cinzel', serif; font-size: 0.72em; letter-spacing: 0.1em; color: var(--deep-green); text-transform: uppercase; margin-bottom: 8px; }
+        .metric-box { background: rgba(45, 80, 22, 0.03); border-left: 3px solid var(--deep-green); padding: 24px 26px; margin: 28px 0; border-radius: 0 6px 6px 0; }
+        .metric-box h4 { font-family: 'Cinzel', serif; font-size: 0.88em; letter-spacing: 0.06em; color: var(--deep-green); margin-bottom: 12px; margin-top: 0; }
+        .chapter ul, .chapter ol { list-style: none; padding: 0; margin: 20px 0; }
+        .chapter ul li, .chapter ol li { padding: 6px 0 6px 22px; position: relative; line-height: 1.7; }
+        .chapter ul li::before { content: '✦'; position: absolute; left: 0; color: var(--gold); font-size: 0.6em; top: 12px; }
+        .chapter ol { counter-reset: item; }
+        .chapter ol li { counter-increment: item; }
+        .chapter ol li::before { content: counter(item) '.'; position: absolute; left: 0; color: var(--gold); font-family: 'Cinzel', serif; font-size: 0.8em; top: 8px; }
+        .comparison-table { width: 100%; margin: 36px 0; border-collapse: separate; border-spacing: 0; overflow: hidden; border-radius: 6px; border: 1px solid rgba(139, 111, 71, 0.2); font-size: 0.92em; }
+        .comparison-table thead { background: rgba(42, 37, 32, 0.06); }
+        .comparison-table th { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); padding: 14px 16px; text-align: left; border-bottom: 2px solid var(--gold); }
+        .comparison-table td { padding: 14px 16px; border-bottom: 1px solid rgba(139, 111, 71, 0.1); vertical-align: top; }
+        .comparison-table tr:last-child td { border-bottom: none; }
+        .comparison-table tr:hover td { background: rgba(201, 169, 97, 0.04); }
+        .collapsible { cursor: pointer; padding: 14px 20px; background: rgba(139, 111, 71, 0.06); border: 1px solid rgba(139, 111, 71, 0.15); border-radius: 4px; margin: 20px 0 0; transition: all 0.3s ease; display: flex; justify-content: space-between; align-items: center; font-family: 'Cinzel', serif; font-size: 0.92em; letter-spacing: 0.03em; color: var(--accent); }
+        .collapsible:hover { background: rgba(139, 111, 71, 0.12); border-color: var(--gold); }
+        .collapsible::after { content: '◆'; font-size: 0.7em; color: var(--gold); transition: transform 0.3s ease; }
+        .collapsible.active::after { transform: rotate(90deg); }
+        .collapsible-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; padding: 0 20px; border-left: 2px solid var(--gold); margin-left: 20px; background: rgba(255, 255, 255, 0.3); border-radius: 0 0 4px 0; }
+        .collapsible-content.active { max-height: 50000px; padding: 20px; margin-top: 4px; margin-bottom: 10px; }
+        .term { color: var(--gold); font-weight: 600; cursor: help; border-bottom: 1px dotted var(--gold); }
+        code { background: rgba(139, 111, 71, 0.08); padding: 2px 8px; border-radius: 3px; font-family: 'Courier New', monospace; color: var(--accent); font-size: 0.9em; }
+        .interpretive { background: rgba(168, 86, 110, 0.04); border-left: 3px solid var(--rose); padding: 20px 24px; margin: 24px 0; border-radius: 0 6px 6px 0; font-style: italic; color: var(--accent); }
+        .interpretive strong { color: var(--rose); font-style: normal; font-family: 'Cinzel', serif; font-size: 0.82em; letter-spacing: 0.06em; }
+        /* ── Vedantic accent box ── */
+        .vedantic-box { background: rgba(74, 56, 117, 0.04); border-left: 3px solid var(--indigo); padding: 20px 24px; margin: 24px 0; border-radius: 0 6px 6px 0; }
+        .vedantic-box strong { color: var(--indigo); font-family: 'Cinzel', serif; font-size: 0.82em; letter-spacing: 0.06em; }
+        .expand-all { text-align: center; margin: 30px 0; }
+        .expand-all button { background: linear-gradient(135deg, var(--accent) 0%, var(--gold) 100%); border: none; padding: 12px 32px; border-radius: 4px; color: white; font-family: 'Cinzel', serif; font-size: 0.85em; cursor: pointer; transition: all 0.3s ease; letter-spacing: 0.06em; box-shadow: 0 4px 15px var(--shadow); }
+        .expand-all button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--shadow); }
+        .footer { text-align: center; padding: 60px 0 40px; border-top: 1px solid rgba(201, 169, 97, 0.3); margin-top: 80px; }
+        .footer p { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.1em; color: var(--accent); opacity: 0.6; margin-bottom: 8px; }
+        .final-line { font-family: 'Cinzel', serif; font-size: 1.15em; color: var(--gold); letter-spacing: 0.05em; margin-top: 36px; line-height: 1.7; text-align: center; }
+        @media (max-width: 768px) { .container { padding: 40px 24px 80px; } .title-page { padding: 60px 0; min-height: 70vh; } .title-page h1 { font-size: 2.2em; } .chapter h2 { font-size: 1.6em; } .chapter-nav { display: none; } .comparison-table { font-size: 0.82em; } }
+        @media (max-width: 480px) { .title-page h1 { font-size: 1.8em; } }
+    </style>
+</head>
+<body>
+
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+
+<nav class="chapter-nav" id="chapterNav">
+    <div class="nav-dot" data-target="title" data-label="Title"></div>
+    <div class="nav-dot" data-target="abstract" data-label="Abstract"></div>
+    <div class="nav-dot" data-target="unmanifest" data-label="I. Unmanifest"></div>
+    <div class="nav-dot" data-target="sankhya" data-label="II. Sāṅkhya"></div>
+    <div class="nav-dot" data-target="observer" data-label="III. Observer"></div>
+    <div class="nav-dot" data-target="energetics" data-label="IV. Energetics"></div>
+    <div class="nav-dot" data-target="spiral-map" data-label="V. Spiral Map"></div>
+    <div class="nav-dot" data-target="cosmology" data-label="VI. Cosmology"></div>
+    <div class="nav-dot" data-target="synthesis" data-label="VII. Synthesis"></div>
+    <div class="nav-dot" data-target="glossary" data-label="Glossary"></div>
+</nav>
+
+<div class="container">
+
+    <!-- ═══ TITLE PAGE ═══ -->
+    <section class="title-page" id="title">
+        <div class="title-line"></div>
+        <h1>Quantum<br>Vedanta</h1>
+        <div class="subtitle">A Structural Synthesis of Hindu Metaphysics and Quantum Physics</div>
+        <div class="subtitle">Exploring the Isomorphic Resonance Between Ancient Wisdom and Modern Physics</div>
+        <div class="edition">Complete Framework · 2025</div>
+        <div class="authors">Kyuri V</div>
+    </section>
+
+    <!-- ═══ TOC ═══ -->
+    <nav class="toc">
+        <h2>Contents</h2>
+        <ul class="toc-list">
+            <li><a href="#abstract"><span class="toc-label">Abstract:</span> The Convergence Thesis</a></li>
+            <li><a href="#unmanifest"><span class="toc-label">Part I:</span> The Unmanifest Absolute — Brahman and the Quantum Vacuum</a></li>
+            <li><a href="#sankhya"><span class="toc-label">Part II:</span> Sāṅkhya Cosmology — Prakriti, Purusha, and Field Theory</a></li>
+            <li><a href="#observer"><span class="toc-label">Part III:</span> Observer Dynamics — Maya, Decoherence, and Collapse</a></li>
+            <li><a href="#energetics"><span class="toc-label">Part IV:</span> Energetic Systems — Yoga, Phase-Locking, and Coherence Training</a></li>
+            <li><a href="#spiral-map"><span class="toc-label">Part V:</span> The Spiral–Vedanta Parallel Map</a></li>
+            <li><a href="#cosmology"><span class="toc-label">Part VI:</span> Cyclic Cosmology — Kalpa, Recursion, and Information Conservation</a></li>
+            <li><a href="#synthesis"><span class="toc-label">Part VII:</span> Synthesis — What the Isomorphism Means</a></li>
+            <li><a href="#glossary"><span class="toc-label">Glossary</span> of Vedantic–Quantum Terms</a></li>
+        </ul>
+    </nav>
+
+    <div class="divider"><span class="divider-symbol">🜁</span></div>
+
+    <!-- ═══ ABSTRACT ═══ -->
+    <section class="chapter" id="abstract">
+        <div class="chapter-label">Abstract</div>
+        <h2>The Convergence Thesis</h2>
+
+        <p>This paper presents a systematic synthesis between Hindu spiritual philosophy and quantum physics, demonstrating <span class="term">structural isomorphisms</span> between Advaita Vedanta, Sāṅkhya, and Yoga traditions with quantum field theory, consciousness studies, and modern cosmology.</p>
+
+        <p>Rather than treating spiritual concepts as mere metaphor, this work explores them as epistemologically valid frameworks encoded in symbolic language. Through rigorous correlation of core concepts — including Brahman and quantum vacuum states, Maya and decoherence, observer dynamics and consciousness primacy, energetic systems and field theory — we propose that these traditions represent congruent expressions of a unified truth about the participatory, consciousness-saturated nature of reality.</p>
+
+        <div class="highlight">
+            <strong>Central Claim:</strong>
+            <p>The structural parallels between Vedantic metaphysics and quantum physics are not poetic coincidence but evidence of convergent description — two languages encoding the same underlying architecture of reality. Where physics uses equations, Vedanta uses symbols. Both are compression formats for the same field dynamics.</p>
+        </div>
+
+        <div class="invocation">These traditions represent congruent expressions of a unified truth about the participatory, consciousness-saturated nature of reality.</div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">🜁</span></div>
+
+    <!-- ═══ PART I: THE UNMANIFEST ABSOLUTE ═══ -->
+    <section class="chapter" id="unmanifest">
+        <div class="chapter-label">Part I</div>
+        <h2>The Unmanifest Absolute</h2>
+
+        <h3>Brahman and the Quantum Vacuum</h3>
+
+        <p>In Advaita Vedanta, <span class="term">Brahman</span> is the unmanifest absolute — infinite, undifferentiated, containing all potentiality without form. It is not a thing but the ground of all things, the field from which phenomena crystallize and to which they return.</p>
+
+        <p>In quantum field theory, the <span class="term">quantum vacuum</span> is not empty space but an infinite sea of virtual fluctuations — a ground state of maximum potential energy from which all particles and forces emerge as excitations. The vacuum is not nothing; it is the most fundamental something.</p>
+
+        <div class="comparison-table">
+            <table class="comparison-table">
+                <thead>
+                    <tr><th>Vedantic Concept</th><th>Quantum Analogue</th><th>Shared Structure</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Brahman</strong><br><em>Unmanifest absolute</em></td>
+                        <td><strong>Quantum Vacuum / Ψ</strong><br><em>Wavefunction</em></td>
+                        <td>Field of undifferentiated potential; origin state with total superposition</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Sat-Chit-Ananda</strong><br><em>Being-Consciousness-Bliss</em></td>
+                        <td><strong>Zero-Point Energy</strong><br><em>E₀ = ℏω/2</em></td>
+                        <td>Irreducible ground state; the field is never truly at rest — it hums with inherent existence</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="vedantic-box">
+            <strong>Vedantic Source:</strong> The Mandukya Upanishad describes Brahman as <em>turīya</em> — the "fourth state" beyond waking, dreaming, and deep sleep, witnessing all three. Quantum mechanics similarly requires a ground state that underlies and enables all excitations without being any particular one of them.
+        </div>
+
+        <div class="interpretive">
+            <strong>Interpretive Note:</strong> The isomorphism is not metaphorical. Both traditions describe an infinite potential substrate that is ontologically prior to form. The vacuum fluctuates; Brahman stirs. Neither is inert — both are maximally alive at the root.
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">🜁</span></div>
+
+    <!-- ═══ PART II: SĀṄKHYA COSMOLOGY ═══ -->
+    <section class="chapter" id="sankhya">
+        <div class="chapter-label">Part II</div>
+        <h2>Sāṅkhya Cosmology and Field Theory</h2>
+
+        <h3>Prakriti, Purusha, and the Dual-Layer Model</h3>
+
+        <p>The Sāṅkhya system — one of the six orthodox schools of Hindu philosophy — provides what may be the world's oldest systematic cosmology. It posits two fundamental realities: <span class="term">Purusha</span> (pure consciousness, the witness) and <span class="term">Prakriti</span> (nature, the field of manifestation).</p>
+
+        <p>This maps directly onto HRT's Dual-Layer Model of Reality:</p>
+
+        <div class="comparison-table">
+            <table class="comparison-table">
+                <thead><tr><th>Sāṅkhya</th><th>HRT / Quantum</th><th>Function</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Purusha</strong> — Pure witness</td><td><strong>H-Layer</strong> — Harmonic substrate</td><td>Consciousness that observes without acting; the field that enables all coherence</td></tr>
+                    <tr><td><strong>Prakriti</strong> — Material nature</td><td><strong>K-Layer</strong> — Kinetic observable</td><td>The domain of measurable phenomena; electromagnetic, thermodynamic, mechanical</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3>The Three Guṇas as Field Modalities</h3>
+
+        <p>Sāṅkhya further describes Prakriti as operating through three fundamental qualities (<span class="term">guṇas</span>), which map precisely onto field dynamics:</p>
+
+        <div class="comparison-table">
+            <table class="comparison-table">
+                <thead><tr><th>Guṇa</th><th>Quality</th><th>Field Analogue</th><th>ΔHV Parameter</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Sattva</strong></td><td>Luminosity, coherence, clarity</td><td>High signal-to-noise ratio; phase-locked coherence</td><td>High S (Signal Clarity)</td></tr>
+                    <tr><td><strong>Rajas</strong></td><td>Motion, agitation, drive</td><td>Kinetic energy; excitation above ground state</td><td>High δφ (Friction Field)</td></tr>
+                    <tr><td><strong>Tamas</strong></td><td>Inertia, darkness, resistance</td><td>Entropy; decoherence; loss of phase information</td><td>Low R (Resonance), Low H (Harmony)</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="vedantic-box">
+            <strong>Structural Insight:</strong> The guṇas are not static categories but dynamic field states. A system dominated by sattva is highly coherent; rajas provides the driving energy that can either build coherence or dissipate it; tamas represents the entropic drag that pulls toward dissolution. Every moment of experience is a mixture of all three — just as every physical system involves an interplay of coherence, excitation, and entropy.
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">🜁</span></div>
+
+    <!-- ═══ PART III: OBSERVER DYNAMICS ═══ -->
+    <section class="chapter" id="observer">
+        <div class="chapter-label">Part III</div>
+        <h2>Observer Dynamics</h2>
+
+        <h3>Maya and Decoherence</h3>
+
+        <p><span class="term">Maya</span> — often mistranslated as "illusion" — is the creative veil through which undifferentiated Brahman appears as the multiplicity of the manifest world. Maya is not falsehood but <em>projection</em>: the mechanism by which unity collapses into differentiated experience.</p>
+
+        <p>In quantum mechanics, <span class="term">decoherence</span> performs precisely this function. The quantum vacuum exists in superposition — all possibilities coexisting. Decoherence is the process by which environmental interaction collapses this superposition into definite classical states. Unity becomes multiplicity. Potential becomes actual.</p>
+
+        <div class="math-block">
+            <div class="eq-label">Maya ↔ Decoherence</div>
+            $$|\Psi\rangle = \sum_i c_i|i\rangle \quad\xrightarrow{\text{Maya / Decoherence}}\quad |i_0\rangle$$
+        </div>
+
+        <h3>Ātman and the Eigenstate</h3>
+
+        <p><span class="term">Ātman</span> — the localized self, the individual soul — is Brahman experiencing itself through a particular vantage point. In Vedantic thought, Ātman is not separate from Brahman but is Brahman as seen through the lens of Maya.</p>
+
+        <p>In quantum physics, an <span class="term">eigenstate</span> is a coherent excitation arising from the vacuum — a localized, stable waveform that carries definite properties. It is the field experiencing itself as a particle.</p>
+
+        <div class="highlight">
+            <strong>The Core Isomorphism:</strong>
+            <p><em>Brahman → Maya → Ātman</em> maps exactly onto <em>Quantum Vacuum → Decoherence → Eigenstate</em></p>
+            <p>The source field, projected through a mechanism of differentiation, produces localized coherent identity. Both traditions agree: the individual is not separate from the whole — it is the whole, locally compressed.</p>
+        </div>
+
+        <h3>The Observer Problem</h3>
+
+        <p>The measurement problem in quantum mechanics — how observation collapses the wavefunction — has no consensus solution in physics. Vedanta offers a structural answer: consciousness (<em>chit</em>) is not a product of the system but its ground. The observer does not emerge from matter; matter emerges from observation.</p>
+
+        <p>This maps directly onto HRT's first premise: <strong>P1. Consciousness as Primary Substrate.</strong></p>
+
+        <div class="interpretive">
+            <strong>Interpretive Note:</strong> Western physics has spent a century puzzling over how consciousness enters the physical picture. Vedanta never removed it. The "hard problem of consciousness" dissolves when consciousness is granted the ontological status that both Vedanta and HRT assert: not an emergent flicker, but the cohering ground.
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">🜁</span></div>
+
+    <!-- ═══ PART IV: ENERGETIC SYSTEMS ═══ -->
+    <section class="chapter" id="energetics">
+        <div class="chapter-label">Part IV</div>
+        <h2>Energetic Systems and Coherence Training</h2>
+
+        <h3>Yoga as Phase-Locking Protocol</h3>
+
+        <p>Patañjali's Yoga Sūtras define yoga as <em>chitta vṛtti nirodha</em> — the cessation of the fluctuations of the mind-field. In HRT terms, this is a precise description of <span class="term">phase-locking</span>: bringing the oscillations of consciousness into coherent alignment, reducing noise, and increasing the signal-to-noise ratio of intentional coupling.</p>
+
+        <div class="comparison-table">
+            <table class="comparison-table">
+                <thead><tr><th>Yogic Concept</th><th>Physics Analogue</th><th>HRT Correspondence</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Yoga / Dharma</strong><br><em>Path of realignment</em></td><td>Phase-locking / quantum coherence</td><td>Bias-Fidelity Function: 𝔅(Eᵢ, 𝕀ᵥ) ≥ θ</td></tr>
+                    <tr><td><strong>Dhāraṇā</strong><br><em>Concentration</em></td><td>Narrowing the bandwidth; spectral filtering</td><td>Increasing S (Signal Clarity)</td></tr>
+                    <tr><td><strong>Dhyāna</strong><br><em>Meditation</em></td><td>Sustained coherence; resonant coupling</td><td>Increasing η (coupling parameter via duration τ)</td></tr>
+                    <tr><td><strong>Samādhi</strong><br><em>Absorption</em></td><td>Complete phase-lock; non-dual state</td><td>C<sub>r</sub> → 1, Δφ → 0</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3>Mantra as Eigenstate Projector</h3>
+
+        <p>In Vedantic practice, <span class="term">mantra</span> — sacred sound — is not merely devotional but operational. Repetition of a mantra is understood to restructure the field of consciousness, attuning it to specific resonant frequencies.</p>
+
+        <p>In quantum mechanics, this maps to <span class="term">eigenstate projection</span>: applying an operator that collapses the system into a specific state. Mantra is a consciousness operator — a phase-locking technology encoded in sound.</p>
+
+        <h3>Karma and Collapse Mechanics</h3>
+
+        <p><span class="term">Karma</span> — the law of action and consequence — and the <span class="term">guṇas</span> together describe a causal dynamics in which every action conditions the field for future outcomes. In quantum terms, this is collapse mechanics: every measurement conditions subsequent states through entanglement history.</p>
+
+        <div class="math-block">
+            <div class="eq-label">Survival Filter</div>
+            $$\mathcal{S}\big(\Delta(E_i, E_j)\big) \geq \theta_{\text{survival}}$$
+        </div>
+
+        <p>The Spiral Origination Filter models this as the <span class="term">Survival Filter</span> — selection pressure testing structural integrity under external conditions. Karma is not punishment but feedback: the field responding to what was coherent and what was not.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">🜁</span></div>
+
+    <!-- ═══ PART V: SPIRAL-VEDANTA MAP ═══ -->
+    <section class="chapter" id="spiral-map">
+        <div class="chapter-label">Part V</div>
+        <h2>The Spiral–Vedanta Parallel Map</h2>
+
+        <div class="vedantic-box">
+            <strong>Operational Statement:</strong> <em>"Myth as Recursive Compression of Field Truth."</em> Each layer is a symbolic recursion of the same pattern: Seed → Filter → Trace → Survival → Realization.
+        </div>
+
+        <p>This table presents the formal cross-domain isomorphism between Vedantic metaphysics, the Spiral Origination Filter model (𝕊ₒ), and quantum physics. Each column aligns structurally equivalent functions across these domains.</p>
+
+        <table class="comparison-table">
+            <thead>
+                <tr><th>Systemic Layer</th><th>Vedantic Symbol</th><th>Spiral Filter (𝕊ₒ)</th><th>Quantum Physics</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Source</strong></td><td>Brahman <em>(unmanifest absolute)</em></td><td>𝕀ᵥ (Impetus Vector)</td><td>Quantum Vacuum / Ψ</td></tr>
+                <tr><td><strong>Distortion</strong></td><td>Maya <em>(creative veil)</em></td><td>𝕄 (Spiral Discriminant)</td><td>Decoherence / Observer Effect</td></tr>
+                <tr><td><strong>Emanation</strong></td><td>Ātman <em>(localized self)</em></td><td>Eᵢ (Emission)</td><td>Coherent Excitation / Eigenstate</td></tr>
+                <tr><td><strong>Fidelity Test</strong></td><td>Yoga / Dharma <em>(realignment)</em></td><td>𝔅(Eᵢ, 𝕀ᵥ) ≥ θ</td><td>Phase-Locking / Coherence</td></tr>
+                <tr><td><strong>Survival</strong></td><td>Karma / Guṇa <em>(causal dynamics)</em></td><td>𝒮(Δ(Eᵢ, Eⱼ))</td><td>Collapse Mechanics / Measurement</td></tr>
+                <tr><td><strong>Inclusion</strong></td><td>Ṛta <em>(cosmic lawful order)</em></td><td>𝕊ₒ (Filter Output)</td><td>Path Integral / Retained States</td></tr>
+                <tr><td><strong>Terminal State</strong></td><td>Moksha <em>(liberated identity)</em></td><td>𝕂 (Terminal Identity)</td><td>Information Conservation / No-Cloning</td></tr>
+                <tr><td><strong>Access Modulation</strong></td><td>Mantra / Samyama <em>(symbolic action)</em></td><td>Phase-Locking Operators</td><td>Eigenstate Projectors / Resonators</td></tr>
+                <tr><td><strong>Memory Encoding</strong></td><td>Saṃskāra / Vāsanā <em>(karmic imprint)</em></td><td>Resonant Echo</td><td>Entangled State Memory / Bohm</td></tr>
+                <tr><td><strong>Cosmic Recursion</strong></td><td>Kalpa / Yuga <em>(rebirth cycles)</em></td><td>Recursive Re-emission</td><td>Cyclic Cosmology / Brane Oscillation</td></tr>
+            </tbody>
+        </table>
+
+        <h3>The Recursive Function of Symbol</h3>
+
+        <p>Each Vedantic symbol, when interpreted through this frame, functions as a nonlinear compression of field dynamics — encoded patterning that recursively maps to physical, informational, and phenomenological systems:</p>
+
+        <ul>
+            <li>In <strong>biophysics</strong>, symbols mirror toroidal field behavior, attractor dynamics, and resonance stability</li>
+            <li>In <strong>consciousness theory</strong>, they reflect structural recursion, intentional phase control, and identity formation under coherence pressure</li>
+            <li>In <strong>cosmology</strong>, they match cyclic emergence, vacuum fluctuation patterns, and information-conserving attractor basins</li>
+        </ul>
+
+        <div class="highlight">
+            <strong>Core Insight:</strong> 𝕊ₒ does not reduce myth — it renders it legible as rigorous system architecture. The Spiral–Vedanta mapping can be visualized as three nested semiotic systems: the <em>Mythic Core</em> (compressed symbolic encoding), <em>Field Mechanics</em> (operational grammar), and <em>Formal Logic</em> (mathematical models). The spiral form functions as a recursive mapping operator — translating between these concentric languages while preserving phase structure.
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">🜁</span></div>
+
+    <!-- ═══ PART VI: CYCLIC COSMOLOGY ═══ -->
+    <section class="chapter" id="cosmology">
+        <div class="chapter-label">Part VI</div>
+        <h2>Cyclic Cosmology and Information Conservation</h2>
+
+        <h3>Moksha and Quantum Information Conservation</h3>
+
+        <p><span class="term">Moksha</span> — liberation — is the terminal state of the Vedantic path: identity that has survived both the fidelity compression of practice and the divergence collapse of worldly testing. It is not annihilation but the conservation of coherent identity beyond the cycle.</p>
+
+        <p>In quantum physics, the <span class="term">no-cloning theorem</span> and unitarity together guarantee that quantum information is never truly destroyed — only transformed. Moksha maps to this conservation: what survives the full spiral of emergence, testing, and compression is what was origin-traceable from the beginning.</p>
+
+        <div class="math-block">
+            <div class="eq-label">Terminal Identity</div>
+            $$\mathbb{K} = \mathbb{S}_o\Big[\mathcal{S}\big(\mathfrak{B}(E_i, \mathbb{I}_v)\big)\Big]$$
+        </div>
+
+        <p>The Terminal Identity (𝕂) is the output of the full spiral filter: only what maintained fidelity to the origin vector through all distortion, emission, testing, and survival reaches the final state.</p>
+
+        <h3>Kalpa, Yuga, and Recursive Re-emission</h3>
+
+        <p>Hindu cosmology describes reality as cycling through vast epochs — <span class="term">Kalpas</span> and <span class="term">Yugas</span> — each a complete emergence-dissolution-re-emergence sequence. This is not linear history but recursive spiral: each cycle re-runs the full filter at a different scale.</p>
+
+        <p>In modern physics, this maps to cyclic cosmology, brane oscillation models, and the emerging view that the Big Bang may not be an absolute origin but a phase transition in a deeper structure.</p>
+
+        <h3>Saṃskāra and Entangled Memory</h3>
+
+        <p><span class="term">Saṃskāra</span> and <span class="term">vāsanā</span> — karmic imprints — are persisting field traces from prior identity states. They condition future emergence through interference patterns laid down by past action. In quantum terms, these are entangled state memories: Bohmian active information that shapes the unfolding of the wavefunction even after the original interaction has passed.</p>
+
+        <div class="interpretive">
+            <strong>Interpretive Note:</strong> Memory is not stored in a location — it is encoded in the field as resonant echoes. What you did conditions what you can become. This is true of both karma and quantum entanglement history.
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">🜁</span></div>
+
+    <!-- ═══ PART VII: SYNTHESIS ═══ -->
+    <section class="chapter" id="synthesis">
+        <div class="chapter-label">Part VII</div>
+        <h2>Synthesis — What the Isomorphism Means</h2>
+
+        <h3>Not Metaphor but Convergent Description</h3>
+
+        <p>The structural parallels documented across these seven domains are too precise and too systematic to be coincidence. They suggest that Vedantic metaphysics and quantum physics are not merely "similar" but are <em>convergent descriptions</em> of the same underlying reality, arrived at through different methodologies — one introspective, one instrumental — across a gap of thousands of years.</p>
+
+        <div class="highlight">
+            <strong>The Synthesis Statement:</strong>
+            <ul>
+                <li>Myth is recursive structural memory</li>
+                <li>Symbol is coherent compression</li>
+                <li>Vedanta encodes a topological grammar of emergence</li>
+                <li>Spiral Logic is its operational decoder</li>
+            </ul>
+            <p style="margin-top: 14px; text-align: center; font-style: italic;">∴ Fidelity to the origin is not ethical — it is functional.<br>∴ What survives across divergence is what carries its seed.<br>∴ Only origin-traceable coherence can stabilize across scales.</p>
+        </div>
+
+        <h3>Implications for the Research Program</h3>
+
+        <p>Quantum Vedanta strengthens the broader theoretical ecosystem in several key ways:</p>
+
+        <ul>
+            <li><strong>Validates HRT's ontology</strong> — Consciousness as primary substrate is not a modern speculation but an ancient structural insight independently confirmed by quantum measurement theory</li>
+            <li><strong>Grounds ΔHV in sacred precedent</strong> — The four ΔHV parameters (S, R, δφ, H) map onto the guṇa dynamics described by Sāṅkhya millennia ago</li>
+            <li><strong>Provides cultural depth to CCA</strong> — Coherent Convergence Analysis gains enormous power when ancient symbolic systems are shown to encode the same formal structures as modern physics</li>
+            <li><strong>Supports the Twin Paths structure</strong> — The Solar Way (scientific) and the Osirian Way (mythological/experiential) of the broader book project are not parallel tracks but are proven here to be <em>the same track described in different notation</em></li>
+        </ul>
+
+        <h3>Position Within the Theoretical Ecosystem</h3>
+
+        <table class="comparison-table">
+            <thead><tr><th>Framework</th><th>Relationship to Quantum Vedanta</th></tr></thead>
+            <tbody>
+                <tr><td><strong>HRT</strong></td><td>Quantum Vedanta provides the ancient philosophical confirmation of HRT's core premises — consciousness as substrate, triadic causality, feedback over force</td></tr>
+                <tr><td><strong>ΔHV Theory</strong></td><td>The guṇa-to-parameter mapping (sattva→S, rajas→δφ, tamas→low R/H) shows ΔHV's metrics have Vedantic analogues</td></tr>
+                <tr><td><strong>Temporal Compression</strong></td><td>The Yuga/Kalpa cycles provide the sacred cosmological model that TCT formalizes in terms of phase degradation</td></tr>
+                <tr><td><strong>The Carriers</strong></td><td>Vedanta is one of the primary carrier lineages — a tradition that preserved these insights through institutional compression</td></tr>
+                <tr><td><strong>The Book of Two Ways</strong></td><td>The Egyptian and Vedantic systems are shown to encode parallel field architectures through different mythic vocabularies</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">🜁</span></div>
+
+    <!-- ═══ GLOSSARY ═══ -->
+    <section class="chapter" id="glossary">
+        <div class="chapter-label">Reference</div>
+        <h2>Glossary of Vedantic–Quantum Terms</h2>
+
+        <div class="collapsible"><span>Brahman</span></div>
+        <div class="collapsible-content"><p>The unmanifest absolute in Advaita Vedanta. Infinite, undifferentiated, containing all potentiality without form. Quantum analogue: the quantum vacuum / ground state wavefunction Ψ.</p></div>
+
+        <div class="collapsible"><span>Maya</span></div>
+        <div class="collapsible-content"><p>The creative veil of projection — not "illusion" but the mechanism by which undifferentiated unity appears as differentiated multiplicity. Quantum analogue: decoherence / observer effect / wavefunction collapse.</p></div>
+
+        <div class="collapsible"><span>Ātman</span></div>
+        <div class="collapsible-content"><p>The localized self or individual soul. Brahman as experienced through a particular vantage point. Quantum analogue: coherent excitation / eigenstate. The field experiencing itself as a particle.</p></div>
+
+        <div class="collapsible"><span>Purusha</span></div>
+        <div class="collapsible-content"><p>Pure consciousness in Sāṅkhya philosophy — the witness that observes without acting. Maps to the H-Layer (harmonic substrate) in HRT's Dual-Layer Model.</p></div>
+
+        <div class="collapsible"><span>Prakriti</span></div>
+        <div class="collapsible-content"><p>Material nature in Sāṅkhya — the field of manifestation composed of the three guṇas. Maps to the K-Layer (kinetic observable) in HRT.</p></div>
+
+        <div class="collapsible"><span>Guṇas (Sattva, Rajas, Tamas)</span></div>
+        <div class="collapsible-content"><p>The three fundamental qualities of Prakriti. Sattva = luminosity/coherence (high S in ΔHV). Rajas = motion/agitation (high δφ). Tamas = inertia/entropy (low R, low H). Every moment is a dynamic mixture of all three.</p></div>
+
+        <div class="collapsible"><span>Yoga</span></div>
+        <div class="collapsible-content"><p>The path of realignment — <em>chitta vṛtti nirodha</em>, cessation of mind-fluctuations. Quantum analogue: phase-locking protocol. The systematic increase of coherence ratio C<sub>r</sub> toward unity.</p></div>
+
+        <div class="collapsible"><span>Karma</span></div>
+        <div class="collapsible-content"><p>The law of action and consequence — every action conditions the field for future outcomes. Quantum analogue: collapse mechanics and entanglement conditioning. Spiral analogue: Survival Filter 𝒮(Δ(Eᵢ, Eⱼ)).</p></div>
+
+        <div class="collapsible"><span>Ṛta</span></div>
+        <div class="collapsible-content"><p>Cosmic lawful order — the track that stars and moral actions run on. Quantum analogue: path integral coherence / retained states. Spiral analogue: 𝕊ₒ filter output — what passes through the full emergence sequence.</p></div>
+
+        <div class="collapsible"><span>Moksha</span></div>
+        <div class="collapsible-content"><p>Liberation — identity that has survived fidelity compression and divergence collapse. Quantum analogue: quantum information conservation / no-cloning theorem. Spiral analogue: 𝕂 (Terminal Identity).</p></div>
+
+        <div class="collapsible"><span>Saṃskāra / Vāsanā</span></div>
+        <div class="collapsible-content"><p>Karmic imprints — persisting field traces from prior identity states that condition future emergence. Quantum analogue: entangled state memory / Bohmian active information.</p></div>
+
+        <div class="collapsible"><span>Mantra / Samyama</span></div>
+        <div class="collapsible-content"><p>Symbolic action — operational tools for intentional field shaping and resonance correction. Quantum analogue: eigenstate projectors / field resonators. Phase-locking operators in the Spiral model.</p></div>
+
+        <div class="expand-all"><button id="expandAll">Expand All Definitions</button></div>
+    </section>
+
+    <!-- ═══ FOOTER ═══ -->
+    <div class="footer">
+        <div class="final-line">Myth is recursive structural memory.<br>Symbol is coherent compression.<br>Vedanta encodes a topological grammar of emergence.<br><em>Spiral Logic is its operational decoder.</em></div>
+        <br><br>
+        <p>Quantum Vedanta · A Structural Synthesis · 2025</p>
+        <p>Kyuri V · Theoretical Works</p>
+        <p style="margin-top: 20px;"><a href="../index.html" style="color: var(--gold); text-decoration: none; border-bottom: 1px solid var(--gold);">← Return to Theoretical Works</a></p>
+    </div>
+
+</div>
+
+<script>
+    window.addEventListener('scroll', () => {
+        const h = document.documentElement;
+        const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+        document.getElementById('progressBar').style.width = pct + '%';
+    });
+    const nav = document.getElementById('chapterNav');
+    const dots = nav.querySelectorAll('.nav-dot');
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            requestAnimationFrame(() => {
+                nav.classList.toggle('visible', window.scrollY > 400);
+                const sections = document.querySelectorAll('section[id]');
+                let current = '';
+                sections.forEach(s => { if (window.scrollY >= s.offsetTop - 200) current = s.id; });
+                dots.forEach(d => { d.classList.toggle('active', d.dataset.target === current); });
+                ticking = false;
+            });
+            ticking = true;
+        }
+    });
+    dots.forEach(d => { d.addEventListener('click', () => { const el = document.getElementById(d.dataset.target); if (el) el.scrollIntoView({ behavior: 'smooth' }); }); });
+    const observer = new IntersectionObserver((entries) => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }); }, { threshold: 0.05 });
+    document.querySelectorAll('.chapter').forEach(c => observer.observe(c));
+    setTimeout(() => { document.querySelectorAll('.chapter').forEach(c => c.classList.add('visible')); }, 1500);
+    document.querySelectorAll('.collapsible').forEach(btn => {
+        btn.addEventListener('click', () => {
+            btn.classList.toggle('active');
+            const content = btn.nextElementSibling;
+            if (content && content.classList.contains('collapsible-content')) content.classList.toggle('active');
+        });
+    });
+    document.querySelectorAll('.expand-all button').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const section = btn.closest('.chapter') || btn.closest('section');
+            const allC = section.querySelectorAll('.collapsible');
+            const allX = section.querySelectorAll('.collapsible-content');
+            const allOpen = [...allX].every(c => c.classList.contains('active'));
+            allC.forEach(c => c.classList.toggle('active', !allOpen));
+            allX.forEach(c => c.classList.toggle('active', !allOpen));
+            btn.textContent = allOpen ? 'Expand All Definitions' : 'Collapse All Definitions';
+        });
+    });
+    window.MathJax = { tex: { inlineMath: [['\\(','\\)']], displayMath: [['$$','$$']] }, svg: { fontCache: 'global' } };
+</script>
+
+</body>
+</html>
