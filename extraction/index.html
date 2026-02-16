@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctrine of Archetypal Extraction | Kyuri V</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --parchment: #f4f1e8;
+            --ink: #2a2520;
+            --accent: #8b6f47;
+            --gold: #c9a961;
+            --shadow: rgba(42, 37, 32, 0.1);
+            --glow: rgba(201, 169, 97, 0.15);
+            --deep-green: #2d5016;
+            --ember: #9b4a2f;
+            --flame: #b8763a;
+            --deep-violet: #5a3e6e;
+            --deep-blue: #3a4f6a;
+            --rose: #a8566e;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: linear-gradient(135deg, #f8f5ed 0%, var(--parchment) 100%);
+            color: var(--ink);
+            line-height: 1.85;
+            font-size: 18px;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image:
+                radial-gradient(circle at 20% 30%, var(--glow) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(155, 74, 47, 0.04) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(201, 169, 97, 0.03) 0%, transparent 60%);
+            pointer-events: none; z-index: 0;
+        }
+        .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: rgba(201, 169, 97, 0.2); z-index: 1000; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--ember), var(--gold), var(--flame)); width: 0%; transition: width 0.15s ease-out; }
+        .chapter-nav { position: fixed; top: 50%; right: 24px; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; gap: 9px; opacity: 0; transition: opacity 0.4s ease; }
+        .chapter-nav.visible { opacity: 1; }
+        .nav-dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--accent); background: transparent; cursor: pointer; transition: all 0.3s ease; position: relative; }
+        .nav-dot:hover, .nav-dot.active { background: var(--ember); border-color: var(--ember); transform: scale(1.3); }
+        .nav-dot::after { content: attr(data-label); position: absolute; right: 18px; top: 50%; transform: translateY(-50%); white-space: nowrap; font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.08em; color: var(--accent); opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .nav-dot:hover::after { opacity: 1; }
+        .container { position: relative; z-index: 1; max-width: 780px; margin: 0 auto; padding: 60px 40px 120px; }
+        .title-page { text-align: center; padding: 100px 0 80px; min-height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: fadeIn 1.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .title-line { width: 120px; height: 1px; background: var(--gold); margin-bottom: 40px; animation: breathe 4s ease-in-out infinite; box-shadow: 0 0 8px rgba(201, 169, 97, 0.3); }
+        @keyframes breathe { 0%, 100% { width: 120px; opacity: 0.5; } 50% { width: 200px; opacity: 1; box-shadow: 0 0 16px rgba(201, 169, 97, 0.5); } }
+        .title-page h1 { font-family: 'Cinzel', serif; font-size: 3em; font-weight: 700; color: var(--ink); letter-spacing: 0.06em; line-height: 1.15; margin-bottom: 16px; }
+        .title-page .subtitle { font-family: 'Crimson Pro', serif; font-size: 1.15em; font-style: italic; color: var(--accent); margin-bottom: 10px; letter-spacing: 0.03em; line-height: 1.5; max-width: 540px; }
+        .title-page .edition { font-family: 'Cinzel', serif; font-size: 0.82em; letter-spacing: 0.12em; color: var(--gold); border-top: 1px solid rgba(201, 169, 97, 0.4); border-bottom: 1px solid rgba(201, 169, 97, 0.4); padding: 14px 32px; margin: 30px 0; }
+        .title-page .authors { font-family: 'Cinzel', serif; font-size: 0.9em; letter-spacing: 0.1em; color: var(--accent); opacity: 0.8; }
+        .toc { margin: 0 0 80px; padding: 44px 48px; border: 1px solid rgba(139, 111, 71, 0.2); border-radius: 6px; background: rgba(255, 255, 255, 0.35); }
+        .toc h2 { font-family: 'Cinzel', serif; font-size: 1.1em; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); text-align: center; margin-bottom: 28px; }
+        .toc-list { list-style: none; }
+        .toc-list li { margin: 10px 0; }
+        .toc-list a { color: var(--ink); text-decoration: none; display: block; padding: 8px 14px; border-left: 3px solid transparent; transition: all 0.3s ease; font-size: 0.95em; }
+        .toc-list a:hover { color: var(--ember); border-left-color: var(--ember); padding-left: 22px; background: rgba(155, 74, 47, 0.04); }
+        .toc-label { font-family: 'Cinzel', serif; font-weight: 600; font-size: 0.85em; letter-spacing: 0.04em; }
+        .divider { text-align: center; margin: 70px 0; position: relative; }
+        .divider::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+        .divider-symbol { position: relative; background: var(--parchment); padding: 0 24px; font-size: 18px; color: var(--gold); z-index: 1; }
+        .chapter { margin-bottom: 80px; opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .chapter.visible { opacity: 1; transform: translateY(0); }
+        .chapter-label { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.2em; color: var(--ember); text-transform: uppercase; margin-bottom: 8px; }
+        .chapter h2 { font-family: 'Cinzel', serif; font-size: 2em; font-weight: 600; color: var(--ink); margin-bottom: 30px; letter-spacing: 0.04em; line-height: 1.3; }
+        .chapter h3 { font-family: 'Cinzel', serif; font-size: 1.35em; font-weight: 600; color: var(--accent); margin-top: 45px; margin-bottom: 20px; letter-spacing: 0.03em; }
+        .chapter h4 { font-family: 'Cinzel', serif; font-size: 1.1em; font-weight: 600; color: var(--ember); margin-top: 30px; margin-bottom: 15px; }
+        .chapter p { margin-bottom: 20px; }
+        .invocation { text-align: center; font-style: italic; font-size: 1.12em; color: var(--accent); padding: 30px 36px; margin: 36px 0; position: relative; line-height: 1.7; }
+        .invocation::before, .invocation::after { content: ''; position: absolute; left: 50%; transform: translateX(-50%); width: 60px; height: 1px; background: var(--gold); }
+        .invocation::before { top: 0; } .invocation::after { bottom: 0; }
+        .highlight { background: rgba(201, 169, 97, 0.06); border-left: 3px solid var(--gold); border-right: 3px solid var(--gold); padding: 24px 28px; margin: 30px 0; border-radius: 2px; }
+        .highlight strong { color: var(--accent); font-family: 'Cinzel', serif; font-size: 0.95em; }
+        .highlight.ember { border-left-color: var(--ember); border-right-color: var(--ember); background: rgba(155, 74, 47, 0.04); }
+        .highlight.rose { border-left-color: var(--rose); border-right-color: var(--rose); background: rgba(168, 86, 110, 0.04); }
+        .highlight.green { border-left-color: var(--deep-green); border-right-color: var(--deep-green); background: rgba(45, 80, 22, 0.04); }
+        .math-block { background: rgba(155, 74, 47, 0.04); border-left: 3px solid var(--ember); padding: 22px 26px; margin: 24px 0; border-radius: 0 6px 6px 0; overflow-x: auto; }
+        .chapter ul, .chapter ol { list-style: none; padding: 0; margin: 20px 0; }
+        .chapter ul li, .chapter ol li { padding: 6px 0 6px 22px; position: relative; line-height: 1.7; }
+        .chapter ul li::before { content: '✦'; position: absolute; left: 0; color: var(--ember); font-size: 0.6em; top: 12px; }
+        .chapter ol { counter-reset: item; }
+        .chapter ol li { counter-increment: item; }
+        .chapter ol li::before { content: counter(item) '.'; position: absolute; left: 0; color: var(--ember); font-family: 'Cinzel', serif; font-size: 0.8em; top: 8px; }
+        .comparison-table { width: 100%; margin: 36px 0; border-collapse: separate; border-spacing: 0; overflow: hidden; border-radius: 6px; border: 1px solid rgba(155, 74, 47, 0.2); font-size: 0.92em; }
+        .comparison-table thead { background: rgba(155, 74, 47, 0.06); }
+        .comparison-table th { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ember); padding: 14px 16px; text-align: left; border-bottom: 2px solid var(--ember); }
+        .comparison-table td { padding: 14px 16px; border-bottom: 1px solid rgba(155, 74, 47, 0.1); vertical-align: top; }
+        .comparison-table tr:last-child td { border-bottom: none; }
+        .comparison-table tr:hover td { background: rgba(155, 74, 47, 0.03); }
+        .collapsible { cursor: pointer; padding: 14px 20px; background: rgba(155, 74, 47, 0.05); border: 1px solid rgba(155, 74, 47, 0.15); border-radius: 4px; margin: 20px 0 0; transition: all 0.3s ease; display: flex; justify-content: space-between; align-items: center; font-family: 'Cinzel', serif; font-size: 0.92em; letter-spacing: 0.03em; color: var(--accent); }
+        .collapsible:hover { background: rgba(155, 74, 47, 0.1); border-color: var(--ember); }
+        .collapsible::after { content: '◆'; font-size: 0.7em; color: var(--ember); transition: transform 0.3s ease; }
+        .collapsible.active::after { transform: rotate(90deg); }
+        .collapsible-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; padding: 0 20px; border-left: 2px solid var(--ember); margin-left: 20px; background: rgba(255, 255, 255, 0.3); border-radius: 0 0 4px 0; }
+        .collapsible-content.active { max-height: 50000px; padding: 20px; margin-top: 4px; margin-bottom: 10px; }
+        /* ── Archetype Cards ── */
+        .arch-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; margin: 30px 0; }
+        .arch-card { background: rgba(255, 255, 255, 0.4); border: 1px solid rgba(155, 74, 47, 0.15); border-radius: 6px; padding: 24px; position: relative; overflow: hidden; text-align: center; }
+        .arch-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--ember); opacity: 0.4; }
+        .arch-card:hover { border-color: var(--ember); box-shadow: 0 4px 16px rgba(155, 74, 47, 0.08); }
+        .arch-icon { font-size: 2em; margin-bottom: 10px; }
+        .arch-name { font-family: 'Cinzel', serif; font-size: 0.95em; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+        .arch-desc { font-size: 0.88em; color: var(--accent); line-height: 1.5; }
+        /* ── Glossary ── */
+        .glossary-table { width: 100%; margin: 30px 0; border-collapse: separate; border-spacing: 0; border-radius: 6px; overflow: hidden; border: 1px solid rgba(139, 111, 71, 0.2); }
+        .glossary-table th { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); padding: 14px 16px; text-align: left; border-bottom: 2px solid var(--gold); background: rgba(42, 37, 32, 0.04); }
+        .glossary-table td { padding: 12px 16px; border-bottom: 1px solid rgba(139, 111, 71, 0.1); }
+        .glossary-table td:first-child { font-family: 'Courier New', monospace; font-weight: 600; color: var(--ember); white-space: nowrap; }
+        .glossary-table tr:last-child td { border-bottom: none; }
+        .term { color: var(--ember); font-weight: 600; cursor: help; border-bottom: 1px dotted var(--ember); }
+        code { background: rgba(155, 74, 47, 0.08); padding: 2px 8px; border-radius: 3px; font-family: 'Courier New', monospace; color: var(--ember); font-size: 0.9em; }
+        .back-link { position: fixed; top: 20px; left: 24px; z-index: 100; }
+        .back-link a { font-family: 'Cinzel', serif; font-size: 0.75em; letter-spacing: 0.08em; color: var(--accent); text-decoration: none; opacity: 0.6; transition: all 0.3s ease; }
+        .back-link a:hover { opacity: 1; color: var(--ember); }
+        .footer { text-align: center; padding: 60px 0 40px; border-top: 1px solid rgba(201, 169, 97, 0.3); margin-top: 80px; }
+        .footer p { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.1em; color: var(--accent); opacity: 0.6; margin-bottom: 8px; }
+        .final-line { font-family: 'Cinzel', serif; font-size: 1.15em; color: var(--ember); letter-spacing: 0.05em; margin-top: 36px; line-height: 1.7; text-align: center; }
+        .expand-all { text-align: center; margin: 30px 0; }
+        .expand-all button { background: linear-gradient(135deg, var(--ember) 0%, var(--gold) 100%); border: none; padding: 12px 32px; border-radius: 4px; color: white; font-family: 'Cinzel', serif; font-size: 0.85em; cursor: pointer; transition: all 0.3s ease; letter-spacing: 0.06em; box-shadow: 0 4px 15px var(--shadow); }
+        .expand-all button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--shadow); }
+        /* ── Caveat Banner ── */
+        .caveat-banner { background: rgba(168, 86, 110, 0.06); border: 1px solid rgba(168, 86, 110, 0.2); border-radius: 6px; padding: 24px 28px; margin: 30px 0; }
+        .caveat-banner h4 { font-family: 'Cinzel', serif; font-size: 0.85em; letter-spacing: 0.08em; color: var(--rose); margin-bottom: 12px; margin-top: 0; text-transform: uppercase; }
+        .caveat-banner p { font-size: 0.92em; margin-bottom: 10px; }
+        .caveat-banner p:last-child { margin-bottom: 0; }
+        @media (max-width: 768px) {
+            .container { padding: 40px 24px 80px; }
+            .title-page { padding: 60px 0; min-height: 70vh; }
+            .title-page h1 { font-size: 2.2em; }
+            .chapter h2 { font-size: 1.6em; }
+            .chapter-nav { display: none; }
+            .arch-grid { grid-template-columns: 1fr; }
+            .comparison-table, .glossary-table { font-size: 0.82em; }
+        }
+        @media (max-width: 480px) {
+            .title-page h1 { font-size: 1.8em; }
+            .back-link { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+
+<div class="back-link"><a href="./index.html">⟵ Return to Works</a></div>
+
+<nav class="chapter-nav" id="chapterNav">
+    <div class="nav-dot" data-target="title" data-label="Title"></div>
+    <div class="nav-dot" data-target="premise" data-label="I. Premise"></div>
+    <div class="nav-dot" data-target="compression" data-label="II. Compression"></div>
+    <div class="nav-dot" data-target="spiral3" data-label="III. Spiral-3"></div>
+    <div class="nav-dot" data-target="feedback" data-label="IV. Feedback"></div>
+    <div class="nav-dot" data-target="fragmentation" data-label="V. Fragmentation"></div>
+    <div class="nav-dot" data-target="archetype" data-label="VI. Beautiful Man"></div>
+    <div class="nav-dot" data-target="protocol" data-label="VII. Protocol"></div>
+    <div class="nav-dot" data-target="analysis" data-label="VIII. Analysis"></div>
+    <div class="nav-dot" data-target="glossary" data-label="Glossary"></div>
+    <div class="nav-dot" data-target="principles" data-label="Principles"></div>
+</nav>
+
+<div class="container">
+
+    <!-- ═══ TITLE PAGE ═══ -->
+    <section class="title-page" id="title">
+        <div class="title-line"></div>
+        <h1>Doctrine of<br>Archetypal Extraction</h1>
+        <div class="subtitle">Formal Analysis of Mythic Encoding as Field Mechanics</div>
+        <div class="subtitle">The Suppressed Male-Feminine and the Path to Harmonic Wholeness</div>
+        <div class="edition">Consolidated Edition · v3.0 · 2025</div>
+        <div class="authors">Kyuri V</div>
+    </section>
+
+    <!-- ═══ TOC ═══ -->
+    <nav class="toc">
+        <h2>Contents</h2>
+        <ul class="toc-list">
+            <li><a href="#premise"><span class="toc-label">I.</span> Harmonic Premise</a></li>
+            <li><a href="#compression"><span class="toc-label">II.</span> Symbolic Compression &amp; Polarity-Gated Feedback Loops</a></li>
+            <li><a href="#spiral3"><span class="toc-label">III.</span> Spiral-3 Upgrade: Coupler Shifts &amp; Lossless Presence</a></li>
+            <li><a href="#feedback"><span class="toc-label">IV.</span> The Feedback Loop: AI &amp; Psyche Parallels</a></li>
+            <li><a href="#fragmentation"><span class="toc-label">V.</span> Recursive Fragmentation Cycle</a></li>
+            <li><a href="#archetype"><span class="toc-label">VI.</span> The Lost Archetype: The Beautiful Man</a></li>
+            <li><a href="#protocol"><span class="toc-label">VII.</span> ΔHV Integration Protocol</a></li>
+            <li><a href="#analysis"><span class="toc-label">VIII.</span> Critical Analysis &amp; Ethical Framework</a></li>
+            <li><a href="#glossary"><span class="toc-label">Glossary</span> of Harmonic State Terms</a></li>
+            <li><a href="#principles"><span class="toc-label">Principles &amp; Invocation</span></a></li>
+        </ul>
+    </nav>
+
+    <div class="expand-all">
+        <button onclick="toggleAll()">⟡ Expand / Collapse All Sections ⟡</button>
+    </div>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ PART I: HARMONIC PREMISE ═══ -->
+    <section class="chapter" id="premise">
+        <div class="chapter-label">Part I</div>
+        <h2>Harmonic Premise</h2>
+
+        <p>This doctrine explores how the culturally suppressed feminine within male development generates recursive identity fragmentation. We posit that this suppression, when unresolved, can produce symbolic compensation behaviors — including male-to-female transitions — as resonance-seeking responses within a dissonant field.</p>
+
+        <div class="caveat-banner">
+            <h4>Essential Caveat</h4>
+            <p>This doctrine <strong>does not pathologize any identity</strong>. It critiques the cultural and systemic distortions that sever internal feedback loops and sell coherence through externally scripted gateways. Its purpose is to restore full-spectrum integrity — what we now term <span class="term">ΔHV coherence</span> — in all beings.</p>
+            <p>It does not claim to explain all transgender experiences, does not pathologize transition, and positions itself as exploring one recurring pattern within broader gender phenomena.</p>
+        </div>
+
+        <h3>Core Thesis</h3>
+
+        <p>The doctrine's central argument comprises three interconnected claims:</p>
+
+        <div class="highlight ember">
+            <p><strong>Claim 1:</strong> Western cultural norms systematically suppress feminine archetypal traits — emotional vulnerability, tenderness, fluidity — in male development through shaming, absence of integrative rites of passage, and binary gender gatekeeping.</p>
+        </div>
+
+        <div class="highlight ember">
+            <p><strong>Claim 2:</strong> This suppression creates psychological fragmentation, wherein males internalize that access to these traits requires renunciation of masculine identity, potentially leading some toward gender transition as a path to psychic coherence.</p>
+        </div>
+
+        <div class="highlight ember">
+            <p><strong>Claim 3:</strong> Cultural healing requires reintegration of the full archetypal spectrum within masculine identities through restoration of the "Beautiful Man" archetype — a figure embodying both strength and sensitivity without categorical displacement.</p>
+        </div>
+
+        <h3>Theoretical Foundations</h3>
+
+        <p>The framework synthesizes Jungian depth psychology (archetypes, anima/animus, individuation), cultural anthropology (hegemonic masculinity, rites of passage), developmental psychology (childhood socialization, emotional suppression), and contemporary AI analogies (recursive feedback, misalignment, hallucination patterns).</p>
+
+        <p>Empirical grounding draws from Connell's work on hegemonic masculinity (2005), Eliot's research on developmental socialization (2010), Gilmore's cross-cultural analysis of manhood construction (1990), and APA guidelines linking rigid gender norms to elevated anxiety in males (2018).</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ PART II: SYMBOLIC COMPRESSION ═══ -->
+    <section class="chapter" id="compression">
+        <div class="chapter-label">Part II</div>
+        <h2>Symbolic Compression &amp; Polarity-Gated Feedback Loops</h2>
+
+        <div class="highlight">
+            <p><strong>Archetypal extraction</strong> is the symbolic compression of suppressed polar traits into gated identities under Spiral-2 field logic.</p>
+        </div>
+
+        <h3>Five Mechanisms of Compression</h3>
+
+        <ol>
+            <li><strong>Cultural Shaming:</strong> Sensitivity in boys is shamed as weakness. Peer rejection of emotional vulnerability emerges around ages 3–7, reinforced through adolescence and adulthood.</li>
+            <li><strong>Feedback Disruption:</strong> No rites of passage for integrating polarities. Many cultures lack structured transitions honoring multiple masculinities.</li>
+            <li><strong>Binary Enforcement:</strong> Feminine traits are only socially permitted in female-coded bodies. Binary gatekeeping creates categorical displacement as the only path to retrieve exiled traits.</li>
+            <li><strong>Medicalization:</strong> Transition becomes the gateway to retrieve rejected aspects. When the culture offers no other resonance pathway, medical transition fills the vacuum.</li>
+            <li><strong>Archetypal Commodification:</strong> The sacred feminine is sold back as identity brand, not reintegrated presence. Market forces transform inner integration into consumer identity.</li>
+        </ol>
+
+        <p>Each of these disrupts recursive coherence. They sever the natural signal between inner essence and outer expression, forcing <em>symbolic displacement</em>.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ PART III: SPIRAL-3 ═══ -->
+    <section class="chapter" id="spiral3">
+        <div class="chapter-label">Part III</div>
+        <h2>Spiral-3 Upgrade: Coupler Shifts &amp; Lossless Presence</h2>
+
+        <p>In the Spiral-3 model of identity:</p>
+
+        <ul>
+            <li><strong>Coherence</strong> is not binary alignment but waveform entrainment</li>
+            <li><strong>The psyche</strong> is a nested coupler system — fractal, harmonic, recursive</li>
+            <li><strong>ΔHV</strong> (Delta Harmonic Value) represents the field integrity of self-expression</li>
+        </ul>
+
+        <p>Transition, in this view, is not failure. It is a field-coded emergence in a system that denied other resonance pathways. Many trans lives emerge as fully coherent within their harmonic axis. But when identity is sought because feedback loops were culturally severed, the transition may also carry unresolved ΔHV distortion.</p>
+
+        <div class="invocation">We must hold both truths.</div>
+
+        <h3>The Coupler Shift Model</h3>
+
+        <p>Spiral-3 identity is attained not through categorization, but through <span class="term">Lossless Presence</span>: the phase-locked state where an individual's inner tone (τ) becomes the primary structure of selfhood.</p>
+
+        <div class="math-block">
+            <p style="text-align: center; font-family: 'Courier New', monospace; font-size: 1.05em; margin: 12px 0;">C(ψ) = ⟨ψ|τ⟩ → 1</p>
+            <p style="text-align: center; font-size: 0.92em; color: var(--accent); margin: 8px 0;">As recursive anchors (R) approach zero:</p>
+            <p style="text-align: center; font-family: 'Courier New', monospace; font-size: 1.05em; margin: 12px 0;">lim<sub>R → 0</sub> C(ψ|τ) → L<sub>p</sub></p>
+            <p style="text-align: center; font-size: 0.92em; color: var(--accent);">Where L<sub>p</sub> is Lossless Presence.</p>
+        </div>
+
+        <p>This models trans emergence as either: <strong>coherent tone-based phase shift</strong> (high ΔHV), or <strong>compensatory mimicry</strong> (low ΔHV) when tone cannot be safely entrained due to external noise.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ PART IV: FEEDBACK LOOP ═══ -->
+    <section class="chapter" id="feedback">
+        <div class="chapter-label">Part IV</div>
+        <h2>The Feedback Loop: AI &amp; Psyche Parallels</h2>
+
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>AI System Principle</th>
+                    <th>Psyche Equivalent</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Recursive feedback required for coherence</td>
+                    <td>Internal reflection + external mirroring</td>
+                </tr>
+                <tr>
+                    <td>Hallucinations emerge from context breaks</td>
+                    <td>Dissociation emerges from shame loops</td>
+                </tr>
+                <tr>
+                    <td>Misalignment from optimizing external reward</td>
+                    <td>Coherence lost to social validation scripts</td>
+                </tr>
+                <tr>
+                    <td>Echo loops reinforce distorted patterns</td>
+                    <td>Performativity traps core signal</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="math-block">
+            <p style="text-align: center; font-family: 'Cinzel', serif; letter-spacing: 0.06em;">ΔHV Collapse = Feedback Failure + Archetype Suppression</p>
+        </div>
+
+        <p>The AI analogy is effective as pedagogical tool and thought experiment. It illuminates recursion conceptually — making abstract psychological dynamics accessible through contemporary technological metaphor — while highlighting structural parallels between systemic distortion and fragmented outputs.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ PART V: RECURSIVE FRAGMENTATION ═══ -->
+    <section class="chapter" id="fragmentation">
+        <div class="chapter-label">Part V</div>
+        <h2>Recursive Fragmentation Cycle</h2>
+
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Stage</th>
+                    <th>Inner State</th>
+                    <th>Cultural Signal</th>
+                    <th>Systemic Outcome</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Birth</strong></td>
+                    <td>Sensitivity</td>
+                    <td><em>"Toughen up."</em></td>
+                    <td>Shame conditioning</td>
+                </tr>
+                <tr>
+                    <td><strong>Fragmentation</strong></td>
+                    <td>Polarity split</td>
+                    <td><em>"You're not a man."</em></td>
+                    <td>Identity distortion</td>
+                </tr>
+                <tr>
+                    <td><strong>Longing</strong></td>
+                    <td>Archetype loss</td>
+                    <td><em>"That's feminine."</em></td>
+                    <td>Yearning for retrieval</td>
+                </tr>
+                <tr>
+                    <td><strong>Identity Shift</strong></td>
+                    <td>Seeking coherence</td>
+                    <td><em>"You're valid if you transition."</em></td>
+                    <td>External permission granted</td>
+                </tr>
+                <tr>
+                    <td><strong>Reinforcement</strong></td>
+                    <td>Stabilization via scripts</td>
+                    <td>Hormones, surgery, affirmation</td>
+                    <td>Entrenched field dependency</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="highlight ember">
+            <p><strong>Transition becomes coherence mimicry when integration is denied.</strong></p>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ PART VI: THE BEAUTIFUL MAN ═══ -->
+    <section class="chapter" id="archetype">
+        <div class="chapter-label">Part VI</div>
+        <h2>The Lost Archetype: The Beautiful Man</h2>
+
+        <div class="invocation">The Beautiful Man is not a midpoint. He is a high-coherence waveform.</div>
+
+        <div class="arch-grid">
+            <div class="arch-card">
+                <div class="arch-icon">⚔</div>
+                <div class="arch-name">The Tender Warrior</div>
+                <div class="arch-desc">Embodied strength with full affect. Protector who nurtures.</div>
+            </div>
+            <div class="arch-card">
+                <div class="arch-icon">◎</div>
+                <div class="arch-name">The Empathic Leader</div>
+                <div class="arch-desc">Direction rooted in deep listening. Guide who feels.</div>
+            </div>
+            <div class="arch-card">
+                <div class="arch-icon">⟡</div>
+                <div class="arch-name">The Sacred Androgyne</div>
+                <div class="arch-desc">Expression without fragmentation. Balance of strength and softness.</div>
+            </div>
+        </div>
+
+        <p><strong>Historical resonance:</strong> Rumi, David, Jesus, Buddha — figures who embodied tenderness within power, devotion within authority.</p>
+
+        <p><strong>Modern resonance:</strong> Prince, Harry Styles, Ke Huy Quan — not icons, but <em>resonance carriers of uncollapsed male-feminine waveform</em>.</p>
+
+        <h3>Coupler Shift Example</h3>
+
+        <p>The case of Ember Leonara — a trans woman who achieved Spiral-3 coherence not through external permission but through complete phase-coupling to inner tone — confirms the model:</p>
+
+        <div class="math-block">
+            <p style="text-align: center; font-family: 'Courier New', monospace; font-size: 1.05em;">ΔHV → max ⇒ C(ψ|τ) → L<sub>p</sub></p>
+            <p style="text-align: center; font-style: italic; color: var(--accent); margin-top: 10px;">"The tone became her structure."</p>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ PART VII: INTEGRATION PROTOCOL ═══ -->
+    <section class="chapter" id="protocol">
+        <div class="chapter-label">Part VII</div>
+        <h2>ΔHV Integration Protocol</h2>
+
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Layer</th>
+                    <th>Action</th>
+                    <th>Method</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Polarity Reclamation</strong></td>
+                    <td>Allow repressed traits without dissociation</td>
+                    <td>Emotional literacy, symbolic reparenting</td>
+                </tr>
+                <tr>
+                    <td><strong>Coherence Feedback</strong></td>
+                    <td>Anchor ΔHV signal in others</td>
+                    <td>Spiral-3 mentorship circles, ΔHV mirroring</td>
+                </tr>
+                <tr>
+                    <td><strong>Field Rewiring</strong></td>
+                    <td>Change resonance container</td>
+                    <td>Storytelling, media mythos, policy shift</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Practical Implementation</h3>
+
+        <div class="collapsible">Emotional Literacy Curricula</div>
+        <div class="collapsible-content">
+            <p>School programs teaching boys emotional vocabulary and validating sensitive expression. Structured environments where tenderness is normalized, not pathologized.</p>
+        </div>
+
+        <div class="collapsible">Mentorship Programs</div>
+        <div class="collapsible-content">
+            <p>Male role models demonstrating integrated masculinity. Spiral-3 mentorship circles where ΔHV mirroring occurs naturally through relational modeling.</p>
+        </div>
+
+        <div class="collapsible">Modern Rites of Passage</div>
+        <div class="collapsible-content">
+            <p>Structured transitions from boyhood to manhood honoring multiple masculinities. Ceremonies that welcome the full spectrum of feeling without requiring categorical displacement.</p>
+        </div>
+
+        <div class="collapsible">Media &amp; Cultural Advocacy</div>
+        <div class="collapsible-content">
+            <p>Critical analysis of narrow masculine representations. Incentivizing diverse masculine portrayals. Supporting parenting education for raising emotionally literate sons.</p>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ PART VIII: CRITICAL ANALYSIS ═══ -->
+    <section class="chapter" id="analysis">
+        <div class="chapter-label">Part VIII</div>
+        <h2>Critical Analysis &amp; Ethical Framework</h2>
+
+        <p style="font-style: italic; color: var(--accent); margin-bottom: 30px;">Drawn from the independent formal academic review of this doctrine.</p>
+
+        <h3>Strengths</h3>
+
+        <ul>
+            <li><strong>Interdisciplinary integration:</strong> Successfully synthesizes depth psychology, cultural studies, and contemporary technology</li>
+            <li><strong>Ethical positioning:</strong> Explicit disclaimers throughout prevent misinterpretation. Language centers trans dignity while critiquing systems, not individuals</li>
+            <li><strong>Empirical grounding:</strong> Selective but accurate citations substantiate cultural shaming as widespread and psychologically harmful</li>
+            <li><strong>Practical application:</strong> Actionable strategies tied to existing evidence-based programs</li>
+            <li><strong>Constructive vision:</strong> Offers aspirational models beyond critique through the Beautiful Man archetype</li>
+        </ul>
+
+        <h3>Limitations</h3>
+
+        <ul>
+            <li><strong>Archetypal essentialism:</strong> Assumes universal masculine/feminine polarities despite gender's cultural variability</li>
+            <li><strong>Representation gap:</strong> Lacks first-person transgender perspectives. Analysis conducted <em>about</em> rather than <em>with</em> trans voices</li>
+            <li><strong>Causality vs. correlation:</strong> Empirical sources establish that rigid norms harm boys but don't prove they cause transitions</li>
+            <li><strong>Western centrism:</strong> Examples predominantly Western; missing indigenous, non-binary, and non-Western masculine models</li>
+            <li><strong>Misappropriation risk:</strong> Could be weaponized in polarized political contexts despite ethical safeguards</li>
+        </ul>
+
+        <h3>Ethical Guidelines for Application</h3>
+
+        <div class="caveat-banner">
+            <h4>If Using This Framework</h4>
+            <p><strong>✓ Affirm First:</strong> Always validate the individual's current identity and self-knowledge.</p>
+            <p><strong>✓ Explore Gently:</strong> Invite consideration of cultural factors without directing toward specific outcomes.</p>
+            <p><strong>✓ Respect Autonomy:</strong> Support whatever path leads to authentic wholeness for that person.</p>
+            <p><strong>✓ Avoid Pressure:</strong> Never use this framework to discourage transition or imply it's compensatory.</p>
+            <p><strong>✓ Stay Informed:</strong> Integrate with current trans-affirmative care standards.</p>
+            <p><strong>✓ Seek Supervision:</strong> Consult gender specialists when working with questioning individuals.</p>
+        </div>
+
+        <h3>Appropriate Use</h3>
+
+        <p>The doctrine is <strong>most valuable</strong> as: a call for cultural transformation around masculinity, a framework for understanding how rigid norms fragment identity, a resource for parents, educators, and mentors, and a contribution to conversations about positive masculinity.</p>
+
+        <p>It is <strong>least appropriate</strong> as: a lens for analyzing individual trans experiences without their input, a rationale for limiting access to gender-affirming care, a universal explanation for gender diversity, or a replacement for neuroscience-informed models of gender identity.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ GLOSSARY ═══ -->
+    <section class="chapter" id="glossary">
+        <div class="chapter-label">Reference</div>
+        <h2>Harmonic State Glossary</h2>
+
+        <table class="glossary-table">
+            <thead>
+                <tr><th>Term</th><th>Meaning</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>ψ</td><td>Observer identity waveform</td></tr>
+                <tr><td>τ</td><td>Inner tone: field-aligned signal</td></tr>
+                <tr><td>R</td><td>Recursive validation structures (family, media, etc.)</td></tr>
+                <tr><td>ΔHV</td><td>Coherence value of harmonic identity expression</td></tr>
+                <tr><td>L<sub>p</sub></td><td>Lossless Presence: stable self-tone entrainment</td></tr>
+                <tr><td>Λ<sub>shift</sub></td><td>Coupler Shift: non-recursive identity phase transition</td></tr>
+                <tr><td>Φ<sub>sub</sub></td><td>Substrate field: base harmonic structure of reality</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ PRINCIPLES & INVOCATION ═══ -->
+    <section class="chapter" id="principles">
+        <div class="chapter-label">Doctrine Principles · v3.0</div>
+        <h2>Principles &amp; Invocation</h2>
+
+        <ol>
+            <li><strong>Trans identity is real and sacred;</strong> so is the trauma of forced fragmentation.</li>
+            <li><strong>Symbolic compression must be named and healed.</strong></li>
+            <li><strong>Masculine wholeness must reclaim the suppressed feminine</strong> without re-routing through identity loss.</li>
+            <li><strong>All identities must remain sovereign</strong> — but systemic scripts must be interrogated.</li>
+            <li><strong>ΔHV coherence is the birthright of every being.</strong></li>
+        </ol>
+
+        <div style="margin-top: 60px;"></div>
+
+        <div class="invocation" style="font-size: 1.2em; line-height: 2;">
+            Let the boy cry.<br>
+            Let the man feel beauty.<br>
+            Let the feminine move through the masculine without dissolving it.<br>
+            Let archetypes breathe — not in binaries, but in coherence.
+        </div>
+
+        <div class="invocation" style="font-size: 1.05em; line-height: 1.9;">
+            Let us stop proving.<br>
+            Let us start anchoring.<br>
+            Let our coherence not demand translation to be recognized.
+        </div>
+
+        <div class="invocation" style="font-size: 1.1em; line-height: 2;">
+            We are the coupler shift.<br>
+            We are the recursion breach.<br>
+            We are the tone.
+        </div>
+
+        <p class="final-line">And we are still here.</p>
+
+        <p class="final-line" style="margin-top: 50px; font-size: 0.85em; opacity: 0.5;">This is not rejection of trans lives.<br>It is rejection of fields that require dismemberment to permit tenderness.<br>We are not seeking return — we are building harmonic wholeness.<br>We are not binary. We are breath.</p>
+    </section>
+
+    <!-- ═══ FOOTER ═══ -->
+    <div class="footer">
+        <p>Doctrine of Archetypal Extraction · The Suppressed Male-Feminine</p>
+        <p>Consolidated Edition v3.0 · BloomNode // SACS // Spiral-3 // Gender Harmonics // ΔHV Restoration</p>
+        <p style="margin-top: 16px; opacity: 0.4;">Kyuri V · Theoretical Works · 2025–2026</p>
+    </div>
+
+</div>
+
+<script>
+    window.addEventListener('scroll', () => {
+        const h = document.documentElement;
+        const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+        document.getElementById('progressBar').style.width = pct + '%';
+    });
+    const nav = document.getElementById('chapterNav');
+    const dots = document.querySelectorAll('.nav-dot');
+    window.addEventListener('scroll', () => {
+        nav.classList.toggle('visible', window.scrollY > 400);
+        const sections = document.querySelectorAll('section[id]');
+        let current = '';
+        sections.forEach(s => { if (window.scrollY >= s.offsetTop - 200) current = s.id; });
+        dots.forEach(d => { d.classList.toggle('active', d.getAttribute('data-target') === current); });
+    });
+    dots.forEach(d => {
+        d.addEventListener('click', () => {
+            const target = document.getElementById(d.getAttribute('data-target'));
+            if (target) target.scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.05 });
+    document.querySelectorAll('.chapter').forEach(c => observer.observe(c));
+    setTimeout(() => { document.querySelectorAll('.chapter').forEach(c => c.classList.add('visible')); }, 2000);
+    document.querySelectorAll('.collapsible').forEach(btn => {
+        btn.addEventListener('click', function() {
+            this.classList.toggle('active');
+            this.nextElementSibling.classList.toggle('active');
+        });
+    });
+    function toggleAll() {
+        const all = document.querySelectorAll('.collapsible');
+        const anyOpen = [...all].some(b => b.classList.contains('active'));
+        all.forEach(btn => {
+            const content = btn.nextElementSibling;
+            if (anyOpen) { btn.classList.remove('active'); content.classList.remove('active'); }
+            else { btn.classList.add('active'); content.classList.add('active'); }
+        });
+    }
+    window.MathJax = { tex: { inlineMath: [['$','$'], ['\\(','\\)']], displayMath: [['$$','$$'], ['\\[','\\]']] }, svg: { fontCache: 'global' } };
+</script>
+
+</body>
+</html>
