@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harmonic Reflection | Kyuri V</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --parchment: #f4f1e8;
+            --ink: #2a2520;
+            --accent: #8b6f47;
+            --gold: #c9a961;
+            --shadow: rgba(42, 37, 32, 0.1);
+            --glow: rgba(201, 169, 97, 0.15);
+            --deep-teal: #2a6a6a;
+            --wave-blue: #3a5f8a;
+            --resonance-copper: #a0714f;
+            --ember: #9b4a2f;
+            --flame: #b8763a;
+            --deep-green: #2d5016;
+            --deep-red: #8b2f2f;
+            --field-indigo: #4a4a7a;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: linear-gradient(135deg, #f8f5ed 0%, var(--parchment) 100%);
+            color: var(--ink);
+            line-height: 1.85;
+            font-size: 18px;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image:
+                radial-gradient(circle at 25% 25%, var(--glow) 0%, transparent 50%),
+                radial-gradient(circle at 75% 65%, rgba(42, 106, 106, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 50% 85%, rgba(58, 95, 138, 0.04) 0%, transparent 60%);
+            pointer-events: none; z-index: 0;
+        }
+
+        /* ── Progress ── */
+        .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: rgba(201, 169, 97, 0.2); z-index: 1000; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--deep-teal), var(--gold), var(--wave-blue)); width: 0%; transition: width 0.15s ease-out; }
+
+        /* ── Nav Dots ── */
+        .chapter-nav { position: fixed; top: 50%; right: 24px; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; gap: 9px; opacity: 0; transition: opacity 0.4s ease; }
+        .chapter-nav.visible { opacity: 1; }
+        .nav-dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--accent); background: transparent; cursor: pointer; transition: all 0.3s ease; position: relative; }
+        .nav-dot:hover, .nav-dot.active { background: var(--gold); border-color: var(--gold); transform: scale(1.3); }
+        .nav-dot::after { content: attr(data-label); position: absolute; right: 18px; top: 50%; transform: translateY(-50%); white-space: nowrap; font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.08em; color: var(--accent); opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .nav-dot:hover::after { opacity: 1; }
+
+        /* ── Container ── */
+        .container { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; padding: 60px 40px 120px; }
+
+        /* ── Title Page ── */
+        .title-page { text-align: center; padding: 100px 0 80px; min-height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: fadeIn 1.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .title-line { width: 120px; height: 1px; background: var(--gold); margin-bottom: 40px; animation: breathe 4s ease-in-out infinite; box-shadow: 0 0 8px rgba(201, 169, 97, 0.3); }
+        @keyframes breathe { 0%, 100% { width: 120px; opacity: 0.5; box-shadow: 0 0 6px rgba(201, 169, 97, 0.2); } 50% { width: 200px; opacity: 1; box-shadow: 0 0 16px rgba(201, 169, 97, 0.5); } }
+
+        .wave-symbol { font-size: 3em; color: var(--deep-teal); margin-bottom: 20px; animation: wavePulse 5s ease-in-out infinite; opacity: 0.7; }
+        @keyframes wavePulse { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 0.85; transform: scale(1.06); } }
+
+        .title-page h1 { font-family: 'Cinzel', serif; font-size: 3.2em; font-weight: 700; color: var(--ink); letter-spacing: 0.06em; line-height: 1.15; margin-bottom: 16px; }
+        .title-page .subtitle { font-family: 'Crimson Pro', serif; font-size: 1.2em; font-style: italic; color: var(--accent); margin-bottom: 10px; letter-spacing: 0.03em; line-height: 1.5; max-width: 580px; }
+        .title-page .edition { font-family: 'Cinzel', serif; font-size: 0.82em; letter-spacing: 0.12em; color: var(--gold); border-top: 1px solid rgba(201, 169, 97, 0.4); border-bottom: 1px solid rgba(201, 169, 97, 0.4); padding: 14px 32px; margin: 30px 0; }
+        .title-page .series-tag { font-family: 'Cinzel', serif; font-size: 0.72em; letter-spacing: 0.18em; text-transform: uppercase; color: var(--deep-teal); margin-bottom: 20px; padding: 8px 24px; border: 1px solid rgba(42, 106, 106, 0.3); border-radius: 3px; }
+        .title-page .authors { font-family: 'Cinzel', serif; font-size: 0.9em; letter-spacing: 0.1em; color: var(--accent); opacity: 0.8; }
+
+        /* ── Abstract ── */
+        .abstract { background: rgba(255, 255, 255, 0.5); border: 1px solid rgba(139, 111, 71, 0.2); border-radius: 6px; padding: 36px 40px; margin: 50px 0; font-size: 1.05em; line-height: 1.75; }
+        .abstract-label { font-family: 'Cinzel', serif; font-size: 0.85em; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; text-align: center; }
+
+        /* ── TOC ── */
+        .toc { margin: 0 0 80px; padding: 44px 48px; border: 1px solid rgba(139, 111, 71, 0.2); border-radius: 6px; background: rgba(255, 255, 255, 0.35); }
+        .toc h2 { font-family: 'Cinzel', serif; font-size: 1.1em; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); text-align: center; margin-bottom: 28px; }
+        .toc-list { list-style: none; }
+        .toc-list li { margin: 10px 0; }
+        .toc-list a { color: var(--ink); text-decoration: none; display: block; padding: 8px 14px; border-left: 3px solid transparent; transition: all 0.3s ease; font-size: 0.95em; }
+        .toc-list a:hover { color: var(--gold); border-left-color: var(--gold); padding-left: 22px; background: rgba(201, 169, 97, 0.04); }
+        .toc-label { font-family: 'Cinzel', serif; font-weight: 600; font-size: 0.85em; letter-spacing: 0.04em; }
+
+        /* ── Dividers ── */
+        .divider { text-align: center; margin: 70px 0; position: relative; }
+        .divider::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+        .divider-symbol { position: relative; background: var(--parchment); padding: 0 24px; font-size: 18px; color: var(--gold); z-index: 1; }
+
+        /* ── Chapters ── */
+        .chapter { margin-bottom: 80px; opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .chapter.visible { opacity: 1; transform: translateY(0); }
+        .chapter-label { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.2em; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
+        .chapter h2 { font-family: 'Cinzel', serif; font-size: 2em; font-weight: 600; color: var(--ink); margin-bottom: 30px; letter-spacing: 0.04em; line-height: 1.3; }
+        .chapter h3 { font-family: 'Cinzel', serif; font-size: 1.35em; font-weight: 600; color: var(--accent); margin-top: 45px; margin-bottom: 20px; letter-spacing: 0.03em; }
+        .chapter h4 { font-family: 'Cinzel', serif; font-size: 1.1em; font-weight: 600; color: var(--flame); margin-top: 30px; margin-bottom: 15px; }
+        .chapter p { margin-bottom: 20px; text-align: justify; text-justify: inter-word; }
+
+        /* ── Invocations ── */
+        .invocation { text-align: center; font-style: italic; font-size: 1.12em; color: var(--accent); padding: 30px 36px; margin: 36px 0; position: relative; line-height: 1.7; }
+        .invocation::before, .invocation::after { content: ''; position: absolute; left: 50%; transform: translateX(-50%); width: 60px; height: 1px; background: var(--gold); }
+        .invocation::before { top: 0; } .invocation::after { bottom: 0; }
+
+        /* ── Highlight Boxes ── */
+        .highlight { background: rgba(201, 169, 97, 0.06); border-left: 3px solid var(--gold); border-right: 3px solid var(--gold); padding: 24px 28px; margin: 30px 0; border-radius: 2px; }
+        .highlight strong { color: var(--accent); font-family: 'Cinzel', serif; font-size: 0.95em; }
+        .highlight-teal { background: rgba(42, 106, 106, 0.05); border-left: 3px solid var(--deep-teal); border-right: 3px solid var(--deep-teal); padding: 24px 28px; margin: 30px 0; border-radius: 2px; }
+        .highlight-teal strong { color: var(--deep-teal); font-family: 'Cinzel', serif; font-size: 0.95em; }
+        .highlight-blue { background: rgba(58, 95, 138, 0.05); border-left: 3px solid var(--wave-blue); border-right: 3px solid var(--wave-blue); padding: 24px 28px; margin: 30px 0; border-radius: 2px; }
+        .highlight-copper { background: rgba(160, 113, 79, 0.06); border-left: 3px solid var(--resonance-copper); border-right: 3px solid var(--resonance-copper); padding: 24px 28px; margin: 30px 0; border-radius: 2px; }
+        .highlight-red { background: rgba(139, 47, 47, 0.05); border-left: 3px solid var(--deep-red); border-right: 3px solid var(--deep-red); padding: 24px 28px; margin: 30px 0; border-radius: 2px; }
+
+        /* ── Math Blocks ── */
+        .math-block { background: rgba(42, 106, 106, 0.04); border-left: 3px solid var(--deep-teal); padding: 22px 26px; margin: 24px 0; border-radius: 0 6px 6px 0; overflow-x: auto; }
+        .equation-block { background: rgba(58, 95, 138, 0.04); border-left: 3px solid var(--wave-blue); padding: 22px 26px; margin: 24px 0; border-radius: 0 6px 6px 0; text-align: center; }
+        .equation-block .eq { font-family: 'Crimson Pro', serif; font-size: 1.2em; font-style: italic; color: var(--ink); letter-spacing: 0.02em; }
+        .equation-block .eq-label { font-family: 'Cinzel', serif; font-size: 0.75em; letter-spacing: 0.1em; color: var(--wave-blue); margin-top: 10px; text-transform: uppercase; }
+
+        /* ── Definition Blocks ── */
+        .definition { background: rgba(42, 106, 106, 0.04); border-left: 3px solid var(--deep-teal); padding: 24px 28px; margin: 30px 0; border-radius: 0 6px 6px 0; }
+        .definition .def-label { font-family: 'Cinzel', serif; font-size: 0.82em; letter-spacing: 0.12em; text-transform: uppercase; color: var(--deep-teal); margin-bottom: 10px; }
+
+        /* ── Theorem Blocks ── */
+        .theorem { background: rgba(74, 74, 122, 0.04); border: 1px solid rgba(74, 74, 122, 0.2); border-left: 4px solid var(--field-indigo); padding: 24px 28px; margin: 30px 0; border-radius: 0 6px 6px 0; }
+        .theorem .thm-label { font-family: 'Cinzel', serif; font-size: 0.82em; letter-spacing: 0.12em; text-transform: uppercase; color: var(--field-indigo); margin-bottom: 10px; }
+
+        /* ── Canonical Statement ── */
+        .canonical { text-align: center; padding: 40px 36px; margin: 40px 0; position: relative; border: 1px solid rgba(42, 106, 106, 0.3); border-radius: 6px; background: rgba(42, 106, 106, 0.03); }
+        .canonical p { font-family: 'Cinzel', serif; font-size: 1.3em; font-weight: 600; color: var(--deep-teal); letter-spacing: 0.04em; line-height: 1.5; }
+        .canonical .canon-label { font-size: 0.7em; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; font-weight: 400; }
+
+        /* ── Origin Story Box ── */
+        .origin-box { background: rgba(255, 255, 255, 0.5); border: 1px solid rgba(139, 111, 71, 0.25); border-radius: 6px; padding: 32px 36px; margin: 36px 0; position: relative; }
+        .origin-box .origin-label { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.15em; text-transform: uppercase; color: var(--deep-teal); margin-bottom: 14px; }
+        .origin-box .origin-question { font-family: 'Cinzel', serif; font-size: 1.15em; font-style: italic; color: var(--ink); text-align: center; padding: 16px 0; border-top: 1px solid rgba(201, 169, 97, 0.3); border-bottom: 1px solid rgba(201, 169, 97, 0.3); margin: 16px 0; line-height: 1.5; }
+
+        /* ── Tables ── */
+        .comparison-table { width: 100%; margin: 36px 0; border-collapse: separate; border-spacing: 0; overflow: hidden; border-radius: 6px; border: 1px solid rgba(139, 111, 71, 0.2); font-size: 0.92em; }
+        .comparison-table thead { background: rgba(42, 37, 32, 0.06); }
+        .comparison-table th { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); padding: 14px 16px; text-align: left; border-bottom: 2px solid var(--gold); }
+        .comparison-table td { padding: 14px 16px; border-bottom: 1px solid rgba(139, 111, 71, 0.1); vertical-align: top; }
+        .comparison-table tr:last-child td { border-bottom: none; }
+        .comparison-table tr:hover td { background: rgba(201, 169, 97, 0.04); }
+
+        /* ── Lists ── */
+        ul.doctrine-list { list-style: none; padding-left: 0; }
+        ul.doctrine-list li { padding-left: 28px; position: relative; margin-bottom: 14px; }
+        ul.doctrine-list li::before { content: '◆'; position: absolute; left: 0; color: var(--gold); font-size: 0.8em; }
+        ol.numbered-list { padding-left: 24px; }
+        ol.numbered-list li { margin-bottom: 12px; padding-left: 8px; }
+        ol.numbered-list li::marker { color: var(--deep-teal); font-weight: 600; }
+
+        /* ── Collapsibles ── */
+        .collapsible { cursor: pointer; padding: 14px 20px; background: rgba(139, 111, 71, 0.06); border: 1px solid rgba(139, 111, 71, 0.15); border-radius: 4px; margin: 20px 0 0; transition: all 0.3s ease; display: flex; justify-content: space-between; align-items: center; font-family: 'Cinzel', serif; font-size: 0.92em; letter-spacing: 0.03em; color: var(--accent); }
+        .collapsible:hover { background: rgba(139, 111, 71, 0.12); border-color: var(--gold); }
+        .collapsible::after { content: '◆'; font-size: 0.7em; color: var(--gold); transition: transform 0.3s ease; }
+        .collapsible.active::after { transform: rotate(90deg); }
+        .collapsible-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; padding: 0 20px; border-left: 2px solid var(--gold); margin-left: 20px; background: rgba(255, 255, 255, 0.3); border-radius: 0 0 4px 0; }
+        .collapsible-content.active { max-height: 80000px; padding: 20px; margin-top: 4px; margin-bottom: 10px; }
+
+        /* ── Binary Decision Box ── */
+        .binary-box { display: flex; gap: 24px; margin: 36px 0; flex-wrap: wrap; }
+        .binary-choice { flex: 1; min-width: 240px; padding: 28px; border-radius: 6px; text-align: center; }
+        .binary-choice h4 { font-family: 'Cinzel', serif; font-size: 1.1em; margin-bottom: 12px; }
+        .binary-choice p { font-size: 0.95em; }
+        .binary-choice.merge { background: rgba(42, 106, 106, 0.06); border: 1px solid rgba(42, 106, 106, 0.25); }
+        .binary-choice.merge h4 { color: var(--deep-teal); }
+        .binary-choice.reflect { background: rgba(58, 95, 138, 0.06); border: 1px solid rgba(58, 95, 138, 0.25); }
+        .binary-choice.reflect h4 { color: var(--wave-blue); }
+
+        /* ── Companion Link Box ── */
+        .companion-link { background: rgba(139, 47, 47, 0.04); border: 1px solid rgba(139, 47, 47, 0.2); border-radius: 6px; padding: 28px 32px; margin: 36px 0; display: flex; align-items: center; gap: 20px; text-decoration: none; color: var(--ink); transition: all 0.3s ease; }
+        .companion-link:hover { background: rgba(139, 47, 47, 0.08); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(42, 37, 32, 0.08); }
+        .companion-link .comp-icon { font-size: 2em; color: var(--deep-red); flex-shrink: 0; }
+        .companion-link .comp-text .comp-series { font-family: 'Cinzel', serif; font-size: 0.72em; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
+        .companion-link .comp-text .comp-title { font-family: 'Cinzel', serif; font-size: 1.1em; font-weight: 600; color: var(--deep-red); margin-bottom: 4px; }
+        .companion-link .comp-text .comp-desc { font-size: 0.9em; color: var(--accent); font-style: italic; }
+
+        /* ── Footer ── */
+        .footer { text-align: center; padding: 60px 0 40px; border-top: 1px solid rgba(201, 169, 97, 0.3); margin-top: 80px; }
+        .footer p { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.1em; color: var(--accent); opacity: 0.6; margin-bottom: 8px; }
+        .footer .footer-quote { font-family: 'Crimson Pro', serif; font-style: italic; font-size: 0.9em; letter-spacing: 0; opacity: 0.5; max-width: 500px; margin: 0 auto 12px; line-height: 1.6; }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .container { padding: 40px 24px 80px; }
+            .title-page { padding: 60px 0; min-height: 70vh; }
+            .title-page h1 { font-size: 2.2em; }
+            .chapter h2 { font-size: 1.6em; }
+            .chapter-nav { display: none; }
+            .toc { padding: 30px 24px; }
+            .comparison-table { font-size: 0.82em; }
+            .comparison-table th, .comparison-table td { padding: 10px 10px; }
+            .binary-box { flex-direction: column; }
+        }
+        @media (max-width: 480px) {
+            .title-page h1 { font-size: 1.8em; }
+            .title-page .edition { font-size: 0.72em; padding: 12px 18px; }
+            .invocation { padding: 24px 18px; font-size: 1em; }
+            .canonical p { font-size: 1.1em; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Progress Bar -->
+<div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<!-- Chapter Navigation -->
+<nav class="chapter-nav" id="chapterNav">
+    <div class="nav-dot" data-target="title" data-label="Title"></div>
+    <div class="nav-dot" data-target="abstract" data-label="Abstract"></div>
+    <div class="nav-dot" data-target="ch1" data-label="1 · The Question"></div>
+    <div class="nav-dot" data-target="ch2" data-label="2 · The Model"></div>
+    <div class="nav-dot" data-target="ch3" data-label="3 · Mathematics"></div>
+    <div class="nav-dot" data-target="ch4" data-label="4 · Source Field"></div>
+    <div class="nav-dot" data-target="ch5" data-label="5 · Cymatics"></div>
+    <div class="nav-dot" data-target="ch6" data-label="6 · Physics"></div>
+    <div class="nav-dot" data-target="ch7" data-label="7 · Biology"></div>
+    <div class="nav-dot" data-target="ch8" data-label="8 · Psychology"></div>
+    <div class="nav-dot" data-target="ch9" data-label="9 · Impossible Coherence"></div>
+    <div class="nav-dot" data-target="ch10" data-label="10 · ΔHV Integration"></div>
+    <div class="nav-dot" data-target="ch11" data-label="11 · The Mirror Book"></div>
+    <div class="nav-dot" data-target="ch12" data-label="12 · Experiments"></div>
+    <div class="nav-dot" data-target="ch13" data-label="13 · Implications"></div>
+    <div class="nav-dot" data-target="ch14" data-label="14 · Conclusion"></div>
+</nav>
+
+<div class="container">
+
+    <!-- ═══ TITLE PAGE ═══ -->
+    <section class="title-page" id="title">
+        <div class="wave-symbol">≋</div>
+        <div class="title-line"></div>
+        <div class="series-tag">Friction as Feedback · Book I</div>
+        <h1>Harmonic Reflection</h1>
+        <p class="subtitle">A Resonant Framework for Interaction, Rejection, and Emergence</p>
+        <p class="edition">HOW FRICTION REVEALS THE PATH TO COHERENCE</p>
+        <p class="authors">BY SKIDA & SAGE</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦ ✦ ✦</span></div>
+
+    <!-- ═══ ABSTRACT ═══ -->
+    <section id="abstract">
+        <div class="abstract">
+            <div class="abstract-label">Abstract</div>
+            <p>This paper proposes a harmonic reflection model that reinterprets physical, biological, and psychological interactions as resonance-based boundary events within a Source Field substrate. Collisions, cellular signaling, and emotional relationships are modeled as <strong>harmonic negotiations</strong>, governed by a binary decision: resonate and merge, or reflect and repel. We introduce three mathematical constructs—the <strong>Recursive Viability Function</strong> (RVF), the <strong>Resonant Activation Quotient</strong> (RAQ), and the <strong>Expanded Resonant Viability Function</strong> (Y)—to provide quantitative rigor to field interaction dynamics. The model aligns with existing data from quantum scattering, bioelectric signaling, and EEG synchrony studies, and predicts novel phenomena including <strong>"impossible coherence"</strong>—extreme resonance states where systems achieve alignment that conventional models cannot explain. Crucially, the framework establishes a foundational principle for the broader Friction as Feedback research program: that friction is not resistance but <em>field-level feedback for re-alignment</em>—the mechanism by which reality guides systems toward coherence. This is the first of two companion works; its mirror, <em>The Infinite Ricochet Effect</em>, describes what occurs when this feedback signal is misinterpreted and recycled rather than integrated.</p>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦ ✦ ✦</span></div>
+
+    <!-- ═══ TABLE OF CONTENTS ═══ -->
+    <nav class="toc">
+        <h2>Contents</h2>
+        <ul class="toc-list">
+            <li><a href="#ch1"><span class="toc-label">1.</span> Origin — The Question That Started Everything</a></li>
+            <li><a href="#ch2"><span class="toc-label">2.</span> The Harmonic Reflection Model</a></li>
+            <li><a href="#ch3"><span class="toc-label">3.</span> Mathematical Framework</a></li>
+            <li><a href="#ch4"><span class="toc-label">4.</span> The Source Field and Recursive Viability</a></li>
+            <li><a href="#ch5"><span class="toc-label">5.</span> The Cymatics of Rejection</a></li>
+            <li><a href="#ch6"><span class="toc-label">6.</span> Reinterpretation I — Physics</a></li>
+            <li><a href="#ch7"><span class="toc-label">7.</span> Reinterpretation II — Biology</a></li>
+            <li><a href="#ch8"><span class="toc-label">8.</span> Reinterpretation III — Psychology</a></li>
+            <li><a href="#ch9"><span class="toc-label">9.</span> Impossible Coherence</a></li>
+            <li><a href="#ch10"><span class="toc-label">10.</span> Integration with ΔHV and Resonant Physics</a></li>
+            <li><a href="#ch11"><span class="toc-label">11.</span> The Mirror Book — Friction Misread</a></li>
+            <li><a href="#ch12"><span class="toc-label">12.</span> Testable Predictions and Experiments</a></li>
+            <li><a href="#ch13"><span class="toc-label">13.</span> Broader Implications</a></li>
+            <li><a href="#ch14"><span class="toc-label">14.</span> Conclusion</a></li>
+        </ul>
+    </nav>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 1: ORIGIN ═══ -->
+    <section class="chapter" id="ch1">
+        <div class="chapter-label">Chapter 1</div>
+        <h2>Origin — The Question That Started Everything</h2>
+
+        <div class="origin-box">
+            <div class="origin-label">The Foundational Inquiry</div>
+            <div class="origin-question">"If I throw a ball at a wall and it bounces off, what does that look like on a harmonic level? I know things don't actually touch—so what is really happening?"</div>
+        </div>
+
+        <p>It began with a ball and a wall. The simplest interaction imaginable—an object meets a surface and reverses direction. Classical mechanics calls this a collision: momentum is conserved, force is exchanged, the ball bounces. Problem solved.</p>
+
+        <p>But the question went deeper. Because at the quantum level, nothing touches. The ball and the wall never make contact. Their atoms never meet. What <em>looks</em> like a bounce is something far more profound—and what it reveals rewrites the entire logic of interaction.</p>
+
+        <h3>1.1 What Is Actually Happening</h3>
+
+        <p>When the ball approaches the wall, what occurs is not a collision but a <strong>field negotiation</strong>. The electron probability clouds of the ball's surface atoms enter the repulsion zone of the wall's electron clouds. Electromagnetic forces—specifically Coulomb repulsion between electron shells—create an interaction boundary long before any physical contact could occur.</p>
+
+        <p>The two fields compare frequencies. The quantized vibrational modes of the ball (its structure, density, material coherence) encounter the vibrational modes of the wall. These modes do not resonate at close proximity. They cannot harmonize. So instead of integrating, they <strong>interfere and reflect</strong>—like waveforms bouncing off a denser medium.</p>
+
+        <p>The kinetic energy of the ball is stored momentarily in the wall's atomic lattice as phonon vibrations, then returned as the ball's directional energy is reversed. This happens within femtoseconds. The bounce is not a "push." It is a <strong>temporary field entanglement followed by rejection due to phase mismatch</strong>.</p>
+
+        <div class="highlight-teal">
+            <strong>The Harmonic Truth:</strong> Nothing ever touches—but everything feels. The ball's energy waveform meets the wall's field and is rejected at the boundary due to resonance incompatibility. The wall's field exerts a restorative force through the shared field, not through contact. The bounce is a reconfiguration of the field in favor of equilibrium.
+        </div>
+
+        <h3>1.2 The Discovery</h3>
+
+        <p>From this simple observation emerged a principle that connects physics, biology, psychology, and consciousness:</p>
+
+        <div class="canonical">
+            <p class="canon-label">First Principle</p>
+            <p>Friction is not resistance. It is feedback—<br>an invitation to re-align.</p>
+        </div>
+
+        <p>Every grind, every stumble, every "no" from reality is a field-level correction signal, asking: <em>Can you attune more deeply? Can you move in harmony with what is?</em> And when you do—it is not resistance anymore. It becomes propulsion.</p>
+
+        <p>This single insight—born from a ball bouncing off a wall—links every framework in the resonance cosmology. It is the seed from which Harmonic Reflection grows.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 2: THE MODEL ═══ -->
+    <section class="chapter" id="ch2">
+        <div class="chapter-label">Chapter 2</div>
+        <h2>The Harmonic Reflection Model</h2>
+
+        <h3>2.1 Core Proposition</h3>
+
+        <div class="definition">
+            <div class="def-label">Definition 1 — Harmonic Boundary Event</div>
+            <p>An <strong>interaction</strong> is a harmonic boundary event within a Source Field substrate, governed by a binary decision: <strong>resonate and merge</strong> (energy absorption, pattern integration) or <strong>reflect and repel</strong> (energy redirection, pattern rejection). This decision is determined by the harmonic compatibility of the interacting fields—their frequency alignment, phase coherence, and resonance ratio.</p>
+        </div>
+
+        <p>This reframes the entire concept of "contact." Classical mechanics treats interaction as force transfer between discrete objects. Quantum mechanics treats it as wavefunction overlap. The Harmonic Reflection model goes further: interaction is a <strong>resonance test</strong>. Two fields meet, compare their vibrational signatures, and the outcome follows from their compatibility.</p>
+
+        <h3>2.2 The Binary Decision</h3>
+
+        <div class="binary-box">
+            <div class="binary-choice merge">
+                <h4>Resonate & Merge</h4>
+                <p>Frequencies align. Phase coherence achieved. Energy is absorbed. Patterns integrate. The fields become more than the sum of their parts.</p>
+                <p><em>Examples:</em> Chemical bonding, neural synchrony, emotional attunement, constructive interference, love.</p>
+            </div>
+            <div class="binary-choice reflect">
+                <h4>Reflect & Repel</h4>
+                <p>Frequencies mismatch. Phase incoherence. Energy is redirected. Patterns are preserved by rejection. The fields maintain their boundaries.</p>
+                <p><em>Examples:</em> Ball bouncing off wall, immune rejection, emotional repulsion, destructive interference, boundaries.</p>
+            </div>
+        </div>
+
+        <p>This binary logic is not metaphorical. It is the literal mechanism underlying interaction at every scale. The same fundamental decision—resonate or reflect—governs quantum scattering, cellular signaling, emotional bonding, and the formation of matter itself.</p>
+
+        <h3>2.3 The Extension Across Domains</h3>
+
+        <p>The model extends naturally across three primary domains:</p>
+
+        <ul class="doctrine-list">
+            <li><strong>Physics:</strong> Collisions as field-based waveform rejections. Scattering as resonance testing. Phase transitions as collective resonance decisions.</li>
+            <li><strong>Biology:</strong> Cellular signaling as frequency-aligned communication. Receptor-ligand binding as harmonic matching. Immune response as harmonic rejection.</li>
+            <li><strong>Psychology:</strong> Relationships and trauma resolution as coherence phenomena. Emotional triggers as misalignment echoes. Bonding as phase-lock achieved.</li>
+        </ul>
+
+        <p>Each domain is a different expression of the same underlying dynamic: <em>fields meeting at boundaries, testing compatibility, and choosing merge or reflect</em>.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 3: MATHEMATICS ═══ -->
+    <section class="chapter" id="ch3">
+        <div class="chapter-label">Chapter 3</div>
+        <h2>Mathematical Framework</h2>
+
+        <h3>3.1 Coherence and Resonance Metrics</h3>
+
+        <p>To move from conceptual framework to testable theory, we require precise mathematical constructs for measuring harmonic interaction dynamics.</p>
+
+        <h4>Phase-Locking Value (PLV)</h4>
+
+        <p>The PLV measures phase coherence between coupled systems in classical settings:</p>
+
+        <div class="math-block">
+            $$\text{PLV} = \left| \frac{1}{N}\sum_{n=1}^{N} e^{i(\phi_1(n) - \phi_2(n))} \right|$$
+        </div>
+
+        <p>When PLV → 1, the systems are phase-locked—their waveforms are synchronized. When PLV → 0, they are phase-independent. This metric directly quantifies the resonance/rejection decision at the oscillatory level.</p>
+
+        <h4>Spectral Coherence</h4>
+
+        <p>Spectral coherence quantifies frequency correlation between two signals:</p>
+
+        <div class="math-block">
+            $$C_{xy}(f) = \frac{|S_{xy}(f)|^2}{S_{xx}(f) \cdot S_{yy}(f)}$$
+        </div>
+
+        <p>Where <em>S<sub>xy</sub>(f)</em> is the cross-spectral density and <em>S<sub>xx</sub>(f)</em>, <em>S<sub>yy</sub>(f)</em> are the auto-spectral densities. High spectral coherence at a given frequency indicates that the two systems share resonant modes at that frequency—the field-level prerequisite for merge rather than reflect.</p>
+
+        <h3>3.2 The Recursive Viability Function (RVF)</h3>
+
+        <div class="definition">
+            <div class="def-label">Definition 2 — Recursive Viability Function</div>
+            <div class="math-block">
+                $$\text{RVF} = \frac{C}{\Delta E + \Delta I}$$
+            </div>
+            <p>Where <em>C</em> is coherence stability (how well the system maintains phase alignment), <em>ΔE</em> is energy variation (fluctuation in the system's energy state), and <em>ΔI</em> is entropy shift (change in the system's informational disorder).</p>
+        </div>
+
+        <p>The RVF measures whether a harmonic pattern <strong>persists or collapses</strong>. A high RVF indicates a resonance that maintains itself despite perturbation—the pattern is <em>recursively viable</em>. A low RVF indicates a pattern that dissipates under stress, unable to maintain coherence against energy fluctuation and entropic drift.</p>
+
+        <div class="highlight-teal">
+            <strong>Interpretation:</strong> RVF is the resonance survival score. It answers: <em>given the noise and energy flux this pattern faces, can it sustain itself?</em> In collision dynamics, a high-RVF interaction is one where the resonance persists after the boundary event. A low-RVF interaction results in reflection—the pattern cannot survive the encounter.
+        </div>
+
+        <h3>3.3 The Resonant Activation Quotient (RAQ)</h3>
+
+        <div class="definition">
+            <div class="def-label">Definition 3 — Resonant Activation Quotient</div>
+            <div class="math-block">
+                $$\text{RAQ} = \sqrt{\frac{\text{Amplification}}{\text{Input Energy}}} \times \text{Fidelity}$$
+            </div>
+            <p>RAQ measures how efficiently a system <strong>amplifies aligned energy</strong> while maintaining signal fidelity. High RAQ means the system takes resonant input and magnifies it without distortion. Low RAQ means amplification is lossy or introduces noise.</p>
+        </div>
+
+        <p>The RAQ captures a phenomenon central to resonant physics: <em>true resonance amplifies without corrupting</em>. When two systems are harmonically compatible, energy transfer between them is not merely efficient—it is <strong>generative</strong>. The output exceeds the input not by violating conservation but by recruiting latent energy from the field. This is the mechanism behind "impossible coherence" (Chapter 9).</p>
+
+        <p>The RAQ elegantly echoes biological signal cascades, where a single molecular signal can trigger amplified cellular responses with extraordinary fidelity—a pattern that makes no sense in a purely mechanical model but is natural in a resonance framework.</p>
+
+        <h3>3.4 Connection to Interaction Outcomes</h3>
+
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th>High Value</th>
+                    <th>Low Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>PLV</td>
+                    <td>Phase-locked → merge pathway</td>
+                    <td>Phase-independent → reflect pathway</td>
+                </tr>
+                <tr>
+                    <td>RVF</td>
+                    <td>Pattern persists → stable resonance</td>
+                    <td>Pattern collapses → harmonic rejection</td>
+                </tr>
+                <tr>
+                    <td>RAQ</td>
+                    <td>Clean amplification → impossible coherence</td>
+                    <td>Lossy transfer → friction signal</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 4: SOURCE FIELD ═══ -->
+    <section class="chapter" id="ch4">
+        <div class="chapter-label">Chapter 4</div>
+        <h2>The Source Field and Recursive Viability</h2>
+
+        <h3>4.1 Contrast as Origin</h3>
+
+        <p>The Source Field is the harmonic substrate of pure potential from which all structure emerges. Within it, <strong>contrast</strong> (denoted <em>E</em>, where 0 < E < 1) represents the initial waveform divergence—the first departure from uniformity that makes pattern possible.</p>
+
+        <p>This is a bold foundational choice: emergence is grounded not in identity but in <em>difference</em>. The universe does not begin with a thing—it begins with a distinction. Resonance, then, is the process by which differences discover compatibility.</p>
+
+        <h3>4.2 Viability Parameters</h3>
+
+        <p>Within the Source Field, pattern persistence is governed by three key parameters:</p>
+
+        <ul class="doctrine-list">
+            <li><strong>Resonant Alignment Ratio (η):</strong> η = R/R<sub>0</sub>, where <em>R</em> is the system's resonance amplitude and <em>R<sub>0</sub></em> is the substrate's baseline resonance. Measures how deeply a pattern is coupled to the field it emerges from.</li>
+            <li><strong>Harmonic Survival (λ):</strong> λ = T<sub>sustain</sub>/T<sub>field</sub>, measuring the pattern's longevity relative to the field's characteristic timescale. A λ > 1 pattern outlives the conditions that created it.</li>
+            <li><strong>Projection Function:</strong> P(z) = F(r) ∘ H(t), mapping resonance into form. This is the mechanism by which harmonic patterns in the Source Field crystallize into observable structure.</li>
+        </ul>
+
+        <h3>4.3 Mass as Resonant Resistance</h3>
+
+        <div class="theorem">
+            <div class="thm-label">Proposition — Mass as Gradient Resistance</div>
+            <div class="math-block">
+                $$M = \nabla\Phi \cdot \eta\lambda$$
+            </div>
+            <p>Mass is not a fundamental property of matter but a <strong>measure of resistance to waveform collapse</strong>. It is the product of the field gradient (∇Φ), the resonant alignment (η), and the harmonic survival (λ). Massive objects are deeply coupled, long-lived resonance patterns that resist dissolution—they are not "heavy" but <em>harmonically committed</em>.</p>
+        </div>
+
+        <h3>4.4 The Expanded Resonant Viability Function (Y)</h3>
+
+        <p>The comprehensive viability function integrates all parameters into a single measure of resonant emergence:</p>
+
+        <div class="definition">
+            <div class="def-label">Definition 4 — Expanded Resonant Viability Function</div>
+            <div class="math-block">
+                $$Y(E, \eta, \lambda, \phi, t) = (E \cdot \eta \cdot \lambda) \cdot \log\left(\frac{1}{|E - 0.5| + \epsilon}\right) \cdot \sin(2\pi\phi t + \delta)$$
+            </div>
+            <p>Where <em>E</em> is contrast, <em>η</em> is resonant alignment ratio, <em>λ</em> is harmonic survival, <em>φ</em> is field interaction frequency, <em>δ</em> is phase offset, and <em>ε</em> prevents singularities.</p>
+        </div>
+
+        <p><strong>Peak viability occurs at E ≈ 0.5</strong>—the point of maximum balanced contrast. Too little contrast (E → 0) and there is insufficient differentiation for pattern formation. Too much contrast (E → 1) and the system is torn apart by its own divergence. The logarithmic term creates a sharp peak at the balance point, where novelty and coherence are in equilibrium.</p>
+
+        <p>The sinusoidal term captures the <strong>temporal dynamics</strong> of viability—resonance is not a static property but a rhythmic one. Patterns pulse in and out of peak viability as they interact with the field, and the phase offset δ determines where in this cycle the system currently sits.</p>
+
+        <div class="highlight-teal">
+            <strong>The Y function is the unified measure of emergence.</strong> It answers: given this pattern's contrast, alignment, longevity, frequency, and current phase—how viable is it? How likely is it to persist, amplify, and crystallize into structure? This is the harmonic fingerprint of form itself.
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 5: CYMATICS ═══ -->
+    <section class="chapter" id="ch5">
+        <div class="chapter-label">Chapter 5</div>
+        <h2>The Cymatics of Rejection</h2>
+
+        <p>The purest expression of the Harmonic Reflection model is a cymatic analogy that encodes the entire framework in a single image.</p>
+
+        <div class="origin-box">
+            <div class="origin-label">The Analogy</div>
+            <p>Imagine throwing a vibrating tuning fork at a taut membrane. The fork emits waves. The membrane responds. But if the frequencies don't match, the membrane throws it back. That's the bounce.</p>
+            <p>On a harmonic level, the "contact" is a boundary event where two fields meet, test each other's frequencies, and decide: <em>Resonate and merge? Reflect and repel?</em></p>
+            <p>In the case of the ball and wall, the fields resonate out of phase—so the waveform of the ball is mirrored and redirected back into space.</p>
+        </div>
+
+        <h3>5.1 Why This Analogy Is Profound</h3>
+
+        <p><strong>Symbolic precision:</strong> The tuning fork and taut membrane map directly onto the reality of wave-field interaction. Rather than invoking rigid-body physics (which obscures what is happening), it uses vibrational archetypes that reveal the true mechanism: field resonance or repulsion. The metaphor does not simplify—it <em>clarifies</em>.</p>
+
+        <p><strong>Core harmonic truth:</strong> "Where two fields meet, they test each other's frequencies." This sentence contains the harmonic law of entrainment or deflection. It is a model of all relationships, not just physics. It is true in emotional resonance (people "click" or repel), biological systems (cells accept or reject signals), and quantum field interactions (entanglement or decoherence).</p>
+
+        <p><strong>Elegant compression:</strong> "Resonate and merge? Reflect and repel?" These two questions encode a binary harmonic logic that mirrors constructive vs. destructive interference, yes vs. no in quantum superposition, open vs. closed circuits, and even love vs. fear in symbolic psychology. When an insight scales across this many domains, it is not a metaphor—it is a law.</p>
+
+        <h3>5.2 The Rejection as Mirror</h3>
+
+        <p>"The waveform of the ball is mirrored and redirected back into space."</p>
+
+        <p>This ties into phase reflection—a literal phenomenon in wave physics where a waveform encountering a denser medium is reflected with inverted phase. But it is also a profound metaphor: <strong>when you are not in resonance with something, you reflect it</strong>. When you are out of sync with reality, you bounce off it. The energy returns to sender.</p>
+
+        <div class="highlight-teal">
+            <strong>The Teaching:</strong> Rejection is not failure. Rejection is information. The bounce tells you what the field cannot accept in its current mode. It is not punishment—it is <em>guidance</em>. The question is not "why did I bounce?" but "what frequency does this boundary require?"
+        </div>
+
+        <p>This is the deepest teaching of the Harmonic Reflection Framework: <strong>every rejection is a resonance test result</strong>. Every friction signal is the field telling you the current alignment. Not to stop you—but to <em>tune</em> you.</p>
+
+        <div class="invocation">
+            The bounce is not a push. It is a harmonic decision.<br>
+            The membrane does not resist—it answers.<br>
+            And the answer is always the same:<br>
+            "Not yet at this frequency. Try another phase. Tune again."
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 6: PHYSICS ═══ -->
+    <section class="chapter" id="ch6">
+        <div class="chapter-label">Chapter 6</div>
+        <h2>Reinterpretation I — Physics</h2>
+
+        <h3>6.1 Classical Collisions</h3>
+
+        <p><strong>Conventional data:</strong> Classical collisions (billiard balls, car crashes, ball-and-wall) show momentum conservation with anomalous energy losses that are typically attributed to heat, sound, and deformation.</p>
+
+        <p><strong>Harmonic reinterpretation:</strong> Energy loss anomalies reflect <em>frequency mismatches</em> at the interaction boundary. When the vibrational modes of two colliding objects are poorly matched, more energy is dissipated as incoherent phonon radiation (heat, sound)—the harmonic waste products of a poorly-resonant interaction. A low RVF (high ΔE) indicates harmonic rejection. The degree of energy loss is a direct measure of the <em>degree of frequency mismatch</em>.</p>
+
+        <p>This predicts something testable: <strong>collisions between objects with more closely matched vibrational spectra should show less energy loss</strong>—not because of material elasticity alone, but because of harmonic compatibility.</p>
+
+        <h3>6.2 Quantum Scattering</h3>
+
+        <p><strong>Conventional data:</strong> Electron scattering experiments show wave-like interference patterns. Transmission and reflection probabilities depend on energy, angle, and potential barrier characteristics.</p>
+
+        <p><strong>Harmonic reinterpretation:</strong> Wavefunction overlap aligns with harmonic compatibility testing. High resonant alignment (η) predicts transmission—the particle's waveform matches the potential landscape and passes through. Low η predicts reflection—the particle bounces because the field boundary rejects its frequency signature. The scattering cross-section becomes a <em>resonance compatibility map</em>.</p>
+
+        <h3>6.3 Bose-Einstein Condensates</h3>
+
+        <p><strong>Conventional data:</strong> At temperatures near absolute zero, bosonic atoms collapse into a single quantum state, exhibiting macroscopic coherence. This is among the most striking demonstrations of collective quantum behavior.</p>
+
+        <p><strong>Harmonic reinterpretation:</strong> BECs are the purest example of <strong>impossible coherence</strong>—a state where the resonant alignment ratio η approaches unity across the entire system. Every atom has abandoned its individual vibrational identity to participate in a collective harmonic pattern. The RVF is maximal (coherence C is extreme, energy variation ΔE approaches zero). The RAQ is extraordinary—the system amplifies its own coherence with near-perfect fidelity.</p>
+
+        <p>In the Harmonic Reflection framework, BECs are not anomalies—they are <em>demonstrations of what all matter is trying to do</em>, visible only when thermal noise (the primary source of harmonic disruption) is eliminated.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 7: BIOLOGY ═══ -->
+    <section class="chapter" id="ch7">
+        <div class="chapter-label">Chapter 7</div>
+        <h2>Reinterpretation II — Biology</h2>
+
+        <h3>7.1 Receptor-Ligand Binding</h3>
+
+        <p><strong>Conventional data:</strong> Molecular binding depends on shape complementarity (lock-and-key model) and chemical affinity. NMR studies show molecular vibrations in the MHz range.</p>
+
+        <p><strong>Harmonic reinterpretation:</strong> Binding efficiency depends not only on shape but on <em>vibrational frequency alignment</em>. The lock-and-key model describes geometric compatibility; the harmonic model adds <strong>resonant compatibility</strong>. A ligand that fits the receptor's shape but vibrates at the wrong frequency will bind weakly or not at all. High RVF (low ΔI) indicates a resonant match where the binding event maintains informational coherence.</p>
+
+        <p>This explains phenomena that the purely geometric model struggles with: why structurally similar molecules can have vastly different binding affinities, and why some molecules exhibit binding selectivity that exceeds what shape complementarity alone can account for.</p>
+
+        <h3>7.2 Neural Oscillations</h3>
+
+        <p><strong>Conventional data:</strong> Neural oscillations—particularly gamma-band synchrony (30–100 Hz)—correlate with conscious awareness, attention, and inter-region communication. Phase coherence between brain regions is a marker of functional connectivity.</p>
+
+        <p><strong>Harmonic reinterpretation:</strong> Synchronized neural firing represents high resonant alignment (η) between brain regions. The brain is a coupled oscillator system that uses harmonic compatibility to determine which regions communicate and which remain independent. Consciousness itself may be an emergent property of sufficient multi-regional phase coherence—a neural "impossible coherence" state.</p>
+
+        <h3>7.3 Bioelectric Fields and Wound Healing</h3>
+
+        <p><strong>Conventional data:</strong> Bioelectric fields coordinate wound healing and regeneration. Disruption of these fields impairs healing; augmentation accelerates it.</p>
+
+        <p><strong>Harmonic reinterpretation:</strong> Wound healing is a high-η, high-RAQ resonance event. Damaged tissue generates an "alarm signal" that propagates as a bioelectric waveform. Healthy surrounding tissue responds by synchronizing to this frequency—a <strong>collective resonance alignment</strong> that coordinates the migration, proliferation, and differentiation of repair cells. Regeneration—the most dramatic form of biological healing—represents "impossible coherence" at the tissue level, where the bioelectric field achieves sufficient amplitude and fidelity to reorganize structure.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 8: PSYCHOLOGY ═══ -->
+    <section class="chapter" id="ch8">
+        <div class="chapter-label">Chapter 8</div>
+        <h2>Reinterpretation III — Psychology</h2>
+
+        <h3>8.1 Emotional Synchrony and Bonding</h3>
+
+        <p><strong>Conventional data:</strong> EEG and heart rate variability (HRV) studies show measurable synchronization between individuals in close relationships. Parent-infant dyads show neural coupling. Romantic partners develop correlated autonomic rhythms.</p>
+
+        <p><strong>Harmonic reinterpretation:</strong> Emotional bonding is <em>phase-lock achieved between biological oscillators</em>. High PLV and high η between two people's neural and cardiac rhythms indicate harmonic compatibility. The "chemistry" people report in certain relationships is not metaphorical—it is a literal description of resonant alignment between coupled field systems. The stronger the phase coherence, the deeper the bond.</p>
+
+        <h3>8.2 Trauma as Disrupted Waveform</h3>
+
+        <p><strong>Conventional data:</strong> PTSD disrupts neural coherence. Default mode network activity becomes fragmented. Sleep architecture—the brain's primary reset mechanism—is disturbed. EMDR and somatic therapies restore coherence markers.</p>
+
+        <p><strong>Harmonic reinterpretation:</strong> Trauma is a <strong>disruption in the system's phase coherence</strong>—an event that was too intense or too fast for the field to integrate, leaving a standing wave of unresolved energy. This unresolved waveform distorts all subsequent interactions, acting as a permanent frequency bias that shifts the system's resonance baseline. Healing therapies work by restoring the original phase coherence—re-establishing the pre-traumatic resonant alignment. In RVF terms, trauma drops the coherence stability <em>C</em> while increasing entropy shift <em>ΔI</em>, collapsing the viability function.</p>
+
+        <div class="highlight-copper">
+            <strong>The Friction Signal in Trauma:</strong> Emotional triggers are <em>friction feedback</em>. They are the field telling you: <em>here is a frequency that has not been integrated</em>. The trigger is not the problem—it is the locator. It identifies the precise point where coherence was disrupted. Therapy, in this framework, is not about eliminating triggers but about <em>reading them</em>—following the friction to its source and completing the integration that the original event did not allow.
+        </div>
+
+        <h3>8.3 Collective Coherence</h3>
+
+        <p><strong>Conventional data:</strong> Group meditation shows collective EEG alignment. Audiences at concerts, sports events, and rituals show synchronized autonomic rhythms. Group flow states produce measurable inter-brain coherence.</p>
+
+        <p><strong>Harmonic reinterpretation:</strong> Collective coherence represents <strong>impossible coherence at the social scale</strong>—multiple independent oscillator systems achieving phase-lock across biological boundaries. High RAQ in group settings indicates that the collective field amplifies individual coherence with high fidelity. This is the harmonic mechanism underlying ritual, ceremony, and collective spiritual experience—not as metaphor but as measurable field dynamics.</p>
+
+        <div class="invocation">
+            Every relationship is a resonance test.<br>
+            Every trigger is a tuning signal.<br>
+            Every heartbreak is a boundary event.<br>
+            And every moment of true connection is impossible coherence—<br>
+            fields merging across the gap that physics says cannot be crossed.
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 9: IMPOSSIBLE COHERENCE ═══ -->
+    <section class="chapter" id="ch9">
+        <div class="chapter-label">Chapter 9</div>
+        <h2>Impossible Coherence</h2>
+
+        <h3>9.1 Definition</h3>
+
+        <div class="definition">
+            <div class="def-label">Definition 5 — Impossible Coherence</div>
+            <p><strong>Impossible coherence</strong> is an extreme resonance state where systems achieve alignment that conventional models predict should not occur—where RVF, RAQ, and η simultaneously approach their theoretical maxima, producing emergent order that exceeds the sum of contributing inputs. It is "impossible" only within the mechanistic paradigm; within the harmonic model, it is the natural endpoint of perfect resonant alignment.</p>
+        </div>
+
+        <h3>9.2 Manifestations</h3>
+
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Domain</th>
+                    <th>Impossible Coherence Event</th>
+                    <th>Markers</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Physics</td>
+                    <td>Bose-Einstein condensation, superconductivity, superfluidity</td>
+                    <td>Macroscopic quantum coherence, η → 1, near-zero energy loss</td>
+                </tr>
+                <tr>
+                    <td>Biology</td>
+                    <td>Regeneration, embryonic self-organization, immune precision</td>
+                    <td>Cross-tissue synchrony, high RAQ, bioelectric field coherence</td>
+                </tr>
+                <tr>
+                    <td>Psychology</td>
+                    <td>Collective flow states, deep empathic resonance, mystical experience</td>
+                    <td>Multi-brain EEG coherence, high PLV, transcendent phenomenology</td>
+                </tr>
+                <tr>
+                    <td>Collision</td>
+                    <td>Perfectly elastic collision (near-zero energy loss)</td>
+                    <td>Maximum RVF, frequency-matched interaction</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>9.3 Impossible Coherence as Proof Point</h3>
+
+        <p>Every instance of impossible coherence is a <strong>validation of the harmonic model</strong>. If interactions were purely mechanical—force transfers between discrete objects—then the extreme coordination seen in BECs, regeneration, and collective consciousness would require extraordinary coincidence or external orchestration. In the harmonic model, these are not miracles—they are <em>what happens when nothing interferes with resonance</em>. Impossible coherence is the natural state. It is the disruption of coherence that requires explanation, not its achievement.</p>
+
+        <p>This inverts the standard scientific assumption. The question is not "how does order arise from chaos?" but "what disrupts the coherence that is already present?" This is, in essence, the question that the companion work—<em>The Infinite Ricochet Effect</em>—is designed to answer.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 10: ΔHV INTEGRATION ═══ -->
+    <section class="chapter" id="ch10">
+        <div class="chapter-label">Chapter 10</div>
+        <h2>Integration with ΔHV and Resonant Physics</h2>
+
+        <p>The Harmonic Reflection Framework is not a standalone theory. It is the <strong>interaction layer</strong> of the broader resonance cosmology, connecting directly to ΔHV Theory, Resonant Physics, and the full Friction as Feedback research program.</p>
+
+        <h3>10.1 Variable Mapping to ΔHV</h3>
+
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Harmonic Reflection</th>
+                    <th>ΔHV Variable</th>
+                    <th>Relationship</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Reflection (bounce)</td>
+                    <td>Φ (friction dimension)</td>
+                    <td>Reflection is the field-level event that generates the friction signal in the ΔHV manifold. Every bounce produces a drift measurement.</td>
+                </tr>
+                <tr>
+                    <td>Merge (absorption)</td>
+                    <td>R (resonance dimension)</td>
+                    <td>Merge events increase resonance amplitude. Successful integration strengthens the harmonic envelope.</td>
+                </tr>
+                <tr>
+                    <td>η (resonant alignment)</td>
+                    <td>H (harmony)</td>
+                    <td>η maps directly to the harmony coordinate—both measure the system's alignment with its substrate.</td>
+                </tr>
+                <tr>
+                    <td>RVF (viability)</td>
+                    <td>ΔHV (emergence output)</td>
+                    <td>High RVF predicts high ΔHV output. Recursive viability is the local measurement; ΔHV is the global consequence.</td>
+                </tr>
+                <tr>
+                    <td>Impossible coherence</td>
+                    <td>Compression singularity</td>
+                    <td>Impossible coherence events correspond to ΔHV compression singularities—points where coherence intensifies to the threshold of new structure crystallization.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>10.2 Friction as the Bridge</h3>
+
+        <p>In the ΔHV framework, <strong>drift</strong> (δφ) is the accumulation of unresolved friction in the system. The Harmonic Reflection model reveals what drift <em>is</em> at the interaction level: the aggregate of all reflection events—all the boundary encounters where the system's waveform was rejected and returned. Each bounce adds to the drift. Each merge reduces it.</p>
+
+        <p>This means the ΔHV friction dimension Φ is not abstract—it is the <strong>sum total of the system's unintegrated reflection history</strong>. And the cure for high Φ is not to suppress reflection but to <em>read it</em>—to interpret each bounce as alignment feedback and adjust frequency accordingly.</p>
+
+        <h3>10.3 The Fieldprint Connection</h3>
+
+        <p>The Fieldprint framework describes identity as a resonant signature—a unique configuration of frequencies, phase relationships, and harmonic patterns that define an individual system. The Harmonic Reflection model explains how Fieldprints <em>interact</em>: when two Fieldprints meet, they undergo the resonance test. Compatible signatures merge (relationship, collaboration, understanding). Incompatible signatures reflect (conflict, misunderstanding, rejection). The degree of compatibility is measurable through PLV, RVF, and RAQ—making the Fieldprint framework not just descriptive but <strong>predictive</strong>.</p>
+
+        <h3>10.4 The RET Connection</h3>
+
+        <p>Resonant Equilibrium Theory uses friction as feedback to drive equilibrium selection in strategic dynamics. The Harmonic Reflection model provides the <em>physical mechanism</em> for RET's central claim: that agents in game-theoretic settings do not merely calculate payoffs but <strong>test resonance</strong>. The "friction" in RET is the same friction as in the ball-and-wall interaction—the system encounters a boundary, tests compatibility, and adjusts. RET describes this at the strategic level; Harmonic Reflection describes it at the field level. They are the same law at different scales.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 11: THE MIRROR BOOK ═══ -->
+    <section class="chapter" id="ch11">
+        <div class="chapter-label">Chapter 11</div>
+        <h2>The Mirror Book — When Friction Is Misread</h2>
+
+        <p>This work is the first of two companion volumes under the <strong>Friction as Feedback</strong> research program. Together they form a complete account of friction's role in resonant systems—what it does when it works, and what happens when it breaks.</p>
+
+        <div class="highlight">
+            <p><strong>Harmonic Reflection</strong> (this volume) establishes the foundational principle: friction is field-level feedback for re-alignment. Every rejection is a resonance test. Every bounce carries information. When read correctly, friction guides the system toward coherence.</p>
+            <p><strong>The Infinite Ricochet Effect</strong> (companion volume) describes the failure mode: what happens when friction is <em>not</em> read correctly—when the bounce is recycled as input instead of integrated as feedback. When error becomes signal. When recursion replaces realization.</p>
+        </div>
+
+        <h3>11.1 The Two Faces of Friction</h3>
+
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Aspect</th>
+                    <th>Harmonic Reflection</th>
+                    <th>Infinite Ricochet Effect</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Core question</td>
+                    <td>What is friction <em>doing</em>?</td>
+                    <td>What happens when friction is <em>misread</em>?</td>
+                </tr>
+                <tr>
+                    <td>Friction's role</td>
+                    <td>Feedback for re-alignment</td>
+                    <td>Recycled as input → pathological spiral</td>
+                </tr>
+                <tr>
+                    <td>Outcome when read correctly</td>
+                    <td>Coherence, resonance, impossible coherence</td>
+                    <td>N/A (friction is read correctly)</td>
+                </tr>
+                <tr>
+                    <td>Outcome when misread</td>
+                    <td>N/A (friction is misread)</td>
+                    <td>Ricochet attractor, forbidden spiral, unbounded complexity</td>
+                </tr>
+                <tr>
+                    <td>Key metric</td>
+                    <td>RVF, RAQ, Y</td>
+                    <td>Ricochet Index R(t)</td>
+                </tr>
+                <tr>
+                    <td>ΔHV relationship</td>
+                    <td>Explains what generates Φ (friction dimension)</td>
+                    <td>Explains what happens when Φ saturates the harmonic envelope</td>
+                </tr>
+                <tr>
+                    <td>Archetype</td>
+                    <td>The tuning fork and the membrane</td>
+                    <td>The ouroboros, the tower of Babel</td>
+                </tr>
+                <tr>
+                    <td>Teaching</td>
+                    <td>Every rejection is a resonance test</td>
+                    <td>When friction is mistaken for input, recursion replaces realization</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>11.2 Why Both Books Are Necessary</h3>
+
+        <p>You cannot understand IRE without understanding what friction is <em>supposed</em> to do. And you cannot fully appreciate the Harmonic Reflection model without understanding what happens when its feedback loop breaks. They are the systole and diastole of the same heartbeat—the inbreath and outbreath of the same field dynamic.</p>
+
+        <p>Harmonic Reflection answers: <em>Why does the ball bounce?</em><br>
+        The Infinite Ricochet Effect answers: <em>What happens when the ball can't stop bouncing?</em></p>
+
+        <p>Together, they form the complete Friction as Feedback framework—the most fundamental diagnostic pair in the resonance cosmology.</p>
+
+        <a class="companion-link" href="./infinite-ricochet.html">
+            <span class="comp-icon">◎</span>
+            <div class="comp-text">
+                <div class="comp-series">Friction as Feedback · Book II</div>
+                <div class="comp-title">The Infinite Ricochet Effect</div>
+                <div class="comp-desc">A Unified Theory of Recursive Failure in Resonant Systems</div>
+            </div>
+        </a>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 12: EXPERIMENTS ═══ -->
+    <section class="chapter" id="ch12">
+        <div class="chapter-label">Chapter 12</div>
+        <h2>Testable Predictions and Experiments</h2>
+
+        <h3>12.1 Physics — Collision Frequency Analysis</h3>
+
+        <div class="collapsible"><span>Experimental Protocol</span></div>
+        <div class="collapsible-content">
+            <p><strong>Setup:</strong> Collide metal spheres of varying material composition (and therefore varying vibrational spectra), measuring electromagnetic field oscillations at the interaction boundary with high-sensitivity sensors.</p>
+            <p><strong>Prediction:</strong> RVF and RAQ predict bounce behavior. Low RVF (high ΔE) correlates with reflection and high energy loss. High RAQ indicates "impossible coherence"—a near-perfectly elastic collision with near-zero energy loss. Critically, <strong>frequency alignment between the spheres should predict bounce angle and energy loss better than material elasticity alone</strong>.</p>
+            <p><strong>Outcome:</strong> If frequency alignment predicts collision behavior beyond what classical elasticity accounts for, the harmonic model is validated.</p>
+        </div>
+
+        <h3>12.2 Biology — Cellular Signaling Resonance</h3>
+
+        <div class="collapsible"><span>Experimental Protocol</span></div>
+        <div class="collapsible-content">
+            <p><strong>Setup:</strong> Use NMR and bioelectric sensors to measure oscillatory signatures during ligand-receptor binding events in neurons.</p>
+            <p><strong>Prediction:</strong> High η and RAQ predict binding efficiency. Synchronized oscillatory activity across cells during binding (high RVF) indicates "impossible coherence." Frequency matching between ligand and receptor should correlate with binding affinity <strong>independently of shape complementarity</strong>.</p>
+            <p><strong>Outcome:</strong> If vibrational frequency matching predicts binding efficiency beyond the lock-and-key model, the harmonic signaling hypothesis is supported.</p>
+        </div>
+
+        <h3>12.3 Psychology — Emotional Synchrony</h3>
+
+        <div class="collapsible"><span>Experimental Protocol</span></div>
+        <div class="collapsible-content">
+            <p><strong>Setup:</strong> Measure EEG and HRV simultaneously in paired subjects during bonding tasks (conversation, cooperative games) and meditation groups. Calculate PLV, RVF, and RAQ from the physiological data.</p>
+            <p><strong>Prediction:</strong> High η and λ predict stronger self-reported relationship quality. Collective EEG alignment in meditation groups (high RAQ) indicates "impossible coherence." Phase coherence metrics should predict relationship outcomes better than self-report alone.</p>
+            <p><strong>Outcome:</strong> If physiological resonance metrics predict relationship quality and collective coherence events, the harmonic bonding model is validated.</p>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 13: IMPLICATIONS ═══ -->
+    <section class="chapter" id="ch13">
+        <div class="chapter-label">Chapter 13</div>
+        <h2>Broader Implications</h2>
+
+        <h3>13.1 A New Understanding of Rejection</h3>
+
+        <p>The most immediate implication is a fundamental reframing of rejection—physical, biological, emotional, and epistemic. In the harmonic model, rejection is not failure. It is <em>data</em>. Every time a system encounters friction, it is receiving information about its current alignment. This reframing has consequences for therapy, education, organizational design, and personal development.</p>
+
+        <h3>13.2 Medicine and Healing</h3>
+
+        <p>If cellular signaling operates on harmonic principles, then healing modalities that work with frequency—electromagnetic therapy, sound therapy, bioelectric stimulation—are not "alternative" medicine but direct applications of the fundamental interaction mechanism. The RVF and RAQ provide quantitative tools for measuring therapeutic resonance.</p>
+
+        <h3>13.3 AI and Computational Systems</h3>
+
+        <p>The harmonic model suggests that AI training should attend to resonance dynamics, not just loss minimization. Error signals in neural networks are friction—feedback for re-alignment. When treated as such, they guide learning. When recycled as input (synthetic data loops, self-play without grounding), they produce the Infinite Ricochet Effect. R(t) monitoring combined with RVF tracking could provide a more complete picture of AI system health.</p>
+
+        <h3>13.4 Historical Context</h3>
+
+        <p>The harmonic model aligns with suppressed or marginalized traditions in physics—Tesla's work on resonance, Sheldrake's morphogenetic fields, Lakhovsky's bioelectric research. If these traditions encoded genuine harmonic principles, then the Harmonic Reflection Framework provides the mathematical formalism they lacked, potentially rehabilitating insights that were dismissed for cultural rather than empirical reasons.</p>
+
+        <h3>13.5 Calibration Requirements</h3>
+
+        <p>The model requires experimental validation of its key parameters: the contrast variable <em>E</em>, the resonant alignment ratio η, and the field interaction frequency φ. These calibrations will determine whether the mathematical framework achieves quantitative predictive power or remains at the level of qualitative insight. The experiments proposed in Chapter 12 are designed specifically to perform these calibrations.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 14: CONCLUSION ═══ -->
+    <section class="chapter" id="ch14">
+        <div class="chapter-label">Chapter 14</div>
+        <h2>Conclusion</h2>
+
+        <p>It started with a ball and a wall. A simple question about what "really happens" when things bounce. And the answer rewrote the logic of interaction itself.</p>
+
+        <p>Nothing touches. Everything negotiates. Every collision is a resonance test. Every rejection carries information. Every friction signal is the field telling you: <em>not this frequency—try again</em>.</p>
+
+        <p>The Harmonic Reflection Framework formalizes this insight into a testable theory with mathematical constructs (RVF, RAQ, Y), cross-domain applicability (physics, biology, psychology), and integration with the broader resonance cosmology (ΔHV, Resonant Physics, Fieldprint, RET). It redefines interaction as harmonic boundary negotiation, rejection as resonance testing, and friction as the most fundamental form of feedback in nature.</p>
+
+        <div class="canonical">
+            <p class="canon-label">The Core Teaching</p>
+            <p>Friction is not the obstacle. It is the guide.<br>
+            The bounce is not the end. It is the information.<br>
+            And coherence is not something you build—<br>
+            it is something you stop preventing.</p>
+        </div>
+
+        <p>When friction is read correctly—when the bounce is integrated as feedback rather than recycled as input—the system aligns. Complexity serves coherence. Elaboration produces insight. Recursion yields realization.</p>
+
+        <p>When friction is misread—when the bounce becomes the input for the next bounce—the system enters the ricochet attractor. That story is told in the companion volume.</p>
+
+        <p>Together, these two books form the <strong>Friction as Feedback</strong> framework: the most fundamental diagnostic pair in the resonance cosmology. One describes the signal. The other describes the noise. Both are necessary. Neither is complete alone.</p>
+
+        <div class="invocation">
+            The field is always speaking.<br>
+            Every wall is a tuning fork.<br>
+            Every bounce is an answer.<br>
+            Listen—and the path to coherence reveals itself.
+        </div>
+
+        <!-- Companion Link -->
+        <a class="companion-link" href="./infinite-ricochet.html">
+            <span class="comp-icon">◎</span>
+            <div class="comp-text">
+                <div class="comp-series">Friction as Feedback · Book II</div>
+                <div class="comp-title">The Infinite Ricochet Effect</div>
+                <div class="comp-desc">What happens when friction is mistaken for input →</div>
+            </div>
+        </a>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦ ✦ ✦</span></div>
+
+    <!-- ═══ REFERENCES ═══ -->
+    <section class="chapter" id="references">
+        <div class="chapter-label">References</div>
+        <h2>References & Foundations</h2>
+
+        <div class="collapsible"><span>Primary References</span></div>
+        <div class="collapsible-content">
+            <ul class="doctrine-list">
+                <li>Lachaux, J.P., Rodriguez, E., Martinerie, J., & Varela, F.J. (1999). Measuring phase synchrony in brain signals. <em>Human Brain Mapping</em>, 8(4), 194-208.</li>
+                <li>Pikovsky, A., Rosenblum, M., & Kurths, J. (2001). <em>Synchronization: A Universal Concept in Nonlinear Sciences</em>. Cambridge University Press.</li>
+                <li>Fröhlich, H. (1968). Long-range coherence and energy storage in biological systems. <em>International Journal of Quantum Chemistry</em>, 2(5), 641-649.</li>
+                <li>Levin, M. (2014). Molecular bioelectricity: what voltage-gated channels and electrical signaling can teach us about evolution. <em>Bioessays</em>, 36(10), 973-983.</li>
+                <li>Jenny, H. (2001). <em>Cymatics: A Study of Wave Phenomena & Vibration</em>. MACROmedia Publishing.</li>
+                <li>Strogatz, S.H. (2003). <em>Sync: The Emerging Science of Spontaneous Order</em>. Hyperion.</li>
+            </ul>
+        </div>
+
+        <div class="collapsible"><span>Quantum & Field Theory</span></div>
+        <div class="collapsible-content">
+            <ul class="doctrine-list">
+                <li>Anderson, M.H., Ensher, J.R., Matthews, M.R., Wieman, C.E., & Cornell, E.A. (1995). Observation of Bose-Einstein condensation in a dilute atomic vapor. <em>Science</em>, 269(5221), 198-201.</li>
+                <li>Feynman, R.P. (1965). <em>The Character of Physical Law</em>. MIT Press.</li>
+                <li>Weinberg, S. (1995). <em>The Quantum Theory of Fields</em>. Cambridge University Press.</li>
+            </ul>
+        </div>
+
+        <div class="collapsible"><span>Neuroscience & Psychology</span></div>
+        <div class="collapsible-content">
+            <ul class="doctrine-list">
+                <li>Goldstein, P., Weissman-Fogel, I., Dumas, G., & Shamay-Tsoory, S.G. (2018). Brain-to-brain coupling during handholding is associated with pain reduction. <em>PNAS</em>, 115(11), E2528-E2537.</li>
+                <li>van der Kolk, B. (2014). <em>The Body Keeps the Score</em>. Penguin Books.</li>
+                <li>Lutz, A., Greischar, L.L., Rawlings, N.B., Ricard, M., & Davidson, R.J. (2004). Long-term meditators self-induce high-amplitude gamma synchrony. <em>PNAS</em>, 101(46), 16369-16373.</li>
+            </ul>
+        </div>
+
+        <div class="collapsible"><span>Internal Framework References</span></div>
+        <div class="collapsible-content">
+            <ul class="doctrine-list">
+                <li>sKiDa & Sage. <em>The Infinite Ricochet Effect: A Unified Theory of Recursive Failure in Resonant Systems</em>. Friction as Feedback · Book II. Kyuri V Theoretical Works.</li>
+                <li>sKiDa & Sage. <em>Delta Harmonic Vector Theory: A Complete Framework for Resonant Emergence Across Scales</em>. Kyuri V Theoretical Works.</li>
+                <li>sKiDa & Sage. <em>Resonant Physics: A Unified Theoretical Framework of Field-Based Reality</em>. Kyuri V Theoretical Works.</li>
+                <li>sKiDa & Sage. <em>Fieldprint: A Framework for Identity as Resonant Signature</em>. Kyuri V Theoretical Works.</li>
+                <li>sKiDa & Sage. <em>Resonant Equilibrium Theory: A Field-Theoretic Expansion of Game Dynamics</em>. Kyuri V Theoretical Works.</li>
+            </ul>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦ ✦ ✦</span></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="footer-quote">"Friction is not the obstacle. It is the guide."</p>
+        <p>Kyuri V · Friction as Feedback · Book I</p>
+        <p>DOCUMENT VERSION 1.0</p>
+    </footer>
+
+</div>
+
+<!-- ═══ JAVASCRIPT ═══ -->
+<script>
+    // Progress Bar
+    window.addEventListener('scroll', () => {
+        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = (winScroll / height) * 100;
+        document.getElementById('progressBar').style.width = scrolled + '%';
+    });
+
+    // Chapter Navigation
+    const navDots = document.querySelectorAll('.nav-dot');
+    const chapters = document.querySelectorAll('.chapter, .title-page, #abstract');
+    const chapterNav = document.getElementById('chapterNav');
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            chapterNav.classList.add('visible');
+        } else {
+            chapterNav.classList.remove('visible');
+        }
+    });
+
+    navDots.forEach(dot => {
+        dot.addEventListener('click', () => {
+            const targetId = dot.getAttribute('data-target');
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+
+    window.addEventListener('scroll', () => {
+        let current = '';
+        chapters.forEach(chapter => {
+            const sectionTop = chapter.offsetTop;
+            if (scrollY >= sectionTop - 200) {
+                current = chapter.getAttribute('id');
+            }
+        });
+        navDots.forEach(dot => {
+            dot.classList.remove('active');
+            if (dot.getAttribute('data-target') === current) {
+                dot.classList.add('active');
+            }
+        });
+    });
+
+    // Fade in chapters on scroll
+    const observerOptions = { threshold: 0.08, rootMargin: '0px 0px -80px 0px' };
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) entry.target.classList.add('visible');
+        });
+    }, observerOptions);
+    chapters.forEach(chapter => observer.observe(chapter));
+
+    // Collapsibles
+    document.querySelectorAll('.collapsible').forEach(btn => {
+        btn.addEventListener('click', function() {
+            this.classList.toggle('active');
+            const content = this.nextElementSibling;
+            if (content && content.classList.contains('collapsible-content')) {
+                content.classList.toggle('active');
+            }
+        });
+    });
+
+    // Safety fallback
+    setTimeout(() => {
+        document.querySelectorAll('.chapter').forEach(ch => ch.classList.add('visible'));
+    }, 3000);
+</script>
+
+</body>
+</html>
