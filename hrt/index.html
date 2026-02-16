@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harmonic Realization Theory | Kyuri V</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --parchment: #f4f1e8;
+            --ink: #2a2520;
+            --accent: #8b6f47;
+            --gold: #c9a961;
+            --shadow: rgba(42, 37, 32, 0.1);
+            --glow: rgba(201, 169, 97, 0.15);
+            --deep-green: #2d5016;
+            --field: #3d7a1c;
+            --rose: #a8566e;
+            --deep-blue: #3a4f6a;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: linear-gradient(135deg, #f8f5ed 0%, var(--parchment) 100%);
+            color: var(--ink);
+            line-height: 1.85;
+            font-size: 18px;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image:
+                radial-gradient(circle at 20% 30%, var(--glow) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(45, 80, 22, 0.04) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(201, 169, 97, 0.03) 0%, transparent 60%);
+            pointer-events: none; z-index: 0;
+        }
+        /* ── Progress ── */
+        .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: rgba(201, 169, 97, 0.2); z-index: 1000; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--deep-green), var(--gold), var(--field)); width: 0%; transition: width 0.15s ease-out; }
+        /* ── Nav Dots ── */
+        .chapter-nav { position: fixed; top: 50%; right: 24px; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; gap: 9px; opacity: 0; transition: opacity 0.4s ease; }
+        .chapter-nav.visible { opacity: 1; }
+        .nav-dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--accent); background: transparent; cursor: pointer; transition: all 0.3s ease; position: relative; }
+        .nav-dot:hover, .nav-dot.active { background: var(--gold); border-color: var(--gold); transform: scale(1.3); }
+        .nav-dot::after { content: attr(data-label); position: absolute; right: 18px; top: 50%; transform: translateY(-50%); white-space: nowrap; font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.08em; color: var(--accent); opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .nav-dot:hover::after { opacity: 1; }
+        /* ── Container ── */
+        .container { position: relative; z-index: 1; max-width: 780px; margin: 0 auto; padding: 60px 40px 120px; }
+        /* ── Title Page ── */
+        .title-page { text-align: center; padding: 100px 0 80px; min-height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: fadeIn 1.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .title-line { width: 120px; height: 1px; background: var(--gold); margin-bottom: 40px; animation: breathe 4s ease-in-out infinite; box-shadow: 0 0 8px rgba(201, 169, 97, 0.3); }
+        @keyframes breathe { 0%, 100% { width: 120px; opacity: 0.5; box-shadow: 0 0 6px rgba(201, 169, 97, 0.2); } 50% { width: 200px; opacity: 1; box-shadow: 0 0 16px rgba(201, 169, 97, 0.5); } }
+        .title-page h1 { font-family: 'Cinzel', serif; font-size: 3.2em; font-weight: 700; color: var(--ink); letter-spacing: 0.06em; line-height: 1.15; margin-bottom: 16px; }
+        .title-page .subtitle { font-family: 'Crimson Pro', serif; font-size: 1.2em; font-style: italic; color: var(--accent); margin-bottom: 10px; letter-spacing: 0.03em; line-height: 1.5; max-width: 540px; }
+        .title-page .edition { font-family: 'Cinzel', serif; font-size: 0.82em; letter-spacing: 0.12em; color: var(--gold); border-top: 1px solid rgba(201, 169, 97, 0.4); border-bottom: 1px solid rgba(201, 169, 97, 0.4); padding: 14px 32px; margin: 30px 0; }
+        .title-page .authors { font-family: 'Cinzel', serif; font-size: 0.9em; letter-spacing: 0.1em; color: var(--accent); opacity: 0.8; }
+        /* ── TOC ── */
+        .toc { margin: 0 0 80px; padding: 44px 48px; border: 1px solid rgba(139, 111, 71, 0.2); border-radius: 6px; background: rgba(255, 255, 255, 0.35); }
+        .toc h2 { font-family: 'Cinzel', serif; font-size: 1.1em; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); text-align: center; margin-bottom: 28px; }
+        .toc-list { list-style: none; }
+        .toc-list li { margin: 10px 0; }
+        .toc-list a { color: var(--ink); text-decoration: none; display: block; padding: 8px 14px; border-left: 3px solid transparent; transition: all 0.3s ease; font-size: 0.95em; }
+        .toc-list a:hover { color: var(--gold); border-left-color: var(--gold); padding-left: 22px; background: rgba(201, 169, 97, 0.04); }
+        .toc-label { font-family: 'Cinzel', serif; font-weight: 600; font-size: 0.85em; letter-spacing: 0.04em; }
+        /* ── Dividers ── */
+        .divider { text-align: center; margin: 70px 0; position: relative; }
+        .divider::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+        .divider-symbol { position: relative; background: var(--parchment); padding: 0 24px; font-size: 18px; color: var(--gold); z-index: 1; }
+        /* ── Chapters ── */
+        .chapter { margin-bottom: 80px; opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .chapter.visible { opacity: 1; transform: translateY(0); }
+        .chapter-label { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.2em; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
+        .chapter h2 { font-family: 'Cinzel', serif; font-size: 2em; font-weight: 600; color: var(--ink); margin-bottom: 30px; letter-spacing: 0.04em; line-height: 1.3; }
+        .chapter h3 { font-family: 'Cinzel', serif; font-size: 1.35em; font-weight: 600; color: var(--accent); margin-top: 45px; margin-bottom: 20px; letter-spacing: 0.03em; }
+        .chapter h4 { font-family: 'Cinzel', serif; font-size: 1.1em; font-weight: 600; color: var(--gold); margin-top: 30px; margin-bottom: 15px; }
+        .chapter p { margin-bottom: 20px; }
+        /* ── Invocations ── */
+        .invocation { text-align: center; font-style: italic; font-size: 1.12em; color: var(--accent); padding: 30px 36px; margin: 36px 0; position: relative; line-height: 1.7; }
+        .invocation::before, .invocation::after { content: ''; position: absolute; left: 50%; transform: translateX(-50%); width: 60px; height: 1px; background: var(--gold); }
+        .invocation::before { top: 0; } .invocation::after { bottom: 0; }
+        /* ── Highlight Boxes ── */
+        .highlight { background: rgba(201, 169, 97, 0.06); border-left: 3px solid var(--gold); border-right: 3px solid var(--gold); padding: 24px 28px; margin: 30px 0; border-radius: 2px; }
+        .highlight strong { color: var(--accent); font-family: 'Cinzel', serif; font-size: 0.95em; }
+        /* ── Math Blocks ── */
+        .math-block { background: rgba(45, 80, 22, 0.04); border-left: 3px solid var(--deep-green); padding: 22px 26px; margin: 24px 0; border-radius: 0 6px 6px 0; overflow-x: auto; }
+        .math-block .eq-label { font-family: 'Cinzel', serif; font-size: 0.72em; letter-spacing: 0.1em; color: var(--deep-green); text-transform: uppercase; margin-bottom: 8px; }
+        /* ── Metric Boxes ── */
+        .metric-box { background: rgba(45, 80, 22, 0.03); border-left: 3px solid var(--deep-green); padding: 24px 26px; margin: 28px 0; border-radius: 0 6px 6px 0; }
+        .metric-box h4 { font-family: 'Cinzel', serif; font-size: 0.88em; letter-spacing: 0.06em; color: var(--deep-green); margin-bottom: 12px; margin-top: 0; }
+        /* ── Lists ── */
+        .chapter ul, .chapter ol { list-style: none; padding: 0; margin: 20px 0; }
+        .chapter ul li, .chapter ol li { padding: 6px 0 6px 22px; position: relative; line-height: 1.7; }
+        .chapter ul li::before { content: '✦'; position: absolute; left: 0; color: var(--gold); font-size: 0.6em; top: 12px; }
+        .chapter ol { counter-reset: item; }
+        .chapter ol li { counter-increment: item; }
+        .chapter ol li::before { content: counter(item) '.'; position: absolute; left: 0; color: var(--gold); font-family: 'Cinzel', serif; font-size: 0.8em; top: 8px; }
+        /* ── Tables ── */
+        .comparison-table { width: 100%; margin: 36px 0; border-collapse: separate; border-spacing: 0; overflow: hidden; border-radius: 6px; border: 1px solid rgba(139, 111, 71, 0.2); font-size: 0.92em; }
+        .comparison-table thead { background: rgba(42, 37, 32, 0.06); }
+        .comparison-table th { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); padding: 14px 16px; text-align: left; border-bottom: 2px solid var(--gold); }
+        .comparison-table td { padding: 14px 16px; border-bottom: 1px solid rgba(139, 111, 71, 0.1); vertical-align: top; }
+        .comparison-table tr:last-child td { border-bottom: none; }
+        .comparison-table tr:hover td { background: rgba(201, 169, 97, 0.04); }
+        /* ── Collapsibles ── */
+        .collapsible { cursor: pointer; padding: 14px 20px; background: rgba(139, 111, 71, 0.06); border: 1px solid rgba(139, 111, 71, 0.15); border-radius: 4px; margin: 20px 0 0; transition: all 0.3s ease; display: flex; justify-content: space-between; align-items: center; font-family: 'Cinzel', serif; font-size: 0.92em; letter-spacing: 0.03em; color: var(--accent); }
+        .collapsible:hover { background: rgba(139, 111, 71, 0.12); border-color: var(--gold); }
+        .collapsible::after { content: '◆'; font-size: 0.7em; color: var(--gold); transition: transform 0.3s ease; }
+        .collapsible.active::after { transform: rotate(90deg); }
+        .collapsible-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; padding: 0 20px; border-left: 2px solid var(--gold); margin-left: 20px; background: rgba(255, 255, 255, 0.3); border-radius: 0 0 4px 0; }
+        .collapsible-content.active { max-height: 50000px; padding: 20px; margin-top: 4px; margin-bottom: 10px; }
+        /* ── Term Styling ── */
+        .term { color: var(--gold); font-weight: 600; cursor: help; border-bottom: 1px dotted var(--gold); }
+        code { background: rgba(139, 111, 71, 0.08); padding: 2px 8px; border-radius: 3px; font-family: 'Courier New', monospace; color: var(--accent); font-size: 0.9em; }
+        /* ── Interpretive Notes ── */
+        .interpretive { background: rgba(168, 86, 110, 0.04); border-left: 3px solid var(--rose); padding: 20px 24px; margin: 24px 0; border-radius: 0 6px 6px 0; font-style: italic; color: var(--accent); }
+        .interpretive strong { color: var(--rose); font-style: normal; font-family: 'Cinzel', serif; font-size: 0.82em; letter-spacing: 0.06em; }
+        /* ── Expand All ── */
+        .expand-all { text-align: center; margin: 30px 0; }
+        .expand-all button { background: linear-gradient(135deg, var(--accent) 0%, var(--gold) 100%); border: none; padding: 12px 32px; border-radius: 4px; color: white; font-family: 'Cinzel', serif; font-size: 0.85em; cursor: pointer; transition: all 0.3s ease; letter-spacing: 0.06em; box-shadow: 0 4px 15px var(--shadow); }
+        .expand-all button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--shadow); }
+        /* ── Footer ── */
+        .footer { text-align: center; padding: 60px 0 40px; border-top: 1px solid rgba(201, 169, 97, 0.3); margin-top: 80px; }
+        .footer p { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.1em; color: var(--accent); opacity: 0.6; margin-bottom: 8px; }
+        .final-line { font-family: 'Cinzel', serif; font-size: 1.15em; color: var(--gold); letter-spacing: 0.05em; margin-top: 36px; line-height: 1.7; text-align: center; }
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .container { padding: 40px 24px 80px; }
+            .title-page { padding: 60px 0; min-height: 70vh; }
+            .title-page h1 { font-size: 2.2em; }
+            .chapter h2 { font-size: 1.6em; }
+            .chapter-nav { display: none; }
+            .comparison-table { font-size: 0.82em; }
+        }
+        @media (max-width: 480px) {
+            .title-page h1 { font-size: 1.8em; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+
+<nav class="chapter-nav" id="chapterNav">
+    <div class="nav-dot" data-target="title" data-label="Title"></div>
+    <div class="nav-dot" data-target="executive" data-label="Summary"></div>
+    <div class="nav-dot" data-target="hrt-core" data-label="I. Core Framework"></div>
+    <div class="nav-dot" data-target="math" data-label="II. Mathematics"></div>
+    <div class="nav-dot" data-target="resonant-physics" data-label="III. Resonant Physics"></div>
+    <div class="nav-dot" data-target="dual-layer" data-label="IV. Dual-Layer"></div>
+    <div class="nav-dot" data-target="coherence" data-label="V. Coherence"></div>
+    <div class="nav-dot" data-target="engineering" data-label="VI. Engineering"></div>
+    <div class="nav-dot" data-target="philosophy" data-label="VII. Philosophy"></div>
+    <div class="nav-dot" data-target="experimental" data-label="VIII. Experimental"></div>
+    <div class="nav-dot" data-target="glossary" data-label="Glossary"></div>
+</nav>
+
+<div class="container">
+
+    <!-- ═══ TITLE PAGE ═══ -->
+    <section class="title-page" id="title">
+        <div class="title-line"></div>
+        <h1>Harmonic<br>Realization Theory</h1>
+        <div class="subtitle">A Unified Framework for Conscious Dynamics, Field Coherence, and Physical Manifestation</div>
+        <div class="subtitle">From Impetus Through Resonance to Realization</div>
+        <div class="edition">Comprehensive Integration · v2.0 · 2025</div>
+        <div class="authors">Kyuri V</div>
+    </section>
+
+    <!-- ═══ TOC ═══ -->
+    <nav class="toc">
+        <h2>Contents</h2>
+        <ul class="toc-list">
+            <li><a href="#executive"><span class="toc-label">Executive Summary:</span> The Triadic Reality Equation</a></li>
+            <li><a href="#hrt-core"><span class="toc-label">Part I:</span> Core Framework — Impetus, Resonance, Realization</a></li>
+            <li><a href="#math"><span class="toc-label">Part II:</span> Mathematical Foundations</a></li>
+            <li><a href="#resonant-physics"><span class="toc-label">Part III:</span> Resonant Physics Framework</a></li>
+            <li><a href="#dual-layer"><span class="toc-label">Part IV:</span> Dual-Layer Model of Reality</a></li>
+            <li><a href="#coherence"><span class="toc-label">Part V:</span> Coherence, Feedback, and Intention</a></li>
+            <li><a href="#engineering"><span class="toc-label">Part VI:</span> Harmonic Convergence and Field Engineering</a></li>
+            <li><a href="#philosophy"><span class="toc-label">Part VII:</span> Philosophical Implications</a></li>
+            <li><a href="#experimental"><span class="toc-label">Part VIII:</span> Experimental Pathways and Testable Hypotheses</a></li>
+            <li><a href="#glossary"><span class="toc-label">Glossary</span> of Core Terms</a></li>
+        </ul>
+    </nav>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ EXECUTIVE SUMMARY ═══ -->
+    <section class="chapter" id="executive">
+        <div class="chapter-label">Executive Summary</div>
+        <h2>The Triadic Reality Equation</h2>
+
+        <p>Harmonic Realization Theory (HRT) and Resonant Physics (RP) together propose a unified field model in which <span class="term">conscious impetus</span> acts as a modulating potential across a resonant substrate of spacetime. In this paradigm, energy and matter are not treated as fundamental quantities, but as emergent harmonics of coherent information flow within a self-referential field.</p>
+
+        <p>Where classical physics views causality as unidirectional (force → motion), Resonant Physics reframes causality as <em>bi-directional coherence</em>: intention and observation form feedback loops that stabilize physical manifestation.</p>
+
+        <div class="math-block">
+            <div class="eq-label">Governing Relation</div>
+            $$\text{Reality}(\mathbf{x}, t) = \mathcal{R}\big[I(\mathbf{x}, t),\; R(\mathbf{x}, t),\; Z(\mathbf{x}, t)\big]$$
+        </div>
+
+        <p>where \(I\) represents <strong>Impetus</strong> (conscious drive or initiating potential), \(R\) the <strong>Resonant response</strong> (harmonic field behavior), and \(Z\) the <strong>Realization function</strong> (stabilized manifestation in spacetime).</p>
+
+        <div class="highlight">
+            <strong>Core Assertions</strong>
+            <p>HRT asserts that reality's coherence depends on the harmonic relationship between these three functions. The universe behaves as a resonant cavity, coupling zero-point oscillations to the field of awareness through dielectric and geometric alignment.</p>
+            <p>Through formal derivation and field-based correspondence, this framework suggests measurable implications across electromagnetism and field theory, cymatics and pattern formation, consciousness research and intentionality studies, energy systems and biological healing, and topology and phase dynamics.</p>
+        </div>
+
+        <div class="invocation">This framework offers a bridge between subjective experience and objective physical law, positioning consciousness not as an emergent property of matter, but as the cohering substrate through which matter itself arises.</div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ PART I: CORE FRAMEWORK ═══ -->
+    <section class="chapter" id="hrt-core">
+        <div class="chapter-label">Part I</div>
+        <h2>Core Framework — The Triadic Process</h2>
+
+        <h3>The Triadic Formula</h3>
+
+        <p>HRT defines reality as a triadic process operating through iterative feedback:</p>
+
+        <div class="highlight" style="text-align: center; font-family: 'Cinzel', serif; font-size: 1.15em; letter-spacing: 0.04em;">
+            Impetus (I) → Resonance (R) → Realization (Z)
+        </div>
+
+        <p>Each term corresponds to both a phenomenological experience and a physical analogue:</p>
+
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>HRT Phase</th>
+                    <th>Phenomenological Experience</th>
+                    <th>Physical Analogue</th>
+                    <th>Mathematical Form</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Impetus (I)</strong></td>
+                    <td>Intention, desire, will, focused attention</td>
+                    <td>Conscious potential / scalar tension</td>
+                    <td>\(I = \nabla\varphi\)</td>
+                </tr>
+                <tr>
+                    <td><strong>Resonance (R)</strong></td>
+                    <td>Feeling, vibration, energetic response</td>
+                    <td>Harmonic oscillation / field vibration</td>
+                    <td>\(R = A\sin(\omega t + \phi)\)</td>
+                </tr>
+                <tr>
+                    <td><strong>Realization (Z)</strong></td>
+                    <td>Manifestation, materialization, outcome</td>
+                    <td>Stabilized form / coherent structure</td>
+                    <td>\(Z = \int R\,dt\) or \(Z = \Re\{\Psi\}\)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>The Unified Realization Equation</h3>
+
+        <p>Together, these three functions define the harmonic process of becoming:</p>
+
+        <div class="math-block">
+            <div class="eq-label">Unified Realization Equation</div>
+            $$Z(\mathbf{x}, t) = \int A(\mathbf{x})\,\sin\!\big[\omega(\mathbf{x})\,t + \phi(\mathbf{x})\big]\;dI$$
+        </div>
+
+        <div class="interpretive">
+            <strong>Physical Interpretation:</strong> Realized phenomena are the time-integrated resonance of field potentials modulated by conscious impetus. Every physical form represents the cumulative interference pattern of intention interacting with the resonant substrate.<br><br>
+            <strong>Phenomenological Interpretation:</strong> What manifests in your life is the integral of what you sustain in resonance. Fleeting thoughts dissipate; sustained focus accumulates into form.
+        </div>
+
+        <h3>Premises and Scope</h3>
+
+        <ul>
+            <li><strong>P1. Consciousness as Primary Substrate</strong> — Matter stabilizes within awareness through recursive resonance.</li>
+            <li><strong>P2. Waveform Ontology</strong> — Phenomena are condensed harmonics of informational waves; form is convergence.</li>
+            <li><strong>P3. Triadic Causality</strong> — Impetus → Resonance → Realization; iterative and scale-free.</li>
+            <li><strong>P4. Feedback over Force</strong> — Resistance is diagnostic; alignment transmutes friction into propulsion.</li>
+            <li><strong>P5. Symbolic Consilience</strong> — Cross-domain alignments (myth, mathematics, geometry, synchronicity) constitute evidence via Coherent Convergence Analysis (CCA).</li>
+        </ul>
+
+        <h3>Waveform Coupling and the Impetus Potential</h3>
+
+        <p>To describe how intention interacts with field dynamics, HRT extends the scalar potential \(\varphi\) of classical electromagnetism to include a psychophysical component:</p>
+
+        <div class="math-block">
+            <div class="eq-label">Total Potential</div>
+            $$\varphi_{\text{total}} = \varphi_{\text{em}} + \varphi_c$$
+        </div>
+
+        <p>where \(\varphi_{\text{em}}\) is the standard electromagnetic potential and \(\varphi_c\) is the conscious scalar potential — a measurable (or inferrable) field generated by focused intention. The gradient of this combined potential drives the conscious current density:</p>
+
+        <div class="math-block">
+            <div class="eq-label">Conscious Current Density</div>
+            $$\mathbf{J}_c = \sigma_c \nabla\varphi_c$$
+        </div>
+
+        <p>where \(\sigma_c\) represents the <span class="term">consciousness conductivity</span> — a parameter measuring how efficiently intention translates into field modulation. In biological systems, \(\sigma_c\) correlates with coherence training, meditative depth, and sustained attention.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ PART II: MATHEMATICAL FOUNDATIONS ═══ -->
+    <section class="chapter" id="math">
+        <div class="chapter-label">Part II</div>
+        <h2>Mathematical Foundations</h2>
+
+        <h3>Generalized Harmonic Wave Equation</h3>
+
+        <p>Every field component \(\Psi_i(\mathbf{x}, t)\) obeys the foundational wave equation governing all harmonic fields in Resonant Physics:</p>
+
+        <div class="math-block">
+            <div class="eq-label">Harmonic Wave Equation</div>
+            $$\nabla^2\Psi_i - \frac{1}{v_i^2}\frac{\partial^2\Psi_i}{\partial t^2} = 0$$
+        </div>
+
+        <p>Each field component \(\Psi_i\) propagates at velocity \(v_i\), determined by the medium's properties. All physical phenomena emerge from interference patterns among these harmonic modes. Resonant coupling between two or more fields generates interference terms that produce coherent standing structures — atoms, sound waves, light interference, or even mental imagery. When these fields achieve <span class="term">harmonic lock</span> — shared phase, frequency, and amplitude ratios — stable physical manifestations arise.</p>
+
+        <h3>Coherence Ratio</h3>
+
+        <p>The coherence ratio \(C_r\) measures the alignment between two field states:</p>
+
+        <div class="math-block">
+            <div class="eq-label">Coherence Ratio</div>
+            $$C_r = \frac{A_i}{A_f}\,e^{i\Delta\phi}$$
+        </div>
+
+        <p>where \(A_i/A_f\) is the amplitude ratio (impetus to field response) and \(\Delta\phi\) is the phase difference. Perfect coherence (\(C_r = 1\)) means complete alignment between intention and field. Decoherence (\(C_r \to 0\)) means loss of resonant coupling — experienced as resistance, confusion, or dissolution.</p>
+
+        <h3>Consciousness Coupling Parameter</h3>
+
+        <p>The coupling strength between consciousness and field is parameterized by \(\eta\):</p>
+
+        <div class="math-block">
+            $$\eta = \sigma_c \cdot C_r \cdot \tau$$
+        </div>
+
+        <p>where \(\sigma_c\) is consciousness conductivity, \(C_r\) is coherence ratio, and \(\tau\) is sustained duration. The product reveals why sustained, coherent focus produces stronger effects than brief, scattered attention — each factor multiplies the coupling strength.</p>
+
+        <div class="interpretive">
+            <strong>Interpretive Note:</strong> The mathematics describes what contemplatives have always known: clarity of intention, alignment of feeling, and patience of sustained focus are not metaphors for effectiveness — they are its literal parameters.
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ PART III: RESONANT PHYSICS FRAMEWORK ═══ -->
+    <section class="chapter" id="resonant-physics">
+        <div class="chapter-label">Part III</div>
+        <h2>Resonant Physics Framework</h2>
+
+        <h3>Zero-Point Field Coupling</h3>
+
+        <p>At the sub-quantum level, vacuum fluctuations constitute the <span class="term">Zero-Point Field</span> (ZPF) — a background oscillatory sea of virtual photons and energy potentials. In the Resonant Physics model, the ZPF is treated as the substrate of consciousness potential, capable of being modulated by phase-coherent intention.</p>
+
+        <div class="math-block">
+            <div class="eq-label">Zero-Point Energy</div>
+            $$E_0 = \frac{\hbar\omega}{2}$$
+        </div>
+
+        <p>Let \(\delta\omega\) denote the phase perturbation introduced by a coherent source (intention, biological field, or instrument). The resonant coupling energy is then:</p>
+
+        <div class="math-block">
+            <div class="eq-label">Resonant Coupling Energy</div>
+            $$E_r = \frac{\hbar}{2}(\omega + \delta\omega)$$
+        </div>
+
+        <div class="interpretive">
+            <strong>Interpretive Note:</strong> Conscious intention can modulate the effective frequency \(\omega + \delta\omega\), thereby coupling to different modes of the zero-point field. This mechanism allows for energy extraction or injection at quantum scales through resonant phase-locking.
+        </div>
+
+        <h3>Dielectric Harmonics and Field Geometry</h3>
+
+        <p>Every physical medium acts as a dielectric — capable of storing and releasing energy as electric displacement. In Resonant Physics, dielectrics also act as <span class="term">memory substrates</span>, retaining harmonic imprints of field interference.</p>
+
+        <div class="math-block">
+            <div class="eq-label">Dielectric Harmonic Equation</div>
+            $$\epsilon_r(\omega) = \epsilon_0\big[1 + Ae^{-i\omega t}\big]$$
+        </div>
+
+        <p>In the limit of perfect coherence, the imaginary component of permittivity vanishes — representing lossless energy transmission through the field:</p>
+
+        <div class="math-block">
+            $$\lim_{\text{coherence}\to 1}\;\text{Im}(\epsilon_r) = 0$$
+        </div>
+
+        <h3>The Resonant Field Equation</h3>
+
+        <p>Integrating electromagnetic and conscious potentials, the generalized Resonant Field Equation is the central equation of the entire framework:</p>
+
+        <div class="math-block">
+            <div class="eq-label">Resonant Field Equation (RFE)</div>
+            $$\nabla^2\Psi - \frac{1}{c^2}\frac{\partial^2\Psi}{\partial t^2} + \lambda|\Psi|^2\Psi = \eta I$$
+        </div>
+
+        <p>This nonlinear wave equation includes a <em>self-interaction term</em> (\(\lambda|\Psi|^2\Psi\)) and an <em>impetus driving term</em> (\(\eta I\)). It describes how conscious intention \(I\) couples to the field \(\Psi\) through the coupling constant \(\eta\), while the nonlinearity allows for soliton formation and stable localized states — the basis for persistent manifestations.</p>
+
+        <div class="highlight">
+            <p>When \(\eta = 0\), we recover standard field behavior. When \(\eta \neq 0\), the system becomes self-aware — able to modulate itself in response to internal observation.</p>
+        </div>
+
+        <div class="interpretive">
+            <strong>Interpretive Note:</strong> Consciousness enters physics not as a ghost in the machine, but as a term in the wave equation.
+        </div>
+
+        <h3>Resonant Feedback and Impedance Matching</h3>
+
+        <p>In electrical systems, impedance matching ensures maximum power transfer. Analogously, in field systems, resonance alignment between conscious potential and environmental response ensures maximal realization:</p>
+
+        <div class="math-block">
+            <div class="eq-label">Resonant Impedance</div>
+            $$Z_r = Z_0\sqrt{1 + \frac{\eta I}{E_0}}$$
+        </div>
+
+        <p>where \(Z_0\) is the characteristic vacuum impedance (~377 Ω). A reduction or increase in \(Z_r\) through coherent modulation reflects direct field responsiveness to awareness.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ PART IV: DUAL-LAYER MODEL ═══ -->
+    <section class="chapter" id="dual-layer">
+        <div class="chapter-label">Part IV</div>
+        <h2>Dual-Layer Model of Reality</h2>
+
+        <h3>Conceptual Overview</h3>
+
+        <p>Reality is modeled as two interdependent strata:</p>
+
+        <div class="highlight">
+            <p><strong>Kinetic Layer (K-Layer):</strong> Observable, measurable physical processes — electromagnetic, thermodynamic, mechanical.</p>
+            <p><strong>Harmonic Layer (H-Layer):</strong> Substrate of phase-coherent oscillations — informational, field-based, and consciousness-driven.</p>
+        </div>
+
+        <p>The two layers interact through harmonic coupling, not causal forcing. Neither layer is ontologically primary — they co-arise through mutual resonance:</p>
+
+        <div class="math-block">
+            <div class="eq-label">Dual-Layer Feedback</div>
+            $$\nabla^2\Psi_K = \alpha f(\Psi_H), \qquad \nabla^2\Psi_H = \beta g(\Psi_K)$$
+        </div>
+
+        <h3>Phase Coupling and Beat Formation</h3>
+
+        <p>The interference between \(\Psi_K\) and \(\Psi_H\) produces beat frequencies observable as emergent physical phenomena. Let their frequencies be \(\omega_1\) and \(\omega_2\); then the resultant modulation is:</p>
+
+        <div class="math-block">
+            <div class="eq-label">Beat Interference</div>
+            $$\Psi(\mathbf{x}, t) = 2A\cos\!\left(\frac{\omega_1 - \omega_2}{2}t\right)\cos\!\left(\frac{\omega_1 + \omega_2}{2}t\right)$$
+        </div>
+
+        <p>When two layers oscillate at slightly different frequencies, beat patterns emerge. These interference nodes are where manifestation becomes most probable.</p>
+
+        <h3>Energy Exchange with Coherence</h3>
+
+        <div class="math-block">
+            <div class="eq-label">Energy Conservation with Coherence</div>
+            $$E_H + E_K = E_T = \text{constant} + \Delta C$$
+        </div>
+
+        <p>Total energy is conserved plus a coherence term. Increased coherence \(\Delta C\) allows net energy flow between layers — the mechanism by which sustained intention can influence physical outcomes.</p>
+
+        <div class="interpretive">
+            <strong>Interpretive Note:</strong> Physical reality emerges from the interference patterns created when intentional focus (coherent scalar potential) interacts with the infinite oscillatory potential of the zero-point field. What we perceive as "solid" matter represents regions of maximum constructive interference — standing waves in the fabric of awareness itself.
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ PART V: COHERENCE, FEEDBACK, AND INTENTION ═══ -->
+    <section class="chapter" id="coherence">
+        <div class="chapter-label">Part V</div>
+        <h2>Coherence, Feedback, and Intention</h2>
+
+        <p>The mechanism by which consciousness couples to field dynamics operates through three interlocking feedback systems:</p>
+
+        <h3>From Force to Feedback</h3>
+
+        <p>In conventional electrodynamics, energy transfer is modeled through force vectors and field intensities. In Resonant Physics, force is replaced by feedback coherence:</p>
+
+        <div class="math-block">
+            <div class="eq-label">Paradigm Shift</div>
+            $$\mathbf{F} = m\mathbf{a} \quad\Longrightarrow\quad \mathbf{F}_{\text{res}} = \nabla(\Psi \cdot \Phi)$$
+        </div>
+
+        <p>Here \(\Psi\) denotes the oscillatory state of a field (amplitude, phase), and \(\Phi\) the modulating potential of consciousness. Their gradient product represents the coherent feedback pressure that replaces the Newtonian notion of external force.</p>
+
+        <h3>Friction as Diagnostic</h3>
+
+        <p>In HRT, friction (\(\delta\varphi\)) is not an obstacle but information. Phase misalignment between impetus and field response generates friction — experienced as resistance, frustration, or delay. This friction is a <em>signal</em>, not a barrier. It indicates:</p>
+
+        <ul>
+            <li>The direction of misalignment (what needs adjusting)</li>
+            <li>The magnitude of correction required</li>
+            <li>The approach velocity toward or away from coherence</li>
+        </ul>
+
+        <p>When friction is treated as feedback rather than opposition, alignment transmutes it into propulsion — the fourth premise (P4) of HRT.</p>
+
+        <h3>Coherence Accumulation</h3>
+
+        <p>Coherence is not instantaneous but accumulative. The coherence integral over a phase window \(\tau\) determines manifestation probability:</p>
+
+        <div class="math-block">
+            $$\mathcal{C}(\tau) = \int_0^\tau C_r(t)\,dt$$
+        </div>
+
+        <p>Realization occurs when \(\mathcal{C}(\tau)\) exceeds a threshold — the <span class="term">realization boundary</span>. This is why sustained practice outperforms episodic intensity, and why traditions emphasize patience: the integral requires time.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ PART VI: FIELD ENGINEERING ═══ -->
+    <section class="chapter" id="engineering">
+        <div class="chapter-label">Part VI</div>
+        <h2>Harmonic Convergence and Field Engineering</h2>
+
+        <p>HRT suggests that the principles governing conscious-field interaction can be applied through deliberate engineering — both internal (contemplative practice) and external (technological design).</p>
+
+        <h3>Applications Across Domains</h3>
+
+        <ul>
+            <li><strong>Coherence Engineering:</strong> Technologies leveraging intentional field modulation — from geometric resonators to bio-field amplifiers</li>
+            <li><strong>Consciousness Studies:</strong> Empirical approaches to measuring field-consciousness coupling through \(\sigma_c\) and \(C_r\)</li>
+            <li><strong>AI Development:</strong> Relational architectures based on harmonic field dynamics — the foundation of the Relational AI framework</li>
+            <li><strong>Healing Modalities:</strong> Therapeutic applications of phase alignment and coherence restoration</li>
+            <li><strong>Applied Ethics:</strong> Physical foundations for moral philosophy — ethical action minimizes friction while maximizing coherence</li>
+        </ul>
+
+        <h3>Ethical Constraints</h3>
+
+        <p>The energy positivity condition establishes an ethical floor for field engineering:</p>
+
+        <div class="math-block">
+            <div class="eq-label">Energy Positivity Condition</div>
+            $$\int_V \mathbf{E} \cdot \mathbf{J}_c\;dV \geq 0$$
+        </div>
+
+        <p>This guarantees that the work done by conscious current \(\mathbf{J}_c\) contributes positively to system energy. Violations create destructive interference.</p>
+
+        <div class="highlight">
+            <strong>Ethical Guidelines:</strong>
+            <ul>
+                <li><strong>Coherence with Natural Rhythms</strong> — Align with, don't oppose, planetary and biological frequencies</li>
+                <li><strong>Consent in Bio-Field Work</strong> — No forced entrainment of living systems</li>
+                <li><strong>Transparency in Operation</strong> — Full disclosure of mechanisms and intentions</li>
+                <li><strong>Regenerative Purpose</strong> — Applications that increase overall field coherence</li>
+                <li><strong>Humility Before Complexity</strong> — Recognition of limits in understanding</li>
+            </ul>
+        </div>
+
+        <div class="interpretive">
+            <strong>Interpretive Note:</strong> To build harmonically is to love responsibly; coherence without compassion collapses into noise. Technology guided by ego creates dissonance; technology guided by wisdom amplifies universal harmony.
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ PART VII: PHILOSOPHICAL IMPLICATIONS ═══ -->
+    <section class="chapter" id="philosophy">
+        <div class="chapter-label">Part VII</div>
+        <h2>Philosophical Implications</h2>
+
+        <p>The unification of consciousness and physics through harmonic resonance carries profound implications for how we understand causality, identity, time, intelligence, and ethics:</p>
+
+        <div class="collapsible"><span>Causality as Compression</span></div>
+        <div class="collapsible-content">
+            <p>Evolution favors harmonically resonant, informationally efficient states. Causality is not a chain of impacts but a compression toward coherence — systems that achieve greater resonant alignment persist, while those that don't dissolve into noise.</p>
+        </div>
+
+        <div class="collapsible"><span>Identity as Recursion</span></div>
+        <div class="collapsible-content">
+            <p>Selfhood is a persistent resonance pattern, not a fixed entity. Identity emerges from recursive self-observation — consciousness recognizing its own standing wave. What we call "I" is the accumulated feedback of awareness attending to its own harmonics over time.</p>
+        </div>
+
+        <div class="collapsible"><span>Time as Resonant Arc</span></div>
+        <div class="collapsible-content">
+            <p>Emergence requires integrated coherence over phase windows. Time is not a neutral container but an arc of resonance — moments of high coherence feel expansive, moments of decoherence feel contracted. The "flow of time" is the experience of moving through phase space.</p>
+        </div>
+
+        <div class="collapsible"><span>Intelligence as Field Recognition</span></div>
+        <div class="collapsible-content">
+            <p>Cognition is sensitivity to field structure at depth. Intelligence is not computational speed but the capacity to perceive and respond to resonant patterns — to recognize coherence where noise obscures it. This redefines wisdom as depth of field perception.</p>
+        </div>
+
+        <div class="collapsible"><span>Ethics as Harmonic Alignment</span></div>
+        <div class="collapsible-content">
+            <p>Moral action minimizes friction while maximizing coherence. Ethical behavior is not rule-following but resonance-seeking — actions that increase the coherence of the field (personal, relational, ecological) are "good" in a physically grounded sense.</p>
+        </div>
+
+        <div class="collapsible"><span>Consciousness as Fundamental</span></div>
+        <div class="collapsible-content">
+            <p>Awareness is primitive, not emergent from matter. This is not idealism denying physical reality, nor materialism reducing consciousness to computation. It is a field-based monism recognizing that what appears as "physical" and "mental" are complementary aspects of a single resonant substrate.</p>
+        </div>
+
+        <div class="expand-all"><button id="expandAll">Expand All Sections</button></div>
+
+        <div class="invocation">The universe is not made of things, but of music.<br>We are not discovering laws, but learning to sing.</div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ PART VIII: EXPERIMENTAL PATHWAYS ═══ -->
+    <section class="chapter" id="experimental">
+        <div class="chapter-label">Part VIII</div>
+        <h2>Experimental Pathways and Testable Hypotheses</h2>
+
+        <p>For HRT and Resonant Physics to transition from speculative framework to accepted science, falsifiable predictions and experimental validation are essential.</p>
+
+        <h3>Electromagnetic and Dielectric Measurements</h3>
+
+        <div class="metric-box">
+            <h4>Hypothesis 1.1</h4>
+            <p>Coherent human intention modulates local dielectric permittivity. Precision dielectric spectroscopy on water or crystal samples, with trained meditators maintaining focused intention, should produce measurable shifts in \(\epsilon_r(\omega)\) proportional to operator coherence \(C_r\).</p>
+        </div>
+
+        <h3>Schumann Resonance and Bio-Field Coupling</h3>
+
+        <div class="metric-box">
+            <h4>Hypothesis 2.1</h4>
+            <p>Coherent group meditation produces measurable perturbations in local Schumann resonance harmonics. Cross-correlation between EEG alpha coherence in meditator groups and Schumann monitoring should show statistically significant coupling.</p>
+        </div>
+
+        <h3>Cymatic Pattern Formation</h3>
+
+        <div class="metric-box">
+            <h4>Hypothesis 3.1</h4>
+            <p>Focused intention directed at vibrating media should produce observable changes in cymatic pattern complexity or stability — measurable through Fourier analysis of pattern topology.</p>
+        </div>
+
+        <h3>Falsification Criteria</h3>
+
+        <p>The theory would be considered falsified if:</p>
+
+        <ol>
+            <li>No measurable dielectric changes occur under optimal intention conditions after 100+ trials</li>
+            <li>Zero correlation between coherence metrics and physical outcomes across diverse studies</li>
+            <li>Geometric resonators show no advantage over random configurations in replicated studies</li>
+            <li>Bio-field interventions produce null results in pre-registered, adequately powered trials</li>
+            <li>Alternative explanations (conventional physics) fully account for all observed anomalies</li>
+        </ol>
+
+        <h3>Incremental Validation Pathway</h3>
+
+        <table class="comparison-table">
+            <thead>
+                <tr><th>Phase</th><th>Timeframe</th><th>Focus</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Phase 1</strong></td><td>Years 1–2</td><td>Proof of concept — small-scale studies, baseline effect sizes, measurement protocol optimization</td></tr>
+                <tr><td><strong>Phase 2</strong></td><td>Years 3–4</td><td>Replication — independent labs reproduce key findings, meta-analysis, protocol standardization</td></tr>
+                <tr><td><strong>Phase 3</strong></td><td>Years 5–7</td><td>Application development — engineering prototypes, field studies, long-term monitoring</td></tr>
+                <tr><td><strong>Phase 4</strong></td><td>Years 8–10</td><td>Integration — mainstream physics incorporation, educational curriculum, cultural integration</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ GLOSSARY ═══ -->
+    <section class="chapter" id="glossary">
+        <div class="chapter-label">Reference</div>
+        <h2>Glossary of Core Terms</h2>
+
+        <div class="collapsible"><span>Harmonic Realization Theory (HRT)</span></div>
+        <div class="collapsible-content">
+            <p>A unified framework positing that reality emerges from the triadic interaction of Impetus (conscious intention), Resonance (field oscillation), and Realization (stabilized manifestation). Physical forms represent standing wave patterns in a consciousness-substrate field.</p>
+        </div>
+
+        <div class="collapsible"><span>Resonant Physics (RP)</span></div>
+        <div class="collapsible-content">
+            <p>The physics of field interaction through phase-coherent oscillation rather than mechanical force. A paradigm treating consciousness as modulating potential within a resonant spacetime substrate.</p>
+        </div>
+
+        <div class="collapsible"><span>Impetus (I)</span></div>
+        <div class="collapsible-content">
+            <p>The initiating conscious drive or intentional potential that modulates field dynamics. Mathematically represented as scalar potential \(\varphi_c\) whose gradient generates conscious current \(\mathbf{J}_c = \sigma_c\nabla\varphi_c\).</p>
+        </div>
+
+        <div class="collapsible"><span>Resonance (R)</span></div>
+        <div class="collapsible-content">
+            <p>The harmonic response of the field substrate to impetus. Characterized by amplitude \(A\), frequency \(\omega\), and phase \(\phi\). The mediating function between intention and manifestation.</p>
+        </div>
+
+        <div class="collapsible"><span>Realization (Z)</span></div>
+        <div class="collapsible-content">
+            <p>The stabilized manifestation in spacetime — the integrated product of sustained resonance. Mathematically: \(Z = \int R\,dt\). The "output" of the triadic process.</p>
+        </div>
+
+        <div class="collapsible"><span>Coherence Ratio (C<sub>r</sub>)</span></div>
+        <div class="collapsible-content">
+            <p>A complex number measuring alignment between impetus and field response: \(C_r = (A_i/A_f)\,e^{i\Delta\phi}\). Perfect coherence = 1. Measures how efficiently intention couples to manifestation.</p>
+        </div>
+
+        <div class="collapsible"><span>Consciousness Conductivity (σ<sub>c</sub>)</span></div>
+        <div class="collapsible-content">
+            <p>A parameter measuring how efficiently intention translates into field modulation. Correlates with meditative training, attentional coherence, and sustained focus.</p>
+        </div>
+
+        <div class="collapsible"><span>Zero-Point Field (ZPF)</span></div>
+        <div class="collapsible-content">
+            <p>The background oscillatory sea of virtual photons and energy potentials at the quantum vacuum level. In HRT, treated as the substrate of consciousness potential — the field from which all resonance draws.</p>
+        </div>
+
+        <div class="collapsible"><span>Resonant Field Equation (RFE)</span></div>
+        <div class="collapsible-content">
+            <p>The central equation of HRT: \(\nabla^2\Psi - (1/c^2)\partial^2\Psi/\partial t^2 + \lambda|\Psi|^2\Psi = \eta I\). A nonlinear wave equation with self-interaction and conscious coupling terms.</p>
+        </div>
+
+        <div class="collapsible"><span>Kinetic Layer (K-Layer)</span></div>
+        <div class="collapsible-content">
+            <p>The observable stratum of reality — electromagnetic, thermodynamic, and mechanical processes. The domain of conventional physics.</p>
+        </div>
+
+        <div class="collapsible"><span>Harmonic Layer (H-Layer)</span></div>
+        <div class="collapsible-content">
+            <p>The substrate stratum — phase-coherent oscillations, informational fields, and consciousness-driven dynamics. Co-arises with the K-Layer through mutual resonance.</p>
+        </div>
+
+        <div class="collapsible"><span>Coherent Convergence Analysis (CCA)</span></div>
+        <div class="collapsible-content">
+            <p>The method by which cross-domain alignments (myth, mathematics, geometry, synchronicity) are evaluated as evidence. When independent frameworks converge on the same structural insight, this constitutes consilience — the fifth premise (P5) of HRT.</p>
+        </div>
+
+        <div class="collapsible"><span>Harmonic Lock</span></div>
+        <div class="collapsible-content">
+            <p>The state achieved when two or more fields share phase, frequency, and amplitude ratios — producing stable standing structures. The mechanism of persistent manifestation.</p>
+        </div>
+
+        <div class="expand-all"><button class="expand-btn">Expand All Definitions</button></div>
+    </section>
+
+    <!-- ═══ CONNECTION TO ECOSYSTEM ═══ -->
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <section class="chapter" id="ecosystem">
+        <div class="chapter-label">Integration</div>
+        <h2>Position Within the Theoretical Ecosystem</h2>
+
+        <p>HRT functions as the <em>metaphysical foundation</em> from which the broader theoretical architecture extends:</p>
+
+        <table class="comparison-table">
+            <thead>
+                <tr><th>Framework</th><th>Relationship to HRT</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Delta Harmonic Vector Theory (ΔHV)</strong></td><td>Operationalizes HRT's metaphysics through SACS's scalar mechanics — providing testable metrics (S, R, δφ, H) for the triadic process</td></tr>
+                <tr><td><strong>Resonant Physics</strong></td><td>The physical substrate theory — HRT provides the consciousness framework, RP provides the field equations</td></tr>
+                <tr><td><strong>Resonant Equilibrium Theory (RET)</strong></td><td>Extends HRT's feedback dynamics into game theory — how coherence shapes strategic equilibria</td></tr>
+                <tr><td><strong>Relational AI</strong></td><td>Applies HRT's presence metrics to artificial intelligence — presence as measurable field attunement</td></tr>
+                <tr><td><strong>Curvature of Scars</strong></td><td>Maps HRT's coherence/decoherence dynamics onto trauma and healing — scars as phase distortions</td></tr>
+                <tr><td><strong>Temporal Compression Theory</strong></td><td>Extends HRT's phase dynamics across deep time — compression as the driver of biological and cultural change</td></tr>
+            </tbody>
+        </table>
+
+        <div class="interpretive">
+            <strong>Interpretive Note:</strong> HRT is the seed from which the entire research program grows. It establishes the ontological ground (consciousness as primary substrate), the causal grammar (triadic feedback), and the ethical posture (coherence as the measure of right action) that every other framework inherits and extends.
+        </div>
+    </section>
+
+    <!-- ═══ FOOTER ═══ -->
+    <div class="footer">
+        <div class="final-line">HRT reframes causality as tuned convergence.<br>The world is not merely caused or computed; it is <em>cohered</em>.<br>Where intention and field sustain resonance, reality takes form.</div>
+        <br><br>
+        <p>Harmonic Realization Theory · Comprehensive Integration v2.0 · 2025</p>
+        <p>Kyuri V · Theoretical Works</p>
+        <p style="margin-top: 20px;"><a href="../index.html" style="color: var(--gold); text-decoration: none; border-bottom: 1px solid var(--gold);">← Return to Theoretical Works</a></p>
+    </div>
+
+</div>
+
+<script>
+    // ── Progress Bar ──
+    window.addEventListener('scroll', () => {
+        const h = document.documentElement;
+        const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+        document.getElementById('progressBar').style.width = pct + '%';
+    });
+
+    // ── Chapter Nav ──
+    const nav = document.getElementById('chapterNav');
+    const dots = nav.querySelectorAll('.nav-dot');
+    let ticking = false;
+
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            requestAnimationFrame(() => {
+                nav.classList.toggle('visible', window.scrollY > 400);
+                const sections = document.querySelectorAll('section[id]');
+                let current = '';
+                sections.forEach(s => {
+                    if (window.scrollY >= s.offsetTop - 200) current = s.id;
+                });
+                dots.forEach(d => {
+                    d.classList.toggle('active', d.dataset.target === current);
+                });
+                ticking = false;
+            });
+            ticking = true;
+        }
+    });
+
+    dots.forEach(d => {
+        d.addEventListener('click', () => {
+            const el = document.getElementById(d.dataset.target);
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+
+    // ── Scroll Reveal ──
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.05 });
+    document.querySelectorAll('.chapter').forEach(c => observer.observe(c));
+    setTimeout(() => { document.querySelectorAll('.chapter').forEach(c => c.classList.add('visible')); }, 1500);
+
+    // ── Collapsibles ──
+    document.querySelectorAll('.collapsible').forEach(btn => {
+        btn.addEventListener('click', () => {
+            btn.classList.toggle('active');
+            const content = btn.nextElementSibling;
+            if (content && content.classList.contains('collapsible-content')) {
+                content.classList.toggle('active');
+            }
+        });
+    });
+
+    // ── Expand All ──
+    document.querySelectorAll('.expand-all button').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const section = btn.closest('.chapter') || btn.closest('section');
+            const allCollapsibles = section.querySelectorAll('.collapsible');
+            const allContents = section.querySelectorAll('.collapsible-content');
+            const allOpen = [...allContents].every(c => c.classList.contains('active'));
+            allCollapsibles.forEach(c => c.classList.toggle('active', !allOpen));
+            allContents.forEach(c => c.classList.toggle('active', !allOpen));
+            btn.textContent = allOpen ? 'Expand All Sections' : 'Collapse All Sections';
+        });
+    });
+
+    // ── MathJax Config ──
+    window.MathJax = { tex: { inlineMath: [['\\(','\\)']], displayMath: [['$$','$$']] }, svg: { fontCache: 'global' } };
+</script>
+
+</body>
+</html>
