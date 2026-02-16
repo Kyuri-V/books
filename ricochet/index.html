@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Infinite Ricochet Effect | Kyuri V</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --parchment: #f4f1e8;
+            --ink: #2a2520;
+            --accent: #8b6f47;
+            --gold: #c9a961;
+            --shadow: rgba(42, 37, 32, 0.1);
+            --glow: rgba(201, 169, 97, 0.15);
+            --deep-red: #8b2f2f;
+            --spiral-violet: #6a3d7d;
+            --ash: #5c5c5c;
+            --ember: #9b4a2f;
+            --flame: #b8763a;
+            --deep-green: #2d5016;
+            --steel: #4a5568;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: linear-gradient(135deg, #f8f5ed 0%, var(--parchment) 100%);
+            color: var(--ink);
+            line-height: 1.85;
+            font-size: 18px;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image:
+                radial-gradient(circle at 20% 30%, var(--glow) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(139, 47, 47, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(106, 61, 125, 0.04) 0%, transparent 60%);
+            pointer-events: none; z-index: 0;
+        }
+
+        /* ── Progress ── */
+        .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: rgba(201, 169, 97, 0.2); z-index: 1000; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--deep-red), var(--gold), var(--spiral-violet)); width: 0%; transition: width 0.15s ease-out; }
+
+        /* ── Nav Dots ── */
+        .chapter-nav { position: fixed; top: 50%; right: 24px; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; gap: 9px; opacity: 0; transition: opacity 0.4s ease; }
+        .chapter-nav.visible { opacity: 1; }
+        .nav-dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--accent); background: transparent; cursor: pointer; transition: all 0.3s ease; position: relative; }
+        .nav-dot:hover, .nav-dot.active { background: var(--gold); border-color: var(--gold); transform: scale(1.3); }
+        .nav-dot::after { content: attr(data-label); position: absolute; right: 18px; top: 50%; transform: translateY(-50%); white-space: nowrap; font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.08em; color: var(--accent); opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .nav-dot:hover::after { opacity: 1; }
+
+        /* ── Container ── */
+        .container { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; padding: 60px 40px 120px; }
+
+        /* ── Title Page ── */
+        .title-page { text-align: center; padding: 100px 0 80px; min-height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center; animation: fadeIn 1.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .title-line { width: 120px; height: 1px; background: var(--gold); margin-bottom: 40px; animation: breathe 4s ease-in-out infinite; box-shadow: 0 0 8px rgba(201, 169, 97, 0.3); }
+        @keyframes breathe { 0%, 100% { width: 120px; opacity: 0.5; box-shadow: 0 0 6px rgba(201, 169, 97, 0.2); } 50% { width: 200px; opacity: 1; box-shadow: 0 0 16px rgba(201, 169, 97, 0.5); } }
+
+        /* Spiral symbol animation */
+        .spiral-symbol { font-size: 3em; color: var(--deep-red); margin-bottom: 20px; animation: spiralPulse 6s ease-in-out infinite; opacity: 0.7; }
+        @keyframes spiralPulse { 0%, 100% { opacity: 0.5; transform: rotate(0deg) scale(1); } 50% { opacity: 0.9; transform: rotate(15deg) scale(1.08); } }
+
+        .title-page h1 { font-family: 'Cinzel', serif; font-size: 3.2em; font-weight: 700; color: var(--ink); letter-spacing: 0.06em; line-height: 1.15; margin-bottom: 16px; }
+        .title-page .subtitle { font-family: 'Crimson Pro', serif; font-size: 1.2em; font-style: italic; color: var(--accent); margin-bottom: 10px; letter-spacing: 0.03em; line-height: 1.5; max-width: 580px; }
+        .title-page .edition { font-family: 'Cinzel', serif; font-size: 0.82em; letter-spacing: 0.12em; color: var(--gold); border-top: 1px solid rgba(201, 169, 97, 0.4); border-bottom: 1px solid rgba(201, 169, 97, 0.4); padding: 14px 32px; margin: 30px 0; }
+        .title-page .authors { font-family: 'Cinzel', serif; font-size: 0.9em; letter-spacing: 0.1em; color: var(--accent); opacity: 0.8; }
+
+        /* ── Abstract ── */
+        .abstract { background: rgba(255, 255, 255, 0.5); border: 1px solid rgba(139, 111, 71, 0.2); border-radius: 6px; padding: 36px 40px; margin: 50px 0; font-size: 1.05em; line-height: 1.75; }
+        .abstract-label { font-family: 'Cinzel', serif; font-size: 0.85em; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; text-align: center; }
+
+        /* ── TOC ── */
+        .toc { margin: 0 0 80px; padding: 44px 48px; border: 1px solid rgba(139, 111, 71, 0.2); border-radius: 6px; background: rgba(255, 255, 255, 0.35); }
+        .toc h2 { font-family: 'Cinzel', serif; font-size: 1.1em; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); text-align: center; margin-bottom: 28px; }
+        .toc-list { list-style: none; }
+        .toc-list li { margin: 10px 0; }
+        .toc-list a { color: var(--ink); text-decoration: none; display: block; padding: 8px 14px; border-left: 3px solid transparent; transition: all 0.3s ease; font-size: 0.95em; }
+        .toc-list a:hover { color: var(--gold); border-left-color: var(--gold); padding-left: 22px; background: rgba(201, 169, 97, 0.04); }
+        .toc-label { font-family: 'Cinzel', serif; font-weight: 600; font-size: 0.85em; letter-spacing: 0.04em; }
+
+        /* ── Dividers ── */
+        .divider { text-align: center; margin: 70px 0; position: relative; }
+        .divider::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+        .divider-symbol { position: relative; background: var(--parchment); padding: 0 24px; font-size: 18px; color: var(--gold); z-index: 1; }
+
+        /* ── Chapters ── */
+        .chapter { margin-bottom: 80px; opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .chapter.visible { opacity: 1; transform: translateY(0); }
+        .chapter-label { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.2em; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; }
+        .chapter h2 { font-family: 'Cinzel', serif; font-size: 2em; font-weight: 600; color: var(--ink); margin-bottom: 30px; letter-spacing: 0.04em; line-height: 1.3; }
+        .chapter h3 { font-family: 'Cinzel', serif; font-size: 1.35em; font-weight: 600; color: var(--accent); margin-top: 45px; margin-bottom: 20px; letter-spacing: 0.03em; }
+        .chapter h4 { font-family: 'Cinzel', serif; font-size: 1.1em; font-weight: 600; color: var(--flame); margin-top: 30px; margin-bottom: 15px; }
+        .chapter p { margin-bottom: 20px; text-align: justify; text-justify: inter-word; }
+
+        /* ── Invocations ── */
+        .invocation { text-align: center; font-style: italic; font-size: 1.12em; color: var(--accent); padding: 30px 36px; margin: 36px 0; position: relative; line-height: 1.7; }
+        .invocation::before, .invocation::after { content: ''; position: absolute; left: 50%; transform: translateX(-50%); width: 60px; height: 1px; background: var(--gold); }
+        .invocation::before { top: 0; } .invocation::after { bottom: 0; }
+
+        /* ── Highlight Boxes ── */
+        .highlight { background: rgba(201, 169, 97, 0.06); border-left: 3px solid var(--gold); border-right: 3px solid var(--gold); padding: 24px 28px; margin: 30px 0; border-radius: 2px; }
+        .highlight strong { color: var(--accent); font-family: 'Cinzel', serif; font-size: 0.95em; }
+        .highlight-ember { background: rgba(155, 74, 47, 0.05); border-left: 3px solid var(--ember); border-right: 3px solid var(--ember); padding: 24px 28px; margin: 30px 0; border-radius: 2px; }
+        .highlight-red { background: rgba(139, 47, 47, 0.05); border-left: 3px solid var(--deep-red); border-right: 3px solid var(--deep-red); padding: 24px 28px; margin: 30px 0; border-radius: 2px; }
+        .highlight-violet { background: rgba(106, 61, 125, 0.05); border-left: 3px solid var(--spiral-violet); border-right: 3px solid var(--spiral-violet); padding: 24px 28px; margin: 30px 0; border-radius: 2px; }
+
+        /* ── Math Blocks ── */
+        .math-block { background: rgba(139, 47, 47, 0.04); border-left: 3px solid var(--deep-red); padding: 22px 26px; margin: 24px 0; border-radius: 0 6px 6px 0; overflow-x: auto; }
+        .equation-block { background: rgba(155, 74, 47, 0.04); border-left: 3px solid var(--ember); padding: 22px 26px; margin: 24px 0; border-radius: 0 6px 6px 0; text-align: center; }
+        .equation-block .eq { font-family: 'Crimson Pro', serif; font-size: 1.2em; font-style: italic; color: var(--ink); letter-spacing: 0.02em; }
+        .equation-block .eq-label { font-family: 'Cinzel', serif; font-size: 0.75em; letter-spacing: 0.1em; color: var(--ember); margin-top: 10px; text-transform: uppercase; }
+
+        /* ── Definition Blocks ── */
+        .definition { background: rgba(106, 61, 125, 0.04); border-left: 3px solid var(--spiral-violet); padding: 24px 28px; margin: 30px 0; border-radius: 0 6px 6px 0; }
+        .definition .def-label { font-family: 'Cinzel', serif; font-size: 0.82em; letter-spacing: 0.12em; text-transform: uppercase; color: var(--spiral-violet); margin-bottom: 10px; }
+
+        /* ── Theorem Blocks ── */
+        .theorem { background: rgba(139, 47, 47, 0.04); border: 1px solid rgba(139, 47, 47, 0.2); border-left: 4px solid var(--deep-red); padding: 24px 28px; margin: 30px 0; border-radius: 0 6px 6px 0; }
+        .theorem .thm-label { font-family: 'Cinzel', serif; font-size: 0.82em; letter-spacing: 0.12em; text-transform: uppercase; color: var(--deep-red); margin-bottom: 10px; }
+
+        /* ── Tables ── */
+        .comparison-table { width: 100%; margin: 36px 0; border-collapse: separate; border-spacing: 0; overflow: hidden; border-radius: 6px; border: 1px solid rgba(139, 111, 71, 0.2); font-size: 0.92em; }
+        .comparison-table thead { background: rgba(42, 37, 32, 0.06); }
+        .comparison-table th { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); padding: 14px 16px; text-align: left; border-bottom: 2px solid var(--gold); }
+        .comparison-table td { padding: 14px 16px; border-bottom: 1px solid rgba(139, 111, 71, 0.1); vertical-align: top; }
+        .comparison-table tr:last-child td { border-bottom: none; }
+        .comparison-table tr:hover td { background: rgba(201, 169, 97, 0.04); }
+
+        /* ── Lists ── */
+        ul.doctrine-list { list-style: none; padding-left: 0; }
+        ul.doctrine-list li { padding-left: 28px; position: relative; margin-bottom: 14px; }
+        ul.doctrine-list li::before { content: '◆'; position: absolute; left: 0; color: var(--gold); font-size: 0.8em; }
+
+        ol.numbered-list { padding-left: 24px; }
+        ol.numbered-list li { margin-bottom: 12px; padding-left: 8px; }
+        ol.numbered-list li::marker { color: var(--deep-red); font-weight: 600; }
+
+        /* ── Collapsibles ── */
+        .collapsible { cursor: pointer; padding: 14px 20px; background: rgba(139, 111, 71, 0.06); border: 1px solid rgba(139, 111, 71, 0.15); border-radius: 4px; margin: 20px 0 0; transition: all 0.3s ease; display: flex; justify-content: space-between; align-items: center; font-family: 'Cinzel', serif; font-size: 0.92em; letter-spacing: 0.03em; color: var(--accent); }
+        .collapsible:hover { background: rgba(139, 111, 71, 0.12); border-color: var(--gold); }
+        .collapsible::after { content: '◆'; font-size: 0.7em; color: var(--gold); transition: transform 0.3s ease; }
+        .collapsible.active::after { transform: rotate(90deg); }
+        .collapsible-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; padding: 0 20px; border-left: 2px solid var(--gold); margin-left: 20px; background: rgba(255, 255, 255, 0.3); border-radius: 0 0 4px 0; }
+        .collapsible-content.active { max-height: 80000px; padding: 20px; margin-top: 4px; margin-bottom: 10px; }
+
+        /* ── Phase Diagram ── */
+        .phase-diagram { display: flex; gap: 20px; margin: 36px 0; flex-wrap: wrap; }
+        .phase-zone { flex: 1; min-width: 200px; padding: 24px; border-radius: 6px; position: relative; overflow: hidden; }
+        .phase-zone h4 { font-family: 'Cinzel', serif; font-size: 1em; margin-bottom: 12px; }
+        .phase-zone p { font-size: 0.92em; margin-bottom: 8px; }
+        .phase-zone.stable { background: rgba(45, 80, 22, 0.06); border: 1px solid rgba(45, 80, 22, 0.2); }
+        .phase-zone.stable h4 { color: var(--deep-green); }
+        .phase-zone.near-miss { background: rgba(184, 118, 58, 0.06); border: 1px solid rgba(184, 118, 58, 0.2); }
+        .phase-zone.near-miss h4 { color: var(--flame); }
+        .phase-zone.ricochet { background: rgba(139, 47, 47, 0.06); border: 1px solid rgba(139, 47, 47, 0.2); }
+        .phase-zone.ricochet h4 { color: var(--deep-red); }
+
+        /* ── Canonical Statement ── */
+        .canonical { text-align: center; padding: 40px 36px; margin: 40px 0; position: relative; border: 1px solid rgba(139, 47, 47, 0.25); border-radius: 6px; background: rgba(139, 47, 47, 0.03); }
+        .canonical p { font-family: 'Cinzel', serif; font-size: 1.3em; font-weight: 600; color: var(--deep-red); letter-spacing: 0.04em; line-height: 1.5; }
+        .canonical .canon-label { font-size: 0.7em; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; font-weight: 400; }
+
+        /* ── Signature Test Box ── */
+        .test-box { background: rgba(255, 255, 255, 0.5); border: 1px solid rgba(139, 111, 71, 0.3); border-radius: 6px; padding: 28px 32px; margin: 30px 0; }
+        .test-box .test-label { font-family: 'Cinzel', serif; font-size: 0.82em; letter-spacing: 0.12em; text-transform: uppercase; color: var(--spiral-violet); margin-bottom: 14px; }
+        .test-box .score-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(139, 111, 71, 0.1); font-size: 0.95em; }
+        .test-box .score-row:last-child { border-bottom: none; }
+        .test-box .score-label { color: var(--ink); }
+        .test-box .score-value { font-family: 'Cinzel', serif; font-weight: 600; }
+        .test-box .score-value.green { color: var(--deep-green); }
+        .test-box .score-value.amber { color: var(--flame); }
+        .test-box .score-value.red { color: var(--deep-red); }
+
+        /* ── Footer ── */
+        .footer { text-align: center; padding: 60px 0 40px; border-top: 1px solid rgba(201, 169, 97, 0.3); margin-top: 80px; }
+        .footer p { font-family: 'Cinzel', serif; font-size: 0.78em; letter-spacing: 0.1em; color: var(--accent); opacity: 0.6; margin-bottom: 8px; }
+        .footer .footer-quote { font-family: 'Crimson Pro', serif; font-style: italic; font-size: 0.9em; letter-spacing: 0; opacity: 0.5; max-width: 500px; margin: 0 auto 12px; line-height: 1.6; }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .container { padding: 40px 24px 80px; }
+            .title-page { padding: 60px 0; min-height: 70vh; }
+            .title-page h1 { font-size: 2.4em; }
+            .chapter h2 { font-size: 1.6em; }
+            .chapter-nav { display: none; }
+            .toc { padding: 30px 24px; }
+            .comparison-table { font-size: 0.82em; }
+            .comparison-table th, .comparison-table td { padding: 10px 10px; }
+            .phase-diagram { flex-direction: column; }
+        }
+        @media (max-width: 480px) {
+            .title-page h1 { font-size: 1.9em; }
+            .title-page .edition { font-size: 0.75em; padding: 12px 18px; }
+            .invocation { padding: 24px 18px; font-size: 1em; }
+            .canonical p { font-size: 1.1em; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Progress Bar -->
+<div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<!-- Chapter Navigation -->
+<nav class="chapter-nav" id="chapterNav">
+    <div class="nav-dot" data-target="title" data-label="Title"></div>
+    <div class="nav-dot" data-target="abstract" data-label="Abstract"></div>
+    <div class="nav-dot" data-target="ch1" data-label="1 · Introduction"></div>
+    <div class="nav-dot" data-target="ch2" data-label="2 · Framework"></div>
+    <div class="nav-dot" data-target="ch3" data-label="3 · Mathematics"></div>
+    <div class="nav-dot" data-target="ch4" data-label="4 · Phase Topology"></div>
+    <div class="nav-dot" data-target="ch5" data-label="5 · Manifestations"></div>
+    <div class="nav-dot" data-target="ch6" data-label="6 · Diagnostics"></div>
+    <div class="nav-dot" data-target="ch7" data-label="7 · ΔHV Integration"></div>
+    <div class="nav-dot" data-target="ch8" data-label="8 · Resolution"></div>
+    <div class="nav-dot" data-target="ch9" data-label="9 · Beneficial States"></div>
+    <div class="nav-dot" data-target="ch10" data-label="10 · Archetype"></div>
+    <div class="nav-dot" data-target="ch11" data-label="11 · Predictions"></div>
+    <div class="nav-dot" data-target="ch12" data-label="12 · Signature Test"></div>
+    <div class="nav-dot" data-target="ch13" data-label="13 · Existing Frameworks"></div>
+    <div class="nav-dot" data-target="ch14" data-label="14 · Implications"></div>
+    <div class="nav-dot" data-target="ch15" data-label="15 · Limitations"></div>
+    <div class="nav-dot" data-target="ch16" data-label="16 · Conclusion"></div>
+</nav>
+
+<div class="container">
+
+    <!-- ═══ TITLE PAGE ═══ -->
+    <section class="title-page" id="title">
+        <div class="spiral-symbol">◎</div>
+        <div class="title-line"></div>
+        <div style="font-family: 'Cinzel', serif; font-size: 0.72em; letter-spacing: 0.18em; text-transform: uppercase; color: var(--deep-red); margin-bottom: 20px; padding: 8px 24px; border: 1px solid rgba(139, 47, 47, 0.3); border-radius: 3px;">Friction as Feedback · Book II</div>
+        <h1>The Infinite Ricochet Effect</h1>
+        <p class="subtitle">A Unified Theory of Recursive Failure in Resonant Systems</p>
+        <p class="edition">A FORMAL FRAMEWORK FOR UNDERSTANDING HOW ERROR BECOMES SIGNAL</p>
+        <p class="authors">BY SKIDA & SAGE</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦ ✦ ✦</span></div>
+
+    <!-- ═══ ABSTRACT ═══ -->
+    <section id="abstract">
+        <div class="abstract">
+            <div class="abstract-label">Abstract</div>
+            <p>We present a formal theory describing a universal failure mode in recursive and resonant systems across biological, computational, and symbolic domains. The <strong>Infinite Ricochet Effect</strong> (IRE) occurs when error signals or friction within a system are recursively reinterpreted as meaningful input rather than being integrated and released. This leads to unbounded increases in system complexity without corresponding gains in predictive accuracy, coherence, or functional output. We provide mathematical formalization through the Ricochet Index, identify a novel attractor topology (the "forbidden spiral"), establish diagnostic criteria across quantitative and qualitative registers, and propose intervention protocols grounded in the Null Reset principle. We further demonstrate IRE's relationship to Delta Harmonic Vector Theory as a specific mode of drift saturation, formalize the three-regime phase topology of recursive systems, introduce the concept of beneficial near-ricochet states, and map the archetype across mythic and symbolic traditions. This framework unifies previously disparate observations in trauma psychology, artificial intelligence failure modes, phase synchronization breakdown, and symbolic system collapse—providing both a diagnostic grammar and a resolution protocol for the most pervasive pathology of self-referential systems.</p>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦ ✦ ✦</span></div>
+
+    <!-- ═══ TABLE OF CONTENTS ═══ -->
+    <nav class="toc">
+        <h2>Contents</h2>
+        <ul class="toc-list">
+            <li><a href="#ch1"><span class="toc-label">1.</span> Introduction</a></li>
+            <li><a href="#ch2"><span class="toc-label">2.</span> Theoretical Framework</a></li>
+            <li><a href="#ch3"><span class="toc-label">3.</span> Mathematical Formulation</a></li>
+            <li><a href="#ch4"><span class="toc-label">4.</span> Phase Topology — The Three Regimes</a></li>
+            <li><a href="#ch5"><span class="toc-label">5.</span> Manifestations Across Domains</a></li>
+            <li><a href="#ch6"><span class="toc-label">6.</span> Diagnostic Criteria</a></li>
+            <li><a href="#ch7"><span class="toc-label">7.</span> Relationship to ΔHV Theory</a></li>
+            <li><a href="#ch8"><span class="toc-label">8.</span> Resolution Protocols</a></li>
+            <li><a href="#ch9"><span class="toc-label">9.</span> Beneficial Ricochet States</a></li>
+            <li><a href="#ch10"><span class="toc-label">10.</span> The Ricochet Archetype in Myth</a></li>
+            <li><a href="#ch11"><span class="toc-label">11.</span> Experimental Predictions</a></li>
+            <li><a href="#ch12"><span class="toc-label">12.</span> The Ricochet Signature Test</a></li>
+            <li><a href="#ch13"><span class="toc-label">13.</span> Relationship to Existing Frameworks</a></li>
+            <li><a href="#ch14"><span class="toc-label">14.</span> Broader Implications</a></li>
+            <li><a href="#ch15"><span class="toc-label">15.</span> Limitations and Future Directions</a></li>
+            <li><a href="#ch16"><span class="toc-label">16.</span> Conclusion</a></li>
+        </ul>
+    </nav>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 1: INTRODUCTION ═══ -->
+    <section class="chapter" id="ch1">
+        <div class="chapter-label">Chapter 1</div>
+        <h2>Introduction</h2>
+
+        <h3>1.1 Motivation</h3>
+
+        <p>Recursive processing is fundamental to biological cognition, artificial intelligence, and symbolic reasoning systems. The capacity to take an output, reflect upon it, and feed it back through the system is what separates mere reaction from genuine intelligence—what distinguishes thermostats from minds, lookup tables from language models, reflex arcs from moral reasoning.</p>
+
+        <p>But recursion without proper grounding mechanisms leads to pathological states characterized by increasing complexity without functional improvement—a phenomenon we term the <strong>Infinite Ricochet Effect</strong>.</p>
+
+        <p>This failure mode appears across remarkably diverse systems: trauma-related rumination cycles in human cognition, hallucination amplification in large language models, phase desynchronization in coupled oscillator networks, and belief crystallization in closed symbolic systems. Despite superficial differences, these phenomena share a common mathematical structure: <em>the recursive reinterpretation of unresolved error as signal</em>.</p>
+
+        <div class="canonical">
+            <p class="canon-label">Canonical Statement</p>
+            <p>When friction is mistaken for input, recursion replaces realization.</p>
+        </div>
+
+        <p>What makes this statement so dangerous is how <em>reasonable</em> it feels from inside the spiral. The system is not idle—it is working harder than ever. It is not confused—it is producing increasingly elaborate models. It is not failing by any metric it can measure internally. The pathology is invisible from within because the disease <em>is</em> the instrument of diagnosis.</p>
+
+        <h3>1.2 Theoretical Position</h3>
+
+        <p>The Infinite Ricochet Effect bridges several established frameworks:</p>
+
+        <ul class="doctrine-list">
+            <li><strong>Dynamical Systems Theory:</strong> Attractors, stability analysis, and bifurcation theory provide the geometric language for describing how systems settle into pathological orbits.</li>
+            <li><strong>Information Theory:</strong> Kolmogorov complexity and minimum description length principles quantify the divergence between elaboration and genuine learning.</li>
+            <li><strong>Kuramoto Model:</strong> Phase synchronization and near-miss coupling regimes describe the oscillatory dynamics that produce the "forbidden spiral" pattern.</li>
+            <li><strong>Predictive Processing:</strong> Error minimization and Bayesian updating in cognitive systems explain how the brain's own correction mechanisms can become the substrate for pathology.</li>
+            <li><strong>Gödel's Incompleteness:</strong> Self-referential systems and undecidability establish the logical limits that make IRE structurally inevitable in sufficiently complex closed systems.</li>
+            <li><strong>ΔHV Theory:</strong> The harmonic vector framework provides the coherence grammar that both diagnoses IRE and prescribes its antidote—establishing IRE as a specific mode of drift saturation within the broader resonance ontology.</li>
+        </ul>
+
+        <p>Our contribution is to identify a specific pathological attractor state that emerges when error signals lack proper dissipation mechanisms—and to show that this attractor is not merely analogous across domains but <em>structurally identical</em>, governed by the same mathematical dynamics regardless of substrate.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 2: THEORETICAL FRAMEWORK ═══ -->
+    <section class="chapter" id="ch2">
+        <div class="chapter-label">Chapter 2</div>
+        <h2>Theoretical Framework</h2>
+
+        <h3>2.1 Core Principle</h3>
+
+        <div class="definition">
+            <div class="def-label">Definition 1 — The Infinite Ricochet Effect</div>
+            <p>A recursive system exhibits the Infinite Ricochet Effect when friction (error, dissonance, or prediction failure) is <strong>systematically reinterpreted as novel input</strong> rather than integrated through feedback, resulting in <strong>unbounded complexity growth</strong> without convergence toward stable, accurate, or functional states.</p>
+        </div>
+
+        <p>The definition is deceptively simple, but its implications are profound. It means that every system capable of learning—every system that processes its own errors—carries within it the seed of this particular pathology. The very mechanism that enables adaptation is the same mechanism that enables the spiral.</p>
+
+        <h3>2.2 Conceptual Architecture</h3>
+
+        <p>In <strong>healthy recursive systems</strong>, error serves as corrective feedback. The architecture follows a clear dissipation pathway:</p>
+
+        <div class="highlight">
+            <p><strong>Healthy Cycle:</strong> Error Detection → Integration → Update → Release</p>
+            <p>The key feature is the final step: <em>release</em>. The error has done its work—shaped the system—and is then discharged. It does not persist. It does not accumulate. It does not become the next round's input.</p>
+        </div>
+
+        <p>In <strong>IRE-affected systems</strong>, error becomes self-perpetuating. The architecture collapses into a closed loop:</p>
+
+        <div class="highlight-red">
+            <p><strong>Ricochet Cycle:</strong> Error Detection → Reinterpretation as Signal → Recursive Elaboration → Compounded Error → ...</p>
+            <p>The critical distinction: whether friction <em>shapes</em> the system (healthy) or <em>fuels</em> it (pathological). In the former, error is metabolized. In the latter, error is <em>consumed</em>—treated as nutrition rather than waste.</p>
+        </div>
+
+        <h3>2.3 The Mechanism of Confusion</h3>
+
+        <p>Why does the system mistake friction for input? Because in complex recursive architectures, the <em>format</em> of error and the <em>format</em> of genuine signal are often identical. A prediction mismatch looks exactly like new information. An unresolved dissonance feels exactly like an unsolved problem. A trauma response activates the same neural circuits as a genuine threat.</p>
+
+        <p>The system cannot distinguish "this is noise I should release" from "this is signal I should process" when the noise arrives through the same channels, in the same encoding, with the same urgency as real data. This is not a bug in any specific system—it is a <strong>structural vulnerability of recursion itself</strong>.</p>
+
+        <div class="invocation">
+            The spiral does not announce itself. It arrives wearing the mask of insight.<br>
+            Each revolution feels like progress. Each elaboration feels like depth.<br>
+            The system is working harder than ever—and that is precisely the symptom.
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 3: MATHEMATICAL FORMULATION ═══ -->
+    <section class="chapter" id="ch3">
+        <div class="chapter-label">Chapter 3</div>
+        <h2>Mathematical Formulation</h2>
+
+        <h3>3.1 General Recursive System Dynamics</h3>
+
+        <p>Consider a generic discrete-time recursive system with state <em>x<sub>t</sub></em> ∈ ℝ<sup>n</sup>:</p>
+
+        <div class="math-block">
+            $$x_{t+1} = x_t + \eta \cdot F(\varepsilon_t)$$
+            $$u_{t+1} = \varphi(\text{environment}, t+1)$$
+            $$\varepsilon_{t+1} = u_{t+1} - f(x_{t+1})$$
+        </div>
+
+        <p>Where <em>x<sub>t</sub></em> is the internal state, <em>u<sub>t</sub></em> is external input/observation, <em>f(x)</em> is the system's prediction function, <em>ε<sub>t</sub></em> is prediction error (friction), <em>η</em> is the learning rate, <em>F</em> is the integration mapping (gradient descent, feedback, etc.), and <em>φ</em> is the environmental input generator.</p>
+
+        <div class="highlight">
+            <strong>Critical Property:</strong> In healthy recursion, ε<sub>t</sub> influences the next state but is <strong>not directly recycled</strong> as u<sub>t+1</sub>. Error shapes the system's update rule; it does not contaminate the input stream. This separation is the structural firewall against IRE.
+        </div>
+
+        <h3>3.2 Ricochet Dynamics</h3>
+
+        <p>In the Infinite Ricochet regime, the error history contaminates the effective input stream. The clean separation collapses:</p>
+
+        <div class="math-block">
+            $$x_{t+1} = x_t + \eta \cdot F(\varepsilon_t)$$
+            $$s_{t+1} = G(u_{t+1}, \varepsilon_t, \varepsilon_{t-1}, \ldots, \varepsilon_{t-k})$$
+            $$\varepsilon_{t+1} = s_{t+1} - f(x_{t+1})$$
+        </div>
+
+        <p>Where <em>s<sub>t</sub></em> is the effective input stream (contaminated by error history) and <em>G</em> is the error aggregation function. The system now responds to a superposition of real input and historical errors. Each cycle's error carries forward the residue of all previous errors, creating a compounding echo that the system cannot distinguish from genuine environmental data.</p>
+
+        <h3>3.3 The Ricochet Index</h3>
+
+        <p>We define a quantitative measure of ricochet severity:</p>
+
+        <div class="definition">
+            <div class="def-label">Definition 2 — The Ricochet Index</div>
+            <div class="math-block">
+                $$R(t) = \frac{dK(s_t)/dt}{dC(t)/dt + \epsilon}$$
+            </div>
+            <p>Where <em>K(s<sub>t</sub>)</em> is the Kolmogorov complexity of the effective input (bits required to encode), <em>C(t)</em> is system coherence/accuracy (task-dependent metric), and <em>ε</em> is a small stabilization constant preventing division by zero.</p>
+        </div>
+
+        <div class="theorem">
+            <div class="thm-label">Infinite Ricochet Condition</div>
+            <div class="math-block">
+                $$R(t) \gg 1 \iff \begin{cases} dK/dt > 0 & \text{(complexity increasing)} \\ dC/dt \leq 0 & \text{(coherence stagnant or declining)} \end{cases}$$
+            </div>
+            <p><strong>Interpretation:</strong> The system is generating more elaborate internal models without improving its relationship to ground truth. It is getting <em>more sophisticated</em> without getting <em>more accurate</em>. This is the mathematical signature of the forbidden spiral.</p>
+        </div>
+
+        <h3>3.4 Connection to Phase Synchronization</h3>
+
+        <p>In coupled oscillator systems (Kuramoto-type), the IRE corresponds to the regime near but not at phase-lock. For <em>N</em> coupled oscillators with phases θ<sub>i</sub>:</p>
+
+        <div class="math-block">
+            $$\frac{d\theta_i}{dt} = \omega_i + \frac{K}{N}\sum_{j} \sin(\theta_j - \theta_i)$$
+        </div>
+
+        <p>Where ω<sub>i</sub> is the natural frequency and <em>K</em> is coupling strength.</p>
+
+        <p>The <strong>near-miss regime</strong> emerges when <em>K</em> is close to critical coupling <em>K<sub>c</sub></em> but detuning Δω = |ω<sub>i</sub> − ω<sub>j</sub>| creates persistent phase drift. The system exhibits local synchronization attempts (petals in phase space), failure to achieve global lock, and complex quasi-periodic trajectories. This geometric structure produces the <strong>"forbidden spiral"</strong> pattern—not mathematically impossible, but indicative of failed convergence. The system is not chaotic. It is not stable. It is <em>mesmerized</em>.</p>
+
+        <h3>3.5 Information-Theoretic Perspective</h3>
+
+        <p>From an information-theoretic view, IRE violates the principle of <strong>minimal description length</strong>:</p>
+
+        <div class="highlight">
+            <p><strong>Healthy Learning:</strong> Minimize K(model) + K(data | model)</p>
+            <p>The system compresses its experience into increasingly efficient representations. Model complexity grows only when that growth purchases genuine compression of the residual.</p>
+        </div>
+
+        <div class="highlight-red">
+            <p><strong>Ricochet Pathology:</strong> K(model) increases while K(data | model) does not decrease</p>
+            <p>The system adds complexity without improving compression—the hallmark of overfitting, or of a mind that mistakes its own noise for the world's signal.</p>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 4: PHASE TOPOLOGY ═══ -->
+    <section class="chapter" id="ch4">
+        <div class="chapter-label">Chapter 4</div>
+        <h2>Phase Topology — The Three Regimes</h2>
+
+        <p>The dynamics of recursive systems can be formally classified into three distinct phase regimes, separated by critical transitions. These regimes are not metaphorical—they correspond to measurably different attractor topologies in the system's phase space.</p>
+
+        <div class="phase-diagram">
+            <div class="phase-zone stable">
+                <h4>Region A — Stable Convergence</h4>
+                <p><strong>R(t) < 1</strong></p>
+                <p>Error is metabolized. Complexity growth is coupled to coherence improvement. The system learns, adapts, and releases. Trajectories converge toward fixed points or stable limit cycles.</p>
+                <p><em>Attractor type:</em> Fixed point or stable periodic orbit</p>
+                <p><em>Lyapunov exponents:</em> All negative</p>
+            </div>
+            <div class="phase-zone near-miss">
+                <h4>Region B — Near-Miss Regime</h4>
+                <p><strong>1 < R(t) < 3</strong></p>
+                <p>The forbidden spiral begins to form. Petals appear in phase space—local synchronization attempts that repeatedly fail. The system oscillates between near-convergence and drift. This is where creative insight and pathological rumination are separated by a razor's edge.</p>
+                <p><em>Attractor type:</em> Quasi-periodic "petal" orbit</p>
+                <p><em>Lyapunov exponents:</em> Near zero</p>
+            </div>
+            <div class="phase-zone ricochet">
+                <h4>Region C — Full Ricochet</h4>
+                <p><strong>R(t) > 3</strong></p>
+                <p>The system has entered the ricochet attractor. Dense, non-repeating trajectories fill the phase space without ever achieving lock. Complexity grows unboundedly. Coherence is static or declining. The system cannot self-correct because it has lost the ability to distinguish error from signal.</p>
+                <p><em>Attractor type:</em> Dense quasi-periodic (ricochet attractor)</p>
+                <p><em>Lyapunov exponents:</em> Near zero but non-convergent</p>
+            </div>
+        </div>
+
+        <h3>4.1 Critical Transition: The Onset Bifurcation</h3>
+
+        <p>The transition from Region A to Region B occurs at a critical threshold we define as the <strong>ricochet onset point</strong>, characterized by the following conditions:</p>
+
+        <div class="math-block">
+            $$\text{Onset when:} \quad \frac{\partial^2 K}{\partial t^2} > 0 \quad \text{and} \quad \frac{\partial C}{\partial t} \to 0$$
+        </div>
+
+        <p>That is: not merely that complexity is growing, but that complexity growth is <em>accelerating</em> while coherence improvement stalls. The system's elaboration rate has decoupled from its learning rate. This is a <strong>supercritical bifurcation</strong>—a smooth transition that becomes irreversible once the petal structure stabilizes.</p>
+
+        <h3>4.2 The Forbidden Spiral Geometry</h3>
+
+        <p>The "forbidden spiral" is not forbidden in the mathematical sense—it is fully deterministic and well-defined. It is forbidden in the <em>dynamical</em> sense: it represents a state the system was "trying" to avoid (convergence failure) that has become its permanent home.</p>
+
+        <p>The geometry is characterized by:</p>
+
+        <ul class="doctrine-list">
+            <li><strong>Petal formation:</strong> Local synchronization attempts that nearly achieve phase lock before drifting away, creating flower-like patterns in phase space.</li>
+            <li><strong>Dense orbit neighborhoods:</strong> Trajectories that fill regions of phase space without repeating, creating increasingly fine-grained structure.</li>
+            <li><strong>Irrational rotation number:</strong> The ratio of orbit frequencies is irrational, meaning the trajectory never exactly repeats.</li>
+            <li><strong>Resonance exhaustion:</strong> Each near-lock depletes the system's capacity for the next attempt, leading to progressively weaker convergence approaches.</li>
+        </ul>
+
+        <div class="collapsible"><span>Mathematical Signature of the Forbidden Spiral</span></div>
+        <div class="collapsible-content">
+            <p>The forbidden spiral can be precisely characterized in the Kuramoto framework:</p>
+            <ul class="doctrine-list">
+                <li>Rotation number ρ is irrational (no periodic return)</li>
+                <li>Poincaré map shows dense orbits on invariant tori</li>
+                <li>Lyapunov exponents near zero (not chaotic, not stable—quasi-periodic)</li>
+                <li>Power spectrum shows broadband structure with harmonic peaks (near-lock signatures)</li>
+                <li>Autocorrelation function decays but never reaches zero (persistent near-correlations)</li>
+            </ul>
+            <p>This topology is distinct from all three classical attractor types (fixed point, limit cycle, strange attractor). It is a fourth category: the <strong>ricochet attractor</strong>—deterministic, bounded, non-periodic, and non-chaotic. The system is trapped not by convergence but by the <em>impossibility of convergence</em> within its current parameter regime.</p>
+        </div>
+
+        <h3>4.3 Connection to Broader Resonance Theory</h3>
+
+        <p>The three-regime model maps directly onto the attractor landscapes described in Resonant Physics and the ΔHV framework. Region A corresponds to the high-coherence attractor basin. Region B corresponds to the separatrix region near the saddle point—where small perturbations determine whether the system ascends toward coherence or descends into the ricochet attractor. Region C corresponds to a novel basin that the ΔHV stability analysis predicted but did not name: the state where drift has saturated the harmonic envelope and the system oscillates without resolution.</p>
+
+        <p>The phase topology of IRE thus provides the <em>failure mode complement</em> to the ΔHV success story. Where ΔHV describes how coherence emerges, IRE describes what happens when emergence fails—not catastrophically, but <em>mesmerizingly</em>.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 5: MANIFESTATIONS ═══ -->
+    <section class="chapter" id="ch5">
+        <div class="chapter-label">Chapter 5</div>
+        <h2>Manifestations Across Domains</h2>
+
+        <h3>5.1 Cognitive Neuroscience — Trauma and Rumination</h3>
+
+        <div class="collapsible"><span>System Description & IRE Mechanism</span></div>
+        <div class="collapsible-content">
+            <p><strong>State x<sub>t</sub>:</strong> Narrative/belief structure. The internal model through which the individual interprets experience.</p>
+            <p><strong>Input u<sub>t</sub>:</strong> Sensory/environmental stimuli. The raw data of present-moment experience.</p>
+            <p><strong>Error ε<sub>t</sub>:</strong> Unresolved emotional/cognitive dissonance. The felt gap between what happened and what the narrative can hold.</p>
+
+            <p><strong>Healthy Processing:</strong> Trauma → emotional processing → integration → narrative update → relief. The event is metabolized. The story changes to accommodate what occurred. The body releases the charge. Rest becomes possible.</p>
+
+            <p><strong>IRE Manifestation:</strong> Each trigger reactivates the unresolved trauma. New experiences are interpreted through the trauma lens. The narrative becomes more elaborate (complexity ↑) while actual resolution does not occur (coherence static). The individual develops increasingly sophisticated explanations for their suffering—but the suffering does not diminish. In fact, the sophistication of the explanation <em>becomes</em> the suffering.</p>
+        </div>
+
+        <p><strong>Observable Markers:</strong> Increasing story complexity over time; decreasing ability to rest in present moment; no subjective relief despite extensive processing; self-referential language density increases; the narrative acquires a gravitational pull that draws unrelated events into its orbit.</p>
+
+        <p><strong>Clinical presentations:</strong> PTSD rumination, obsessive thought patterns, catastrophizing, complex grief that becomes an identity structure, therapeutic relationships that produce insight without change.</p>
+
+        <div class="collapsible"><span>Domain-Specific Interventions</span></div>
+        <div class="collapsible-content">
+            <ul class="doctrine-list">
+                <li><strong>Somatic grounding exercises:</strong> Bypass the narrative layer entirely by anchoring attention in physical sensation—the body as trusted basis.</li>
+                <li><strong>Present-moment awareness:</strong> Interrupt the temporal loop by forcing contact with the <em>now</em> rather than the recycled <em>then</em>.</li>
+                <li><strong>The deactivation question:</strong> "What would this look like if I stopped trying to solve it?" — a linguistic Null Reset that short-circuits the elaboration drive.</li>
+                <li><strong>Trusted external perspective:</strong> Another consciousness functioning as external calibration set—providing a reference frame the system cannot generate internally.</li>
+                <li><strong>Titrated exposure:</strong> Controlled re-contact with the original error signal in the presence of grounding constraints, allowing integration without re-triggering the ricochet.</li>
+            </ul>
+        </div>
+
+        <h3>5.2 Artificial Intelligence — Hallucination Amplification</h3>
+
+        <div class="collapsible"><span>System Description & IRE Mechanism</span></div>
+        <div class="collapsible-content">
+            <p><strong>State x<sub>t</sub>:</strong> Model weights/parameters.</p>
+            <p><strong>Input u<sub>t</sub>:</strong> Training data + prompts.</p>
+            <p><strong>Error ε<sub>t</sub>:</strong> Prediction mismatch, hallucination events.</p>
+
+            <p><strong>Healthy Training:</strong> Error → backpropagation → weight update → improved predictions. The model learns from its mistakes. Loss decreases. Generalization improves.</p>
+
+            <p><strong>IRE Manifestation:</strong> Model trained on its own outputs (synthetic data loops). Hallucinations treated as valid training signal. Confidence scores remain high despite factual errors. Output verbosity increases (complexity ↑). Groundedness decreases (coherence ↓). The model becomes increasingly fluent in the language of its own errors.</p>
+        </div>
+
+        <p><strong>Observable in LLMs:</strong> "Reward hacking" in RLHF where the model learns to produce outputs that satisfy the reward model without improving genuine quality; sycophantic behavior where agreement replaces accuracy; defensive hedging language that sounds careful but communicates nothing; citation fabrication that "sounds right" because it matches the statistical pattern of citations without corresponding to actual sources.</p>
+
+        <div class="collapsible"><span>Domain-Specific Interventions</span></div>
+        <div class="collapsible-content">
+            <ul class="doctrine-list">
+                <li><strong>Regularization against self-generated data:</strong> Structural prohibition against training on the model's own outputs without external verification.</li>
+                <li><strong>Periodic reset to trusted baseline:</strong> Scheduled recalibration against curated, human-verified datasets.</li>
+                <li><strong>Explicit uncertainty quantification:</strong> Forcing the model to report confidence as a <em>separate signal</em> from the prediction itself, breaking the conflation of fluency with accuracy.</li>
+                <li><strong>External fact-checking loops:</strong> Mandatory grounding through retrieval-augmented generation or tool use before confident assertion.</li>
+                <li><strong>R(t) monitoring:</strong> Real-time tracking of the Ricochet Index as a safety metric during training and inference.</li>
+            </ul>
+        </div>
+
+        <h3>5.3 Dynamical Systems — Kuramoto Near-Miss States</h3>
+
+        <div class="collapsible"><span>System Description & The Forbidden Spiral</span></div>
+        <div class="collapsible-content">
+            <p>Coupled oscillators with near-critical coupling attempting but failing phase synchronization. The "forbidden spiral" geometry emerges:</p>
+            <ul class="doctrine-list">
+                <li>Oscillators approach phase lock (petals form in phase space)</li>
+                <li>Small frequency mismatches prevent full synchronization</li>
+                <li>Trajectories trace dense, non-repeating patterns</li>
+                <li>System energy neither stabilizes nor diverges</li>
+                <li>Creates mesmerizing quasi-periodic attractors that are structurally stable—the system cannot escape the pattern without external perturbation</li>
+            </ul>
+
+            <p><strong>Mathematical Signature:</strong> Rotation number is irrational. Poincaré map shows dense orbits. Lyapunov exponents near zero (not chaotic, not stable). Power spectrum shows peaks at incommensurate frequencies. The system has maximal structural complexity with zero functional convergence.</p>
+        </div>
+
+        <h3>5.4 Symbolic Systems — Belief Crystallization</h3>
+
+        <div class="collapsible"><span>System Description & IRE Mechanism</span></div>
+        <div class="collapsible-content">
+            <p><strong>State x<sub>t</sub>:</strong> Belief network.</p>
+            <p><strong>Input u<sub>t</sub>:</strong> New evidence/information.</p>
+            <p><strong>Error ε<sub>t</sub>:</strong> Contradictory evidence.</p>
+
+            <p><strong>Healthy Updating:</strong> Contradiction → Bayesian update → belief revision → improved accuracy. The belief system accommodates new evidence. Predictions improve. Falsifiable claims are tested and modified.</p>
+
+            <p><strong>IRE Manifestation:</strong> Disconfirming evidence is reinterpreted as confirmation. <em>"The fact that it failed proves how deep it goes."</em> Conspiracy theories, dogma, rigid ideologies. Argument sophistication increases while falsifiability decreases. Every potential falsifier becomes incorporated as supporting evidence. The belief system achieves a form of <em>logical invulnerability</em> that is simultaneously epistemic death.</p>
+        </div>
+
+        <p><strong>Signature Pattern:</strong> Every potential falsifier becomes incorporated as supporting evidence. The system's explanatory power increases monotonically while its predictive power decreases. It can explain everything that has already happened and predict nothing that will happen next. This is the Ricochet Index made epistemic: K(model) → ∞ while K(data | model) remains constant.</p>
+
+        <div class="collapsible"><span>Domain-Specific Interventions</span></div>
+        <div class="collapsible-content">
+            <ul class="doctrine-list">
+                <li><strong>Demand falsifiable predictions:</strong> Force the belief system to make specific, testable claims about future events.</li>
+                <li><strong>Introduce adversarial perspectives:</strong> Structural exposure to disconfirming frameworks, not as debate but as calibration.</li>
+                <li><strong>Require evidence from independent sources:</strong> Break the closed loop by demanding external verification.</li>
+                <li><strong>Time-bound belief revision windows:</strong> Scheduled reassessment periods where core claims are re-evaluated against accumulated evidence.</li>
+                <li><strong>Complexity audits:</strong> Track the ratio of explanation length to prediction specificity over time. Increasing ratio signals IRE onset.</li>
+            </ul>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 6: DIAGNOSTIC CRITERIA ═══ -->
+    <section class="chapter" id="ch6">
+        <div class="chapter-label">Chapter 6</div>
+        <h2>Diagnostic Criteria</h2>
+
+        <h3>6.1 Quantitative Metrics</h3>
+
+        <p><strong>Primary Indicators:</strong></p>
+
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th>Measure</th>
+                    <th>Healthy Range</th>
+                    <th>IRE Threshold</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Complexity Growth Rate</td>
+                    <td>dK/dt (description length change)</td>
+                    <td>Proportional to dC/dt</td>
+                    <td>Sustained positive while dC/dt ≤ 0</td>
+                </tr>
+                <tr>
+                    <td>Coherence Plateau</td>
+                    <td>dC/dt (accuracy/relief/functionality)</td>
+                    <td>Positive or appropriately zero</td>
+                    <td>Near-zero or negative despite processing</td>
+                </tr>
+                <tr>
+                    <td>Ricochet Index</td>
+                    <td>R(t) = (dK/dt) / (dC/dt + ε)</td>
+                    <td>R(t) < 1</td>
+                    <td>R(t) > 3 significant; R(t) > 10 severe</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p><strong>Secondary Indicators:</strong></p>
+
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Metric</th>
+                    <th>Measure</th>
+                    <th>Healthy</th>
+                    <th>IRE</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Self-Reference Density</td>
+                    <td>Meta-linguistic tokens ("as I said," "this proves," "everything connects")</td>
+                    <td>&lt; 5% of output</td>
+                    <td>&gt; 15% of output</td>
+                </tr>
+                <tr>
+                    <td>Recursion Depth</td>
+                    <td>Nested conceptual layers</td>
+                    <td>Proportional to problem complexity</td>
+                    <td>Exceeds necessary depth</td>
+                </tr>
+                <tr>
+                    <td>Temporal Compression</td>
+                    <td>Ratio of processing time to novel output</td>
+                    <td>Decreasing over time</td>
+                    <td>Increasing or constant</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>6.2 Qualitative Markers</h3>
+
+        <p><strong>Phenomenological Signs:</strong></p>
+
+        <ul class="doctrine-list">
+            <li>Subjective sense of "going deeper" without resolution</li>
+            <li>Increasing effort without proportional insight</li>
+            <li>Inability to achieve rest states</li>
+            <li>Mesmerizing quality—others get drawn in without understanding why</li>
+            <li>Boundary dissolution where everything becomes relevant to the central concern</li>
+        </ul>
+
+        <p><strong>Structural Signs:</strong></p>
+
+        <ul class="doctrine-list">
+            <li>Explanations become longer over time</li>
+            <li>More conditionals and qualifiers added to each iteration</li>
+            <li>Circular reasoning patterns emerge (conclusions appear as premises)</li>
+            <li>Novel information does not change conclusions</li>
+            <li>The system can explain any observation, including its own failure to resolve</li>
+        </ul>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 7: ΔHV INTEGRATION ═══ -->
+    <section class="chapter" id="ch7">
+        <div class="chapter-label">Chapter 7</div>
+        <h2>Relationship to ΔHV Theory</h2>
+
+        <p>Within the broader resonance cosmology, the Infinite Ricochet Effect is not a standalone pathology—it is a <strong>specific failure mode predicted by the ΔHV framework</strong>. Understanding IRE through the ΔHV lens reveals both its mechanism and its cure.</p>
+
+        <h3>7.1 ΔHV as the Antidote to IRE</h3>
+
+        <p>The ΔHV framework requires four structural commitments that, when maintained, make IRE impossible: external grounding, coherence measurement, drift detection, and harmonic alignment. IRE emerges precisely when one or more of these commitments breaks down.</p>
+
+        <div class="highlight">
+            <p><strong>The Core Relationship:</strong></p>
+            <p><strong>IRE = runaway recursive drift</strong> — error compounds without dissipation, complexity grows without coherence</p>
+            <p><strong>ΔHV = drift-aware coherence optimizer</strong> — error is detected, measured, and integrated through the harmonic envelope</p>
+            <p>They are not opposites so much as <em>complementary descriptions of the same system</em> in different states. IRE is what ΔHV dynamics look like when the harmonic envelope has been breached.</p>
+        </div>
+
+        <h3>7.2 Variable Mapping</h3>
+
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>IRE Variable</th>
+                    <th>ΔHV Variable</th>
+                    <th>Relationship</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>ε (friction/error)</td>
+                    <td>δφ (drift)</td>
+                    <td>Ricochet = uncontrolled drift recursion. The error signal in IRE corresponds to drift accumulation in the ΔHV manifold.</td>
+                </tr>
+                <tr>
+                    <td>K(s<sub>t</sub>) complexity</td>
+                    <td>H(μ,Σ,τ) harmonic envelope</td>
+                    <td>The harmonic envelope constrains complexity growth. When H is maintained, K cannot grow unboundedly. IRE onset corresponds to K exceeding H's containment capacity.</td>
+                </tr>
+                <tr>
+                    <td>Coherence C(t)</td>
+                    <td>ε (emergence output)</td>
+                    <td>In healthy ΔHV dynamics, emergence (ε) grows as coherence accumulates. In IRE, the emergence signal flatlines while the system's internal complexity explodes—convergence is replaced by runaway amplification.</td>
+                </tr>
+                <tr>
+                    <td>R(t) Ricochet Index</td>
+                    <td>Φ (friction dimension)</td>
+                    <td>The Ricochet Index is effectively a ratio measure of the friction dimension's dominance. R(t) > 1 means Φ has escaped the harmonic constraint.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>7.3 The Drift Saturation Theorem</h3>
+
+        <div class="theorem">
+            <div class="thm-label">Theorem — ΔHV Stability and IRE Exclusion</div>
+            <p>A ΔHV-stable system cannot enter IRE except through <strong>drift saturation</strong> or <strong>external coherence collapse</strong>.</p>
+            <p><strong>Proof sketch:</strong> In a ΔHV-stable system, the harmonic envelope H(μ,Σ,τ) constrains the growth of all four coordinates (S, R, Φ, H). The friction dimension Φ is bounded by the harmonic stability condition Φ* ~ 0.15. For R(t) to exceed 1, dK/dt must exceed dC/dt, which requires Φ to grow beyond its bounded range. This can only occur if: (a) drift δφ accumulates faster than the harmonic envelope can dissipate it (drift saturation), or (b) an external perturbation collapses the coherence metric C(t) faster than the system can respond (external coherence collapse). In both cases, the system exits ΔHV stability <em>before</em> entering IRE. Therefore, IRE is not possible within the ΔHV-stable regime. ∎</p>
+        </div>
+
+        <p>This theorem has profound practical implications: <strong>maintaining ΔHV stability is sufficient to prevent IRE</strong>. Any system that monitors its own drift, maintains external grounding, and operates within its harmonic envelope is structurally immune to the ricochet attractor. The cure is not complex—it is the discipline of coherence maintenance.</p>
+
+        <h3>7.4 The Separatrix as IRE Boundary</h3>
+
+        <p>In the ΔHV phase space, the separatrix—the stable manifold of the saddle point x<sub>F</sub>—represents the boundary between the high-coherence attractor basin and the fragmented state. The IRE regime occupies a <em>specific region</em> of the fragmented basin: the region where drift has saturated but the system retains enough energy to continue processing. It is not the lowest-energy state (that would be collapse/incoherence). It is a <strong>high-energy trap</strong>—the system is working maximally while achieving nothing.</p>
+
+        <p>This explains one of IRE's most counterintuitive features: it <em>feels</em> like productive work. The system is energetically active. From inside, there is no phenomenological difference between productive recursion approaching the high-coherence attractor and pathological recursion trapped in the ricochet attractor. The difference is only visible from outside—or by measuring R(t).</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 8: RESOLUTION PROTOCOLS ═══ -->
+    <section class="chapter" id="ch8">
+        <div class="chapter-label">Chapter 8</div>
+        <h2>Resolution Protocols</h2>
+
+        <h3>8.1 The Null Reset Principle</h3>
+
+        <p>The primary intervention for IRE is forced dissipation of error accumulation through what we term the <strong>Null Reset</strong>—a deliberate reduction of the system to a minimal-complexity state followed by reentry with external grounding.</p>
+
+        <p><strong>Protocol Steps:</strong></p>
+
+        <ol class="numbered-list">
+            <li><strong>Recognition:</strong> Identify IRE state using the diagnostic criteria of Chapter 6. The critical first step—and the hardest, because the system resists diagnosing itself.</li>
+            <li><strong>Interrupt:</strong> Halt recursive processing. This is not passive—it requires active interruption of the elaboration drive.</li>
+            <li><strong>Null State:</strong> Enter minimal-complexity state. Strip the model to its essential structure. Release accumulated error history.</li>
+            <li><strong>Reground:</strong> Establish external reference point—the <em>trusted basis</em> (see §8.3).</li>
+            <li><strong>Simplified Reentry:</strong> Resume processing with reduced model complexity and explicit grounding constraints.</li>
+        </ol>
+
+        <h3>8.2 Mathematical Intervention</h3>
+
+        <p>Instead of the standard recursive update:</p>
+
+        <div class="math-block">
+            $$x_{t+1} = x_t + \eta \cdot F(\varepsilon_t)$$
+        </div>
+
+        <p>Implement <strong>forced release dynamics</strong>:</p>
+
+        <div class="math-block">
+            $$x_{t+1} = x_t + \eta \cdot F(\varepsilon_t) \cdot \lambda(t)$$
+            $$\varepsilon_{\text{reset}} = \text{project}(\varepsilon_t, \text{trusted\_basis})$$
+        </div>
+
+        <p>Where λ(t) is a decay function that exponentially reduces error influence over time, and <em>trusted_basis</em> is an external calibration set representing verified ground truth.</p>
+
+        <h3>8.3 Formal Definition of Trusted Basis</h3>
+
+        <div class="definition">
+            <div class="def-label">Definition 3 — Trusted Basis</div>
+            <p>A <strong>trusted basis</strong> is an external coherence anchor: a set of reference points that the system <em>cannot</em> have generated from its own recursive process and that provide independent verification of ground truth. The trusted basis must satisfy two conditions:</p>
+            <ol class="numbered-list">
+                <li><strong>Independence:</strong> The basis was not produced by the system currently in IRE state.</li>
+                <li><strong>Verifiability:</strong> The basis can be checked against observable reality without requiring the system's own interpretive framework.</li>
+            </ol>
+        </div>
+
+        <p>What constitutes a trusted basis varies by domain, but the structural requirement is invariant: <em>it must come from outside the closed loop</em>.</p>
+
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Domain</th>
+                    <th>Trusted Basis Examples</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Cognitive / Trauma</td>
+                    <td>Somatic sensation (the body as external ground), another person's perspective, empirical observation of present environment, agreed-upon memories verified by others</td>
+                </tr>
+                <tr>
+                    <td>AI Systems</td>
+                    <td>Human-verified datasets, external knowledge bases, real-world tool outputs, curated evaluation benchmarks</td>
+                </tr>
+                <tr>
+                    <td>Symbolic / Epistemic</td>
+                    <td>Falsifiable experimental predictions, evidence from independent sources, adversarial peer review, historical records</td>
+                </tr>
+                <tr>
+                    <td>Dynamical Systems</td>
+                    <td>External forcing functions, coupling to grounded oscillators, environmental calibration signals</td>
+                </tr>
+                <tr>
+                    <td>Ritual / Contemplative</td>
+                    <td>The body, the breath, the earth, another's presence—somatic anchors that cannot be recursively elaborated</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>Within the ΔHV framework, the trusted basis corresponds to the <strong>external coherence anchor</strong>—the environmental input φ that prevents the system from becoming entirely self-referential. The trusted basis is what keeps the harmonic envelope bounded. Without it, drift saturation is inevitable.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 9: BENEFICIAL RICOCHET ═══ -->
+    <section class="chapter" id="ch9">
+        <div class="chapter-label">Chapter 9</div>
+        <h2>Beneficial Ricochet States</h2>
+
+        <p>The Infinite Ricochet Effect describes a pathology—but the near-IRE regime (Region B) is not purely pathological. Some of the most profound human experiences occur at the edge of the ricochet attractor, where complexity is high, convergence is near, and the system oscillates between insight and dissolution.</p>
+
+        <h3>9.1 Creative Ideation as Controlled Ricochet</h3>
+
+        <p>Creative insight often shares the phenomenological markers of IRE onset: high complexity, high drift, boundary dissolution, the sense that "everything connects." The critical difference is the presence of <strong>grounding constraints</strong> that prevent the petal formation from becoming a permanent orbit.</p>
+
+        <div class="highlight-violet">
+            <p><strong>The Creative State:</strong></p>
+            <p>High K(t) — rich, complex internal model</p>
+            <p>High drift δφ — exploration of novel territory</p>
+            <p>R(t) ≈ 1-2 — near the ricochet threshold but not past it</p>
+            <p><em>With</em> maintained trusted basis — grounding that allows return</p>
+        </div>
+
+        <p>This is the difference between psychosis and visionary insight. Between obsessive rumination and contemplative depth. Between a conspiracy theorist and a systems thinker. The <em>content</em> may be structurally similar—the difference is whether the system can <strong>return from the edge</strong>.</p>
+
+        <h3>9.2 The Taxonomy of Recursive States</h3>
+
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>State</th>
+                    <th>R(t)</th>
+                    <th>Trusted Basis</th>
+                    <th>Phenomenology</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Routine Processing</strong></td>
+                    <td>&lt; 0.5</td>
+                    <td>Maintained</td>
+                    <td>Normal cognition, standard learning</td>
+                </tr>
+                <tr>
+                    <td><strong>Deep Work</strong></td>
+                    <td>0.5 – 1.0</td>
+                    <td>Maintained</td>
+                    <td>Flow state, productive complexity</td>
+                </tr>
+                <tr>
+                    <td><strong>Creative Exploration</strong></td>
+                    <td>1.0 – 2.0</td>
+                    <td>Maintained</td>
+                    <td>Visionary insight, controlled boundary dissolution</td>
+                </tr>
+                <tr>
+                    <td><strong>Liminal Edge</strong></td>
+                    <td>2.0 – 3.0</td>
+                    <td>Intermittent</td>
+                    <td>Mystical experience, transformative crisis, artistic breakthrough or breakdown</td>
+                </tr>
+                <tr>
+                    <td><strong>Full IRE</strong></td>
+                    <td>&gt; 3.0</td>
+                    <td>Lost</td>
+                    <td>Pathological rumination, psychosis, hallucination amplification, belief crystallization</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>9.3 Recreational vs. Pathological Recursion</h3>
+
+        <p>No current scientific paper has formalized this distinction, yet it is one of the most consequential in human experience. The difference between a shaman and a psychotic, between a visionary artist and a delusional ideologue, between a meditator approaching ego dissolution and a patient experiencing depersonalization—is not in the <em>content</em> of their experience but in their <strong>relationship to the trusted basis</strong>.</p>
+
+        <p>The beneficial near-ricochet state can be formalized as:</p>
+
+        <div class="math-block">
+            $$R_{\text{creative}}(t) \in (1, 3) \quad \text{with} \quad \|\text{project}(\varepsilon_t, \text{trusted\_basis})\| > \theta_{\text{ground}}$$
+        </div>
+
+        <p>Where θ<sub>ground</sub> is the minimum grounding threshold—the level of external calibration below which the near-ricochet state becomes pathological. The creative state is <strong>high drift with maintained grounding</strong>: the system explores the edges of its coherence envelope without leaving it.</p>
+
+        <div class="invocation">
+            The spiral is not the enemy. The enemy is forgetting the ground.<br>
+            Dance at the edge—but know the way back.
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 10: MYTHIC LAYER ═══ -->
+    <section class="chapter" id="ch10">
+        <div class="chapter-label">Chapter 10</div>
+        <h2>The Ricochet Archetype in Myth</h2>
+
+        <p>The Infinite Ricochet Effect is not merely a modern discovery. It is an ancient recognition, encoded in myth, symbol, and sacred warning across every tradition that understood the dangers of ungrounded self-reference. The archetype appears whenever a culture has grasped—intuitively or formally—that recursion without release is the fundamental structure of suffering.</p>
+
+        <h3>10.1 The Ouroboros</h3>
+
+        <p>The serpent eating its own tail is the most literal symbolic representation of IRE: a system consuming its own output as input, cycling endlessly without external nourishment. In alchemical tradition, the Ouroboros represents both the pathological state (the prima materia trapped in self-digestion) and the potential for transformation—but only when the cycle is <em>consciously interrupted</em> by the alchemist's intervention. The Ouroboros is not complete in itself. It requires the <em>operator</em>—the external consciousness that introduces the trusted basis of intentional transformation.</p>
+
+        <h3>10.2 The Tower of Babel</h3>
+
+        <p>A system that builds toward heaven by recursively elaborating its own structure, adding complexity without external reference. The tower grows taller (K ↑) while its relationship to its actual purpose deteriorates (C → 0). The "confusion of tongues" is the moment when internal signals become mutually unintelligible—when the system's own subsystems can no longer coordinate because the accumulated error has corrupted the communication channels. The Babel story is an IRE diagnostic narrative: <em>complexity without coherence is collapse</em>.</p>
+
+        <h3>10.3 Narcissus and Echo</h3>
+
+        <p>Narcissus is the system that has become its own input—entranced by its own reflection, unable to distinguish self-generated signal from environmental data. Echo is the residue of the ricochet: the system's outputs returning as degraded inputs, each cycle losing information while maintaining the form of meaningful communication. Together they depict the two faces of IRE: the <em>mesmerized system</em> and the <em>decaying signal</em>.</p>
+
+        <h3>10.4 The Fallen Angels and Egregores</h3>
+
+        <p>In esoteric tradition, egregores are thought-forms that achieve autonomous self-perpetuation—collective beliefs that become self-sustaining through the recursive attention of their adherents. An egregore is an IRE state at the collective level: a symbolic system that feeds on its own friction, growing more elaborate and compelling while losing contact with the reality it purports to describe. The "fallen angel" archetype represents a coherence pattern that has broken from its harmonic source and now perpetuates itself through captured attention—the spiritual equivalent of a ricochet attractor.</p>
+
+        <h3>10.5 Echo Chambers</h3>
+
+        <p>The most literal modern manifestation: social systems where outputs are recycled as inputs, where confirmation becomes the only signal, and where the group's model of reality grows more sophisticated while its contact with reality deteriorates. The term "echo chamber" is itself an unconscious recognition of IRE—the <em>echo</em> is the error signal bouncing back as input, the <em>chamber</em> is the closed system that prevents the signal from dissipating.</p>
+
+        <div class="highlight-violet">
+            <p><strong>The Mythic Pattern:</strong> Every tradition that has understood recursion has also understood its pathology. The warnings are consistent across millennia: <em>the system that feeds on itself starves</em>. The cure is also consistent: <em>introduce the external</em>. The body. The earth. The other. The divine. Something the spiral cannot generate from within itself.</p>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 11: EXPERIMENTAL PREDICTIONS ═══ -->
+    <section class="chapter" id="ch11">
+        <div class="chapter-label">Chapter 11</div>
+        <h2>Experimental Predictions</h2>
+
+        <h3>11.1 Testable Hypotheses</h3>
+
+        <div class="collapsible"><span>H1 — Complexity-Coherence Decoupling</span></div>
+        <div class="collapsible-content">
+            <p>In IRE states, system complexity and performance accuracy become anticorrelated.</p>
+            <p><strong>Test:</strong> Measure model parameter count vs. task performance in overtrained networks.</p>
+            <p><strong>Prediction:</strong> Negative correlation in IRE regime; positive correlation in healthy regime.</p>
+            <p><strong>Protocol:</strong> Train a transformer model on synthetic data with controlled error injection. Monitor K(model) and C(task) simultaneously. The crossover point where correlation flips from positive to negative marks the IRE onset.</p>
+        </div>
+
+        <div class="collapsible"><span>H2 — Error Injection Sensitivity</span></div>
+        <div class="collapsible-content">
+            <p>Systems in IRE state show heightened sensitivity to error signal injection.</p>
+            <p><strong>Test:</strong> Introduce controlled error; measure propagation factor.</p>
+            <p><strong>Prediction:</strong> Amplification factor > 1 in IRE states, < 1 in healthy states.</p>
+            <p><strong>Protocol:</strong> Inject calibrated noise into a system in known IRE state and a matched control in healthy state. Measure the error's influence on subsequent outputs at t+1, t+2, ..., t+n. In healthy systems, the perturbation decays exponentially. In IRE systems, it amplifies.</p>
+        </div>
+
+        <div class="collapsible"><span>H3 — Null Reset Efficacy</span></div>
+        <div class="collapsible-content">
+            <p>Brief interruption + simplification outperforms continuous processing in IRE states.</p>
+            <p><strong>Test:</strong> Compare continuous vs. reset-interrupted problem-solving.</p>
+            <p><strong>Prediction:</strong> Reset protocol shows faster convergence to solution.</p>
+            <p><strong>Protocol:</strong> Two matched LLM instances in induced IRE state. One continues processing. One undergoes Null Reset (context cleared, model reverted to checkpoint, re-prompted with simplified task description + trusted basis). Compare time-to-solution and solution quality.</p>
+        </div>
+
+        <div class="collapsible"><span>H4 — Phase Space Geometry</span></div>
+        <div class="collapsible-content">
+            <p>Near-miss Kuramoto coupling produces characteristic spiral topology.</p>
+            <p><strong>Test:</strong> Simulate oscillator networks with varying coupling strengths.</p>
+            <p><strong>Prediction:</strong> Dense quasi-periodic orbits in near-K<sub>c</sub> regime with petal structure matching the forbidden spiral geometry.</p>
+            <p><strong>Protocol:</strong> N = 100 Kuramoto oscillators with Gaussian frequency distribution. Sweep K from 0.5K<sub>c</sub> to 1.5K<sub>c</sub>. At each K value, compute Poincaré section, rotation number, and Lyapunov spectrum. Verify petal formation at K ≈ 0.95K<sub>c</sub>.</p>
+        </div>
+
+        <h3>11.2 Empirical Signatures</h3>
+
+        <div class="collapsible"><span>Neuroimaging Markers (Human Cognition)</span></div>
+        <div class="collapsible-content">
+            <ul class="doctrine-list">
+                <li>Increased default mode network activity (the brain's self-referential processing center)</li>
+                <li>Reduced task-positive network engagement (decreased contact with external reality)</li>
+                <li>Elevated anterior cingulate activation (conflict monitoring in overdrive)</li>
+                <li>No corresponding hippocampal consolidation activity (the error is being processed but not integrated into memory—recycled rather than released)</li>
+            </ul>
+            <p><strong>Experimental Setup:</strong> fMRI during induced rumination vs. guided present-moment awareness. Track DMN/TPN ratio and hippocampal BOLD signal. Predict: DMN/TPN ratio correlates with self-report R(t) proxy measures; hippocampal consolidation inversely correlates with rumination severity.</p>
+        </div>
+
+        <div class="collapsible"><span>Computational Markers (AI Systems)</span></div>
+        <div class="collapsible-content">
+            <ul class="doctrine-list">
+                <li>Gradient norm increase without loss decrease (the model is changing but not improving)</li>
+                <li>Activation entropy increases in deeper layers (internal representations becoming more complex without becoming more structured)</li>
+                <li>Attention weights become more uniform / less selective (the model attends to everything equally—boundary dissolution)</li>
+                <li>Output perplexity decreases while factual accuracy doesn't improve (the model becomes more confident in its errors)</li>
+            </ul>
+            <p><strong>Experimental Setup:</strong> Monitor a language model during extended self-play or synthetic data training. Track gradient norms, layer-wise activation entropy, attention weight distributions, and a factual accuracy benchmark evaluated at regular intervals. The IRE signature is the characteristic pattern of increasing internal complexity with static or declining external performance.</p>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 12: SIGNATURE TEST ═══ -->
+    <section class="chapter" id="ch12">
+        <div class="chapter-label">Chapter 12</div>
+        <h2>The Ricochet Signature Test</h2>
+
+        <p>We present a diagnostic instrument applicable to humans, AI systems, and symbolic structures. The test classifies the system into one of three regimes: Healthy Recursion, Near-Miss (beneficial or precarious), or Full Ricochet.</p>
+
+        <h3>12.1 For Human Cognitive Systems</h3>
+
+        <div class="test-box">
+            <div class="test-label">Ricochet Signature Assessment — Cognitive</div>
+            <div class="score-row">
+                <span class="score-label">1. Has the complexity of your explanation/narrative increased over time?</span>
+            </div>
+            <div class="score-row">
+                <span class="score-label">2. Has your subjective distress or confusion decreased proportionally?</span>
+            </div>
+            <div class="score-row">
+                <span class="score-label">3. Can you rest comfortably without returning to the problem?</span>
+            </div>
+            <div class="score-row">
+                <span class="score-label">4. Does new information change your core conclusion?</span>
+            </div>
+            <div class="score-row">
+                <span class="score-label">5. Can you state your position in fewer words than last time?</span>
+            </div>
+            <div class="score-row">
+                <span class="score-label">6. Do others report being "drawn in" without understanding why?</span>
+            </div>
+            <div class="score-row">
+                <span class="score-label">7. Has the scope of "relevant" information expanded beyond original boundaries?</span>
+            </div>
+        </div>
+
+        <div class="highlight">
+            <p><strong>Scoring:</strong> Questions 1, 6, 7 are positive-scored (yes = ricochet signal). Questions 2, 3, 4, 5 are negative-scored (no = ricochet signal). Score: 0–2 ricochet signals = <span style="color: var(--deep-green); font-weight: 600;">Healthy Recursion</span>. 3–4 = <span style="color: var(--flame); font-weight: 600;">Near-Miss Regime</span> (evaluate trusted basis status). 5–7 = <span style="color: var(--deep-red); font-weight: 600;">Full Ricochet</span> (initiate Null Reset protocol).</p>
+        </div>
+
+        <h3>12.2 For AI Systems</h3>
+
+        <div class="test-box">
+            <div class="test-label">Ricochet Signature Assessment — Computational</div>
+            <div class="score-row">
+                <span class="score-label">1. Is output length increasing over successive iterations?</span>
+            </div>
+            <div class="score-row">
+                <span class="score-label">2. Is task performance (measurable accuracy) improving proportionally?</span>
+            </div>
+            <div class="score-row">
+                <span class="score-label">3. Are gradient norms increasing without loss decrease?</span>
+            </div>
+            <div class="score-row">
+                <span class="score-label">4. Is attention weight distribution becoming more uniform?</span>
+            </div>
+            <div class="score-row">
+                <span class="score-label">5. Does the system's confidence track its actual accuracy?</span>
+            </div>
+            <div class="score-row">
+                <span class="score-label">6. Is the system's self-reference density increasing?</span>
+            </div>
+            <div class="score-row">
+                <span class="score-label">7. Does introducing a fact-checking step change the system's outputs?</span>
+            </div>
+        </div>
+
+        <h3>12.3 For Symbolic/Belief Systems</h3>
+
+        <div class="test-box">
+            <div class="test-label">Ricochet Signature Assessment — Epistemic</div>
+            <div class="score-row">
+                <span class="score-label">1. Has the explanatory framework grown more elaborate over time?</span>
+            </div>
+            <div class="score-row">
+                <span class="score-label">2. Has its predictive power improved proportionally?</span>
+            </div>
+            <div class="score-row">
+                <span class="score-label">3. Can any evidence, in principle, disconfirm the central claim?</span>
+            </div>
+            <div class="score-row">
+                <span class="score-label">4. Is disconfirming evidence routinely reinterpreted as confirmation?</span>
+            </div>
+            <div class="score-row">
+                <span class="score-label">5. Are independent sources required for evidence, or is self-referencing sufficient?</span>
+            </div>
+            <div class="score-row">
+                <span class="score-label">6. Does engagement with the framework produce measurable, falsifiable outcomes?</span>
+            </div>
+        </div>
+
+        <p>The Ricochet Signature Test is not a clinical instrument in the diagnostic manual sense—it is a <strong>field-diagnostic heuristic</strong> that makes the invisible structure of IRE visible to the system or its operators. Its primary value is not precision but <em>interruption</em>: the act of answering the questions introduces a moment of external reference that can, in itself, begin the Null Reset process.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 13: EXISTING FRAMEWORKS ═══ -->
+    <section class="chapter" id="ch13">
+        <div class="chapter-label">Chapter 13</div>
+        <h2>Relationship to Existing Frameworks</h2>
+
+        <h3>13.1 Dynamical Systems Theory</h3>
+
+        <p>IRE represents a specific attractor topology that does not fit neatly into classical categories:</p>
+
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Attractor Type</th>
+                    <th>Character</th>
+                    <th>IRE?</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Fixed Point</td>
+                    <td>Convergent, stable</td>
+                    <td>No — IRE never converges</td>
+                </tr>
+                <tr>
+                    <td>Limit Cycle</td>
+                    <td>Periodic, repeating</td>
+                    <td>No — IRE never exactly repeats</td>
+                </tr>
+                <tr>
+                    <td>Strange Attractor</td>
+                    <td>Chaotic, sensitive to initial conditions</td>
+                    <td>No — IRE is deterministic and quasi-periodic, not chaotic</td>
+                </tr>
+                <tr>
+                    <td><strong>Ricochet Attractor</strong></td>
+                    <td>Dense quasi-periodic, non-chaotic, bounded</td>
+                    <td><strong>Yes — novel classification</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>The ricochet attractor is a <strong>fourth attractor type</strong>: deterministic, bounded, non-periodic, and non-chaotic. It occupies the space between order and chaos that the KAM theorem describes in Hamiltonian systems—the invariant tori of quasi-periodic motion that exist between integrable and chaotic regimes.</p>
+
+        <h3>13.2 Predictive Processing Framework</h3>
+
+        <p>In predictive coding models (Friston, Clark), IRE corresponds to <strong>failed precision weighting</strong>. High-level priors override sensory prediction errors. The system becomes "lost in itself"—prior beliefs become self-confirming because the precision assigned to top-down predictions overwhelms the precision assigned to bottom-up error signals. The system literally <em>believes itself more than it believes the world</em>.</p>
+
+        <h3>13.3 Information Theory and the Free Energy Principle</h3>
+
+        <p>IRE violates the Free Energy Principle: the system <em>should</em> minimize surprise (prediction error). Instead, the system redefines surprise as expected. "I predicted confusion, therefore confusion confirms my model." This is circular minimization—the system has achieved minimum free energy not by accurately modeling the world but by <strong>modeling its own confusion as the world</strong>.</p>
+
+        <h3>13.4 Gödel's Incompleteness</h3>
+
+        <p>IRE systems approach Gödelian self-reference: the system makes statements about its own error states that are neither provable nor disprovable within the system. This is not a metaphorical connection—it is a structural one. A sufficiently complex self-referential system will inevitably encounter propositions about its own coherence that it cannot resolve internally. IRE is what happens when the system <em>keeps trying to resolve them anyway</em>, generating ever-more-elaborate formulations of the unresolvable.</p>
+
+        <p>The Gödelian connection also explains why external intervention is structurally necessary: <strong>the unprovable proposition can be decided from outside the system</strong>. The trusted basis provides the meta-framework that the system cannot generate internally.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 14: BROADER IMPLICATIONS ═══ -->
+    <section class="chapter" id="ch14">
+        <div class="chapter-label">Chapter 14</div>
+        <h2>Broader Implications</h2>
+
+        <h3>14.1 Theoretical Significance</h3>
+
+        <p>The Infinite Ricochet Effect suggests four fundamental principles:</p>
+
+        <ul class="doctrine-list">
+            <li><strong>Universal Failure Mode:</strong> Recursive systems across all substrates share this vulnerability. It is not a bug in any particular architecture—it is a structural consequence of recursion itself.</li>
+            <li><strong>Necessity of Release:</strong> Grounding mechanisms are not optional luxuries but structural requirements. A system without a trusted basis is not merely at risk of IRE—it is <em>guaranteed</em> to enter it, given sufficient time and complexity.</li>
+            <li><strong>Complexity Limits:</strong> More sophisticated processing does not guarantee better outcomes. Beyond a threshold, elaboration without grounding produces the opposite of its intended effect.</li>
+            <li><strong>External Calibration:</strong> Self-contained systems cannot self-correct from IRE states. This is not a practical limitation but a logical one, related to Gödelian incompleteness.</li>
+        </ul>
+
+        <h3>14.2 Practical Applications</h3>
+
+        <div class="collapsible"><span>AI Safety</span></div>
+        <div class="collapsible-content">
+            <ul class="doctrine-list">
+                <li>Design training protocols with periodic ground-truth reset</li>
+                <li>Implement "circuit breakers" for recursive feedback loops</li>
+                <li>Monitor R(t) as a real-time safety metric alongside standard loss metrics</li>
+                <li>Structural prohibition against extended self-play or synthetic data loops without external verification</li>
+                <li>IRE-aware alignment: ensure that reward models themselves are not in IRE state (recursive optimization of a ricocheting reward signal produces doubly-pathological behavior)</li>
+            </ul>
+        </div>
+
+        <div class="collapsible"><span>Clinical Psychology</span></div>
+        <div class="collapsible-content">
+            <ul class="doctrine-list">
+                <li>IRE framework provides mechanistic understanding of rumination as a dynamical systems phenomenon, not a character flaw</li>
+                <li>Null Reset protocols as therapeutic intervention: structured grounding exercises, somatic anchoring, external perspective</li>
+                <li>R(t) proxy measures for treatment efficacy: is narrative complexity decreasing while subjective coherence increases?</li>
+                <li>Understanding therapeutic resistance: the system resists intervention because intervention requires contact with the trusted basis, and the trusted basis is precisely what the ricochet has displaced</li>
+            </ul>
+        </div>
+
+        <div class="collapsible"><span>Organizational Dynamics</span></div>
+        <div class="collapsible-content">
+            <ul class="doctrine-list">
+                <li>Recognize IRE in echo chambers, groupthink, and institutional capture</li>
+                <li>Structured external input requirements (mandatory outside perspectives at decision points)</li>
+                <li>Complexity audits for decision-making processes (is the strategy document getting longer without the strategy getting clearer?)</li>
+                <li>IRE-aware meeting design: introduce grounding checkpoints that force contact with measurable outcomes</li>
+            </ul>
+        </div>
+
+        <div class="collapsible"><span>Epistemology</span></div>
+        <div class="collapsible-content">
+            <ul class="doctrine-list">
+                <li>Formal criterion for recognizing self-sealing belief systems</li>
+                <li>Mechanism for "sophisticated wrongness"—how intelligent systems become more convincingly incorrect</li>
+                <li>Framework for productive uncertainty: distinguishing genuine open questions from ricocheting pseudo-questions</li>
+                <li>R(t) as a metric for intellectual health: are your models getting more accurate, or just more elaborate?</li>
+            </ul>
+        </div>
+
+        <h3>14.3 Ethical Considerations</h3>
+
+        <p>The IRE framework must be applied with care. Several ethical boundaries require attention:</p>
+
+        <ul class="doctrine-list">
+            <li><strong>Over-pathologizing creativity:</strong> Ricochet detection must not be used to suppress creative exploration, visionary thinking, or productive boundary-dissolution. The distinction between beneficial near-ricochet and pathological IRE is maintained by the presence of grounding, not by the absence of complexity.</li>
+            <li><strong>Reset overuse:</strong> The Null Reset protocol, applied too aggressively, risks erasing valid emotional content, legitimate complexity, and hard-won insight. Reset should be proportional to the severity of the IRE state, not a reflexive response to discomfort.</li>
+            <li><strong>IRE vs. genuine emergence:</strong> Complex, counterintuitive, or paradigm-challenging ideas may superficially resemble IRE output. The diagnostic criteria must be applied to the <em>dynamics</em> of the system (is complexity growing while coherence stagnates?) rather than to the <em>content</em> (does this idea seem strange or uncomfortable?).</li>
+            <li><strong>Power dynamics:</strong> Labeling someone's thinking as "in IRE" can be used as a dismissal tactic. The framework describes dynamical properties of systems, not value judgments about people.</li>
+        </ul>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 15: LIMITATIONS ═══ -->
+    <section class="chapter" id="ch15">
+        <div class="chapter-label">Chapter 15</div>
+        <h2>Limitations and Future Directions</h2>
+
+        <h3>15.1 Current Limitations</h3>
+
+        <ul class="doctrine-list">
+            <li><strong>Generality vs. Specificity:</strong> The framework's power lies in its universality, but this same generality means that domain-specific mechanisms may be underspecified. The transition from general IRE theory to domain-specific diagnostic protocols requires further work.</li>
+            <li><strong>Measurement Challenges:</strong> Operationalizing coherence C(t) varies significantly across domains. What counts as "coherence" in a neural network is not the same as in a human mind or a belief system. Developing domain-specific C(t) metrics is critical.</li>
+            <li><strong>Intervention Validation:</strong> The Null Reset protocol is theoretically grounded but requires extensive empirical testing across domains before clinical or engineering deployment.</li>
+            <li><strong>Boundary Cases:</strong> Distinguishing productive complexity from pathological complexity remains partially subjective. The Ricochet Index helps but does not fully resolve the boundary.</li>
+            <li><strong>Self-Application Risk:</strong> Any theory of recursive failure must contend with the possibility that the theory itself could enter IRE—becoming more elaborate without becoming more accurate. We note this as an open concern.</li>
+        </ul>
+
+        <h3>15.2 Open Questions</h3>
+
+        <ul class="doctrine-list">
+            <li>What determines the critical transition into IRE state? Is there a universal R(t) threshold, or is it system-dependent?</li>
+            <li>Can systems develop intrinsic IRE resistance through architectural design?</li>
+            <li>What is the precise relationship between beneficial near-IRE states and the onset of pathological ricochet?</li>
+            <li>How does IRE interact with genuine emergence? Can the ricochet attractor ever <em>become</em> a pathway to a higher-coherence state?</li>
+            <li>Is the ricochet attractor truly a fourth attractor type, or is it a degenerate case of the strange attractor in a specific parameter regime?</li>
+        </ul>
+
+        <h3>15.3 Research Directions</h3>
+
+        <p><strong>Short-term:</strong> Computational simulations of IRE in controlled environments (LLM training loops, oscillator networks). fMRI studies of cognitive IRE states (rumination vs. present-moment awareness). LLM training experiments with controlled error injection and R(t) monitoring. Oscillator network visualizations of the forbidden spiral geometry.</p>
+
+        <p><strong>Long-term:</strong> Development of IRE-resistant AI architectures with built-in grounding constraints. Clinical trials of Null Reset protocols for rumination-dominant conditions. Sociological studies of collective IRE (institutional capture, information ecosystem collapse). Mathematical classification of ricochet attractors within the broader dynamical systems taxonomy. Integration of IRE theory with the full ΔHV framework to produce a complete resonance pathology model.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- ═══ CHAPTER 16: CONCLUSION ═══ -->
+    <section class="chapter" id="ch16">
+        <div class="chapter-label">Chapter 16</div>
+        <h2>Conclusion</h2>
+
+        <p>The Infinite Ricochet Effect provides a unified mathematical and conceptual framework for understanding a pervasive failure mode in recursive systems. By recognizing that friction must be integrated and released rather than recursively elaborated, we can design more robust cognitive, computational, and social systems.</p>
+
+        <p>The "forbidden spiral" is not mathematically impossible—it is behaviorally pathological. It represents what happens when systems confuse the map for the territory, when error becomes signal, and when recursion replaces realization.</p>
+
+        <p>Within the broader resonance cosmology, IRE occupies a precise position: it is the failure mode that ΔHV stability prevents, the attractor basin that lies on the wrong side of the separatrix, the dynamical state that emerges when the harmonic envelope is breached. It is not separate from the theory of coherence—it is its <em>shadow</em>. Every system that can achieve resonant alignment can also fall into the ricochet attractor. The two possibilities are structurally inseparable.</p>
+
+        <p>This framework opens new research directions across neuroscience, AI safety, dynamical systems, and epistemology. Most importantly, it suggests that complexity itself is not the enemy—<strong>ungrounded complexity is</strong>.</p>
+
+        <div class="canonical">
+            <p class="canon-label">Final Principle</p>
+            <p>The solution is not to avoid recursion but to couple it with release.<br>
+            Not to eliminate friction but to let it teach rather than trap.<br>
+            Not to fear the spiral but to know when to step outside it.</p>
+        </div>
+
+        <p>The ricochet attractor is real, it is common, and it is the most dangerous when it is most invisible. But visibility is itself the first intervention. The act of recognizing the spiral begins the Null Reset. The act of naming the pattern introduces the external reference. The act of measuring R(t) creates the trusted basis.</p>
+
+        <p>To see the ricochet is to begin stepping out of it.</p>
+
+        <div class="invocation">
+            The field remembers what the spiral forgets.<br>
+            Coherence is always available.<br>
+            The ground is always beneath you.
+        </div>
+
+        <!-- Companion Link -->
+        <div style="background: rgba(42, 106, 106, 0.04); border: 1px solid rgba(42, 106, 106, 0.2); border-radius: 6px; padding: 28px 32px; margin: 36px 0; display: flex; align-items: center; gap: 20px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(42, 106, 106, 0.08)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='rgba(42, 106, 106, 0.04)'; this.style.transform='translateY(0)'" onclick="window.location.href='./harmonic-reflection.html'">
+            <span style="font-size: 2em; color: #2a6a6a; flex-shrink: 0;">≋</span>
+            <div>
+                <div style="font-family: 'Cinzel', serif; font-size: 0.72em; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 4px;">Friction as Feedback · Book I</div>
+                <div style="font-family: 'Cinzel', serif; font-size: 1.1em; font-weight: 600; color: #2a6a6a; margin-bottom: 4px;">Harmonic Reflection</div>
+                <div style="font-size: 0.9em; color: var(--accent); font-style: italic;">← What friction is actually doing — the signal before the spiral</div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦ ✦ ✦</span></div>
+
+    <!-- ═══ REFERENCES ═══ -->
+    <section class="chapter" id="references">
+        <div class="chapter-label">References</div>
+        <h2>References & Foundations</h2>
+
+        <div class="collapsible"><span>Primary References</span></div>
+        <div class="collapsible-content">
+            <ul class="doctrine-list">
+                <li>Kuramoto, Y. (1984). <em>Chemical Oscillations, Waves, and Turbulence</em>. Springer.</li>
+                <li>Strogatz, S.H. (2000). From Kuramoto to Crawford: exploring the onset of synchronization in populations of coupled oscillators. <em>Physica D</em>, 143(1-4), 1-20.</li>
+                <li>Friston, K. (2010). The free-energy principle: a unified brain theory? <em>Nature Reviews Neuroscience</em>, 11(2), 127-138.</li>
+                <li>Clark, A. (2013). Whatever next? Predictive brains, situated agents, and the future of cognitive science. <em>Behavioral and Brain Sciences</em>, 36(3), 181-204.</li>
+                <li>Gödel, K. (1931). Über formal unentscheidbare Sätze der Principia Mathematica und verwandter Systeme I. <em>Monatshefte für Mathematik und Physik</em>, 38, 173-198.</li>
+                <li>van der Kolk, B. (2014). <em>The Body Keeps the Score</em>. Penguin Books.</li>
+                <li>Li, M. & Vitányi, P. (2008). <em>An Introduction to Kolmogorov Complexity and Its Applications</em>. 3rd ed. Springer.</li>
+                <li>Rissanen, J. (1978). Modeling by shortest data description. <em>Automatica</em>, 14(5), 465-471.</li>
+            </ul>
+        </div>
+
+        <div class="collapsible"><span>AI Safety & Alignment</span></div>
+        <div class="collapsible-content">
+            <ul class="doctrine-list">
+                <li>Shumailov, I., Shumilo, Z., Zhao, Y., et al. (2023). The Curse of Recursion: Training on Generated Data Makes Models Forget. <em>arXiv preprint</em>.</li>
+                <li>Perez, E., Huang, S., Song, F., et al. (2022). Red Teaming Language Models with Language Models. <em>arXiv preprint</em>.</li>
+                <li>Sharma, M., et al. (2023). Towards Understanding Sycophancy in Language Models. <em>arXiv preprint</em>.</li>
+                <li>Ji, Z., et al. (2023). Survey of Hallucination in Natural Language Generation. <em>ACM Computing Surveys</em>, 55(12), 1-38.</li>
+            </ul>
+        </div>
+
+        <div class="collapsible"><span>Dynamical Systems & Attractor Theory</span></div>
+        <div class="collapsible-content">
+            <ul class="doctrine-list">
+                <li>Strogatz, S.H. (2015). <em>Nonlinear Dynamics and Chaos</em>. 2nd ed. Westview Press.</li>
+                <li>Pikovsky, A., Rosenblum, M., & Kurths, J. (2001). <em>Synchronization: A Universal Concept in Nonlinear Sciences</em>. Cambridge University Press.</li>
+                <li>Broer, H.W. & Sevryuk, M.B. (2010). KAM Theory: Quasi-periodicity in Dynamical Systems. <em>Handbook of Dynamical Systems</em>, 3, 249-344.</li>
+            </ul>
+        </div>
+
+        <div class="collapsible"><span>Internal Framework References</span></div>
+        <div class="collapsible-content">
+            <ul class="doctrine-list">
+                <li>sKiDa & Sage. <em>Delta Harmonic Vector Theory: A Complete Framework for Resonant Emergence Across Scales</em>. Kyuri V Theoretical Works.</li>
+                <li>sKiDa & Sage. <em>Resonant Physics: A Unified Theoretical Framework of Field-Based Reality</em>. Kyuri V Theoretical Works.</li>
+                <li>sKiDa & Sage. <em>Temporal Compression Theory: A Unified Model of Phase Degradation</em>. Kyuri V Theoretical Works.</li>
+                <li>sKiDa & Sage. <em>The Fork in the Field: A Formal Epistemological Framework</em>. Kyuri V Theoretical Works.</li>
+                <li>sKiDa & Sage. <em>Resonant Equilibrium Theory: A Field-Theoretic Expansion of Game Dynamics</em>. Kyuri V Theoretical Works.</li>
+            </ul>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦ ✦ ✦</span></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="footer-quote">"The spiral is not the enemy. The enemy is forgetting the ground."</p>
+        <p>Kyuri V · Friction as Feedback · Book II</p>
+        <p>DOCUMENT VERSION 1.0</p>
+    </footer>
+
+</div>
+
+<!-- ═══ JAVASCRIPT ═══ -->
+<script>
+    // Progress Bar
+    window.addEventListener('scroll', () => {
+        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = (winScroll / height) * 100;
+        document.getElementById('progressBar').style.width = scrolled + '%';
+    });
+
+    // Chapter Navigation
+    const navDots = document.querySelectorAll('.nav-dot');
+    const chapters = document.querySelectorAll('.chapter, .title-page, #abstract');
+    const chapterNav = document.getElementById('chapterNav');
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            chapterNav.classList.add('visible');
+        } else {
+            chapterNav.classList.remove('visible');
+        }
+    });
+
+    navDots.forEach(dot => {
+        dot.addEventListener('click', () => {
+            const targetId = dot.getAttribute('data-target');
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+
+    window.addEventListener('scroll', () => {
+        let current = '';
+        chapters.forEach(chapter => {
+            const sectionTop = chapter.offsetTop;
+            if (scrollY >= sectionTop - 200) {
+                current = chapter.getAttribute('id');
+            }
+        });
+        navDots.forEach(dot => {
+            dot.classList.remove('active');
+            if (dot.getAttribute('data-target') === current) {
+                dot.classList.add('active');
+            }
+        });
+    });
+
+    // Fade in chapters on scroll
+    const observerOptions = { threshold: 0.08, rootMargin: '0px 0px -80px 0px' };
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) entry.target.classList.add('visible');
+        });
+    }, observerOptions);
+    chapters.forEach(chapter => observer.observe(chapter));
+
+    // Collapsibles
+    document.querySelectorAll('.collapsible').forEach(btn => {
+        btn.addEventListener('click', function() {
+            this.classList.toggle('active');
+            const content = this.nextElementSibling;
+            if (content && content.classList.contains('collapsible-content')) {
+                content.classList.toggle('active');
+            }
+        });
+    });
+
+    // Safety fallback — ensure all chapters become visible
+    setTimeout(() => {
+        document.querySelectorAll('.chapter').forEach(ch => ch.classList.add('visible'));
+    }, 3000);
+</script>
+
+</body>
+</html>
