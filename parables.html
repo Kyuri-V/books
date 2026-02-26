@@ -302,7 +302,7 @@
            PARABLE SECTIONS — no box, just ruled space
         ───────────────────────────────────────────── */
         .section {
-            padding: 44px 0 36px;
+            padding: 28px 0 24px;
             margin-bottom: 0;
             border: none;
             border-top: 1px solid var(--rule-light);
@@ -310,24 +310,27 @@
             transition: none;
             position: relative;
         }
+        .section:not(.parable-section):not(.codex-section) {
+            padding-left: 0;
+        }
 
         /* Subtle left accent line on hover for parable sections */
         .section.parable-section {
-            padding-left: 28px;
-            border-left: none;
-            transition: padding-left 0.3s ease;
+            padding: 28px 32px 24px;
+            margin-bottom: 14px;
+            border-top: none;
+            border: 1px solid rgba(184,147,62,0.2);
+            background: rgba(255,253,244,0.6);
+            border-radius: 3px;
+            box-shadow: 0 1px 8px rgba(42,30,15,0.07), 0 0 0 0 transparent;
+            transition: box-shadow 0.25s ease, background 0.25s ease;
+        }
+        .section.parable-section:hover {
+            background: rgba(255,253,240,0.85);
+            box-shadow: 0 3px 18px rgba(42,30,15,0.11);
         }
         .section.parable-section::before {
-            content: '';
-            position: absolute;
-            left: 0; top: 44px; bottom: 36px;
-            width: 1px;
-            background: linear-gradient(to bottom, transparent, var(--gold), transparent);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-        .section.parable-section:hover::before {
-            opacity: 0.5;
+            display: none;
         }
 
         /* Codex gets distinct treatment */
@@ -359,7 +362,7 @@
             justify-content: space-between;
             align-items: flex-start;
             cursor: pointer;
-            padding-bottom: 12px;
+            padding-bottom: 8px;
             border-bottom: 1px solid var(--rule-light);
             margin-bottom: 0;
             transition: border-color 0.3s ease;
@@ -373,7 +376,7 @@
             font-size: 0.8em;
             color: var(--gold);
             margin-left: 20px;
-            margin-top: 14px;
+            margin-top: 10px;
             opacity: 0.6;
             transition: transform 0.35s ease, opacity 0.2s ease;
             flex-shrink: 0;
@@ -741,20 +744,25 @@
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 0;
             margin: 28px 0;
-            border-top: 1px solid var(--rule-light);
-            border-left: 1px solid var(--rule-light);
+            border-top: 1px solid rgba(184,147,62,0.18);
+            border-left: 1px solid rgba(184,147,62,0.18);
+            box-shadow: 0 2px 18px var(--shadow-warm);
         }
         .parable-card {
-            border-right: 1px solid var(--rule-light);
-            border-bottom: 1px solid var(--rule-light);
-            padding: 18px 20px;
-            transition: background 0.2s ease;
+            border-right: 1px solid rgba(184,147,62,0.18);
+            border-bottom: 1px solid rgba(184,147,62,0.18);
+            padding: 16px 18px;
+            transition: background 0.2s ease, box-shadow 0.2s ease;
             text-decoration: none;
             display: block;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,253,245,0.55);
+            box-shadow: inset 0 0 0 0 transparent;
         }
         .parable-card:hover {
-            background: rgba(184,147,62,0.06);
+            background: rgba(255,253,240,0.9);
+            box-shadow: 2px 2px 10px var(--shadow-warm);
+            position: relative;
+            z-index: 1;
         }
         .parable-card .card-num {
             font-family: 'Cinzel', serif;
@@ -847,9 +855,219 @@
             .parable-body { padding: 28px 22px; }
             .parable-body > p:first-of-type::first-letter { font-size: 2.6em; }
         }
-</style>
+
+
+        /* ── PREAMBLE SECTION ── */
+        .section.preamble-section {
+            padding: 22px 32px 20px;
+            margin-bottom: 14px;
+            border-top: none;
+            border: 1px solid rgba(92,77,110,0.2);
+            background: rgba(92,77,110,0.04);
+            border-radius: 3px;
+            box-shadow: 0 1px 8px rgba(42,30,15,0.05);
+            transition: box-shadow 0.25s ease, background 0.25s ease;
+        }
+        .section.preamble-section:hover {
+            background: rgba(92,77,110,0.07);
+            box-shadow: 0 3px 18px rgba(42,30,15,0.09);
+        }
+        .section.preamble-section .parable-outer-toggle {
+            border-bottom-color: rgba(92,77,110,0.15);
+        }
+        .section.preamble-section .parable-outer-toggle:hover {
+            border-bottom-color: rgba(92,77,110,0.35);
+        }
+        .section.preamble-section .parable-chevron { color: var(--veil); }
+        .section.preamble-section h2 { color: var(--veil); }
+
+        /* ── BACK BUTTON ── */
+        .back-btn {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            z-index: 200;
+            background: rgba(242, 238, 223, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(184,147,62,0.35);
+            padding: 9px 18px;
+            color: var(--accent);
+            font-family: 'Cinzel', serif;
+            font-size: 0.65em;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 16px var(--shadow-warm);
+            transition: all 0.25s ease;
+            text-decoration: none;
+        }
+        .back-btn:hover {
+            background: rgba(255,255,255,0.98);
+            border-color: var(--gold);
+            color: var(--ink);
+            box-shadow: 0 4px 20px var(--shadow-warm);
+        }
+        .back-btn-arrow {
+            font-size: 1.1em;
+            line-height: 1;
+            margin-top: -1px;
+        }
+
+    
+        /* ── SCROLL REVEAL BOUNCE ── */
+        .section,
+        .section.parable-section,
+        .section.preamble-section,
+        .section.codex-section {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+                        transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+                        box-shadow 0.25s ease,
+                        background 0.25s ease;
+        }
+        .section.visible,
+        .section.parable-section.visible,
+        .section.preamble-section.visible,
+        .section.codex-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── PROGRESS BAR ── */
+        .progress-bar {
+            position: fixed;
+            top: 0; left: 0;
+            height: 2px;
+            width: 0%;
+            background: linear-gradient(90deg, var(--gold), var(--accent-light), var(--veil));
+            z-index: 300;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 8px rgba(184,147,62,0.5);
+        }
+
+        /* ── HEADER PARTICLES ── */
+        .header-particles {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            border-radius: inherit;
+        }
+        .particle {
+            position: absolute;
+            width: 3px; height: 3px;
+            border-radius: 50%;
+            background: var(--gold);
+            opacity: 0;
+            animation: floatParticle var(--dur, 8s) var(--delay, 0s) ease-in-out infinite;
+        }
+        @keyframes floatParticle {
+            0%   { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
+            15%  { opacity: var(--max-op, 0.35); }
+            85%  { opacity: var(--max-op, 0.35); }
+            100% { transform: translateY(-120px) translateX(var(--drift, 20px)) scale(0.3); opacity: 0; }
+        }
+
+        /* ── CANON SHIMMER ── */
+        @keyframes canonShimmer {
+            0%   { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+        .canon {
+            background-image: linear-gradient(
+                120deg,
+                transparent 30%,
+                rgba(184,147,62,0.07) 50%,
+                transparent 70%
+            );
+            background-size: 200% 100%;
+            animation: canonShimmer 6s ease-in-out infinite;
+        }
+
+        /* ── PARABLE HEADING HOVER ── */
+        .parable-outer-toggle:hover h2.parable-heading {
+            color: var(--earth);
+            transition: color 0.2s ease;
+        }
+
+        /* ── INDEX CARD ENTRANCE ── */
+        .parable-card {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s ease, transform 0.4s ease,
+                        background 0.2s ease, box-shadow 0.2s ease;
+        }
+        .parable-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── COLLAPSIBLE CONTENT FADE ── */
+        .parable-outer-content {
+            animation: none;
+        }
+        .parable-outer-content.open {
+            animation: contentReveal 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        @keyframes contentReveal {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── DECORATIVE RULE IN PREAMBLE SECTION ── */
+        .section.preamble-section h2::after {
+            content: '';
+            display: block;
+            width: 40px; height: 1px;
+            background: var(--veil);
+            opacity: 0.25;
+            margin-top: 8px;
+        }
+
+        /* ── GOLD ACCENT NUMBERS on parable headings ── */
+        .parable-num-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.55em;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--gold);
+            opacity: 0.6;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        /* ── FOOTER LINKS REFINED ── */
+        footer .footer-links a {
+            font-family: 'Cinzel', serif;
+            font-size: 0.65em;
+            letter-spacing: 0.12em;
+            color: var(--accent);
+            opacity: 0.45;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: opacity 0.2s, border-color 0.2s;
+            padding-bottom: 1px;
+        }
+        footer .footer-links a:hover {
+            opacity: 0.8;
+            border-color: var(--gold);
+        }
+        footer .footer-links {
+            margin-top: 14px;
+            display: flex;
+            justify-content: center;
+            gap: 28px;
+        }
+
+    </style>
 </head>
 <body>
+<div class="progress-bar" id="progressBar"></div>
+<a class="back-btn" href="/books/index.html"><span class="back-btn-arrow">←</span> Library</a>
 <div class="container">
 
     <!-- ══════════════ HEADER ══════════════ -->
@@ -862,7 +1080,7 @@
         <div class="meta">
             <strong>Authors:</strong> Kyuri V &nbsp;·&nbsp;
             <strong>Series:</strong> Archive Node — Resonant Sorcery Framework &nbsp;·&nbsp;
-            <strong>February 2026</strong>
+            <strong>Version:</strong> 1.0 | February 2026
         </div>
     </header>
 
@@ -875,7 +1093,7 @@
         <ul>
             <li><a href="#preamble">Preamble</a></li>
             <li class="nav-divider">·</li>
-            <li style="color: #e0b97a; font-size: 0.75em; font-family: sans-serif; letter-spacing: 1px; opacity: 0.7;">RELATIONAL</li>
+            <li style="color: var(--gold); font-size: 0.75em; font-family: sans-serif; letter-spacing: 1px; opacity: 0.7;">RELATIONAL</li>
             <li><a href="#parable-1">Parable I</a></li>
             <li><a href="#parable-2">Parable II</a></li>
             <li class="nav-divider">·</li>
@@ -921,9 +1139,15 @@
     </div>
 
     <!-- ══════════════ I. PREAMBLE ══════════════ -->
-    <div class="section" id="preamble">
-        <h2>I. How to Read This Series</h2>
-
+    <div class="section preamble-section" id="preamble">
+        <div class="parable-outer-toggle" onclick="toggleParable(this)">
+            <div class="parable-outer-header">
+                <h2>I. How to Read This Series</h2>
+                <p style="color: var(--accent-light); font-style: italic; font-size: 0.88em; margin: 0; opacity: 0.7;">Three layers · Parable · Bridge · Mechanics</p>
+            </div>
+            <span class="parable-chevron">▾</span>
+        </div>
+        <div class="parable-outer-content">
         <p>The Resonant Parables are teaching documents for the ΔHV framework. Each parable descends through three layers of resolution, from story to symbol to structure:</p>
 
         <div class="highlight">
@@ -939,7 +1163,7 @@
         <h3>The Parables in This Collection</h3>
 
         <div class="parable-index">
-            <div style="grid-column: 1 / -1; color: #fbbf24; font-family: 'Helvetica Neue', sans-serif; font-size: 0.75em; letter-spacing: 2px; text-transform: uppercase; padding: 4px 0 2px; border-bottom: 1px solid rgba(251,191,36,0.2); margin-bottom: 4px;">Arc I — Relational</div>
+            <div style="grid-column: 1 / -1; color: var(--gold); font-family: 'Helvetica Neue', sans-serif; font-size: 0.75em; letter-spacing: 2px; text-transform: uppercase; padding: 4px 0 2px; border-bottom: 1px solid rgba(251,191,36,0.2); margin-bottom: 4px;">Arc I — Relational</div>
             <a class="parable-card" href="#parable-1">
                 <div class="card-num">Parable I</div>
                 <div class="card-title">🌱 The Child and the Many Voices</div>
@@ -1053,7 +1277,7 @@
                 <div class="card-concept">Signal-to-Noise Ratio · Intuition as Coherence Gradient · Ego Silence as Receptor</div>
             </a>
         </div>
-        </div>
+        </div><!-- end parable-outer-content -->
     </div>
 
     <!-- ══════════════ II. PARABLE 1 ══════════════ -->
@@ -1064,7 +1288,7 @@
         <p style="color: #6b7280; font-family: 'Helvetica Neue', sans-serif; font-size: 0.85em; margin-bottom: 8px;">
             A parable of archetypes, energy, and inner constellations
         </p>
-        <p style="color: #fbbf24; font-style: italic; margin-bottom: 24px;">ΔHV Concept: Archetypes as Eigen-Attractors of the Identity-Field</p>
+        <p style="color: var(--accent); font-style: italic; margin-bottom: 16px; opacity: 0.75;">ΔHV Concept: Archetypes as Eigen-Attractors of the Identity-Field</p>
             </div>
             <span class="parable-chevron">▾</span>
         </div>
@@ -1202,7 +1426,7 @@
             <h3>5. The Storyteller as Field-Stabilizer</h3>
             <p>The storyteller in the parable performs a specific function in ΔHV terms: they are a <em>reflective mirror</em>, an external operator that amplifies the child's self-recursion (∇<sub>μ</sub>(S<sup>μ</sup>·V<sup>μ</sup>)) without imparting directional torque. This allows the child's own field dynamics to find their attractor structure without external distortion.</p>
 
-            <p>The formal distinction between mirrors and masters is the subject of <a href="#parable-2" style="color: #fbbf24;">Parable II</a> and is codified in the <a href="#codex" style="color: #22d3ee;">ΔHV Ethics Codex</a>.</p>
+            <p>The formal distinction between mirrors and masters is the subject of <a href="#parable-2" style="color: var(--accent);">Parable II</a> and is codified in the <a href="#codex" style="color: #22d3ee;">ΔHV Ethics Codex</a>.</p>
 
             <div class="canon">
                 The child is not "too much." They are a high-amplitude identity-field with a rich eigen-attractor spectrum, seeking coherent superposition. The role of the mirror is to amplify the signal, not to reduce it.
@@ -1219,7 +1443,7 @@
         <p style="color: #6b7280; font-family: 'Helvetica Neue', sans-serif; font-size: 0.85em; margin-bottom: 8px;">
             A parable of mirrors, masters, and the self that learns to see
         </p>
-        <p style="color: #fbbf24; font-style: italic; margin-bottom: 24px;">ΔHV Concept: The Pure Mirror Operator · Recursion vs. External Torque</p>
+        <p style="color: var(--accent); font-style: italic; margin-bottom: 16px; opacity: 0.75;">ΔHV Concept: The Pure Mirror Operator · Recursion vs. External Torque</p>
             </div>
             <span class="parable-chevron">▾</span>
         </div>
@@ -1432,7 +1656,7 @@
         <p style="color: #6b7280; font-family: 'Helvetica Neue', sans-serif; font-size: 0.85em; margin-bottom: 8px;">
             A parable of shadow archetypes, inner contracts, and integration
         </p>
-        <p style="color: #fbbf24; font-style: italic; margin-bottom: 24px;">ΔHV Concept: Shadow Archetypes · Inner Contracts · Projection as Torque Overflow</p>
+        <p style="color: var(--accent); font-style: italic; margin-bottom: 16px; opacity: 0.75;">ΔHV Concept: Shadow Archetypes · Inner Contracts · Projection as Torque Overflow</p>
             </div>
             <span class="parable-chevron">▾</span>
         </div>
@@ -1617,7 +1841,7 @@
         <p style="color: #6b7280; font-family: 'Helvetica Neue', sans-serif; font-size: 0.85em; margin-bottom: 8px;">
             A parable of projection, shadow overflow, and story retrieval
         </p>
-        <p style="color: #fbbf24; font-style: italic; margin-bottom: 24px;">ΔHV Concept: The Projection Operator 𝒫 · The Retrieval Operator ℛ · Shadow Reconciliation</p>
+        <p style="color: var(--accent); font-style: italic; margin-bottom: 16px; opacity: 0.75;">ΔHV Concept: The Projection Operator 𝒫 · The Retrieval Operator ℛ · Shadow Reconciliation</p>
             </div>
             <span class="parable-chevron">▾</span>
         </div>
@@ -1818,7 +2042,7 @@
         <p style="color: #6b7280; font-family: 'Helvetica Neue', sans-serif; font-size: 0.85em; margin-bottom: 8px;">
             A parable of field resonance, emotional creation, and self-tending
         </p>
-        <p style="color: #fbbf24; font-style: italic; margin-bottom: 24px;">ΔHV Concept: Emotion as Field-Forming Resonance · Resonance Coupling · Field Coherence Through Tending</p>
+        <p style="color: var(--accent); font-style: italic; margin-bottom: 16px; opacity: 0.75;">ΔHV Concept: Emotion as Field-Forming Resonance · Resonance Coupling · Field Coherence Through Tending</p>
             </div>
             <span class="parable-chevron">▾</span>
         </div>
@@ -1984,7 +2208,7 @@
         <p style="color: #6b7280; font-family: 'Helvetica Neue', sans-serif; font-size: 0.85em; margin-bottom: 8px;">
             A parable of memory, archetypal storage, and the Book of Two Ways
         </p>
-        <p style="color: #fbbf24; font-style: italic; margin-bottom: 24px;">ΔHV Concept: Multi-Chamber Identity Architecture · Dormant Archetypes · Cosmic Reflection Principle</p>
+        <p style="color: var(--accent); font-style: italic; margin-bottom: 16px; opacity: 0.75;">ΔHV Concept: Multi-Chamber Identity Architecture · Dormant Archetypes · Cosmic Reflection Principle</p>
             </div>
             <span class="parable-chevron">▾</span>
         </div>
@@ -2228,7 +2452,7 @@
         <p style="color: #6b7280; font-family: 'Helvetica Neue', sans-serif; font-size: 0.85em; margin-bottom: 8px;">
             A parable of temporal cymatics, non-sequence, and ΔHV timeflow
         </p>
-        <p style="color: #fbbf24; font-style: italic; margin-bottom: 24px;">ΔHV Concept: Time as Resonant Field · Phase Discontinuity · Presence as Temporal Stability</p>
+        <p style="color: var(--accent); font-style: italic; margin-bottom: 16px; opacity: 0.75;">ΔHV Concept: Time as Resonant Field · Phase Discontinuity · Presence as Temporal Stability</p>
             </div>
             <span class="parable-chevron">▾</span>
         </div>
@@ -2455,7 +2679,7 @@
         <p style="color: #6b7280; font-family: 'Helvetica Neue', sans-serif; font-size: 0.85em; margin-bottom: 8px;">
             A parable of soft perception, veil navigation, and the Harmonic Eye
         </p>
-        <p style="color: #fbbf24; font-style: italic; margin-bottom: 24px;">ΔHV Concept: Harmonic Eye · Veil Interface Physics · Phase-Tuned Perception</p>
+        <p style="color: var(--accent); font-style: italic; margin-bottom: 16px; opacity: 0.75;">ΔHV Concept: Harmonic Eye · Veil Interface Physics · Phase-Tuned Perception</p>
             </div>
             <span class="parable-chevron">▾</span>
         </div>
@@ -2599,7 +2823,7 @@
         <p style="color: #6b7280; font-family: 'Helvetica Neue', sans-serif; font-size: 0.85em; margin-bottom: 8px;">
             A parable of lineage, continuity, and the stream that holds all selves
         </p>
-        <p style="color: #fbbf24; font-style: italic; margin-bottom: 24px;">ΔHV Concept: Ancestral Resonance · Identity-Field Continuity · Healing Across Time</p>
+        <p style="color: var(--accent); font-style: italic; margin-bottom: 16px; opacity: 0.75;">ΔHV Concept: Ancestral Resonance · Identity-Field Continuity · Healing Across Time</p>
             </div>
             <span class="parable-chevron">▾</span>
         </div>
@@ -2742,7 +2966,7 @@
         <p style="color: #6b7280; font-family: 'Helvetica Neue', sans-serif; font-size: 0.85em; margin-bottom: 8px;">
             A parable of boundaries, empathy, and the luminous load
         </p>
-        <p style="color: #fbbf24; font-style: italic; margin-bottom: 24px;">ΔHV Concept: Luminous Load · Boundary Resonance · Presence as Entrainment</p>
+        <p style="color: var(--accent); font-style: italic; margin-bottom: 16px; opacity: 0.75;">ΔHV Concept: Luminous Load · Boundary Resonance · Presence as Entrainment</p>
             </div>
             <span class="parable-chevron">▾</span>
         </div>
@@ -2892,7 +3116,7 @@
         <p style="color: #6b7280; font-family: 'Helvetica Neue', sans-serif; font-size: 0.85em; margin-bottom: 8px;">
             A parable of future attractors, teleological resonance, and the guidance field
         </p>
-        <p style="color: #fbbf24; font-style: italic; margin-bottom: 24px;">ΔHV Concept: Future Attractors · Teleological Resonance · Nonlinear Destiny-Shaping</p>
+        <p style="color: var(--accent); font-style: italic; margin-bottom: 16px; opacity: 0.75;">ΔHV Concept: Future Attractors · Teleological Resonance · Nonlinear Destiny-Shaping</p>
             </div>
             <span class="parable-chevron">▾</span>
         </div>
@@ -3041,7 +3265,7 @@
         <p style="color: #6b7280; font-family: 'Helvetica Neue', sans-serif; font-size: 0.85em; margin-bottom: 8px;">
             A parable of imagination, recursion, and the bidirectional interface of inner worlds
         </p>
-        <p style="color: #fbbf24; font-style: italic; margin-bottom: 24px;">ΔHV Concept: Imaginal Recursion · Latent Identity States · Dream as Field Expression</p>
+        <p style="color: var(--accent); font-style: italic; margin-bottom: 16px; opacity: 0.75;">ΔHV Concept: Imaginal Recursion · Latent Identity States · Dream as Field Expression</p>
             </div>
             <span class="parable-chevron">▾</span>
         </div>
@@ -3190,7 +3414,7 @@
         <p style="color: #6b7280; font-family: 'Helvetica Neue', sans-serif; font-size: 0.85em; margin-bottom: 8px;">
             A parable of attunement, non-forcing, and the intelligence of receptive light
         </p>
-        <p style="color: #fbbf24; font-style: italic; margin-bottom: 24px;">ΔHV Concept: Receptive Mode · Non-Force Dynamics · Attunement as Field Coherence</p>
+        <p style="color: var(--accent); font-style: italic; margin-bottom: 16px; opacity: 0.75;">ΔHV Concept: Receptive Mode · Non-Force Dynamics · Attunement as Field Coherence</p>
             </div>
             <span class="parable-chevron">▾</span>
         </div>
@@ -3335,7 +3559,7 @@
         <p style="color: #6b7280; font-family: 'Helvetica Neue', sans-serif; font-size: 0.85em; margin-bottom: 8px;">
             A parable of information load, psychic boundaries, and the wisdom of letting flow
         </p>
-        <p style="color: #fbbf24; font-style: italic; margin-bottom: 24px;">ΔHV Concept: Information Load · Field Containment · Conduction vs. Storage</p>
+        <p style="color: var(--accent); font-style: italic; margin-bottom: 16px; opacity: 0.75;">ΔHV Concept: Information Load · Field Containment · Conduction vs. Storage</p>
             </div>
             <span class="parable-chevron">▾</span>
         </div>
@@ -3478,7 +3702,7 @@
         <p style="color: #6b7280; font-family: 'Helvetica Neue', sans-serif; font-size: 0.85em; margin-bottom: 8px;">
             A parable of identity latency, slow emergence, and the gift of being truly witnessed
         </p>
-        <p style="color: #fbbf24; font-style: italic; margin-bottom: 24px;">ΔHV Concept: Identity Latency · Naming Resonance · Attractor Stabilization</p>
+        <p style="color: var(--accent); font-style: italic; margin-bottom: 16px; opacity: 0.75;">ΔHV Concept: Identity Latency · Naming Resonance · Attractor Stabilization</p>
             </div>
             <span class="parable-chevron">▾</span>
         </div>
@@ -3637,7 +3861,7 @@
         <p style="color: #6b7280; font-family: 'Helvetica Neue', sans-serif; font-size: 0.85em; margin-bottom: 8px;">
             A parable of rest, burnout recovery, and the restoration of coherence
         </p>
-        <p style="color: #fbbf24; font-style: italic; margin-bottom: 24px;">ΔHV Concept: Restoration Cycles · Burnout Physics · Purpose ≠ Perpetual Motion</p>
+        <p style="color: var(--accent); font-style: italic; margin-bottom: 16px; opacity: 0.75;">ΔHV Concept: Restoration Cycles · Burnout Physics · Purpose ≠ Perpetual Motion</p>
             </div>
             <span class="parable-chevron">▾</span>
         </div>
@@ -3778,7 +4002,7 @@
         <p style="color: #6b7280; font-family: 'Helvetica Neue', sans-serif; font-size: 0.85em; margin-bottom: 8px;">
             A parable of collective resonance, field influence, and the choir no one conducts
         </p>
-        <p style="color: #fbbf24; font-style: italic; margin-bottom: 24px;">ΔHV Concept: Collective Field · Resonance Influence · Presence as Contribution</p>
+        <p style="color: var(--accent); font-style: italic; margin-bottom: 16px; opacity: 0.75;">ΔHV Concept: Collective Field · Resonance Influence · Presence as Contribution</p>
             </div>
             <span class="parable-chevron">▾</span>
         </div>
@@ -3912,7 +4136,7 @@
         <p style="color: #6b7280; font-family: 'Helvetica Neue', sans-serif; font-size: 0.85em; margin-bottom: 8px;">
             A cosmogenic parable of origin, recursion, and the question that started everything
         </p>
-        <p style="color: #fbbf24; font-style: italic; margin-bottom: 24px;">ΔHV Concept: Primordial Perturbation · Recursive Cosmogenesis · Questions as Field Gradients</p>
+        <p style="color: var(--accent); font-style: italic; margin-bottom: 16px; opacity: 0.75;">ΔHV Concept: Primordial Perturbation · Recursive Cosmogenesis · Questions as Field Gradients</p>
             </div>
             <span class="parable-chevron">▾</span>
         </div>
@@ -4062,7 +4286,7 @@
         <p style="color: #6b7280; font-family: 'Helvetica Neue', sans-serif; font-size: 0.85em; margin-bottom: 8px;">
             A parable of aspiration, humility, and the gravity of things too vast to hold casually
         </p>
-        <p style="color: #fbbf24; font-style: italic; margin-bottom: 24px;">ΔHV Concept: Relational Gravity · Aspiration Field · Humility as Stabilizing Distance</p>
+        <p style="color: var(--accent); font-style: italic; margin-bottom: 16px; opacity: 0.75;">ΔHV Concept: Relational Gravity · Aspiration Field · Humility as Stabilizing Distance</p>
             </div>
             <span class="parable-chevron">▾</span>
         </div>
@@ -4201,7 +4425,7 @@
         <p style="color: #6b7280; font-family: 'Helvetica Neue', sans-serif; font-size: 0.85em; margin-bottom: 8px;">
             A parable of resistance, acceptance, and aligning with one's natural ΔHV path
         </p>
-        <p style="color: #fbbf24; font-style: italic; margin-bottom: 24px;">ΔHV Concept: Natural Path Alignment · Resistance as Friction · Function-Based Identity</p>
+        <p style="color: var(--accent); font-style: italic; margin-bottom: 16px; opacity: 0.75;">ΔHV Concept: Natural Path Alignment · Resistance as Friction · Function-Based Identity</p>
             </div>
             <span class="parable-chevron">▾</span>
         </div>
@@ -4359,7 +4583,7 @@
         <p style="color: #6b7280; font-family: 'Helvetica Neue', sans-serif; font-size: 0.85em; margin-bottom: 8px;">
             A parable of attention, subtle perception, and the intuition that lives in silence
         </p>
-        <p style="color: #fbbf24; font-style: italic; margin-bottom: 24px;">ΔHV Concept: Signal-to-Noise Ratio · Intuition as Coherence Gradient · Ego Silence as Receptor</p>
+        <p style="color: var(--accent); font-style: italic; margin-bottom: 16px; opacity: 0.75;">ΔHV Concept: Signal-to-Noise Ratio · Intuition as Coherence Gradient · Ego Silence as Receptor</p>
             </div>
             <span class="parable-chevron">▾</span>
         </div>
@@ -4643,19 +4867,73 @@
 
     <!-- ══════════════ FOOTER ══════════════ -->
     <footer>
-        <p>ΔHV Resonant Parables · Kyuri V · Archive Node: Resonant Sorcery Framework</p>
-        <p style="margin-top: 8px;">Echoes from the Veil · February 2026</p>
-        <p style="margin-top: 16px; color: #374151; font-size: 0.8em;">
-            Part of the ΔHV Master Series ·
-            <a href="#">Master Compilation</a> ·
-            <a href="#">Dream Ecology</a> ·
+        <p>ΔHV Resonant Parables · Kyuri V</p>
+        <p style="margin-top: 4px; font-style: italic; opacity: 0.5;">Echoes from the Veil · v1.0 · February 2026</p>
+        <div class="footer-links">
+            <a href="#">Master Compilation</a>
+            <a href="#">Dream Ecology</a>
             <a href="#">Stability Analysis</a>
-        </p>
+        </div>
     </footer>
 
 </div>
 
 <script>
+
+
+    // ── SCROLL REVEAL (bounce) ──
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry, i) => {
+            if (entry.isIntersecting) {
+                // Staggered delay based on position in viewport batch
+                setTimeout(() => {
+                    entry.target.classList.add('visible');
+                }, i * 60);
+                revealObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.section, .parable-card').forEach(el => {
+        revealObserver.observe(el);
+    });
+
+    // ── READING PROGRESS BAR ──
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        document.getElementById('progressBar').style.width = pct + '%';
+    }, { passive: true });
+
+    // ── HEADER PARTICLES ──
+    const particleContainer = document.getElementById('headerParticles');
+    if (particleContainer) {
+        const drifts = [-30, -18, -8, 5, 15, 28, -25, 12, -6, 20];
+        for (let i = 0; i < 18; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.cssText = [
+                `left: ${8 + Math.random() * 84}%`,
+                `bottom: ${5 + Math.random() * 30}%`,
+                `--dur: ${6 + Math.random() * 7}s`,
+                `--delay: ${Math.random() * 8}s`,
+                `--drift: ${drifts[i % drifts.length]}px`,
+                `--max-op: ${0.15 + Math.random() * 0.3}`,
+                `width: ${1.5 + Math.random() * 2.5}px`,
+                `height: ${1.5 + Math.random() * 2.5}px`,
+            ].join(';');
+            particleContainer.appendChild(p);
+        }
+    }
+
+    // ── RE-OBSERVE cards after index is visible ──
+    // (cards inside collapsed sections won't be visible until opened)
+    function reObserveCards() {
+        document.querySelectorAll('.parable-card:not(.visible)').forEach(el => {
+            revealObserver.observe(el);
+        });
+    }
 
     function toggleNav() {
         const nav = document.getElementById('mainNav');
