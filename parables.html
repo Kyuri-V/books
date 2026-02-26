@@ -741,7 +741,7 @@
         ───────────────────────────────────────────── */
         .parable-index {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
             gap: 0;
             margin: 28px 0;
             border-top: 1px solid rgba(184,147,62,0.18);
@@ -751,7 +751,7 @@
         .parable-card {
             border-right: 1px solid rgba(184,147,62,0.18);
             border-bottom: 1px solid rgba(184,147,62,0.18);
-            padding: 16px 18px;
+            padding: 11px 14px;
             transition: background 0.2s ease, box-shadow 0.2s ease;
             text-decoration: none;
             display: block;
@@ -859,14 +859,21 @@
 
         /* ── PREAMBLE SECTION ── */
         .section.preamble-section {
-            padding: 22px 32px 20px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
             margin-bottom: 14px;
+            padding: 22px 36px 20px;
             border-top: none;
             border: 1px solid rgba(92,77,110,0.2);
             background: rgba(92,77,110,0.04);
             border-radius: 3px;
             box-shadow: 0 1px 8px rgba(42,30,15,0.05);
             transition: box-shadow 0.25s ease, background 0.25s ease;
+            text-align: center;
+        }
+        .section.preamble-section .parable-outer-content {
+            text-align: left;
         }
         .section.preamble-section:hover {
             background: rgba(92,77,110,0.07);
@@ -874,12 +881,36 @@
         }
         .section.preamble-section .parable-outer-toggle {
             border-bottom-color: rgba(92,77,110,0.15);
+            justify-content: center;
+            gap: 12px;
         }
         .section.preamble-section .parable-outer-toggle:hover {
             border-bottom-color: rgba(92,77,110,0.35);
         }
-        .section.preamble-section .parable-chevron { color: var(--veil); }
+        .section.preamble-section .parable-chevron {
+            color: var(--veil);
+            margin-top: 6px;
+        }
         .section.preamble-section h2 { color: var(--veil); }
+        .section.preamble-section h2::after { margin: 8px auto 0; }
+
+        /* ── INDEX SECTION ── */
+        .section.index-section {
+            padding: 20px 0 10px;
+            border-top: none;
+            background: none;
+            margin-bottom: 14px;
+        }
+        .index-heading {
+            font-family: 'Cinzel', serif;
+            font-size: 0.72em;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--gold);
+            opacity: 0.7;
+            margin-bottom: 16px;
+            text-align: center;
+        }
 
         /* ── BACK BUTTON ── */
         .back-btn {
@@ -1158,10 +1189,13 @@
 
         <p>You do not need to read all three layers to receive the teaching. The parable stands alone. The bridge is for those who want to see the architecture. The mechanics are for those who want to work with the system.</p>
 
-        <p>All parables in this series operate within the ΔHV ethical framework codified in the <a href="#codex" style="color: #22d3ee;">Ethics Codex</a> below. That codex is not part of any single parable — it is the governing doctrine for all of them.</p>
+        <p>All parables in this series operate within the ΔHV ethical framework codified in the <a href="#codex" style="color: var(--veil);">Ethics Codex</a> below. That codex is not part of any single parable — it is the governing doctrine for all of them.</p>
+        </div><!-- end parable-outer-content -->
+    </div>
 
-        <h3>The Parables in This Collection</h3>
-
+    <!-- ══════════════ INDEX ══════════════ -->
+    <div class="section index-section">
+        <h3 class="index-heading">The Parables in This Collection</h3>
         <div class="parable-index">
             <div style="grid-column: 1 / -1; color: var(--gold); font-family: 'Helvetica Neue', sans-serif; font-size: 0.75em; letter-spacing: 2px; text-transform: uppercase; padding: 4px 0 2px; border-bottom: 1px solid rgba(251,191,36,0.2); margin-bottom: 4px;">Arc I — Relational</div>
             <a class="parable-card" href="#parable-1">
@@ -1277,8 +1311,7 @@
                 <div class="card-concept">Signal-to-Noise Ratio · Intuition as Coherence Gradient · Ego Silence as Receptor</div>
             </a>
         </div>
-        </div><!-- end parable-outer-content -->
-    </div>
+    </div><!-- end index-section -->
 
     <!-- ══════════════ II. PARABLE 1 ══════════════ -->
     <div class="section parable-section" id="parable-1">
