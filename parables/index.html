@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Resonant Parables — Sky Book</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --parchment: #f2eedf;
+      --ink: #1e1a15;
+      --ink-soft: #3d3228;
+      --gold: #b8933e;
+      --shadow-warm: rgba(42,30,15,0.18);
+      --shadow-deep: rgba(42,30,15,0.28);
+    }
+
+    *{ box-sizing:border-box; margin:0; padding:0; }
+
+    body{
+      font-family: "Crimson Pro", serif;
+      background: var(--parchment);
+      color: var(--ink-soft);
+      min-height: 100vh;
+      overflow-x:hidden;
+    }
+
+    /* Subtle parchment atmosphere (similar spirit to your archive page) */
+    body::before{
+      content:"";
+      position:fixed; inset:0;
+      background:
+        radial-gradient(ellipse 80% 60% at 15% 20%, rgba(201,169,97,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 85% 80%, rgba(139,111,71,0.05) 0%, transparent 60%),
+        radial-gradient(ellipse 100% 50% at 50% 50%, rgba(255,250,235,0.4) 0%, transparent 80%);
+      pointer-events:none;
+      z-index:0;
+    }
+    body::after{
+      content:"";
+      position:fixed; inset:0;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+      background-size:256px 256px;
+      opacity:.55;
+      pointer-events:none;
+      z-index:0;
+    }
+
+    .wrap{
+      position:relative;
+      z-index:1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 18px 60px;
+    }
+
+    header{
+      text-align:center;
+      margin-bottom: 22px;
+      padding: 18px 10px 10px;
+    }
+    .series{
+      font-family:"Cinzel", serif;
+      letter-spacing: .26em;
+      text-transform: uppercase;
+      font-size: .7rem;
+      color: var(--gold);
+      opacity: .85;
+      margin-bottom: 10px;
+    }
+    h1{
+      font-family:"Cinzel", serif;
+      font-weight: 700;
+      letter-spacing: .06em;
+      color: var(--ink);
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      line-height: 1.15;
+    }
+    .sub{
+      margin-top: 8px;
+      font-style: italic;
+      color: rgba(122,92,53,.85);
+    }
+
+    /* Book Stage */
+    .stage{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap: 14px;
+      margin-top: 18px;
+      user-select:none;
+    }
+
+    /* Nav buttons */
+    .nav-btn{
+      appearance:none;
+      border: 1px solid rgba(184,147,62,0.35);
+      background: rgba(242,238,223,0.92);
+      backdrop-filter: blur(10px);
+      color: rgba(61,50,40,0.95);
+      width: 44px;
+      height: 44px;
+      border-radius: 999px;
+      cursor:pointer;
+      display:grid;
+      place-items:center;
+      box-shadow: 0 8px 26px var(--shadow-warm);
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+      font-size: 18px;
+      line-height: 1;
+    }
+    .nav-btn:hover{
+      transform: translateY(-1px);
+      border-color: rgba(184,147,62,0.65);
+      box-shadow: 0 12px 34px var(--shadow-warm);
+    }
+    .nav-btn:disabled{
+      opacity: .35;
+      cursor:not-allowed;
+      transform:none;
+    }
+
+    /* Book container keeps both pages equal size */
+    .book{
+      position: relative;
+      width: min(900px, 100%);
+      aspect-ratio: 2 / 1.25; /* a spread */
+      perspective: 1600px;
+      filter: drop-shadow(0 18px 40px var(--shadow-deep));
+    }
+
+    /* Pressed-together pages */
+    .spread{
+      position:absolute;
+      inset:0;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0; /* pressed together */
+      align-items: stretch;
+    }
+
+    .page-slot{
+      position:relative;
+      overflow: visible; /* your PNG already has page silhouette */
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    img.page{
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display:block;
+      pointer-events:none;
+    }
+
+    /* Flip layers */
+    .flip{
+      position:absolute;
+      top:0; bottom:0;
+      width: 50%;
+      z-index: 20;
+      transform-style: preserve-3d;
+      backface-visibility: hidden;
+      display:none;
+    }
+
+    /* Right-page forward flip */
+    .flip.right{
+      left: 50%;
+      transform-origin: left center;
+    }
+
+    /* Left-page backward flip */
+    .flip.left{
+      left: 0;
+      transform-origin: right center;
+    }
+
+    .flip-face{
+      position:absolute;
+      inset:0;
+      backface-visibility:hidden;
+      transform-style:preserve-3d;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .flip-face img{
+      width:100%;
+      height:100%;
+      object-fit: contain;
+      display:block;
+      pointer-events:none;
+    }
+
+    /* The back face is rotated so it appears when the page flips */
+    .flip-face.back{
+      transform: rotateY(180deg);
+    }
+
+    /* Animations */
+    @keyframes flipForward{
+      from{ transform: rotateY(0deg); }
+      to  { transform: rotateY(-180deg); }
+    }
+    @keyframes flipBackward{
+      from{ transform: rotateY(0deg); }
+      to  { transform: rotateY(180deg); }
+    }
+
+    .flip.forward{
+      animation: flipForward 650ms cubic-bezier(.2,.7,.15,1) forwards;
+    }
+    .flip.backward{
+      animation: flipBackward 650ms cubic-bezier(.2,.7,.15,1) forwards;
+    }
+
+    /* Footer meta */
+    .meta{
+      margin-top: 14px;
+      text-align:center;
+      font-family:"Cinzel", serif;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      font-size:.65rem;
+      opacity:.55;
+      color: rgba(122,92,53,.95);
+    }
+
+    @media (max-width: 700px){
+      .book{ aspect-ratio: 2 / 1.45; }
+      .nav-btn{ width:40px; height:40px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="series">ΔHV Archive · Resonant Parables</div>
+      <h1>The Child and the Many Voices</h1>
+      <div class="sub">Sky Book · 14 pages</div>
+    </header>
+
+    <div class="stage">
+      <button class="nav-btn" id="prevBtn" aria-label="Previous spread">‹</button>
+
+      <div class="book" aria-label="Parable book viewer">
+        <div class="spread">
+          <!-- Left page -->
+          <div class="page-slot" id="leftSlot">
+            <img class="page" id="leftImg" alt="Left page">
+          </div>
+
+          <!-- Right page -->
+          <div class="page-slot" id="rightSlot">
+            <img class="page" id="rightImg" alt="Right page">
+          </div>
+        </div>
+
+        <!-- Flip overlay for right-page forward turns -->
+        <div class="flip right" id="flipRight">
+          <div class="flip-face front">
+            <img id="flipRightFront" alt="Flipping page front">
+          </div>
+          <div class="flip-face back">
+            <img id="flipRightBack" alt="Flipping page back">
+          </div>
+        </div>
+
+        <!-- Flip overlay for left-page backward turns -->
+        <div class="flip left" id="flipLeft">
+          <div class="flip-face front">
+            <img id="flipLeftFront" alt="Flipping page front">
+          </div>
+          <div class="flip-face back">
+            <img id="flipLeftBack" alt="Flipping page back">
+          </div>
+        </div>
+      </div>
+
+      <button class="nav-btn" id="nextBtn" aria-label="Next spread">›</button>
+    </div>
+
+    <div class="meta" id="metaText">Spread 1 of 7 · Pages 1–2</div>
+  </div>
+
+  <script>
+    // ---- CONFIG ----
+    const TOTAL_PAGES = 14;
+    const BASE_PATH = "/parables/";
+    const FILE_PREFIX = "sky_p";
+    const FILE_EXT = ".png";
+
+    // Spread index: 0..6 (7 spreads)
+    let spread = 0;
+    let animating = false;
+
+    const leftImg = document.getElementById("leftImg");
+    const rightImg = document.getElementById("rightImg");
+
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const metaText = document.getElementById("metaText");
+
+    const flipRight = document.getElementById("flipRight");
+    const flipRightFront = document.getElementById("flipRightFront");
+    const flipRightBack  = document.getElementById("flipRightBack");
+
+    const flipLeft = document.getElementById("flipLeft");
+    const flipLeftFront = document.getElementById("flipLeftFront");
+    const flipLeftBack  = document.getElementById("flipLeftBack");
+
+    function pageSrc(n){
+      return `${BASE_PATH}${FILE_PREFIX}${n}${FILE_EXT}`;
+    }
+
+    function clampSpread(){
+      const maxSpread = Math.floor(TOTAL_PAGES / 2) - 1;
+      spread = Math.max(0, Math.min(maxSpread, spread));
+    }
+
+    function currentPages(){
+      const leftPage = spread * 2 + 1;
+      const rightPage = leftPage + 1;
+      return { leftPage, rightPage };
+    }
+
+    function setSpreadImages(){
+      const { leftPage, rightPage } = currentPages();
+      leftImg.src = pageSrc(leftPage);
+      rightImg.src = pageSrc(rightPage);
+
+      const totalSpreads = Math.floor(TOTAL_PAGES / 2);
+      metaText.textContent = `Spread ${spread + 1} of ${totalSpreads} · Pages ${leftPage}–${rightPage}`;
+
+      prevBtn.disabled = spread === 0 || animating;
+      nextBtn.disabled = spread === (totalSpreads - 1) || animating;
+    }
+
+    // Preload next/prev images for smoother flips
+    function preloadSpread(targetSpread){
+      const totalSpreads = Math.floor(TOTAL_PAGES / 2);
+      if(targetSpread < 0 || targetSpread >= totalSpreads) return;
+
+      const lp = targetSpread * 2 + 1;
+      const rp = lp + 1;
+
+      [lp, rp].forEach(p=>{
+        const img = new Image();
+        img.src = pageSrc(p);
+      });
+    }
+
+    function showFlip(el){
+      el.style.display = "block";
+      el.classList.remove("forward","backward");
+      // force reflow so animation reliably restarts
+      void el.offsetWidth;
+    }
+    function hideFlip(el){
+      el.style.display = "none";
+      el.classList.remove("forward","backward");
+      el.style.transform = "rotateY(0deg)";
+    }
+
+    // Forward: right page flips over -> becomes new left page
+    function nextSpread(){
+      if(animating) return;
+      const totalSpreads = Math.floor(TOTAL_PAGES / 2);
+      if(spread >= totalSpreads - 1) return;
+
+      animating = true;
+      prevBtn.disabled = true;
+      nextBtn.disabled = true;
+
+      const { leftPage, rightPage } = currentPages();
+      const nextLeft  = leftPage + 2; // next spread left page
+      const nextRight = rightPage + 2;
+
+      // Setup flip:
+      // front = current right page
+      // back  = next left page (because when flipped, it lands as the new left)
+      flipRightFront.src = pageSrc(rightPage);
+      flipRightBack.src  = pageSrc(nextLeft);
+
+      showFlip(flipRight);
+      flipRight.classList.add("forward");
+
+      // While flipping, also preload the upcoming right page
+      preloadSpread(spread + 2);
+
+      flipRight.addEventListener("animationend", function handler(){
+        flipRight.removeEventListener("animationend", handler);
+
+        spread++;
+        clampSpread();
+
+        // After flip completes, set new spread images
+        leftImg.src  = pageSrc(nextLeft);
+        rightImg.src = pageSrc(nextRight);
+
+        hideFlip(flipRight);
+
+        animating = false;
+        setSpreadImages();
+        // Preload neighbor spreads
+        preloadSpread(spread + 1);
+        preloadSpread(spread - 1);
+      }, { once:true });
+    }
+
+    // Backward: left page flips back -> reveals previous right page
+    function prevSpread(){
+      if(animating) return;
+      if(spread <= 0) return;
+
+      animating = true;
+      prevBtn.disabled = true;
+      nextBtn.disabled = true;
+
+      const { leftPage, rightPage } = currentPages();
+      const prevLeft  = leftPage - 2;
+      const prevRight = rightPage - 2;
+
+      // Setup flip:
+      // front = current left page
+      // back  = previous right page (because flipping backward shows the previous right)
+      flipLeftFront.src = pageSrc(leftPage);
+      flipLeftBack.src  = pageSrc(prevRight);
+
+      showFlip(flipLeft);
+      flipLeft.classList.add("backward");
+
+      preloadSpread(spread - 2);
+
+      flipLeft.addEventListener("animationend", function handler(){
+        flipLeft.removeEventListener("animationend", handler);
+
+        spread--;
+        clampSpread();
+
+        leftImg.src  = pageSrc(prevLeft);
+        rightImg.src = pageSrc(prevRight);
+
+        hideFlip(flipLeft);
+
+        animating = false;
+        setSpreadImages();
+        preloadSpread(spread + 1);
+        preloadSpread(spread - 1);
+      }, { once:true });
+    }
+
+    // Button wiring
+    nextBtn.addEventListener("click", nextSpread);
+    prevBtn.addEventListener("click", prevSpread);
+
+    // Keyboard support
+    window.addEventListener("keydown", (e)=>{
+      if(e.key === "ArrowRight") nextSpread();
+      if(e.key === "ArrowLeft") prevSpread();
+    });
+
+    // Init
+    setSpreadImages();
+    preloadSpread(1);
+  </script>
+</body>
+</html>
