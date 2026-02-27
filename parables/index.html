@@ -236,8 +236,6 @@
 
     .book {
       position: relative;
-      /* Fixed aspect ratio — every page will be forced to this.
-         Pages are portrait (roughly 3:4), two side by side = 3:2 spread */
       width: min(840px, 90vw);
       aspect-ratio: 2 / 1.35;
       perspective: 2000px;
@@ -247,22 +245,20 @@
     .spread {
       position: absolute;
       inset: 0;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: 1fr;
-      align-items: stretch;
-      gap: 0;
+      display: flex;
+      flex-direction: row;
     }
 
-    /* Each half fills its column exactly — forced to same height as the spread */
+    /* Each half is exactly 50% wide and 100% tall of the book */
     .page-slot {
       position: relative;
-      overflow: hidden;
+      width: 50%;
       height: 100%;
-      align-self: stretch;
+      overflow: hidden;
+      flex-shrink: 0;
     }
 
-    /* Force every page image to fill its slot uniformly, corner to corner */
+    /* Image absolutely fills its slot exactly — stretches to every corner */
     img.page {
       position: absolute;
       top: 0;
