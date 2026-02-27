@@ -249,23 +249,27 @@
       inset: 0;
       display: grid;
       grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr;
+      align-items: stretch;
       gap: 0;
     }
 
-    /* Each half fills its column exactly */
+    /* Each half fills its column exactly — forced to same height as the spread */
     .page-slot {
       position: relative;
-      overflow: hidden; /* crop any size irregularities */
+      overflow: hidden;
+      height: 100%;
+      align-self: stretch;
     }
 
-    /* Force every page image to fill its slot uniformly */
+    /* Force every page image to fill its slot uniformly, corner to corner */
     img.page {
       position: absolute;
-      inset: 0;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
-      object-fit: fill;    /* stretches image to fill slot corner to corner */
-      object-position: center;
+      object-fit: fill;
       display: block;
       pointer-events: none;
     }
