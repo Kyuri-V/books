@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Resonant Parables — Sky Book</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --parchment: #ede8d5;
+      --ink: #1e1a15;
+      --ink-soft: #3d3228;
+      --gold: #b8933e;
+      --gold-light: #d4ac5a;
+      --accent: #7a5c35;
+      --shadow-warm: rgba(42,30,15,0.18);
+      --shadow-deep: rgba(20,12,4,0.55);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: "Crimson Pro", serif;
+      background: var(--parchment);
+      color: var(--ink-soft);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      touch-action: pan-y;
+    }
+
+    /* Parchment atmosphere */
+    body::before {
+      content: "";
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 20% 15%, rgba(201,169,97,0.09) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 70% at 80% 85%, rgba(139,111,71,0.06) 0%, transparent 55%),
+        radial-gradient(ellipse 90% 40% at 50% 50%, rgba(255,250,235,0.35) 0%, transparent 75%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Grain texture */
+    body::after {
+      content: "";
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      background-size: 256px 256px;
+      opacity: 0.6;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── WRAP ── */
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0;
+    }
+
+    /* ── HEADER ── */
+    header {
+      text-align: center;
+      padding: 14px 24px 10px;
+      width: 100%;
+      flex-shrink: 0;
+      animation: fadeDown 0.9s ease-out both;
+      border-bottom: 1px solid rgba(184,147,62,0.15);
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .series {
+      font-family: "Cinzel", serif;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      font-size: 0.48rem;
+      color: var(--gold);
+      opacity: 0.6;
+      margin-bottom: 4px;
+    }
+
+    h1 {
+      font-family: "Cinzel", serif;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      color: var(--ink);
+      font-size: 1.05rem;
+      line-height: 1.2;
+    }
+
+    h1 .article {
+      display: inline;
+      font-size: 0.7em;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.65;
+      margin-right: 6px;
+    }
+
+    /* ── STAGE — takes all remaining vertical space ── */
+    .stage {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      animation: fadeUp 0.9s ease-out 0.15s both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── BOOK ── */
+    .book-wrap {
+      position: relative;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      filter:
+        drop-shadow(0 20px 40px rgba(20,12,4,0.4))
+        drop-shadow(0 6px 14px rgba(20,12,4,0.22));
+    }
+
+    .book {
+      position: relative;
+      /* Portrait: match image ratio 983:1431 ≈ 1:1.456 */
+      height: min(calc(100vh - 120px), 85vw * 1.456);
+      width: min(85vw, calc((100vh - 120px) / 1.456));
+      perspective: 1800px;
+    }
+
+    /* Single page slot fills the whole book */
+    #pageSlot {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    canvas.page {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      pointer-events: none;
+    }
+
+    /* Edge shadows on the page */
+    #pageSlot::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to right,  rgba(30,15,5,0.10) 0%, transparent 5%),
+        linear-gradient(to left,   rgba(30,15,5,0.07) 0%, transparent 5%),
+        linear-gradient(to bottom, rgba(30,15,5,0.05) 0%, transparent 6%),
+        linear-gradient(to top,    rgba(30,15,5,0.08) 0%, transparent 8%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* ── FLIP OVERLAY ── */
+    .flip {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      transform-style: preserve-3d;
+      backface-visibility: hidden;
+      display: none;
+    }
+
+    .flip.forward-flip  { transform-origin: left center; }
+    .flip.backward-flip { transform-origin: right center; }
+
+    .flip-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
+      overflow: hidden;
+    }
+    .flip-face img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      display: block;
+      pointer-events: none;
+    }
+    .flip-face.back { transform: rotateY(180deg); }
+
+    .flip-face.front::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to left, rgba(20,10,2,0.0) 0%, rgba(20,10,2,0.20) 100%);
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    @keyframes flipForward {
+      from { transform: rotateY(0deg); }
+      to   { transform: rotateY(-180deg); }
+    }
+    @keyframes flipBackward {
+      from { transform: rotateY(0deg); }
+      to   { transform: rotateY(180deg); }
+    }
+
+    .flip.go-forward  { animation: flipForward  600ms cubic-bezier(0.18,0.72,0.14,1) forwards; }
+    .flip.go-backward { animation: flipBackward 600ms cubic-bezier(0.18,0.72,0.14,1) forwards; }
+
+    /* ── TAP ZONES (invisible left/right halves) ── */
+    .tap-zone {
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 50%;
+      z-index: 30;
+      cursor: pointer;
+    }
+    #tapPrev { left: 0; }
+    #tapNext { right: 0; }
+
+    /* ── FOOTER ── */
+    footer {
+      flex-shrink: 0;
+      width: 100%;
+      padding: 8px 20px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(184,147,62,0.15);
+      animation: fadeUp 0.9s ease-out 0.3s both;
+    }
+
+    .nav-btn {
+      appearance: none;
+      border: 1px solid rgba(184,147,62,0.3);
+      background: rgba(250,247,238,0.9);
+      backdrop-filter: blur(8px);
+      color: var(--accent);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 3px 12px var(--shadow-warm);
+      font-size: 18px;
+      transition: all 0.18s ease;
+      flex-shrink: 0;
+    }
+    .nav-btn:active { transform: scale(0.92); background: rgba(255,255,255,0.98); }
+    .nav-btn:disabled { opacity: 0.25; cursor: not-allowed; }
+
+    /* Dots */
+    .dots {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+    }
+    .dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--gold);
+      opacity: 0.2;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      cursor: pointer;
+    }
+    .dot.active {
+      opacity: 0.75;
+      transform: scale(1.4);
+    }
+
+    .page-label {
+      font-family: "Cinzel", serif;
+      font-size: 0.5rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      opacity: 0.45;
+      min-width: 48px;
+      text-align: right;
+    }
+
+    /* Back button */
+    .back-btn {
+      position: fixed;
+      top: 12px; left: 12px;
+      z-index: 100;
+      background: rgba(250,247,238,0.92);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(184,147,62,0.3);
+      padding: 6px 12px;
+      color: var(--accent);
+      font-family: "Cinzel", serif;
+      font-size: 0.55em;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 2px 10px var(--shadow-warm);
+      transition: all 0.2s ease;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <a class="back-btn" href="/books/index.html">← Library</a>
+
+  <div class="wrap">
+
+    <header>
+      <div class="series">ΔHV Archive &nbsp;·&nbsp; Resonant Parables</div>
+      <h1>
+        <span class="article">The</span>Child and the Many Voices
+      </h1>
+    </header>
+
+    <div class="stage">
+      <div class="book-wrap">
+        <div class="book" id="book">
+
+          <div id="pageSlot">
+            <canvas class="page" id="pageCanvas"></canvas>
+          </div>
+
+          <!-- Flip overlay -->
+          <div class="flip" id="flipEl">
+            <div class="flip-face front">
+              <img id="flipFront" alt="">
+            </div>
+            <div class="flip-face back">
+              <img id="flipBack" alt="">
+            </div>
+          </div>
+
+          <!-- Tap zones -->
+          <div class="tap-zone" id="tapPrev"></div>
+          <div class="tap-zone" id="tapNext"></div>
+
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <button class="nav-btn" id="prevBtn" aria-label="Previous page">‹</button>
+      <div class="dots" id="dots"></div>
+      <span class="page-label" id="pageLabel"></span>
+      <button class="nav-btn" id="nextBtn" aria-label="Next page">›</button>
+    </footer>
+
+  </div>
+
+  <script>
+    // ── CONFIG ──
+    const TOTAL_PAGES = 14;
+    const BASE_PATH   = "/books/parables/";
+    const FILE_PREFIX = "sky_p";
+    const FILE_EXT    = ".png";
+    const FLIP_MS     = 600;
+
+    let page      = 1;
+    let animating = false;
+
+    // ── ELEMENTS ──
+    const canvas    = document.getElementById("pageCanvas");
+    const prevBtn   = document.getElementById("prevBtn");
+    const nextBtn   = document.getElementById("nextBtn");
+    const pageLabel = document.getElementById("pageLabel");
+    const dotsEl    = document.getElementById("dots");
+    const flipEl    = document.getElementById("flipEl");
+    const flipFront = document.getElementById("flipFront");
+    const flipBack  = document.getElementById("flipBack");
+    const tapPrev   = document.getElementById("tapPrev");
+    const tapNext   = document.getElementById("tapNext");
+
+    // ── BUILD DOTS ──
+    const dotEls = [];
+    for (let i = 0; i < TOTAL_PAGES; i++) {
+      const d = document.createElement("div");
+      d.className = "dot";
+      d.addEventListener("click", () => jumpTo(i + 1));
+      dotsEl.appendChild(d);
+      dotEls.push(d);
+    }
+
+    function pageSrc(n) {
+      return `${BASE_PATH}${FILE_PREFIX}${n}${FILE_EXT}`;
+    }
+
+    function drawToCanvas(cvs, src) {
+      return new Promise(resolve => {
+        const ctx = cvs.getContext('2d');
+        const img = new Image();
+        img.onload = function() {
+          cvs.width  = cvs.offsetWidth  || cvs.parentElement.offsetWidth;
+          cvs.height = cvs.offsetHeight || cvs.parentElement.offsetHeight;
+          ctx.drawImage(img, 0, 0, cvs.width, cvs.height);
+          resolve();
+        };
+        img.src = src;
+      });
+    }
+
+    function preload(n) {
+      if (n < 1 || n > TOTAL_PAGES) return;
+      const img = new Image();
+      img.src = pageSrc(n);
+    }
+
+    function updateUI() {
+      drawToCanvas(canvas, pageSrc(page));
+      pageLabel.textContent = `${page} / ${TOTAL_PAGES}`;
+      prevBtn.disabled = page === 1 || animating;
+      nextBtn.disabled = page === TOTAL_PAGES || animating;
+      dotEls.forEach((d, i) => d.classList.toggle("active", i === page - 1));
+    }
+
+    function showFlip() {
+      flipEl.style.display = "block";
+      flipEl.classList.remove("go-forward", "go-backward");
+      void flipEl.offsetWidth;
+    }
+    function hideFlip() {
+      flipEl.style.display = "none";
+      flipEl.classList.remove("go-forward", "go-backward");
+    }
+
+    function nextPage() {
+      if (animating || page >= TOTAL_PAGES) return;
+      animating = true;
+      prevBtn.disabled = true;
+      nextBtn.disabled = true;
+
+      flipFront.src = pageSrc(page);
+      flipBack.src  = pageSrc(page + 1);
+      flipEl.classList.remove("forward-flip", "backward-flip");
+      flipEl.classList.add("forward-flip");
+
+      showFlip();
+      flipEl.classList.add("go-forward");
+      preload(page + 2);
+
+      setTimeout(() => {
+        page++;
+        hideFlip();
+        animating = false;
+        updateUI();
+        preload(page + 1);
+      }, FLIP_MS);
+    }
+
+    function prevPage() {
+      if (animating || page <= 1) return;
+      animating = true;
+      prevBtn.disabled = true;
+      nextBtn.disabled = true;
+
+      flipFront.src = pageSrc(page);
+      flipBack.src  = pageSrc(page - 1);
+      flipEl.classList.remove("forward-flip", "backward-flip");
+      flipEl.classList.add("backward-flip");
+
+      showFlip();
+      flipEl.classList.add("go-backward");
+      preload(page - 2);
+
+      setTimeout(() => {
+        page--;
+        hideFlip();
+        animating = false;
+        updateUI();
+        preload(page - 1);
+      }, FLIP_MS);
+    }
+
+    function jumpTo(target) {
+      if (animating || target === page) return;
+      page = Math.max(1, Math.min(TOTAL_PAGES, target));
+      updateUI();
+    }
+
+    // ── TAP ZONES ──
+    tapNext.addEventListener("click", nextPage);
+    tapPrev.addEventListener("click", prevPage);
+
+    // ── NAV BUTTONS ──
+    nextBtn.addEventListener("click", nextPage);
+    prevBtn.addEventListener("click", prevPage);
+
+    // ── SWIPE ──
+    let touchStartX = 0;
+    let touchStartY = 0;
+    document.addEventListener("touchstart", e => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    document.addEventListener("touchend", e => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      const dy = e.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+        dx < 0 ? nextPage() : prevPage();
+      }
+    }, { passive: true });
+
+    // ── KEYBOARD ──
+    window.addEventListener("keydown", e => {
+      if (e.key === "ArrowRight") nextPage();
+      if (e.key === "ArrowLeft")  prevPage();
+    });
+
+    // ── INIT ──
+    updateUI();
+    preload(2);
+    preload(3);
+  </script>
+</body>
+</html>
