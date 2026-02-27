@@ -311,6 +311,76 @@
       text-align: right;
     }
 
+    /* ── PAGE ARROWS ── */
+    .page-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 35;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid rgba(184,147,62,0.35);
+      background: rgba(250,247,238,0.7);
+      backdrop-filter: blur(6px);
+      color: var(--accent);
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 12px var(--shadow-warm);
+      transition: all 0.2s ease;
+      pointer-events: all;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .page-arrow:active {
+      background: rgba(255,255,255,0.95);
+      border-color: rgba(184,147,62,0.7);
+      transform: translateY(-50%) scale(0.92);
+    }
+    .page-arrow.arrow-prev { left: 8px; }
+    .page-arrow.arrow-next { right: 8px; }
+    .page-arrow.hidden { opacity: 0; pointer-events: none; }
+
+    /* ── NUMBERED PAGE DOTS ── */
+    .dots {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      flex-wrap: wrap;
+      padding: 0 4px;
+    }
+    .dot {
+      min-width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      background: transparent;
+      border: 1px solid rgba(184,147,62,0.25);
+      font-family: "Cinzel", serif;
+      font-size: 0.42rem;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      opacity: 0.45;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      padding: 0 4px;
+    }
+    .dot.active {
+      opacity: 1;
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--parchment);
+      transform: scale(1.15);
+    }
+    .dot:hover:not(.active) { opacity: 0.7; border-color: rgba(184,147,62,0.5); }
+
     /* Back button */
     .back-btn {
       position: fixed;
@@ -371,6 +441,10 @@
           <div class="tap-zone" id="tapPrev"></div>
           <div class="tap-zone" id="tapNext"></div>
 
+          <!-- Page arrows -->
+          <div class="page-arrow arrow-prev" id="arrowPrev">&#8249;</div>
+          <div class="page-arrow arrow-next" id="arrowNext">&#8250;</div>
+
         </div>
       </div>
     </div>
@@ -407,15 +481,19 @@
     const tapPrev   = document.getElementById("tapPrev");
     const tapNext   = document.getElementById("tapNext");
 
-    // ── BUILD DOTS ──
+    // ── BUILD NUMBERED DOTS ──
     const dotEls = [];
     for (let i = 0; i < TOTAL_PAGES; i++) {
       const d = document.createElement("div");
       d.className = "dot";
+      d.textContent = i + 1;
       d.addEventListener("click", () => jumpTo(i + 1));
       dotsEl.appendChild(d);
       dotEls.push(d);
     }
+
+    const arrowPrev = document.getElementById("arrowPrev");
+    const arrowNext = document.getElementById("arrowNext");
 
     function pageSrc(n) {
       return `${BASE_PATH}${FILE_PREFIX}${n}${FILE_EXT}`;
@@ -446,6 +524,8 @@
       pageLabel.textContent = `${page} / ${TOTAL_PAGES}`;
       prevBtn.disabled = page === 1 || animating;
       nextBtn.disabled = page === TOTAL_PAGES || animating;
+      arrowPrev.classList.toggle("hidden", page === 1);
+      arrowNext.classList.toggle("hidden", page === TOTAL_PAGES);
       dotEls.forEach((d, i) => d.classList.toggle("active", i === page - 1));
     }
 
@@ -516,6 +596,10 @@
     // ── TAP ZONES ──
     tapNext.addEventListener("click", nextPage);
     tapPrev.addEventListener("click", prevPage);
+
+    // ── ARROWS ──
+    arrowPrev.addEventListener("click", e => { e.stopPropagation(); prevPage(); });
+    arrowNext.addEventListener("click", e => { e.stopPropagation(); nextPage(); });
 
     // ── NAV BUTTONS ──
     nextBtn.addEventListener("click", nextPage);
