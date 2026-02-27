@@ -265,7 +265,7 @@
       inset: 0;
       width: 100%;
       height: 100%;
-      object-fit: fill; /* keep full image visible (no cropping) */
+      object-fit: fill !important; /* keep full image visible (no cropping) */
       
       display: block;
       pointer-events: none;
@@ -277,7 +277,7 @@
       position: absolute;
       inset: 0;
       background: linear-gradient(to right,
-        transparent 85%,
+        transparent 97%,
         rgba(30,15,5,0.18) 100%
       );
       pointer-events: none;
@@ -290,7 +290,7 @@
       position: absolute;
       inset: 0;
       background: linear-gradient(to left,
-        transparent 85%,
+        transparent 97%,
         rgba(30,15,5,0.18) 100%
       );
       pointer-events: none;
@@ -303,25 +303,13 @@
       top: 0; bottom: 0;
       left: 50%;
       transform: translateX(-50%);
-      width: 6px;
+      width: 0;
       z-index: 10;
       pointer-events: none;
-      background: linear-gradient(to right,
-        rgba(20,10,2,0.28) 0%,
-        rgba(184,147,62,0.25) 40%,
-        rgba(184,147,62,0.25) 60%,
-        rgba(20,10,2,0.28) 100%
-      );
-    }
+      background: none;
+}
     /* Top & bottom spine caps */
-    .spine::before, .spine::after {
-      content: '';
-      position: absolute;
-      left: -2px; right: -2px;
-      height: 3px;
-      background: rgba(30,15,5,0.2);
-      border-radius: 1px;
-    }
+    .spine::before, .spine::after { display:none; }
     .spine::before { top: 0; }
     .spine::after  { bottom: 0; }
 
@@ -375,7 +363,7 @@
       inset: 0;
       width: 100%;
       height: 100%;
-      object-fit: fill; /* keep full image visible (no cropping) */
+      object-fit: fill !important; /* keep full image visible (no cropping) */
       
       display: block;
       pointer-events: none;
