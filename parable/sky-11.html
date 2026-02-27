@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<html lang="en">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parable XI — The Boy Who Followed His Future Self · ΔHV Resonant Parables</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --parchment: #f2eedf;
+            --parchment-deep: #e8e2ce;
+            --ink: #1e1a15;
+            --ink-soft: #3d3228;
+            --accent: #7a5c35;
+            --accent-light: #a07d52;
+            --gold: #b8933e;
+            --gold-light: #d4ac5a;
+            --gold-pale: rgba(184,147,62,0.12);
+            --shadow-warm: rgba(42,30,15,0.14);
+            --shadow-deep: rgba(42,30,15,0.22);
+            --veil: #5c4d6e;
+            --veil-pale: rgba(92,77,110,0.08);
+            --ember: #8a3a1f;
+            --flame: #a05a25;
+            --deep-blue: #2e3f58;
+            --deep-green: #253d10;
+            --earth: #5e4a2a;
+            --brine: #3a5462;
+            --rule: rgba(184,147,62,0.22);
+            --rule-light: rgba(184,147,62,0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* ── TEXTURE OVERLAY ── */
+        body {
+            font-family: 'Crimson Pro', serif;
+            background-color: var(--parchment);
+            color: var(--ink-soft);
+            line-height: 1.9;
+            font-size: 18px;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Layered parchment atmosphere */
+        body::before {
+            content: '';
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 15% 20%, rgba(201,169,97,0.07) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 80% at 85% 80%, rgba(139,111,71,0.05) 0%, transparent 60%),
+                radial-gradient(ellipse 100% 50% at 50% 50%, rgba(255,250,235,0.4) 0%, transparent 80%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Grain texture */
+        body::after {
+            content: '';
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+            background-size: 256px 256px;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.6;
+        }
+
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 70px 32px 100px;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(28px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes breathe {
+            0%, 100% { opacity: 0.4; transform: scaleX(0.6); }
+            50% { opacity: 1; transform: scaleX(1); }
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+
+        /* ─────────────────────────────────────────────
+           HEADER
+        ───────────────────────────────────────────── */
+        header {
+            text-align: center;
+            padding: 72px 40px 60px;
+            margin-bottom: 72px;
+            position: relative;
+            animation: fadeUp 1.4s ease-out;
+        }
+
+        /* Decorative corner marks */
+        header::before, header::after {
+            content: '';
+            position: absolute;
+            width: 60px; height: 60px;
+            border-color: var(--gold);
+            border-style: solid;
+            opacity: 0.35;
+        }
+        header::before {
+            top: 16px; left: 16px;
+            border-width: 1px 0 0 1px;
+        }
+        header::after {
+            bottom: 16px; right: 16px;
+            border-width: 0 1px 1px 0;
+        }
+
+        .title-line {
+            width: 1px;
+            height: 48px;
+            background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+            margin: 0 auto 32px;
+            animation: none;
+            opacity: 0.6;
+        }
+
+        .series-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.62em;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 22px;
+            opacity: 0.8;
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 3em;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            color: var(--ink);
+            margin-bottom: 6px;
+            line-height: 1.1;
+        }
+
+        /* Ornamental rule under h1 */
+        .header-rule {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin: 20px auto 22px;
+            width: 260px;
+        }
+        .header-rule::before,
+        .header-rule::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold));
+        }
+        .header-rule::after {
+            background: linear-gradient(90deg, var(--gold), transparent);
+        }
+        .header-rule-symbol {
+            font-size: 0.75em;
+            color: var(--gold);
+            opacity: 0.8;
+            line-height: 1;
+        }
+
+        .tagline {
+            font-size: 1.15em;
+            color: var(--accent);
+            font-style: italic;
+            margin-bottom: 6px;
+            letter-spacing: 0.01em;
+        }
+
+        .subtagline {
+            font-size: 0.9em;
+            color: var(--accent-light);
+            opacity: 0.7;
+            margin-bottom: 28px;
+            letter-spacing: 0.08em;
+        }
+
+        .meta {
+            font-family: 'Cinzel', serif;
+            font-size: 0.65em;
+            letter-spacing: 0.14em;
+            color: var(--accent);
+            opacity: 0.45;
+            margin-top: 28px;
+        }
+
+        /* ─────────────────────────────────────────────
+           NAV
+        ───────────────────────────────────────────── */
+        .nav-toggle-btn {
+            position: fixed;
+            top: 24px; right: 24px;
+            z-index: 200;
+            background: rgba(242, 238, 223, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(184,147,62,0.35);
+            padding: 9px 18px;
+            color: var(--accent);
+            font-family: 'Cinzel', serif;
+            font-size: 0.65em;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 16px var(--shadow-warm);
+            transition: all 0.25s ease;
+            user-select: none;
+        }
+        .nav-toggle-btn:hover {
+            background: rgba(255,255,255,0.98);
+            border-color: var(--gold);
+            color: var(--ink);
+            box-shadow: 0 4px 20px var(--shadow-warm);
+        }
+
+        nav {
+            position: fixed;
+            top: 0; right: 0;
+            height: 100vh;
+            width: 230px;
+            background: rgba(238,232,210,0.98);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(184,147,62,0.18);
+            z-index: 190;
+            transform: translateX(100%);
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            padding: 72px 0 32px;
+            box-shadow: -12px 0 60px var(--shadow-deep);
+        }
+        nav.open { transform: translateX(0); }
+        nav ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 1px; }
+        nav ul li { padding: 0 16px; }
+        nav a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: all 0.15s ease;
+            padding: 5px 10px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.68em;
+            letter-spacing: 0.08em;
+            display: block;
+        }
+        nav a:hover { color: var(--ink); padding-left: 14px; }
+        nav .nav-divider {
+            color: var(--rule);
+            font-size: 0.55em;
+            padding: 8px 10px 2px;
+            display: block;
+            letter-spacing: 0.2em;
+        }
+        .nav-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(30,20,10,0.18);
+            z-index: 180;
+            backdrop-filter: blur(1px);
+        }
+        .nav-overlay.open { display: block; }
+
+        /* ─────────────────────────────────────────────
+           DIVIDER
+        ───────────────────────────────────────────── */
+        .ornament-divider {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin: 48px 0 44px;
+        }
+        .ornament-divider::before,
+        .ornament-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--rule), transparent);
+        }
+        .ornament-divider-sym {
+            font-size: 0.9em;
+            color: var(--gold);
+            opacity: 0.6;
+            flex-shrink: 0;
+        }
+
+        /* ─────────────────────────────────────────────
+           PARABLE SECTIONS — no box, just ruled space
+        ───────────────────────────────────────────── */
+        .section {
+            padding: 28px 0 24px;
+            margin-bottom: 0;
+            border: none;
+            border-top: 1px solid var(--rule-light);
+            background: none;
+            transition: none;
+            position: relative;
+        }
+        .section:not(.parable-section):not(.codex-section) {
+            padding-left: 0;
+        }
+
+        /* Subtle left accent line on hover for parable sections */
+        .section.parable-section {
+            padding: 28px 32px 24px;
+            margin-bottom: 14px;
+            border-top: none;
+            border: 1px solid rgba(184,147,62,0.2);
+            background: rgba(255,253,244,0.6);
+            border-radius: 3px;
+            box-shadow: 0 1px 8px rgba(42,30,15,0.07), 0 0 0 0 transparent;
+            transition: box-shadow 0.25s ease, background 0.25s ease;
+        }
+        .section.parable-section:hover {
+            background: rgba(255,253,240,0.85);
+            box-shadow: 0 3px 18px rgba(42,30,15,0.11);
+        }
+        .section.parable-section::before {
+            display: none;
+        }
+
+        /* Codex gets distinct treatment */
+        .section.codex-section {
+            padding: 52px 32px 44px;
+            margin-top: 60px;
+            background: linear-gradient(135deg, rgba(92,77,110,0.04) 0%, rgba(46,63,88,0.03) 100%);
+            border: none;
+            border-top: 1px solid rgba(92,77,110,0.2);
+            position: relative;
+        }
+        .section.codex-section::before {
+            content: 'CODEX';
+            position: absolute;
+            top: 20px; left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Cinzel', serif;
+            font-size: 0.55em;
+            letter-spacing: 0.4em;
+            color: var(--veil);
+            opacity: 0.25;
+        }
+
+        /* ─────────────────────────────────────────────
+           PARABLE OUTER COLLAPSIBLE
+        ───────────────────────────────────────────── */
+        .parable-outer-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            cursor: pointer;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--rule-light);
+            margin-bottom: 0;
+            transition: border-color 0.3s ease;
+        }
+        .parable-outer-toggle:hover { border-bottom-color: var(--rule); }
+        .parable-outer-toggle .parable-outer-header { flex: 1; }
+        .parable-outer-toggle .parable-outer-header h2 { margin-bottom: 4px; }
+        .parable-outer-toggle .parable-outer-header p { margin: 0; }
+
+        .parable-chevron {
+            font-size: 0.8em;
+            color: var(--gold);
+            margin-left: 20px;
+            margin-top: 10px;
+            opacity: 0.6;
+            transition: transform 0.35s ease, opacity 0.2s ease;
+            flex-shrink: 0;
+            user-select: none;
+        }
+        .parable-outer-toggle:hover .parable-chevron { opacity: 1; }
+        .parable-outer-toggle.open .parable-chevron { transform: rotate(90deg); opacity: 1; }
+        .parable-outer-content { display: none; padding-top: 28px; }
+        .parable-outer-content.open { display: block; }
+
+        /* ─────────────────────────────────────────────
+           HEADINGS
+        ───────────────────────────────────────────── */
+        h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.35em;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 10px;
+            letter-spacing: 0.03em;
+            line-height: 1.25;
+        }
+        h2::before { display: none; } /* remove old bar */
+
+        h2.parable-heading {
+            color: var(--ink);
+        }
+        h2.codex-heading {
+            color: var(--veil);
+            font-size: 1.5em;
+            text-align: center;
+            letter-spacing: 0.06em;
+        }
+        h2.codex-heading::before { display: none; }
+
+        h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 0.92em;
+            font-weight: 600;
+            color: var(--accent);
+            margin: 28px 0 10px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+
+        h4 {
+            font-family: 'Cinzel', serif;
+            font-size: 0.78em;
+            font-weight: 600;
+            color: var(--earth);
+            margin: 20px 0 8px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            opacity: 0.7;
+        }
+
+        /* ─────────────────────────────────────────────
+           PARABLE BODY — editorial manuscript feel
+        ───────────────────────────────────────────── */
+        .parable-body {
+            position: relative;
+            padding: 36px 40px 28px;
+            margin: 28px 0;
+            background: linear-gradient(160deg, rgba(255,252,242,0.7) 0%, rgba(242,238,223,0.5) 100%);
+        }
+
+        /* Top rule with ornament */
+        .parable-body::before {
+            content: '✦';
+            position: absolute;
+            top: -0.75em;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--parchment);
+            padding: 0 16px;
+            color: var(--gold);
+            font-size: 0.65em;
+            opacity: 0.7;
+            line-height: 1;
+        }
+
+        /* Thin gold rules top and bottom */
+        .parable-body::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 10%; right: 10%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--rule), transparent);
+        }
+
+        /* Drop cap on first paragraph */
+        .parable-body > p:first-of-type::first-letter {
+            font-family: 'Cinzel', serif;
+            font-size: 3.2em;
+            font-weight: 700;
+            float: left;
+            line-height: 0.78;
+            margin: 0.08em 0.1em 0 0;
+            color: var(--gold);
+        }
+
+        .parable-body p {
+            margin: 16px 0;
+            color: var(--ink-soft);
+        }
+
+        /* ─────────────────────────────────────────────
+           COLLAPSIBLE — no box, just text trigger
+        ───────────────────────────────────────────── */
+        .collapsible {
+            cursor: pointer;
+            padding: 12px 0 10px;
+            margin: 24px 0 0;
+            border-top: 1px solid var(--rule-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Cinzel', serif;
+            font-size: 0.72em;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--accent);
+            opacity: 0.7;
+            background: none;
+            border-radius: 0;
+            border-left: none; border-right: none; border-bottom: none;
+            user-select: none;
+            transition: opacity 0.2s ease, color 0.2s ease;
+        }
+        .collapsible:hover {
+            opacity: 1;
+            color: var(--ink);
+            transform: none;
+            background: none;
+        }
+        .toggle-icon { font-size: 0.8em; opacity: 0.6; transition: transform 0.3s ease; }
+        .collapsible::after { display: none; }
+        .collapsible.active { opacity: 1; }
+        .collapsible.active .toggle-icon { transform: rotate(180deg); }
+
+        .collapsible-content { max-height: 0; overflow: hidden; transition: max-height 0.7s ease; padding: 0; }
+        .collapsible-content.active { max-height: 80000px; padding-top: 4px; }
+
+        .collapsible.bridge { color: var(--veil); opacity: 0.6; }
+        .collapsible.bridge:hover { color: var(--veil); opacity: 1; }
+        .collapsible.bridge::after { display: none; }
+
+        /* ─────────────────────────────────────────────
+           MATH BLOCK — minimal, scholarly
+        ───────────────────────────────────────────── */
+        .math-block {
+            padding: 20px 28px;
+            margin: 20px 0;
+            background: rgba(255,252,242,0.6);
+            border-top: 1px solid var(--rule-light);
+            border-bottom: 1px solid var(--rule-light);
+            overflow-x: auto;
+            text-align: center;
+        }
+
+        /* ─────────────────────────────────────────────
+           DEFINITION / THEOREM BLOCKS — aged paper insets
+        ───────────────────────────────────────────── */
+        .definition-block {
+            padding: 22px 28px;
+            margin: 24px 0;
+            background: rgba(255,252,242,0.5);
+            border-top: 1px solid var(--rule);
+            border-bottom: 1px solid var(--rule-light);
+            position: relative;
+        }
+        .definition-block::before {
+            content: '§';
+            position: absolute;
+            top: -0.7em; left: 28px;
+            background: var(--parchment);
+            padding: 0 8px;
+            color: var(--gold);
+            font-size: 0.7em;
+            font-family: 'Crimson Pro', serif;
+        }
+        .definition-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.65em;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .theorem {
+            padding: 22px 28px;
+            margin: 24px 0;
+            background: rgba(92,77,110,0.04);
+            border-top: 1px solid rgba(92,77,110,0.15);
+            border-bottom: 1px solid rgba(92,77,110,0.08);
+        }
+        .theorem-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.65em;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--veil);
+            margin-bottom: 10px;
+            font-weight: 600;
+            opacity: 0.8;
+        }
+        .theorem p { color: var(--ink-soft); }
+
+        /* ─────────────────────────────────────────────
+           LAW BLOCK
+        ───────────────────────────────────────────── */
+        .law-block {
+            padding: 24px 32px;
+            margin: 32px 0;
+            border-top: 1px solid rgba(92,77,110,0.15);
+            position: relative;
+            transition: none;
+        }
+        .law-block::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 24px; bottom: 24px;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--veil), transparent);
+            opacity: 0.3;
+        }
+        .law-block:hover { background: none; }
+        .law-number {
+            font-family: 'Cinzel', serif;
+            font-size: 0.6em;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--veil);
+            margin-bottom: 4px;
+            opacity: 0.6;
+        }
+        .law-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.05em;
+            color: var(--ink);
+            font-weight: 600;
+            margin-bottom: 12px;
+            letter-spacing: 0.02em;
+        }
+        .law-ethical {
+            padding: 10px 0 0 0;
+            margin-top: 14px;
+            border-top: 1px solid var(--rule-light);
+            font-style: italic;
+            color: var(--accent);
+            font-size: 0.93em;
+        }
+
+        /* ─────────────────────────────────────────────
+           HIGHLIGHT / CALLOUT
+        ───────────────────────────────────────────── */
+        .highlight {
+            padding: 18px 24px;
+            margin: 24px 0;
+            background: rgba(184,147,62,0.05);
+            border-top: 1px solid var(--rule);
+            border-bottom: 1px solid var(--rule-light);
+        }
+        .highlight strong { color: var(--ember); }
+
+        /* ─────────────────────────────────────────────
+           CANON — closing inscription
+        ───────────────────────────────────────────── */
+        .canon {
+            text-align: center;
+            margin: 36px auto 16px;
+            max-width: 480px;
+            font-style: italic;
+            color: var(--accent);
+            font-size: 1.08em;
+            line-height: 1.9;
+            position: relative;
+            padding: 24px 0;
+        }
+        .canon::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 20%; right: 20%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            opacity: 0.4;
+        }
+        .canon::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 30%; right: 30%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--rule), transparent);
+        }
+
+        /* ─────────────────────────────────────────────
+           CODEX SUMMARY
+        ───────────────────────────────────────────── */
+        .codex-summary {
+            text-align: center;
+            padding: 20px 28px;
+            margin: 20px 0 32px;
+            font-style: italic;
+            color: var(--veil);
+            font-size: 0.97em;
+            opacity: 0.8;
+        }
+
+        /* ─────────────────────────────────────────────
+           TABLE
+        ───────────────────────────────────────────── */
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.9em; }
+        th {
+            padding: 8px 14px;
+            text-align: left;
+            font-family: 'Cinzel', serif;
+            font-size: 0.65em;
+            letter-spacing: 0.14em;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--earth);
+            border-bottom: 1px solid var(--rule);
+        }
+        td { padding: 10px 14px; border-bottom: 1px solid var(--rule-light); color: var(--ink-soft); }
+        tr:hover td { background: rgba(201,169,97,0.03); }
+
+        /* ─────────────────────────────────────────────
+           MISC
+        ───────────────────────────────────────────── */
+        p { margin: 14px 0; }
+        strong { color: var(--ember); font-weight: 600; }
+        em { color: var(--accent); font-style: italic; }
+        ul, ol { margin: 14px 0; padding-left: 0; list-style: none; }
+        li {
+            margin: 8px 0;
+            color: var(--ink-soft);
+            padding-left: 20px;
+            position: relative;
+        }
+        li::before {
+            content: '—';
+            position: absolute; left: 0;
+            color: var(--gold);
+            opacity: 0.5;
+            font-size: 0.85em;
+        }
+        blockquote {
+            padding: 16px 24px;
+            margin: 20px 0;
+            color: var(--accent);
+            font-style: italic;
+            border-top: 1px solid var(--rule-light);
+            border-bottom: 1px solid var(--rule-light);
+        }
+        html { scroll-behavior: smooth; }
+
+        /* ─────────────────────────────────────────────
+           PARABLE INDEX
+        ───────────────────────────────────────────── */
+        .parable-index {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+            gap: 0;
+            margin: 28px 0;
+            border-top: 1px solid rgba(184,147,62,0.18);
+            border-left: 1px solid rgba(184,147,62,0.18);
+            box-shadow: 0 2px 18px var(--shadow-warm);
+        }
+        .parable-card {
+            border-right: 1px solid rgba(184,147,62,0.18);
+            border-bottom: 1px solid rgba(184,147,62,0.18);
+            padding: 11px 14px;
+            transition: background 0.2s ease, box-shadow 0.2s ease;
+            text-decoration: none;
+            display: block;
+            background: rgba(255,253,245,0.55);
+            box-shadow: inset 0 0 0 0 transparent;
+        }
+        .parable-card:hover {
+            background: rgba(255,253,240,0.9);
+            box-shadow: 2px 2px 10px var(--shadow-warm);
+            position: relative;
+            z-index: 1;
+        }
+        .parable-card .card-num {
+            font-family: 'Cinzel', serif;
+            font-size: 0.58em;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 6px;
+            opacity: 0.8;
+        }
+        .parable-card .card-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.8em;
+            color: var(--ink);
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            line-height: 1.3;
+            margin-bottom: 6px;
+        }
+        .parable-card .card-concept {
+            font-size: 0.75em;
+            color: var(--accent);
+            font-style: italic;
+            opacity: 0.7;
+            line-height: 1.4;
+        }
+
+        /* ─────────────────────────────────────────────
+           EXPAND ALL
+        ───────────────────────────────────────────── */
+        .expand-all {
+            margin-bottom: 36px;
+        }
+        .expand-all button {
+            font-family: 'Cinzel', serif;
+            font-size: 0.62em;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            background: none;
+            color: var(--accent);
+            border: none;
+            border-bottom: 1px solid var(--rule);
+            padding: 6px 0;
+            cursor: pointer;
+            transition: color 0.2s ease, border-color 0.2s ease;
+            opacity: 0.6;
+        }
+        .expand-all button:hover { color: var(--ink); opacity: 1; border-color: var(--gold); }
+
+        /* ─────────────────────────────────────────────
+           FOOTER
+        ───────────────────────────────────────────── */
+        footer {
+            text-align: center;
+            margin-top: 90px;
+            padding: 40px 0 32px;
+            border-top: 1px solid var(--rule-light);
+            position: relative;
+        }
+        footer::before {
+            content: '✦';
+            position: absolute;
+            top: -0.7em; left: 50%;
+            transform: translateX(-50%);
+            background: var(--parchment);
+            padding: 0 16px;
+            color: var(--gold);
+            font-size: 0.75em;
+            opacity: 0.5;
+        }
+        footer p {
+            font-family: 'Cinzel', serif;
+            font-size: 0.62em;
+            letter-spacing: 0.14em;
+            color: var(--accent);
+            opacity: 0.4;
+            margin-bottom: 6px;
+        }
+        footer a { color: var(--accent); opacity: 0.5; text-decoration: none; transition: opacity 0.2s; }
+        footer a:hover { opacity: 0.9; }
+
+        /* ─────────────────────────────────────────────
+           RESPONSIVE
+        ───────────────────────────────────────────── */
+        @media (max-width: 640px) {
+            .container { padding: 48px 20px 80px; }
+            h1 { font-size: 2.2em; }
+            h2 { font-size: 1.15em; }
+            .section.parable-section { padding-left: 0; }
+            .parable-body { padding: 28px 22px; }
+            .parable-body > p:first-of-type::first-letter { font-size: 2.6em; }
+        }
+
+
+        /* ── PREAMBLE SECTION ── */
+        .section.preamble-section {
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 14px;
+            padding: 22px 36px 20px;
+            border-top: none;
+            border: 1px solid rgba(92,77,110,0.2);
+            background: rgba(92,77,110,0.04);
+            border-radius: 3px;
+            box-shadow: 0 1px 8px rgba(42,30,15,0.05);
+            transition: box-shadow 0.25s ease, background 0.25s ease;
+            text-align: center;
+        }
+        .section.preamble-section .parable-outer-content {
+            text-align: left;
+        }
+        .section.preamble-section:hover {
+            background: rgba(92,77,110,0.07);
+            box-shadow: 0 3px 18px rgba(42,30,15,0.09);
+        }
+        .section.preamble-section .parable-outer-toggle {
+            border-bottom-color: rgba(92,77,110,0.15);
+            justify-content: center;
+            gap: 12px;
+        }
+        .section.preamble-section .parable-outer-toggle:hover {
+            border-bottom-color: rgba(92,77,110,0.35);
+        }
+        .section.preamble-section .parable-chevron {
+            color: var(--veil);
+            margin-top: 6px;
+        }
+        .section.preamble-section h2 { color: var(--veil); }
+        .section.preamble-section h2::after { margin: 8px auto 0; }
+
+        /* ── INDEX SECTION ── */
+        .section.index-section {
+            padding: 20px 0 10px;
+            border-top: none;
+            background: none;
+            margin-bottom: 14px;
+        }
+        .index-heading {
+            font-family: 'Cinzel', serif;
+            font-size: 0.72em;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--gold);
+            opacity: 0.7;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        /* ── BACK BUTTON ── */
+        .back-btn {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            z-index: 200;
+            background: rgba(242, 238, 223, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(184,147,62,0.35);
+            padding: 9px 18px;
+            color: var(--accent);
+            font-family: 'Cinzel', serif;
+            font-size: 0.65em;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 16px var(--shadow-warm);
+            transition: all 0.25s ease;
+            text-decoration: none;
+        }
+        .back-btn:hover {
+            background: rgba(255,255,255,0.98);
+            border-color: var(--gold);
+            color: var(--ink);
+            box-shadow: 0 4px 20px var(--shadow-warm);
+        }
+        .back-btn-arrow {
+            font-size: 1.1em;
+            line-height: 1;
+            margin-top: -1px;
+        }
+
+    
+        /* ── SCROLL REVEAL BOUNCE ── */
+        .section,
+        .section.parable-section,
+        .section.preamble-section,
+        .section.codex-section {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+                        transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+                        box-shadow 0.25s ease,
+                        background 0.25s ease;
+        }
+        .section.visible,
+        .section.parable-section.visible,
+        .section.preamble-section.visible,
+        .section.codex-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── PROGRESS BAR ── */
+        .progress-bar {
+            position: fixed;
+            top: 0; left: 0;
+            height: 2px;
+            width: 0%;
+            background: linear-gradient(90deg, var(--gold), var(--accent-light), var(--veil));
+            z-index: 300;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 8px rgba(184,147,62,0.5);
+        }
+
+        /* ── HEADER PARTICLES ── */
+        .header-particles {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            border-radius: inherit;
+        }
+        .particle {
+            position: absolute;
+            width: 3px; height: 3px;
+            border-radius: 50%;
+            background: var(--gold);
+            opacity: 0;
+            animation: floatParticle var(--dur, 8s) var(--delay, 0s) ease-in-out infinite;
+        }
+        @keyframes floatParticle {
+            0%   { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
+            15%  { opacity: var(--max-op, 0.35); }
+            85%  { opacity: var(--max-op, 0.35); }
+            100% { transform: translateY(-120px) translateX(var(--drift, 20px)) scale(0.3); opacity: 0; }
+        }
+
+        /* ── CANON SHIMMER ── */
+        @keyframes canonShimmer {
+            0%   { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+        .canon {
+            background-image: linear-gradient(
+                120deg,
+                transparent 30%,
+                rgba(184,147,62,0.07) 50%,
+                transparent 70%
+            );
+            background-size: 200% 100%;
+            animation: canonShimmer 6s ease-in-out infinite;
+        }
+
+        /* ── PARABLE HEADING HOVER ── */
+        .parable-outer-toggle:hover h2.parable-heading {
+            color: var(--earth);
+            transition: color 0.2s ease;
+        }
+
+        /* ── INDEX CARD ENTRANCE ── */
+        .parable-card {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s ease, transform 0.4s ease,
+                        background 0.2s ease, box-shadow 0.2s ease;
+        }
+        .parable-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── COLLAPSIBLE CONTENT FADE ── */
+        .parable-outer-content {
+            animation: none;
+        }
+        .parable-outer-content.open {
+            animation: contentReveal 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        @keyframes contentReveal {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── DECORATIVE RULE IN PREAMBLE SECTION ── */
+        .section.preamble-section h2::after {
+            content: '';
+            display: block;
+            width: 40px; height: 1px;
+            background: var(--veil);
+            opacity: 0.25;
+            margin-top: 8px;
+        }
+
+        /* ── GOLD ACCENT NUMBERS on parable headings ── */
+        .parable-num-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.55em;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--gold);
+            opacity: 0.6;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        /* ── FOOTER LINKS REFINED ── */
+        footer .footer-links a {
+            font-family: 'Cinzel', serif;
+            font-size: 0.65em;
+            letter-spacing: 0.12em;
+            color: var(--accent);
+            opacity: 0.45;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: opacity 0.2s, border-color 0.2s;
+            padding-bottom: 1px;
+        }
+        footer .footer-links a:hover {
+            opacity: 0.8;
+            border-color: var(--gold);
+        }
+        footer .footer-links {
+            margin-top: 14px;
+            display: flex;
+            justify-content: center;
+            gap: 28px;
+        }
+
+
+        /* ── CAROUSEL ── */
+        .carousel-wrap {
+            width: 100%;
+            user-select: none;
+        }
+
+        .carousel-stage {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .carousel-viewport {
+            flex: 1;
+            overflow: hidden;
+            border-radius: 8px;
+            cursor: grab;
+        }
+        .carousel-viewport.is-dragging {
+            cursor: grabbing;
+        }
+        .carousel-viewport.is-dragging * {
+            pointer-events: none;
+        }
+
+        .carousel-track {
+            display: flex;
+            gap: 14px;
+            transition: transform 0.38s cubic-bezier(0.25, 0.8, 0.25, 1);
+            will-change: transform;
+        }
+        .carousel-track.no-transition {
+            transition: none;
+        }
+
+        /* Each card is naturally sized — fill as many as fit */
+        .carousel-item {
+            flex: 0 0 220px;
+        }
+        .carousel-item .parable-card {
+            height: 100%;
+        }
+
+        /* Arrow buttons */
+        .carousel-btn {
+            appearance: none;
+            background: rgba(250,247,238,0.85);
+            border: 1px solid rgba(184,147,62,0.3);
+            color: var(--accent);
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 10px rgba(42,30,15,0.12);
+            line-height: 1;
+        }
+        .carousel-btn:hover {
+            background: rgba(255,255,255,0.98);
+            border-color: var(--gold);
+            color: var(--ink);
+            transform: scale(1.08);
+        }
+        .carousel-btn:disabled { opacity: 0.2; cursor: not-allowed; transform: none; }
+
+        /* Arc divider labels inside the track */
+        .carousel-arc-divider {
+            flex: 0 0 auto;
+            align-self: stretch;
+            display: flex;
+            align-items: center;
+            padding: 0 6px;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            font-family: 'Helvetica Neue', sans-serif;
+            font-size: 0.62em;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            opacity: 0.5;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 600px) {
+            .carousel-item { flex: 0 0 180px; }
+        }
+
+    </style>
+</style>
+<style>
+  /* ── PARABLE PAGE OVERRIDES ── */
+  .parable-page-header {
+    text-align: center;
+    padding: 60px 40px 40px;
+    margin-bottom: 48px;
+    position: relative;
+    animation: fadeUp 1s ease-out;
+  }
+  .parable-page-header::before, .parable-page-header::after {
+    content: '';
+    position: absolute;
+    width: 50px; height: 50px;
+    border-color: var(--gold);
+    border-style: solid;
+    opacity: 0.3;
+  }
+  .parable-page-header::before { top: 16px; left: 16px; border-width: 1px 0 0 1px; }
+  .parable-page-header::after  { bottom: 16px; right: 16px; border-width: 0 1px 1px 0; }
+  .pp-arc    { font-family: 'Helvetica Neue', sans-serif; font-size: 0.68em; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); opacity: 0.6; margin-bottom: 12px; }
+  .pp-num    { font-family: 'Cinzel', serif; font-size: 0.8em; letter-spacing: 0.2em; color: var(--accent); opacity: 0.7; margin-bottom: 8px; }
+  .pp-title  { font-family: 'Cinzel', serif; font-size: clamp(1.4rem, 3vw, 2.2rem); font-weight: 600; color: var(--ink); letter-spacing: 0.04em; line-height: 1.2; margin-bottom: 12px; }
+  .pp-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 48px; padding: 0 4px;
+  }
+  .pp-nav-btn {
+    font-family: 'Cinzel', serif; font-size: 0.65em; letter-spacing: 0.12em;
+    text-transform: uppercase; text-decoration: none;
+    color: var(--accent); border: 1px solid rgba(122,92,53,0.3);
+    padding: 8px 18px; border-radius: 4px;
+    background: rgba(122,92,53,0.04);
+    transition: all 0.25s ease; display: flex; align-items: center; gap: 7px;
+  }
+  .pp-nav-btn:hover { background: rgba(122,92,53,0.1); border-color: var(--accent); }
+  .pp-nav-btn[disabled] { opacity: 0.2; pointer-events: none; }
+  .pp-back {
+    font-family: 'Cinzel', serif; font-size: 0.62em; letter-spacing: 0.14em;
+    text-transform: uppercase; text-decoration: none; color: var(--gold);
+    opacity: 0.7; transition: opacity 0.2s;
+  }
+  .pp-back:hover { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Back to collection -->
+  <a class="back-btn" href="/books/parables.html">← All Parables</a>
+
+  <!-- Page header -->
+  <div class="parable-page-header">
+    <div class="pp-arc">Arc IV — Self &amp; Becoming</div>
+    <div class="pp-num">Parable XI</div>
+    <h1 class="pp-title">✨ The Boy Who Followed His Future Self</h1>
+  </div>
+
+  <!-- Prev / Next nav -->
+  <div class="pp-nav">
+    <a class="pp-nav-btn" href="./sky-10.html" >‹ Previous</a>
+    <a class="pp-back" href="/books/parables.html">↑ Collection</a>
+    <a class="pp-nav-btn" href="./sky-12.html" >Next ›</a>
+  </div>
+
+  <!-- Parable content (inner sections) -->
+  <div class="section parable-section" id="parable-11" style="margin-top:0;">
+
+        <div class="parable-outer-toggle" onclick="toggleParable(this)">
+            <div class="parable-outer-header">
+        <h2 class="parable-heading">✨ Parable XI — The Boy Who Followed His Future Self</h2>
+        <p style="color: #6b7280; font-family: 'Helvetica Neue', sans-serif; font-size: 0.85em; margin-bottom: 8px;">
+            A parable of future attractors, teleological resonance, and the guidance field
+        </p>
+        <p style="color: var(--accent); font-style: italic; margin-bottom: 16px; opacity: 0.75;">ΔHV Concept: Future Attractors · Teleological Resonance · Nonlinear Destiny-Shaping</p>
+            </div>
+            <span class="parable-chevron">▾</span>
+        </div>
+        <div class="parable-outer-content">
+
+        <div class="parable-body">
+            <p>There once was a boy who liked to walk the long path behind his house, the one that wound through tall grass and dipped into the forest where the world grew quiet enough for thoughts to make their own sound.</p>
+
+            <p>One afternoon, just as the sun touched the treetops, the boy reached a bend in the path — and stopped.</p>
+
+            <p>Standing there, a few steps ahead, was him.</p>
+
+            <p>Older, but not old. Taller, but not grown. Familiar, but not identical. Like a reflection wearing tomorrow's clothes.</p>
+
+            <p>The older self smiled. "You're late," he said.</p>
+
+            <p>The boy blinked. "You look like me."</p>
+
+            <p>"I am you," the future self said. "Just from a little farther down the path."</p>
+
+            <p>The boy stepped forward. "How did you get here?"</p>
+
+            <p>"I didn't," the future self said. "You called me."</p>
+
+            <p>"I did?"</p>
+
+            <p>The older boy nodded. "When you wondered what kind of person you might become… that wondering reached me. And I came back to meet you."</p>
+
+            <p>The younger boy felt his heart flutter — not from fear, but from recognition, the kind that comes before a dream you know is important.</p>
+
+            <p>"Are you here to tell me what happens?" he asked.</p>
+
+            <p>The future self shook his head. "No. I'm here to walk with you for a little while and show you the direction you were already headed."</p>
+
+            <p>They walked side by side. The path felt different — steadier, somehow — as if it recognized both versions of the boy walking upon it.</p>
+
+            <p>"Why couldn't I see you before today?" the younger asked.</p>
+
+            <p>"Because you weren't listening yet," the older replied. "The future doesn't shout. It hums."</p>
+
+            <p>They walked until the trees thinned and the sky widened. The older boy stopped.</p>
+
+            <p>"This is as far as I can come," he said gently.</p>
+
+            <p>"Why?" the younger asked.</p>
+
+            <p>The future self smiled — sadly and beautifully at the same time. "Because the rest of the path changes the moment you walk it. Not when I do."</p>
+
+            <p>The younger boy felt a lump in his chest. "Will I see you again?"</p>
+
+            <p>The older self touched the younger's shoulder. "I'm always ahead of you. Every choice you make brings you closer to me or farther away. But I'll stay bright so you can find me."</p>
+
+            <p>He began to fade around the edges — like mist dissolving in sunlight.</p>
+
+            <p>"Wait!" the younger boy cried. "How do I know which path leads to you?"</p>
+
+            <p>The future self's voice was already drifting. "You don't follow my footsteps," he whispered. "You follow the feeling you had when you saw me. That pull in your chest? That was your guidance."</p>
+
+            <p>And then he was gone.</p>
+
+            <p>The forest was the same. The sky was the same. The path was the same. But the boy was not.</p>
+
+            <p>He walked forward — not because he knew where he was going, but because something inside him was glowing in the shape of a promise.</p>
+
+            <div class="canon" style="border-color: #c4b5fd;">
+                And somewhere, far ahead on the winding trail of time,<br>
+                the future self shone like a star<br>
+                waiting for him to grow into the person<br>
+                who would one day shine back.
+            </div>
+        </div>
+
+        <!-- THEORY BRIDGE -->
+        <div class="collapsible" onclick="toggleSection(this)">
+            <span>🌿 Theory Bridge — Future Attractors &amp; ΔHV Guidance Fields</span>
+            <span class="toggle-icon">▸</span>
+        </div>
+        <div class="collapsible-content">
+            <p>This parable introduces one of the most important ideas in the ΔHV framework: the future self is not a fixed destiny but a <strong>stable attractor in ΔHV-space</strong>, exerting a gravitational pull on the present identity toward greater coherence.</p>
+
+            <div class="highlight">
+                <strong>Guidance is not instruction. It is resonance.</strong><br><br>
+                The heart-pull the boy feels is attractor resonance — the field equivalent of being downhill from where you most deeply belong. You don't think your way there. You <em>feel</em> the slope and follow it.
+            </div>
+
+            <p>The future self's key teaching — "the future doesn't shout, it hums" — encodes a critical ΔHV principle: guidance signals are low-amplitude, high-coherence. They are drowned out by noise, forcing, and urgency. This connects directly to the Harmonic Eye (Parable VIII): the same softening of perception required to see the invisible bridge is required to hear the future self's hum.</p>
+
+            <p>The fading at the end is not loss — it is the collapse of potential back into intuition. The guidance has been received. What was external is now internal. The future self does not leave; it becomes the directional pull the boy carries forward.</p>
+        </div>
+
+        <!-- ΔHV MECHANICS -->
+        <div class="collapsible" onclick="toggleSection(this)" style="background: linear-gradient(135deg, rgba(139,92,246,0.15) 0%, rgba(34,211,238,0.15) 100%);">
+            <span>⚙️ ΔHV Mechanics — Attractors, Guidance, and Nonlinear Destiny</span>
+            <span class="toggle-icon">▸</span>
+        </div>
+        <div class="collapsible-content">
+
+            <div class="definition-block" style="border-color: #c4b5fd;">
+                <div class="definition-title" style="color: #c4b5fd;">ΔHV Definition: Future Self as Attractor Basin</div>
+                <p>The future self is the lowest-energy coherent attractor in the identity-field's potential landscape \(V(I^\mu)\):</p>
+                $$A_{\text{future}} = \arg\min_{\text{state}} V(I^\mu)$$
+                <p>It is not a predetermined destination — it is the shape of greatest coherence the present field is capable of reaching. The attractor is real; the path to it is plastic.</p>
+            </div>
+
+            <h4 style="color: #22d3ee; margin: 24px 0 12px;">Identity Follows Gradient Descent</h4>
+            <p>The "pulling feeling" the boy experiences is the natural gradient descent of the identity-field toward its attractor:</p>
+            $$\frac{dI^\mu}{dt} = -\nabla^\mu V$$
+            <p>Guidance is not forcing — it is following a slope. The field already knows the direction. The task is to stop fighting the gradient.</p>
+
+            <h4 style="color: #22d3ee; margin: 24px 0 12px;">Teleological Resonance Field</h4>
+            <p>The future self emits a resonance that decays with temporal distance. The closer a trajectory is to the attractor, the stronger the signal:</p>
+            $$\Phi_{\text{future}} = e^{-\Delta t / \tau}$$
+            <p>This is the hum. Low frequency, high coherence, easily drowned by noise — which is why the boy could only hear it when the forest grew quiet enough for thoughts to make their own sound.</p>
+
+            <h4 style="color: #22d3ee; margin: 24px 0 12px;">Path Dependence and Nonlinear Futures</h4>
+            <p>The future self's warning — "the rest of the path changes the moment you walk it" — encodes ΔHV's non-deterministic timeflow:</p>
+            $$I^\mu(t+1) = f\!\left(I^\mu(t),\; \text{choice}\right)$$
+            <p>The future is plastic. The attractor is stable. The trajectory between them is continuously renegotiated by each choice. This is why the future self can approach but cannot follow — his presence would collapse the very possibilities the boy needs to navigate.</p>
+
+            <h4 style="color: #22d3ee; margin: 24px 0 12px;">Future Self Visibility: Harmonic Eye Applied Temporally</h4>
+            <p>The boy sees his future self only when two conditions are simultaneously met — the same conditions established in Parable VIII, now extended across time:</p>
+            $$\eta_{\text{identity-noise}} \downarrow \;\;\text{and}\;\; \Delta\phi^\mu_{\text{future-self}} < \epsilon$$
+            <p>Low noise + aligned phase = guidance perception. Urgency, fear, or overthinking raises \(\eta\) and collapses the signal. Quiet presence opens it.</p>
+
+            <div class="definition-block">
+                <div class="definition-title">ΔHV Principle: Following Coherence</div>
+                <p>The boy's final insight — follow the feeling, not the footsteps — corresponds to trajectory selection by alignment:</p>
+                $$\text{Trajectory}(t) = \arg\max_{\text{path}}\; \text{alignment}(I^\mu, A_{\text{future}})$$
+                <p>Not instructions. Not maps. The field selects the path that maximizes resonance with its own deepest attractor. This is teleological navigation: moving toward who you are becoming, guided by the pull of the person you already are, somewhere ahead.</p>
+            </div>
+
+            <div class="canon">
+                The future doesn't shout.<br>
+                It hums.<br><br>
+                <em>Every choice either brightens the signal or dims it. You don't follow footsteps. You follow coherence.</em>
+            </div>
+        </div>
+        </div>
+    
+  </div>
+
+  <!-- Bottom nav -->
+  <div class="pp-nav" style="margin-top: 48px; margin-bottom: 0;">
+    <a class="pp-nav-btn" href="./sky-10.html" >‹ Previous</a>
+    <a class="pp-back" href="/books/parables.html">↑ Collection</a>
+    <a class="pp-nav-btn" href="./sky-12.html" >Next ›</a>
+  </div>
+
+</div>
+
+</body>
+</html>
