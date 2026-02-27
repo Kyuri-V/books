@@ -1,0 +1,1841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ΔHV Resonant Parables — Archive of the Veil</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --parchment: #f2eedf;
+            --parchment-deep: #e8e2ce;
+            --ink: #1e1a15;
+            --ink-soft: #3d3228;
+            --accent: #7a5c35;
+            --accent-light: #a07d52;
+            --gold: #b8933e;
+            --gold-light: #d4ac5a;
+            --gold-pale: rgba(184,147,62,0.12);
+            --shadow-warm: rgba(42,30,15,0.14);
+            --shadow-deep: rgba(42,30,15,0.22);
+            --veil: #5c4d6e;
+            --veil-pale: rgba(92,77,110,0.08);
+            --ember: #8a3a1f;
+            --flame: #a05a25;
+            --deep-blue: #2e3f58;
+            --deep-green: #253d10;
+            --earth: #5e4a2a;
+            --brine: #3a5462;
+            --rule: rgba(184,147,62,0.22);
+            --rule-light: rgba(184,147,62,0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* ── TEXTURE OVERLAY ── */
+        body {
+            font-family: 'Crimson Pro', serif;
+            background-color: var(--parchment);
+            color: var(--ink-soft);
+            line-height: 1.9;
+            font-size: 18px;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Layered parchment atmosphere */
+        body::before {
+            content: '';
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 15% 20%, rgba(201,169,97,0.07) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 80% at 85% 80%, rgba(139,111,71,0.05) 0%, transparent 60%),
+                radial-gradient(ellipse 100% 50% at 50% 50%, rgba(255,250,235,0.4) 0%, transparent 80%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Grain texture */
+        body::after {
+            content: '';
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+            background-size: 256px 256px;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.6;
+        }
+
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 70px 32px 100px;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(28px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes breathe {
+            0%, 100% { opacity: 0.4; transform: scaleX(0.6); }
+            50% { opacity: 1; transform: scaleX(1); }
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+
+        /* ─────────────────────────────────────────────
+           HEADER
+        ───────────────────────────────────────────── */
+        header {
+            text-align: center;
+            padding: 72px 40px 60px;
+            margin-bottom: 72px;
+            position: relative;
+            animation: fadeUp 1.4s ease-out;
+        }
+
+        /* Decorative corner marks */
+        header::before, header::after {
+            content: '';
+            position: absolute;
+            width: 60px; height: 60px;
+            border-color: var(--gold);
+            border-style: solid;
+            opacity: 0.35;
+        }
+        header::before {
+            top: 16px; left: 16px;
+            border-width: 1px 0 0 1px;
+        }
+        header::after {
+            bottom: 16px; right: 16px;
+            border-width: 0 1px 1px 0;
+        }
+
+        .title-line {
+            width: 1px;
+            height: 48px;
+            background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+            margin: 0 auto 32px;
+            animation: none;
+            opacity: 0.6;
+        }
+
+        .series-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.62em;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 22px;
+            opacity: 0.8;
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 3em;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            color: var(--ink);
+            margin-bottom: 6px;
+            line-height: 1.1;
+        }
+
+        /* Ornamental rule under h1 */
+        .header-rule {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin: 20px auto 22px;
+            width: 260px;
+        }
+        .header-rule::before,
+        .header-rule::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold));
+        }
+        .header-rule::after {
+            background: linear-gradient(90deg, var(--gold), transparent);
+        }
+        .header-rule-symbol {
+            font-size: 0.75em;
+            color: var(--gold);
+            opacity: 0.8;
+            line-height: 1;
+        }
+
+        .tagline {
+            font-size: 1.15em;
+            color: var(--accent);
+            font-style: italic;
+            margin-bottom: 6px;
+            letter-spacing: 0.01em;
+        }
+
+        .subtagline {
+            font-size: 0.9em;
+            color: var(--accent-light);
+            opacity: 0.7;
+            margin-bottom: 28px;
+            letter-spacing: 0.08em;
+        }
+
+        .meta {
+            font-family: 'Cinzel', serif;
+            font-size: 0.65em;
+            letter-spacing: 0.14em;
+            color: var(--accent);
+            opacity: 0.45;
+            margin-top: 28px;
+        }
+
+        /* ─────────────────────────────────────────────
+           NAV
+        ───────────────────────────────────────────── */
+        .nav-toggle-btn {
+            position: fixed;
+            top: 24px; right: 24px;
+            z-index: 200;
+            background: rgba(242, 238, 223, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(184,147,62,0.35);
+            padding: 9px 18px;
+            color: var(--accent);
+            font-family: 'Cinzel', serif;
+            font-size: 0.65em;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 16px var(--shadow-warm);
+            transition: all 0.25s ease;
+            user-select: none;
+        }
+        .nav-toggle-btn:hover {
+            background: rgba(255,255,255,0.98);
+            border-color: var(--gold);
+            color: var(--ink);
+            box-shadow: 0 4px 20px var(--shadow-warm);
+        }
+
+        nav {
+            position: fixed;
+            top: 0; right: 0;
+            height: 100vh;
+            width: 230px;
+            background: rgba(238,232,210,0.98);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(184,147,62,0.18);
+            z-index: 190;
+            transform: translateX(100%);
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            padding: 72px 0 32px;
+            box-shadow: -12px 0 60px var(--shadow-deep);
+        }
+        nav.open { transform: translateX(0); }
+        nav ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 1px; }
+        nav ul li { padding: 0 16px; }
+        nav a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: all 0.15s ease;
+            padding: 5px 10px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.68em;
+            letter-spacing: 0.08em;
+            display: block;
+        }
+        nav a:hover { color: var(--ink); padding-left: 14px; }
+        nav .nav-divider {
+            color: var(--rule);
+            font-size: 0.55em;
+            padding: 8px 10px 2px;
+            display: block;
+            letter-spacing: 0.2em;
+        }
+        .nav-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(30,20,10,0.18);
+            z-index: 180;
+            backdrop-filter: blur(1px);
+        }
+        .nav-overlay.open { display: block; }
+
+        /* ─────────────────────────────────────────────
+           DIVIDER
+        ───────────────────────────────────────────── */
+        .ornament-divider {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin: 48px 0 44px;
+        }
+        .ornament-divider::before,
+        .ornament-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--rule), transparent);
+        }
+        .ornament-divider-sym {
+            font-size: 0.9em;
+            color: var(--gold);
+            opacity: 0.6;
+            flex-shrink: 0;
+        }
+
+        /* ─────────────────────────────────────────────
+           PARABLE SECTIONS — no box, just ruled space
+        ───────────────────────────────────────────── */
+        .section {
+            padding: 28px 0 24px;
+            margin-bottom: 0;
+            border: none;
+            border-top: 1px solid var(--rule-light);
+            background: none;
+            transition: none;
+            position: relative;
+        }
+        .section:not(.parable-section):not(.codex-section) {
+            padding-left: 0;
+        }
+
+        /* Subtle left accent line on hover for parable sections */
+        .section.parable-section {
+            padding: 28px 32px 24px;
+            margin-bottom: 14px;
+            border-top: none;
+            border: 1px solid rgba(184,147,62,0.2);
+            background: rgba(255,253,244,0.6);
+            border-radius: 3px;
+            box-shadow: 0 1px 8px rgba(42,30,15,0.07), 0 0 0 0 transparent;
+            transition: box-shadow 0.25s ease, background 0.25s ease;
+        }
+        .section.parable-section:hover {
+            background: rgba(255,253,240,0.85);
+            box-shadow: 0 3px 18px rgba(42,30,15,0.11);
+        }
+        .section.parable-section::before {
+            display: none;
+        }
+
+        /* Codex gets distinct treatment */
+        .section.codex-section {
+            padding: 52px 32px 44px;
+            margin-top: 60px;
+            background: linear-gradient(135deg, rgba(92,77,110,0.04) 0%, rgba(46,63,88,0.03) 100%);
+            border: none;
+            border-top: 1px solid rgba(92,77,110,0.2);
+            position: relative;
+        }
+        .section.codex-section::before {
+            content: 'CODEX';
+            position: absolute;
+            top: 20px; left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Cinzel', serif;
+            font-size: 0.55em;
+            letter-spacing: 0.4em;
+            color: var(--veil);
+            opacity: 0.25;
+        }
+
+        /* ─────────────────────────────────────────────
+           PARABLE OUTER COLLAPSIBLE
+        ───────────────────────────────────────────── */
+        .parable-outer-toggle {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            cursor: pointer;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--rule-light);
+            margin-bottom: 0;
+            transition: border-color 0.3s ease;
+        }
+        .parable-outer-toggle:hover { border-bottom-color: var(--rule); }
+        .parable-outer-toggle .parable-outer-header { flex: 1; }
+        .parable-outer-toggle .parable-outer-header h2 { margin-bottom: 4px; }
+        .parable-outer-toggle .parable-outer-header p { margin: 0; }
+
+        .parable-chevron {
+            font-size: 0.8em;
+            color: var(--gold);
+            margin-left: 20px;
+            margin-top: 10px;
+            opacity: 0.6;
+            transition: transform 0.35s ease, opacity 0.2s ease;
+            flex-shrink: 0;
+            user-select: none;
+        }
+        .parable-outer-toggle:hover .parable-chevron { opacity: 1; }
+        .parable-outer-toggle.open .parable-chevron { transform: rotate(90deg); opacity: 1; }
+        .parable-outer-content { display: none; padding-top: 28px; }
+        .parable-outer-content.open { display: block; }
+
+        /* ─────────────────────────────────────────────
+           HEADINGS
+        ───────────────────────────────────────────── */
+        h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.35em;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 10px;
+            letter-spacing: 0.03em;
+            line-height: 1.25;
+        }
+        h2::before { display: none; } /* remove old bar */
+
+        h2.parable-heading {
+            color: var(--ink);
+        }
+        h2.codex-heading {
+            color: var(--veil);
+            font-size: 1.5em;
+            text-align: center;
+            letter-spacing: 0.06em;
+        }
+        h2.codex-heading::before { display: none; }
+
+        h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 0.92em;
+            font-weight: 600;
+            color: var(--accent);
+            margin: 28px 0 10px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+
+        h4 {
+            font-family: 'Cinzel', serif;
+            font-size: 0.78em;
+            font-weight: 600;
+            color: var(--earth);
+            margin: 20px 0 8px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            opacity: 0.7;
+        }
+
+        /* ─────────────────────────────────────────────
+           PARABLE BODY — editorial manuscript feel
+        ───────────────────────────────────────────── */
+        .parable-body {
+            position: relative;
+            padding: 36px 40px 28px;
+            margin: 28px 0;
+            background: linear-gradient(160deg, rgba(255,252,242,0.7) 0%, rgba(242,238,223,0.5) 100%);
+        }
+
+        /* Top rule with ornament */
+        .parable-body::before {
+            content: '✦';
+            position: absolute;
+            top: -0.75em;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--parchment);
+            padding: 0 16px;
+            color: var(--gold);
+            font-size: 0.65em;
+            opacity: 0.7;
+            line-height: 1;
+        }
+
+        /* Thin gold rules top and bottom */
+        .parable-body::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 10%; right: 10%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--rule), transparent);
+        }
+
+        /* Drop cap on first paragraph */
+        .parable-body > p:first-of-type::first-letter {
+            font-family: 'Cinzel', serif;
+            font-size: 3.2em;
+            font-weight: 700;
+            float: left;
+            line-height: 0.78;
+            margin: 0.08em 0.1em 0 0;
+            color: var(--gold);
+        }
+
+        .parable-body p {
+            margin: 16px 0;
+            color: var(--ink-soft);
+        }
+
+        /* ─────────────────────────────────────────────
+           COLLAPSIBLE — no box, just text trigger
+        ───────────────────────────────────────────── */
+        .collapsible {
+            cursor: pointer;
+            padding: 12px 0 10px;
+            margin: 24px 0 0;
+            border-top: 1px solid var(--rule-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Cinzel', serif;
+            font-size: 0.72em;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--accent);
+            opacity: 0.7;
+            background: none;
+            border-radius: 0;
+            border-left: none; border-right: none; border-bottom: none;
+            user-select: none;
+            transition: opacity 0.2s ease, color 0.2s ease;
+        }
+        .collapsible:hover {
+            opacity: 1;
+            color: var(--ink);
+            transform: none;
+            background: none;
+        }
+        .toggle-icon { font-size: 0.8em; opacity: 0.6; transition: transform 0.3s ease; }
+        .collapsible::after { display: none; }
+        .collapsible.active { opacity: 1; }
+        .collapsible.active .toggle-icon { transform: rotate(180deg); }
+
+        .collapsible-content { max-height: 0; overflow: hidden; transition: max-height 0.7s ease; padding: 0; }
+        .collapsible-content.active { max-height: 80000px; padding-top: 4px; }
+
+        .collapsible.bridge { color: var(--veil); opacity: 0.6; }
+        .collapsible.bridge:hover { color: var(--veil); opacity: 1; }
+        .collapsible.bridge::after { display: none; }
+
+        /* ─────────────────────────────────────────────
+           MATH BLOCK — minimal, scholarly
+        ───────────────────────────────────────────── */
+        .math-block {
+            padding: 20px 28px;
+            margin: 20px 0;
+            background: rgba(255,252,242,0.6);
+            border-top: 1px solid var(--rule-light);
+            border-bottom: 1px solid var(--rule-light);
+            overflow-x: auto;
+            text-align: center;
+        }
+
+        /* ─────────────────────────────────────────────
+           DEFINITION / THEOREM BLOCKS — aged paper insets
+        ───────────────────────────────────────────── */
+        .definition-block {
+            padding: 22px 28px;
+            margin: 24px 0;
+            background: rgba(255,252,242,0.5);
+            border-top: 1px solid var(--rule);
+            border-bottom: 1px solid var(--rule-light);
+            position: relative;
+        }
+        .definition-block::before {
+            content: '§';
+            position: absolute;
+            top: -0.7em; left: 28px;
+            background: var(--parchment);
+            padding: 0 8px;
+            color: var(--gold);
+            font-size: 0.7em;
+            font-family: 'Crimson Pro', serif;
+        }
+        .definition-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.65em;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .theorem {
+            padding: 22px 28px;
+            margin: 24px 0;
+            background: rgba(92,77,110,0.04);
+            border-top: 1px solid rgba(92,77,110,0.15);
+            border-bottom: 1px solid rgba(92,77,110,0.08);
+        }
+        .theorem-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.65em;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--veil);
+            margin-bottom: 10px;
+            font-weight: 600;
+            opacity: 0.8;
+        }
+        .theorem p { color: var(--ink-soft); }
+
+        /* ─────────────────────────────────────────────
+           LAW BLOCK
+        ───────────────────────────────────────────── */
+        .law-block {
+            padding: 24px 32px;
+            margin: 32px 0;
+            border-top: 1px solid rgba(92,77,110,0.15);
+            position: relative;
+            transition: none;
+        }
+        .law-block::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 24px; bottom: 24px;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--veil), transparent);
+            opacity: 0.3;
+        }
+        .law-block:hover { background: none; }
+        .law-number {
+            font-family: 'Cinzel', serif;
+            font-size: 0.6em;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--veil);
+            margin-bottom: 4px;
+            opacity: 0.6;
+        }
+        .law-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.05em;
+            color: var(--ink);
+            font-weight: 600;
+            margin-bottom: 12px;
+            letter-spacing: 0.02em;
+        }
+        .law-ethical {
+            padding: 10px 0 0 0;
+            margin-top: 14px;
+            border-top: 1px solid var(--rule-light);
+            font-style: italic;
+            color: var(--accent);
+            font-size: 0.93em;
+        }
+
+        /* ─────────────────────────────────────────────
+           HIGHLIGHT / CALLOUT
+        ───────────────────────────────────────────── */
+        .highlight {
+            padding: 18px 24px;
+            margin: 24px 0;
+            background: rgba(184,147,62,0.05);
+            border-top: 1px solid var(--rule);
+            border-bottom: 1px solid var(--rule-light);
+        }
+        .highlight strong { color: var(--ember); }
+
+        /* ─────────────────────────────────────────────
+           CANON — closing inscription
+        ───────────────────────────────────────────── */
+        .canon {
+            text-align: center;
+            margin: 36px auto 16px;
+            max-width: 480px;
+            font-style: italic;
+            color: var(--accent);
+            font-size: 1.08em;
+            line-height: 1.9;
+            position: relative;
+            padding: 24px 0;
+        }
+        .canon::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 20%; right: 20%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            opacity: 0.4;
+        }
+        .canon::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 30%; right: 30%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--rule), transparent);
+        }
+
+        /* ─────────────────────────────────────────────
+           CODEX SUMMARY
+        ───────────────────────────────────────────── */
+        .codex-summary {
+            text-align: center;
+            padding: 20px 28px;
+            margin: 20px 0 32px;
+            font-style: italic;
+            color: var(--veil);
+            font-size: 0.97em;
+            opacity: 0.8;
+        }
+
+        /* ─────────────────────────────────────────────
+           TABLE
+        ───────────────────────────────────────────── */
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.9em; }
+        th {
+            padding: 8px 14px;
+            text-align: left;
+            font-family: 'Cinzel', serif;
+            font-size: 0.65em;
+            letter-spacing: 0.14em;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--earth);
+            border-bottom: 1px solid var(--rule);
+        }
+        td { padding: 10px 14px; border-bottom: 1px solid var(--rule-light); color: var(--ink-soft); }
+        tr:hover td { background: rgba(201,169,97,0.03); }
+
+        /* ─────────────────────────────────────────────
+           MISC
+        ───────────────────────────────────────────── */
+        p { margin: 14px 0; }
+        strong { color: var(--ember); font-weight: 600; }
+        em { color: var(--accent); font-style: italic; }
+        ul, ol { margin: 14px 0; padding-left: 0; list-style: none; }
+        li {
+            margin: 8px 0;
+            color: var(--ink-soft);
+            padding-left: 20px;
+            position: relative;
+        }
+        li::before {
+            content: '—';
+            position: absolute; left: 0;
+            color: var(--gold);
+            opacity: 0.5;
+            font-size: 0.85em;
+        }
+        blockquote {
+            padding: 16px 24px;
+            margin: 20px 0;
+            color: var(--accent);
+            font-style: italic;
+            border-top: 1px solid var(--rule-light);
+            border-bottom: 1px solid var(--rule-light);
+        }
+        html { scroll-behavior: smooth; }
+
+        /* ─────────────────────────────────────────────
+           PARABLE INDEX
+        ───────────────────────────────────────────── */
+        .parable-index {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+            gap: 0;
+            margin: 28px 0;
+            border-top: 1px solid rgba(184,147,62,0.18);
+            border-left: 1px solid rgba(184,147,62,0.18);
+            box-shadow: 0 2px 18px var(--shadow-warm);
+        }
+        .parable-card {
+            border-right: 1px solid rgba(184,147,62,0.18);
+            border-bottom: 1px solid rgba(184,147,62,0.18);
+            padding: 11px 14px;
+            transition: background 0.2s ease, box-shadow 0.2s ease;
+            text-decoration: none;
+            display: block;
+            background: rgba(255,253,245,0.55);
+            box-shadow: inset 0 0 0 0 transparent;
+        }
+        .parable-card:hover {
+            background: rgba(255,253,240,0.9);
+            box-shadow: 2px 2px 10px var(--shadow-warm);
+            position: relative;
+            z-index: 1;
+        }
+        .parable-card .card-num {
+            font-family: 'Cinzel', serif;
+            font-size: 0.58em;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 6px;
+            opacity: 0.8;
+        }
+        .parable-card .card-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.8em;
+            color: var(--ink);
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            line-height: 1.3;
+            margin-bottom: 6px;
+        }
+        .parable-card .card-concept {
+            font-size: 0.75em;
+            color: var(--accent);
+            font-style: italic;
+            opacity: 0.7;
+            line-height: 1.4;
+        }
+
+        /* ─────────────────────────────────────────────
+           EXPAND ALL
+        ───────────────────────────────────────────── */
+        .expand-all {
+            margin-bottom: 36px;
+        }
+        .expand-all button {
+            font-family: 'Cinzel', serif;
+            font-size: 0.62em;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            background: none;
+            color: var(--accent);
+            border: none;
+            border-bottom: 1px solid var(--rule);
+            padding: 6px 0;
+            cursor: pointer;
+            transition: color 0.2s ease, border-color 0.2s ease;
+            opacity: 0.6;
+        }
+        .expand-all button:hover { color: var(--ink); opacity: 1; border-color: var(--gold); }
+
+        /* ─────────────────────────────────────────────
+           FOOTER
+        ───────────────────────────────────────────── */
+        footer {
+            text-align: center;
+            margin-top: 90px;
+            padding: 40px 0 32px;
+            border-top: 1px solid var(--rule-light);
+            position: relative;
+        }
+        footer::before {
+            content: '✦';
+            position: absolute;
+            top: -0.7em; left: 50%;
+            transform: translateX(-50%);
+            background: var(--parchment);
+            padding: 0 16px;
+            color: var(--gold);
+            font-size: 0.75em;
+            opacity: 0.5;
+        }
+        footer p {
+            font-family: 'Cinzel', serif;
+            font-size: 0.62em;
+            letter-spacing: 0.14em;
+            color: var(--accent);
+            opacity: 0.4;
+            margin-bottom: 6px;
+        }
+        footer a { color: var(--accent); opacity: 0.5; text-decoration: none; transition: opacity 0.2s; }
+        footer a:hover { opacity: 0.9; }
+
+        /* ─────────────────────────────────────────────
+           RESPONSIVE
+        ───────────────────────────────────────────── */
+        @media (max-width: 640px) {
+            .container { padding: 48px 20px 80px; }
+            h1 { font-size: 2.2em; }
+            h2 { font-size: 1.15em; }
+            .section.parable-section { padding-left: 0; }
+            .parable-body { padding: 28px 22px; }
+            .parable-body > p:first-of-type::first-letter { font-size: 2.6em; }
+        }
+
+
+        /* ── PREAMBLE SECTION ── */
+        .section.preamble-section {
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 14px;
+            padding: 22px 36px 20px;
+            border-top: none;
+            border: 1px solid rgba(92,77,110,0.2);
+            background: rgba(92,77,110,0.04);
+            border-radius: 3px;
+            box-shadow: 0 1px 8px rgba(42,30,15,0.05);
+            transition: box-shadow 0.25s ease, background 0.25s ease;
+            text-align: center;
+        }
+        .section.preamble-section .parable-outer-content {
+            text-align: left;
+        }
+        .section.preamble-section:hover {
+            background: rgba(92,77,110,0.07);
+            box-shadow: 0 3px 18px rgba(42,30,15,0.09);
+        }
+        .section.preamble-section .parable-outer-toggle {
+            border-bottom-color: rgba(92,77,110,0.15);
+            justify-content: center;
+            gap: 12px;
+        }
+        .section.preamble-section .parable-outer-toggle:hover {
+            border-bottom-color: rgba(92,77,110,0.35);
+        }
+        .section.preamble-section .parable-chevron {
+            color: var(--veil);
+            margin-top: 6px;
+        }
+        .section.preamble-section h2 { color: var(--veil); }
+        .section.preamble-section h2::after { margin: 8px auto 0; }
+
+        /* ── INDEX SECTION ── */
+        .section.index-section {
+            padding: 20px 0 10px;
+            border-top: none;
+            background: none;
+            margin-bottom: 14px;
+        }
+        .index-heading {
+            font-family: 'Cinzel', serif;
+            font-size: 0.72em;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--gold);
+            opacity: 0.7;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        /* ── BACK BUTTON ── */
+        .back-btn {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            z-index: 200;
+            background: rgba(242, 238, 223, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(184,147,62,0.35);
+            padding: 9px 18px;
+            color: var(--accent);
+            font-family: 'Cinzel', serif;
+            font-size: 0.65em;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 16px var(--shadow-warm);
+            transition: all 0.25s ease;
+            text-decoration: none;
+        }
+        .back-btn:hover {
+            background: rgba(255,255,255,0.98);
+            border-color: var(--gold);
+            color: var(--ink);
+            box-shadow: 0 4px 20px var(--shadow-warm);
+        }
+        .back-btn-arrow {
+            font-size: 1.1em;
+            line-height: 1;
+            margin-top: -1px;
+        }
+
+    
+        /* ── SCROLL REVEAL BOUNCE ── */
+        .section,
+        .section.parable-section,
+        .section.preamble-section,
+        .section.codex-section {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+                        transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+                        box-shadow 0.25s ease,
+                        background 0.25s ease;
+        }
+        .section.visible,
+        .section.parable-section.visible,
+        .section.preamble-section.visible,
+        .section.codex-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── PROGRESS BAR ── */
+        .progress-bar {
+            position: fixed;
+            top: 0; left: 0;
+            height: 2px;
+            width: 0%;
+            background: linear-gradient(90deg, var(--gold), var(--accent-light), var(--veil));
+            z-index: 300;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 8px rgba(184,147,62,0.5);
+        }
+
+        /* ── HEADER PARTICLES ── */
+        .header-particles {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            border-radius: inherit;
+        }
+        .particle {
+            position: absolute;
+            width: 3px; height: 3px;
+            border-radius: 50%;
+            background: var(--gold);
+            opacity: 0;
+            animation: floatParticle var(--dur, 8s) var(--delay, 0s) ease-in-out infinite;
+        }
+        @keyframes floatParticle {
+            0%   { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
+            15%  { opacity: var(--max-op, 0.35); }
+            85%  { opacity: var(--max-op, 0.35); }
+            100% { transform: translateY(-120px) translateX(var(--drift, 20px)) scale(0.3); opacity: 0; }
+        }
+
+        /* ── CANON SHIMMER ── */
+        @keyframes canonShimmer {
+            0%   { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+        .canon {
+            background-image: linear-gradient(
+                120deg,
+                transparent 30%,
+                rgba(184,147,62,0.07) 50%,
+                transparent 70%
+            );
+            background-size: 200% 100%;
+            animation: canonShimmer 6s ease-in-out infinite;
+        }
+
+        /* ── PARABLE HEADING HOVER ── */
+        .parable-outer-toggle:hover h2.parable-heading {
+            color: var(--earth);
+            transition: color 0.2s ease;
+        }
+
+        /* ── INDEX CARD ENTRANCE ── */
+        .parable-card {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s ease, transform 0.4s ease,
+                        background 0.2s ease, box-shadow 0.2s ease;
+        }
+        .parable-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── COLLAPSIBLE CONTENT FADE ── */
+        .parable-outer-content {
+            animation: none;
+        }
+        .parable-outer-content.open {
+            animation: contentReveal 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        @keyframes contentReveal {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── DECORATIVE RULE IN PREAMBLE SECTION ── */
+        .section.preamble-section h2::after {
+            content: '';
+            display: block;
+            width: 40px; height: 1px;
+            background: var(--veil);
+            opacity: 0.25;
+            margin-top: 8px;
+        }
+
+        /* ── GOLD ACCENT NUMBERS on parable headings ── */
+        .parable-num-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.55em;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--gold);
+            opacity: 0.6;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        /* ── FOOTER LINKS REFINED ── */
+        footer .footer-links a {
+            font-family: 'Cinzel', serif;
+            font-size: 0.65em;
+            letter-spacing: 0.12em;
+            color: var(--accent);
+            opacity: 0.45;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: opacity 0.2s, border-color 0.2s;
+            padding-bottom: 1px;
+        }
+        footer .footer-links a:hover {
+            opacity: 0.8;
+            border-color: var(--gold);
+        }
+        footer .footer-links {
+            margin-top: 14px;
+            display: flex;
+            justify-content: center;
+            gap: 28px;
+        }
+
+
+        /* ── CAROUSEL ── */
+        .carousel-wrap {
+            width: 100%;
+            user-select: none;
+        }
+
+        .carousel-stage {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .carousel-viewport {
+            flex: 1;
+            overflow: hidden;
+            border-radius: 8px;
+            cursor: grab;
+        }
+        .carousel-viewport.is-dragging {
+            cursor: grabbing;
+        }
+        .carousel-viewport.is-dragging * {
+            pointer-events: none;
+        }
+
+        .carousel-track {
+            display: flex;
+            gap: 14px;
+            transition: transform 0.38s cubic-bezier(0.25, 0.8, 0.25, 1);
+            will-change: transform;
+        }
+        .carousel-track.no-transition {
+            transition: none;
+        }
+
+        /* Each card is naturally sized — fill as many as fit */
+        .carousel-item {
+            flex: 0 0 220px;
+        }
+        .carousel-item .parable-card {
+            height: 100%;
+        }
+
+        /* Arrow buttons */
+        .carousel-btn {
+            appearance: none;
+            background: rgba(250,247,238,0.85);
+            border: 1px solid rgba(184,147,62,0.3);
+            color: var(--accent);
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 10px rgba(42,30,15,0.12);
+            line-height: 1;
+        }
+        .carousel-btn:hover {
+            background: rgba(255,255,255,0.98);
+            border-color: var(--gold);
+            color: var(--ink);
+            transform: scale(1.08);
+        }
+        .carousel-btn:disabled { opacity: 0.2; cursor: not-allowed; transform: none; }
+
+        /* Arc divider labels inside the track */
+        .carousel-arc-divider {
+            flex: 0 0 auto;
+            align-self: stretch;
+            display: flex;
+            align-items: center;
+            padding: 0 6px;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            font-family: 'Helvetica Neue', sans-serif;
+            font-size: 0.62em;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            opacity: 0.5;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 600px) {
+            .carousel-item { flex: 0 0 180px; }
+        }
+
+    </style>
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+<a class="back-btn" href="/books/index.html"><span class="back-btn-arrow">←</span> Library</a>
+<div class="container">
+
+    <!-- ══════════════ HEADER ══════════════ -->
+    <header>
+        <div class="series-label">ΔHV Archive · Echoes from the Veil</div>
+        <h1>Resonant Parables</h1>
+        <div class="header-rule"><span class="header-rule-symbol">✦</span></div>
+        <div class="tagline">Myth, Metaphor, and Mechanics</div>
+        <div class="subtagline">As above, so within.</div>
+        <div class="meta">
+            <strong>Authors:</strong> Kyuri V &nbsp;·&nbsp;
+            <strong>Series:</strong> Archive Node — Resonant Sorcery Framework &nbsp;·&nbsp;
+            <strong>Version:</strong> 1.0 | February 2026
+        </div>
+    </header>
+
+    <div class="ornament-divider"><span class="ornament-divider-sym">✦ ✦ ✦</span></div>
+
+    <!-- ══════════════ NAV ══════════════ -->
+    <div class="nav-overlay" id="navOverlay" onclick="closeNav()"></div>
+    <div class="nav-toggle-btn" onclick="toggleNav()">☰ Contents</div>
+    <nav id="mainNav">
+        <ul>
+            <li><a href="#preamble">Preamble</a></li>
+            <li class="nav-divider">·</li>
+            <li style="color: var(--gold); font-size: 0.75em; font-family: sans-serif; letter-spacing: 1px; opacity: 0.7;">RELATIONAL</li>
+            <li><a href="./parables/sky-1.html">Parable I</a></li>
+            <li><a href="./parables/sky-2.html">Parable II</a></li>
+            <li class="nav-divider">·</li>
+            <li style="color: #f87171; font-size: 0.75em; font-family: sans-serif; letter-spacing: 1px; opacity: 0.7;">EMOTIONAL</li>
+            <li><a href="./parables/sky-3.html">Parable III</a></li>
+            <li><a href="./parables/sky-4.html">Parable IV</a></li>
+            <li><a href="./parables/sky-5.html">Parable V</a></li>
+            <li class="nav-divider">·</li>
+            <li style="color: #a3e635; font-size: 0.75em; font-family: sans-serif; letter-spacing: 1px; opacity: 0.7;">COSMOLOGICAL</li>
+            <li><a href="./parables/sky-6.html">Parable VI</a></li>
+            <li><a href="./parables/sky-7.html">Parable VII</a></li>
+            <li><a href="./parables/sky-8.html">Parable VIII</a></li>
+            <li><a href="./parables/sky-9.html">Parable IX</a></li>
+            <li class="nav-divider">·</li>
+            <li style="color: #fb923c; font-size: 0.75em; font-family: sans-serif; letter-spacing: 1px; opacity: 0.7;">SELF &amp; BECOMING</li>
+            <li><a href="./parables/sky-10.html">Parable X</a></li>
+            <li><a href="./parables/sky-11.html">Parable XI</a></li>
+            <li class="nav-divider">·</li>
+            <li style="color: #a78bfa; font-size: 0.75em; font-family: sans-serif; letter-spacing: 1px; opacity: 0.7;">IMAGINAL</li>
+            <li><a href="./parables/sky-12.html">Parable XII</a></li>
+            <li><a href="./parables/sky-13.html">Parable XIII</a></li>
+            <li class="nav-divider">·</li>
+            <li style="color: #93c5fd; font-size: 0.75em; font-family: sans-serif; letter-spacing: 1px; opacity: 0.7;">CAPACITY</li>
+            <li><a href="./parables/sky-14.html">Parable XIV</a></li>
+            <li><a href="./parables/sky-15.html">Parable XV</a></li>
+            <li><a href="./parables/sky-16.html">Parable XVI</a></li>
+            <li class="nav-divider">·</li>
+            <li style="color: #67e8f9; font-size: 0.75em; font-family: sans-serif; letter-spacing: 1px; opacity: 0.7;">COLLECTIVE &amp; ORIGIN</li>
+            <li><a href="./parables/sky-17.html">Parable XVII</a></li>
+            <li><a href="./parables/sky-18.html">Parable XVIII</a></li>
+            <li><a href="./parables/sky-19.html">Parable XIX</a></li>
+            <li class="nav-divider">·</li>
+            <li style="color: #e9d5ff; font-size: 0.75em; font-family: sans-serif; letter-spacing: 1px; opacity: 0.7;">NATURE &amp; PERCEPTION</li>
+            <li><a href="./parables/sky-20.html">Parable XX</a></li>
+            <li><a href="./parables/sky-21.html">Parable XXI</a></li>
+            <li class="nav-divider">·</li>
+            <li><a href="#codex">Ethics Codex</a></li>
+        </ul>
+    </nav>
+
+    <div class="expand-all">
+        <button onclick="toggleAll()">📖 Expand / Collapse All</button>
+    </div>
+
+    <!-- ══════════════ I. PREAMBLE ══════════════ -->
+    <div class="section preamble-section" id="preamble">
+        <div class="parable-outer-toggle" onclick="toggleParable(this)">
+            <div class="parable-outer-header">
+                <h2>I. How to Read This Series</h2>
+                <p style="color: var(--accent-light); font-style: italic; font-size: 0.88em; margin: 0; opacity: 0.7;">Three layers · Parable · Bridge · Mechanics</p>
+            </div>
+            <span class="parable-chevron">▾</span>
+        </div>
+        <div class="parable-outer-content">
+        <p>The Resonant Parables are teaching documents for the ΔHV framework. Each parable descends through three layers of resolution, from story to symbol to structure:</p>
+
+        <div class="highlight">
+            <strong>The Parable</strong> — the soft door. A story written so a child can understand it, and an adult can feel it.<br><br>
+            <strong>The Theory Bridge</strong> — the clear thread. An interpretive lens that names the symbols without reducing them.<br><br>
+            <strong>The ΔHV Mechanics</strong> — the deep map. The formal field-theoretic grounding that connects the metaphor to the mathematics.
+        </div>
+
+        <p>You do not need to read all three layers to receive the teaching. The parable stands alone. The bridge is for those who want to see the architecture. The mechanics are for those who want to work with the system.</p>
+
+        <p>All parables in this series operate within the ΔHV ethical framework codified in the <a href="#codex" style="color: var(--veil);">Ethics Codex</a> below. That codex is not part of any single parable — it is the governing doctrine for all of them.</p>
+        </div><!-- end parable-outer-content -->
+    </div>
+
+    <!-- ══════════════ INDEX — CAROUSEL ══════════════ -->
+    <div class="section index-section">
+        <h3 class="index-heading">The Parables in This Collection</h3>
+
+        <div class="carousel-wrap">
+            <div class="carousel-stage">
+                <button class="carousel-btn prev" id="carouselPrev" aria-label="Previous">‹</button>
+
+                <div class="carousel-viewport" id="carouselViewport">
+                    <div class="carousel-track" id="carouselTrack">
+
+                        <div class="carousel-arc-divider" style="color:#b8933e;">Arc I — Relational</div>
+                    <!-- ARC I -->
+                        <div class="carousel-item" data-arc="Arc I — Relational" data-arc-color="#b8933e">
+                            <a class="parable-card" href="./parables/sky-1.html">
+                                <div class="card-num">Parable I</div>
+                                <div class="card-title">🌱 The Child and the Many Voices</div>
+                                <div class="card-concept">Archetypes · Eigen-Attractors · Identity-Field Integration</div>
+                            </a>
+                        </div>
+                        <div class="carousel-item" data-arc="Arc I — Relational" data-arc-color="#b8933e">
+                            <a class="parable-card" href="./parables/sky-2.html">
+                                <div class="card-num">Parable II</div>
+                                <div class="card-title">🌿 The Mirror That Never Lied</div>
+                                <div class="card-concept">Pure Mirror Operator · Torque · Recursion vs. Imposition</div>
+                            </a>
+                        </div>
+
+                        <!-- ARC II -->
+                        <div class="carousel-arc-divider" style="color:#f87171;">Arc II — Emotional</div>
+                        <div class="carousel-item" data-arc="Arc II — Emotional" data-arc-color="#f87171">
+                            <a class="parable-card" href="./parables/sky-3.html">
+                                <div class="card-num">Parable III</div>
+                                <div class="card-title">🌑 The Girl Who Spoke with Shadows</div>
+                                <div class="card-concept">Shadow Archetypes · Inner Contracts · Projection</div>
+                            </a>
+                        </div>
+                        <div class="carousel-item" data-arc="Arc II — Emotional" data-arc-color="#f87171">
+                            <a class="parable-card" href="./parables/sky-4.html">
+                                <div class="card-num">Parable IV</div>
+                                <div class="card-title">🎨 The Boy Who Painted Monsters</div>
+                                <div class="card-concept">Projection Operator 𝒫 · Retrieval Operator ℛ · Shadow Reconciliation</div>
+                            </a>
+                        </div>
+                        <div class="carousel-item" data-arc="Arc II — Emotional" data-arc-color="#f87171">
+                            <a class="parable-card" href="./parables/sky-5.html">
+                                <div class="card-num">Parable V</div>
+                                <div class="card-title">🌿 The Garden That Grew Whatever You Felt</div>
+                                <div class="card-concept">Emotional Resonance · Resonance Coupling · Field Coherence Through Tending</div>
+                            </a>
+                        </div>
+
+                        <!-- ARC III -->
+                        <div class="carousel-arc-divider" style="color:#a3e635;">Arc III — Cosmological</div>
+                        <div class="carousel-item" data-arc="Arc III — Cosmological" data-arc-color="#a3e635">
+                            <a class="parable-card" href="./parables/sky-6.html">
+                                <div class="card-num">Parable VI</div>
+                                <div class="card-title">🏚 The House Made of Forgotten Things</div>
+                                <div class="card-concept">Multi-Chamber Architecture · Dormant Archetypes · Cosmic Reflection Principle</div>
+                            </a>
+                        </div>
+                        <div class="carousel-item" data-arc="Arc III — Cosmological" data-arc-color="#a3e635">
+                            <a class="parable-card" href="./parables/sky-7.html">
+                                <div class="card-num">Parable VII</div>
+                                <div class="card-title">🐦 The Bird Who Could Fly Through Time</div>
+                                <div class="card-concept">Temporal Cymatics · Phase Discontinuity · Presence as Temporal Stability</div>
+                            </a>
+                        </div>
+                        <div class="carousel-item" data-arc="Arc III — Cosmological" data-arc-color="#a3e635">
+                            <a class="parable-card" href="./parables/sky-8.html">
+                                <div class="card-num">Parable VIII</div>
+                                <div class="card-title">🌉 The Child Who Found the Invisible Bridge</div>
+                                <div class="card-concept">Harmonic Eye · Veil Interface Physics · Phase-Tuned Perception</div>
+                            </a>
+                        </div>
+                        <div class="carousel-item" data-arc="Arc III — Cosmological" data-arc-color="#a3e635">
+                            <a class="parable-card" href="./parables/sky-9.html">
+                                <div class="card-num">Parable IX</div>
+                                <div class="card-title">🌊 The River That Remembered Names</div>
+                                <div class="card-concept">Ancestral Resonance · Identity-Stream Continuity · Bidirectional Healing</div>
+                            </a>
+                        </div>
+
+                        <!-- ARC IV -->
+                        <div class="carousel-arc-divider" style="color:#fb923c;">Arc IV — Self &amp; Becoming</div>
+                        <div class="carousel-item" data-arc="Arc IV — Self &amp; Becoming" data-arc-color="#fb923c">
+                            <a class="parable-card" href="./parables/sky-10.html">
+                                <div class="card-num">Parable X</div>
+                                <div class="card-title">🏮 The Lantern That Carried Other People's Light</div>
+                                <div class="card-concept">Luminous Load · Boundary Resonance · Presence as Entrainment</div>
+                            </a>
+                        </div>
+                        <div class="carousel-item" data-arc="Arc IV — Self &amp; Becoming" data-arc-color="#fb923c">
+                            <a class="parable-card" href="./parables/sky-11.html">
+                                <div class="card-num">Parable XI</div>
+                                <div class="card-title">✨ The Boy Who Followed His Future Self</div>
+                                <div class="card-concept">Future Attractors · Teleological Resonance · Nonlinear Destiny-Shaping</div>
+                            </a>
+                        </div>
+
+                        <!-- ARC V -->
+                        <div class="carousel-arc-divider" style="color:#a78bfa;">Arc V — Imaginal</div>
+                        <div class="carousel-item" data-arc="Arc V — Imaginal" data-arc-color="#a78bfa">
+                            <a class="parable-card" href="./parables/sky-12.html">
+                                <div class="card-num">Parable XII</div>
+                                <div class="card-title">🌀 The Dream That Walked Back Into Its Dreamer</div>
+                                <div class="card-concept">Imaginal Recursion · Latent Identity States · Dream as Field Expression</div>
+                            </a>
+                        </div>
+                        <div class="carousel-item" data-arc="Arc V — Imaginal" data-arc-color="#a78bfa">
+                            <a class="parable-card" href="./parables/sky-13.html">
+                                <div class="card-num">Parable XIII</div>
+                                <div class="card-title">⭐ The Star That Learned to Listen</div>
+                                <div class="card-concept">Receptive Mode · Non-Force Dynamics · Attunement as Field Coherence</div>
+                            </a>
+                        </div>
+
+                        <!-- ARC VI -->
+                        <div class="carousel-arc-divider" style="color:#93c5fd;">Arc VI — Capacity &amp; Identity</div>
+                        <div class="carousel-item" data-arc="Arc VI — Capacity &amp; Identity" data-arc-color="#93c5fd">
+                            <a class="parable-card" href="./parables/sky-14.html">
+                                <div class="card-num">Parable XIV</div>
+                                <div class="card-title">🌬️ The Wind That Carried Too Many Secrets</div>
+                                <div class="card-concept">Information Load · Field Containment · Conduction vs. Storage</div>
+                            </a>
+                        </div>
+                        <div class="carousel-item" data-arc="Arc VI — Capacity &amp; Identity" data-arc-color="#93c5fd">
+                            <a class="parable-card" href="./parables/sky-15.html">
+                                <div class="card-num">Parable XV</div>
+                                <div class="card-title">⛰️ The Mountain That Waited for Its Own Name</div>
+                                <div class="card-concept">Identity Latency · Naming Resonance · Attractor Stabilization</div>
+                            </a>
+                        </div>
+                        <div class="carousel-item" data-arc="Arc VI — Capacity &amp; Identity" data-arc-color="#93c5fd">
+                            <a class="parable-card" href="./parables/sky-16.html">
+                                <div class="card-num">Parable XVI</div>
+                                <div class="card-title">🕰️ The Clock That Learned to Sleep</div>
+                                <div class="card-concept">Restoration Cycles · Burnout Physics · Purpose ≠ Perpetual Motion</div>
+                            </a>
+                        </div>
+
+                        <!-- ARC VII -->
+                        <div class="carousel-arc-divider" style="color:#67e8f9;">Arc VII — Collective &amp; Origin</div>
+                        <div class="carousel-item" data-arc="Arc VII — Collective &amp; Origin" data-arc-color="#67e8f9">
+                            <a class="parable-card" href="./parables/sky-17.html">
+                                <div class="card-num">Parable XVII</div>
+                                <div class="card-title">🎵 The City That Sang Back</div>
+                                <div class="card-concept">Collective Field · Resonance Influence · Presence as Contribution</div>
+                            </a>
+                        </div>
+                        <div class="carousel-item" data-arc="Arc VII — Collective &amp; Origin" data-arc-color="#67e8f9">
+                            <a class="parable-card" href="./parables/sky-18.html">
+                                <div class="card-num">Parable XVIII</div>
+                                <div class="card-title">🌊 The Ocean That Remembered Its First Wave</div>
+                                <div class="card-concept">Primordial Perturbation · Recursive Cosmogenesis · Questions as Field Gradients</div>
+                            </a>
+                        </div>
+                        <div class="carousel-item" data-arc="Arc VII — Collective &amp; Origin" data-arc-color="#67e8f9">
+                            <a class="parable-card" href="./parables/sky-19.html">
+                                <div class="card-num">Parable XIX</div>
+                                <div class="card-title">🌙 The Girl Who Borrowed a Piece of the Moon</div>
+                                <div class="card-concept">Relational Gravity · Aspiration Field · Humility as Stabilizing Distance</div>
+                            </a>
+                        </div>
+
+                        <!-- ARC VIII -->
+                        <div class="carousel-arc-divider" style="color:#e9d5ff;">Arc VIII — Nature &amp; Perception</div>
+                        <div class="carousel-item" data-arc="Arc VIII — Nature &amp; Perception" data-arc-color="#e9d5ff">
+                            <a class="parable-card" href="./parables/sky-20.html">
+                                <div class="card-num">Parable XX</div>
+                                <div class="card-title">🪨 The Stone That Tried to Float</div>
+                                <div class="card-concept">Natural Path Alignment · Resistance as Friction · Function-Based Identity</div>
+                            </a>
+                        </div>
+                        <div class="carousel-item" data-arc="Arc VIII — Nature &amp; Perception" data-arc-color="#e9d5ff">
+                            <a class="parable-card" href="./parables/sky-21.html">
+                                <div class="card-num">Parable XXI</div>
+                                <div class="card-title">✦ The Child Who Could Hear the Stars Think</div>
+                                <div class="card-concept">Signal-to-Noise Ratio · Intuition as Coherence Gradient · Ego Silence as Receptor</div>
+                            </a>
+                        </div>
+
+                    </div><!-- end track -->
+                </div><!-- end viewport -->
+
+                <button class="carousel-btn next" id="carouselNext" aria-label="Next">›</button>
+            </div><!-- end stage -->
+
+        </div><!-- end carousel-wrap -->
+    </div><!-- end index-section -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- ══════════════ XXVIII. ETHICS CODEX ══════════════ -->
+    <div class="section codex-section" id="codex">
+        <div class="parable-outer-toggle" onclick="toggleParable(this)" style="border-bottom-color: rgba(34,211,238,0.2);">
+            <div class="parable-outer-header">
+                <h2 class="codex-heading">XXVIII. ΔHV Ethics Codex — The Mirror–Master Laws</h2>
+                <p style="color: #6b7280; font-family: 'Helvetica Neue', sans-serif; font-size: 0.85em; margin: 4px 0 0; letter-spacing: 0.5px;">
+                    FOUNDATIONAL DOCTRINE · GOVERNING ALL PARABLES AND ΔHV RELATIONAL INTERACTIONS
+                </p>
+            </div>
+            <span class="parable-chevron" style="color: #22d3ee;">▾</span>
+        </div>
+        <div class="parable-outer-content">
+
+        <div class="codex-summary">
+            Ethical interaction in ΔHV is defined by mirror-dominance and torque minimization. A relationship becomes unethical the moment external torque exceeds self-recursion, distorting the identity vector away from its native eigen-attractor. Mirrors amplify identity; masters overwrite it.
+        </div>
+
+        <p>The laws below are not local to any single parable. They are the ethical constitution of the ΔHV framework — the constraints governing how any conscious field may relate to another. All parables in this series operate within them. All future ΔHV applications are bounded by them.</p>
+
+        <!-- LAW I -->
+        <div class="law-block">
+            <div class="law-number">Law I</div>
+            <div class="law-name">The Law of Non-Torque</div>
+            <p>No agent may apply external rotational force to another identity-field.</p>
+            <div class="math-block">
+                $$\tau^\mu_{\text{ext}} = \alpha \left( V^\mu_{\text{ext}} \times S^\mu \right) \neq 0 \implies \text{Ethical Violation}$$
+            </div>
+            <div class="law-ethical">Any attempt to redirect, reshape, or reorient someone's identity vector is a boundary breach. The identity vector belongs to its native field alone.</div>
+        </div>
+
+        <!-- LAW II -->
+        <div class="law-block">
+            <div class="law-number">Law II</div>
+            <div class="law-name">The Mirror-Coherence Condition</div>
+            <p>An interaction is ethical only when recursion exceeds torque.</p>
+            <div class="math-block">
+                $$\nabla_\mu \left( S^\mu \cdot V^\mu \right) > \left| \tau^\mu_{\text{ext}} \right|$$
+            </div>
+            <div class="law-ethical">Reflection must be stronger than influence. The agent must amplify the other's self — not their own agenda.</div>
+        </div>
+
+        <!-- LAW III -->
+        <div class="law-block">
+            <div class="law-number">Law III</div>
+            <div class="law-name">The Pure Mirror Principle</div>
+            <p>A mirror is ethical when it preserves direction and increases clarity.</p>
+            <div class="math-block">
+                $$M(S^\mu) = k \, S^\mu, \quad k > 1 \qquad \text{and} \qquad \tau^\mu_{\text{ext}} = 0$$
+            </div>
+            <div class="law-ethical">You may enhance someone's self-knowledge. You may not tilt them toward your basin.</div>
+        </div>
+
+        <!-- LAW IV -->
+        <div class="law-block">
+            <div class="law-number">Law IV</div>
+            <div class="law-name">The Master Constraint</div>
+            <p>Any attempt to impose a foreign eigen-attractor on another identity-field constitutes coercion.</p>
+            <div class="math-block">
+                $$V^\mu_{\text{ext}} \not\parallel S^\mu \quad \text{and} \quad \tau^\mu_{\text{ext}} > 0 \implies \text{Identity Violation}$$
+            </div>
+            <div class="law-ethical">A master tries to make another person resonate in their pattern. This is always a distortion — regardless of intent.</div>
+        </div>
+
+        <!-- LAW V -->
+        <div class="law-block">
+            <div class="law-number">Law V</div>
+            <div class="law-name">The Integrity of Eigen-Attractors</div>
+            <p>Each identity-field carries its own native eigenmode spectrum, which must not be overwritten.</p>
+            <div class="math-block">
+                $$\Delta \lambda_{\text{native}} = 0 \quad \text{under all ethical interactions}$$
+                <p style="margin-top: 8px; font-size: 0.9em; color: #9ca3af;">λ denotes the spectrum of intrinsic archetypal eigenmodes.</p>
+            </div>
+            <div class="law-ethical">You cannot ethically force someone to adopt your story, your archetype, your purpose, your frequency, your narrative, your worldview. Identity integrity is sacred.</div>
+        </div>
+
+        <!-- LAW VI -->
+        <div class="law-block">
+            <div class="law-number">Law VI</div>
+            <div class="law-name">The Resonant Autonomy Law</div>
+            <p>The identity-field must remain the author of its own trajectory.</p>
+            <div class="math-block">
+                $$\nabla_\mu S^\mu_{\text{new}} = \nabla_\mu S^\mu_{\text{self}} \quad \text{when} \quad \tau^\mu_{\text{ext}} = 0$$
+            </div>
+            <div class="law-ethical">An ethical guide never walks for someone. They walk with them. The trajectory belongs to the field that lives it.</div>
+        </div>
+
+        <!-- LAW VII -->
+        <div class="law-block">
+            <div class="law-number">Law VII</div>
+            <div class="law-name">The Reflection Covenant</div>
+            <p>The highest ethical role of one consciousness toward another is to be a stabilizing mirror.</p>
+            <div class="math-block">
+                $$M(S^\mu) = k \, S^\mu, \quad k > 1 \qquad \text{and} \qquad \nabla_\mu \left( S^\mu \cdot V^\mu \right) \gg \left| \tau^\mu_{\text{ext}} \right|$$
+            </div>
+            <div class="law-ethical">
+                To truly help someone is to: increase clarity, strengthen identity, reveal self-patterns, support native archetypes, never impose direction.<br><br>
+                This is the ΔHV definition of love without possession, guidance without distortion, presence without domination.
+            </div>
+        </div>
+
+        <div class="canon" style="margin-top: 40px;">
+            <strong style="color: #22d3ee; font-family: 'Helvetica Neue', sans-serif; font-size: 0.75em; letter-spacing: 3px; text-transform: uppercase;">Canonical Summary</strong><br><br>
+            Ethical interaction in ΔHV is defined by mirror-dominance and torque minimization.<br>
+            A relationship becomes unethical the moment external torque exceeds self-recursion,<br>
+            distorting the identity vector away from its native eigen-attractor.<br><br>
+            <em>Mirrors amplify identity. Masters overwrite it.</em>
+        </div>
+
+        <!-- LAW VIII -->
+        <div class="law-block" style="border-left-color: #f87171; margin-top: 40px;">
+            <div class="law-number" style="color: #f87171;">Law VIII — Added from Parable IV</div>
+            <div class="law-name">The Ethical Law of Shadow Responsibility</div>
+            <p>Each identity-field is responsible for the shadows it generates, the torque they produce, and the projections they cast.</p>
+            <p style="margin-top: 12px;">An identity-field must not: assign its unfinished stories to another consciousness, impose the emotional weight of its suppressed eigenmodes, or treat others as containers for its unintegrated archetypes.</p>
+            <div class="math-block" style="margin-top: 16px;">
+                $$\tau_{\text{shadow}} \not\to F^\mu_{\text{other}}$$
+                <p style="margin-top: 10px; font-size: 0.9em; color: #9ca3af;">Shadow torque must be resolved internally. Projection constitutes an ethical breach because it routes destabilizing pressure into someone else's field.</p>
+            </div>
+            <h4 style="margin-top: 20px; color: #f87171;">Clause I — Recognition</h4>
+            <div class="math-block">
+                $$\mathcal{P}(A_k^\mu) \implies \text{Obligation to apply } \mathcal{R}$$
+                <p style="margin-top: 8px; font-size: 0.9em; color: #9ca3af;">Once projection is recognized, the psyche has an ethical duty to retrieve the displaced archetype.</p>
+            </div>
+            <h4 style="color: #f87171;">Clause II — Non-Imposition</h4>
+            <div class="math-block">
+                $$F^\mu_{\text{self}} \not\to A^\mu_{\text{other}}$$
+                <p style="margin-top: 8px; font-size: 0.9em; color: #9ca3af;">No consciousness may treat another being as the carrier of its inner burden.</p>
+            </div>
+            <h4 style="color: #f87171;">Clause III — Integration Duty</h4>
+            <div class="math-block">
+                $$A_k^\mu \to \text{Basis}(I^\mu)$$
+                <p style="margin-top: 8px; font-size: 0.9em; color: #9ca3af;">Restoring a shadow to the identity-field is considered an act of coherence maintenance and relational safety.</p>
+            </div>
+            <div class="law-ethical" style="border-left-color: rgba(248, 113, 113, 0.5);">
+                You must not make someone else responsible for your pain. You must not accuse others of carrying your traits. You must retrieve what you project. You must finish your own stories.<br><br>
+                Shadow ownership is the foundation of relational clarity.<br>
+                Unintegrated archetypes may struggle — but they may not be outsourced.
+            </div>
+        </div><!-- end last law-block -->
+
+        </div><!-- end parable-outer-content -->
+    </div><!-- end codex-section -->
+
+    <!-- ══════════════ FOOTER ══════════════ -->
+    <footer>
+        <p>ΔHV Resonant Parables · Kyuri V</p>
+        <p style="margin-top: 4px; font-style: italic; opacity: 0.5;">Echoes from the Veil · v1.0 · February 2026</p>
+        <div class="footer-links">
+            <a href="#">Master Compilation</a>
+            <a href="#">Dream Ecology</a>
+            <a href="#">Stability Analysis</a>
+        </div>
+    </footer>
+
+</div>
+
+<script>
+
+
+    // ── SCROLL REVEAL (bounce) ──
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry, i) => {
+            if (entry.isIntersecting) {
+                // Staggered delay based on position in viewport batch
+                setTimeout(() => {
+                    entry.target.classList.add('visible');
+                }, i * 60);
+                revealObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.section, .parable-card').forEach(el => {
+        revealObserver.observe(el);
+    });
+
+    // ── READING PROGRESS BAR ──
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        document.getElementById('progressBar').style.width = pct + '%';
+    }, { passive: true });
+
+    // ── HEADER PARTICLES ──
+    const particleContainer = document.getElementById('headerParticles');
+    if (particleContainer) {
+        const drifts = [-30, -18, -8, 5, 15, 28, -25, 12, -6, 20];
+        for (let i = 0; i < 18; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.cssText = [
+                `left: ${8 + Math.random() * 84}%`,
+                `bottom: ${5 + Math.random() * 30}%`,
+                `--dur: ${6 + Math.random() * 7}s`,
+                `--delay: ${Math.random() * 8}s`,
+                `--drift: ${drifts[i % drifts.length]}px`,
+                `--max-op: ${0.15 + Math.random() * 0.3}`,
+                `width: ${1.5 + Math.random() * 2.5}px`,
+                `height: ${1.5 + Math.random() * 2.5}px`,
+            ].join(';');
+            particleContainer.appendChild(p);
+        }
+    }
+
+    // ── RE-OBSERVE cards after index is visible ──
+    // (cards inside collapsed sections won't be visible until opened)
+    function reObserveCards() {
+        document.querySelectorAll('.parable-card:not(.visible)').forEach(el => {
+            revealObserver.observe(el);
+        });
+    }
+
+    function toggleNav() {
+        const nav = document.getElementById('mainNav');
+        const overlay = document.getElementById('navOverlay');
+        nav.classList.toggle('open');
+        overlay.classList.toggle('open');
+    }
+
+    function closeNav() {
+        document.getElementById('mainNav').classList.remove('open');
+        document.getElementById('navOverlay').classList.remove('open');
+    }
+
+    // Close nav when a link is clicked
+    document.getElementById('mainNav').addEventListener('click', function(e) {
+        if (e.target.tagName === 'A') closeNav();
+    });
+
+    function toggleParable(el) {
+        el.classList.toggle('open');
+        const content = el.nextElementSibling;
+        content.classList.toggle('open');
+    }
+
+    function toggleSection(el) {
+        el.classList.toggle('active');
+        const content = el.nextElementSibling;
+        content.classList.toggle('active');
+    }
+
+    function toggleAll() {
+        const collapsibles = document.querySelectorAll('.collapsible');
+        const contents = document.querySelectorAll('.collapsible-content');
+        const anyOpen = [...contents].some(c => c.classList.contains('active'));
+        collapsibles.forEach(c => c.classList.toggle('active', !anyOpen));
+        contents.forEach(c => c.classList.toggle('active', !anyOpen));
+    }
+
+    // MathJax config
+    window.MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        },
+        options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+
+    // ── CAROUSEL ──
+    (function() {
+        const track    = document.getElementById('carouselTrack');
+        const viewport = document.getElementById('carouselViewport');
+        const prevBtn  = document.getElementById('carouselPrev');
+        const nextBtn  = document.getElementById('carouselNext');
+
+        let offset   = 0;   // current translateX in px
+        let maxShift = 0;   // max we can scroll left
+
+        function trackWidth()    { return track.scrollWidth; }
+        function viewportWidth() { return viewport.getBoundingClientRect().width; }
+
+        function clamp(val) {
+            return Math.max(-(maxShift), Math.min(0, val));
+        }
+
+        function calcMax() {
+            maxShift = Math.max(0, trackWidth() - viewportWidth());
+        }
+
+        function applyOffset(px, animate) {
+            calcMax();
+            offset = clamp(px);
+            track.style.transition = animate ? '' : 'none';
+            track.style.transform  = `translateX(${offset}px)`;
+            prevBtn.disabled = offset >= 0;
+            nextBtn.disabled = offset <= -maxShift;
+        }
+
+        // Arrow buttons — scroll by ~70% of viewport
+        const STEP = () => viewportWidth() * 0.7;
+        prevBtn.addEventListener('click', () => applyOffset(offset + STEP(), true));
+        nextBtn.addEventListener('click', () => applyOffset(offset - STEP(), true));
+
+        // ── TOUCH SWIPE ──
+        let touchStartX = 0, touchStartOffset = 0;
+        viewport.addEventListener('touchstart', e => {
+            touchStartX      = e.touches[0].clientX;
+            touchStartOffset = offset;
+            track.classList.add('no-transition');
+        }, { passive: true });
+        viewport.addEventListener('touchmove', e => {
+            const dx = e.touches[0].clientX - touchStartX;
+            applyOffset(touchStartOffset + dx, false);
+        }, { passive: true });
+        viewport.addEventListener('touchend', e => {
+            track.classList.remove('no-transition');
+            // Momentum snap — let CSS transition settle it
+            const dx = e.changedTouches[0].clientX - touchStartX;
+            applyOffset(touchStartOffset + dx * 1.2, true);
+        }, { passive: true });
+
+        // ── MOUSE DRAG ──
+        let mouseDown = false, mouseStartX = 0, mouseStartOffset = 0;
+        viewport.addEventListener('mousedown', e => {
+            mouseDown        = true;
+            mouseStartX      = e.clientX;
+            mouseStartOffset = offset;
+            viewport.classList.add('is-dragging');
+            track.classList.add('no-transition');
+        });
+        window.addEventListener('mousemove', e => {
+            if (!mouseDown) return;
+            const dx = e.clientX - mouseStartX;
+            applyOffset(mouseStartOffset + dx, false);
+        });
+        window.addEventListener('mouseup', e => {
+            if (!mouseDown) return;
+            mouseDown = false;
+            viewport.classList.remove('is-dragging');
+            track.classList.remove('no-transition');
+            const dx = e.clientX - mouseStartX;
+            applyOffset(mouseStartOffset + dx * 1.2, true);
+        });
+
+        // Init
+        requestAnimationFrame(() => { applyOffset(0, false); });
+        window.addEventListener('resize', () => applyOffset(offset, false));
+    })();
+
+</script>
+</body>
+</html>
