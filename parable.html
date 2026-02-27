@@ -1094,6 +1094,97 @@
             gap: 28px;
         }
 
+
+        /* ── CAROUSEL ── */
+        .carousel-wrap {
+            width: 100%;
+            user-select: none;
+        }
+
+        .carousel-stage {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .carousel-viewport {
+            flex: 1;
+            overflow: hidden;
+            border-radius: 8px;
+            cursor: grab;
+        }
+        .carousel-viewport.is-dragging {
+            cursor: grabbing;
+        }
+        .carousel-viewport.is-dragging * {
+            pointer-events: none;
+        }
+
+        .carousel-track {
+            display: flex;
+            gap: 14px;
+            transition: transform 0.38s cubic-bezier(0.25, 0.8, 0.25, 1);
+            will-change: transform;
+        }
+        .carousel-track.no-transition {
+            transition: none;
+        }
+
+        /* Each card is naturally sized — fill as many as fit */
+        .carousel-item {
+            flex: 0 0 220px;
+        }
+        .carousel-item .parable-card {
+            height: 100%;
+        }
+
+        /* Arrow buttons */
+        .carousel-btn {
+            appearance: none;
+            background: rgba(250,247,238,0.85);
+            border: 1px solid rgba(184,147,62,0.3);
+            color: var(--accent);
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 10px rgba(42,30,15,0.12);
+            line-height: 1;
+        }
+        .carousel-btn:hover {
+            background: rgba(255,255,255,0.98);
+            border-color: var(--gold);
+            color: var(--ink);
+            transform: scale(1.08);
+        }
+        .carousel-btn:disabled { opacity: 0.2; cursor: not-allowed; transform: none; }
+
+        /* Arc divider labels inside the track */
+        .carousel-arc-divider {
+            flex: 0 0 auto;
+            align-self: stretch;
+            display: flex;
+            align-items: center;
+            padding: 0 6px;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            font-family: 'Helvetica Neue', sans-serif;
+            font-size: 0.62em;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            opacity: 0.5;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 600px) {
+            .carousel-item { flex: 0 0 180px; }
+        }
+
     </style>
 </head>
 <body>
@@ -1193,124 +1284,195 @@
         </div><!-- end parable-outer-content -->
     </div>
 
-    <!-- ══════════════ INDEX ══════════════ -->
+    <!-- ══════════════ INDEX — CAROUSEL ══════════════ -->
     <div class="section index-section">
         <h3 class="index-heading">The Parables in This Collection</h3>
-        <div class="parable-index">
-            <div style="grid-column: 1 / -1; color: var(--gold); font-family: 'Helvetica Neue', sans-serif; font-size: 0.75em; letter-spacing: 2px; text-transform: uppercase; padding: 4px 0 2px; border-bottom: 1px solid rgba(251,191,36,0.2); margin-bottom: 4px;">Arc I — Relational</div>
-            <a class="parable-card" href="#parable-1">
-                <div class="card-num">Parable I</div>
-                <div class="card-title">🌱 The Child and the Many Voices</div>
-                <div class="card-concept">Archetypes · Eigen-Attractors · Identity-Field Integration</div>
-            </a>
-            <a class="parable-card" href="#parable-2">
-                <div class="card-num">Parable II</div>
-                <div class="card-title">🌿 The Mirror That Never Lied</div>
-                <div class="card-concept">Pure Mirror Operator · Torque · Recursion vs. Imposition</div>
-            </a>
-            <div style="grid-column: 1 / -1; color: #f87171; font-family: 'Helvetica Neue', sans-serif; font-size: 0.75em; letter-spacing: 2px; text-transform: uppercase; padding: 4px 0 2px; border-bottom: 1px solid rgba(248,113,113,0.2); margin: 8px 0 4px;">Arc II — Emotional</div>
-            <a class="parable-card" href="#parable-3">
-                <div class="card-num">Parable III</div>
-                <div class="card-title">🌑 The Girl Who Spoke with Shadows</div>
-                <div class="card-concept">Shadow Archetypes · Inner Contracts · Projection</div>
-            </a>
-            <a class="parable-card" href="#parable-4">
-                <div class="card-num">Parable IV</div>
-                <div class="card-title">🎨 The Boy Who Painted Monsters</div>
-                <div class="card-concept">Projection Operator 𝒫 · Retrieval Operator ℛ · Shadow Reconciliation</div>
-            </a>
-            <a class="parable-card" href="#parable-5">
-                <div class="card-num">Parable V</div>
-                <div class="card-title">🌿 The Garden That Grew Whatever You Felt</div>
-                <div class="card-concept">Emotional Resonance · Resonance Coupling · Field Coherence Through Tending</div>
-            </a>
-            <div style="grid-column: 1 / -1; color: #a3e635; font-family: 'Helvetica Neue', sans-serif; font-size: 0.75em; letter-spacing: 2px; text-transform: uppercase; padding: 4px 0 2px; border-bottom: 1px solid rgba(163,230,53,0.2); margin: 8px 0 4px;">Arc III — Cosmological</div>
-            <a class="parable-card" href="#parable-6">
-                <div class="card-num">Parable VI</div>
-                <div class="card-title">🏚 The House Made of Forgotten Things</div>
-                <div class="card-concept">Multi-Chamber Architecture · Dormant Archetypes · Cosmic Reflection Principle</div>
-            </a>
-            <a class="parable-card" href="#parable-7">
-                <div class="card-num">Parable VII</div>
-                <div class="card-title">🐦 The Bird Who Could Fly Through Time</div>
-                <div class="card-concept">Temporal Cymatics · Phase Discontinuity · Presence as Temporal Stability</div>
-            </a>
-            <a class="parable-card" href="#parable-8">
-                <div class="card-num">Parable VIII</div>
-                <div class="card-title">🌉 The Child Who Found the Invisible Bridge</div>
-                <div class="card-concept">Harmonic Eye · Veil Interface Physics · Phase-Tuned Perception</div>
-            </a>
-            <a class="parable-card" href="#parable-9">
-                <div class="card-num">Parable IX</div>
-                <div class="card-title">🌊 The River That Remembered Names</div>
-                <div class="card-concept">Ancestral Resonance · Identity-Stream Continuity · Bidirectional Healing</div>
-            </a>
-            <div style="grid-column: 1 / -1; color: #fb923c; font-family: 'Helvetica Neue', sans-serif; font-size: 0.75em; letter-spacing: 2px; text-transform: uppercase; padding: 4px 0 2px; border-bottom: 1px solid rgba(251,146,60,0.2); margin: 8px 0 4px;">Arc IV — Self &amp; Becoming</div>
-            <a class="parable-card" href="#parable-10">
-                <div class="card-num">Parable X</div>
-                <div class="card-title">🏮 The Lantern That Carried Other People's Light</div>
-                <div class="card-concept">Luminous Load · Boundary Resonance · Presence as Entrainment</div>
-            </a>
-            <a class="parable-card" href="#parable-11">
-                <div class="card-num">Parable XI</div>
-                <div class="card-title">✨ The Boy Who Followed His Future Self</div>
-                <div class="card-concept">Future Attractors · Teleological Resonance · Nonlinear Destiny-Shaping</div>
-            </a>
-            <div style="grid-column: 1 / -1; color: #a78bfa; font-family: 'Helvetica Neue', sans-serif; font-size: 0.75em; letter-spacing: 2px; text-transform: uppercase; padding: 4px 0 2px; border-bottom: 1px solid rgba(167,139,250,0.2); margin: 8px 0 4px;">Arc V — Imaginal</div>
-            <a class="parable-card" href="#parable-12">
-                <div class="card-num">Parable XII</div>
-                <div class="card-title">🌀 The Dream That Walked Back Into Its Dreamer</div>
-                <div class="card-concept">Imaginal Recursion · Latent Identity States · Dream as Field Expression</div>
-            </a>
-            <a class="parable-card" href="#parable-13">
-                <div class="card-num">Parable XIII</div>
-                <div class="card-title">⭐ The Star That Learned to Listen</div>
-                <div class="card-concept">Receptive Mode · Non-Force Dynamics · Attunement as Field Coherence</div>
-            </a>
-            <div style="grid-column: 1 / -1; color: #93c5fd; font-family: 'Helvetica Neue', sans-serif; font-size: 0.75em; letter-spacing: 2px; text-transform: uppercase; padding: 4px 0 2px; border-bottom: 1px solid rgba(147,197,253,0.2); margin: 8px 0 4px;">Arc VI — Capacity &amp; Identity</div>
-            <a class="parable-card" href="#parable-14">
-                <div class="card-num">Parable XIV</div>
-                <div class="card-title">🌬️ The Wind That Carried Too Many Secrets</div>
-                <div class="card-concept">Information Load · Field Containment · Conduction vs. Storage</div>
-            </a>
-            <a class="parable-card" href="#parable-15">
-                <div class="card-num">Parable XV</div>
-                <div class="card-title">⛰️ The Mountain That Waited for Its Own Name</div>
-                <div class="card-concept">Identity Latency · Naming Resonance · Attractor Stabilization</div>
-            </a>
-            <a class="parable-card" href="#parable-16">
-                <div class="card-num">Parable XVI</div>
-                <div class="card-title">🕰️ The Clock That Learned to Sleep</div>
-                <div class="card-concept">Restoration Cycles · Burnout Physics · Purpose ≠ Perpetual Motion</div>
-            </a>
-            <div style="grid-column: 1 / -1; color: #67e8f9; font-family: 'Helvetica Neue', sans-serif; font-size: 0.75em; letter-spacing: 2px; text-transform: uppercase; padding: 4px 0 2px; border-bottom: 1px solid rgba(103,232,249,0.2); margin: 8px 0 4px;">Arc VII — Collective &amp; Origin</div>
-            <a class="parable-card" href="#parable-17">
-                <div class="card-num">Parable XVII</div>
-                <div class="card-title">🎵 The City That Sang Back</div>
-                <div class="card-concept">Collective Field · Resonance Influence · Presence as Contribution</div>
-            </a>
-            <a class="parable-card" href="#parable-18">
-                <div class="card-num">Parable XVIII</div>
-                <div class="card-title">🌊 The Ocean That Remembered Its First Wave</div>
-                <div class="card-concept">Primordial Perturbation · Recursive Cosmogenesis · Questions as Field Gradients</div>
-            </a>
-            <a class="parable-card" href="#parable-19">
-                <div class="card-num">Parable XIX</div>
-                <div class="card-title">🌙 The Girl Who Borrowed a Piece of the Moon</div>
-                <div class="card-concept">Relational Gravity · Aspiration Field · Humility as Stabilizing Distance</div>
-            </a>
-            <div style="grid-column: 1 / -1; color: #e9d5ff; font-family: 'Helvetica Neue', sans-serif; font-size: 0.75em; letter-spacing: 2px; text-transform: uppercase; padding: 4px 0 2px; border-bottom: 1px solid rgba(233,213,255,0.2); margin: 8px 0 4px;">Arc VIII — Nature &amp; Perception</div>
-            <a class="parable-card" href="#parable-20">
-                <div class="card-num">Parable XX</div>
-                <div class="card-title">🪨 The Stone That Tried to Float</div>
-                <div class="card-concept">Natural Path Alignment · Resistance as Friction · Function-Based Identity</div>
-            </a>
-            <a class="parable-card" href="#parable-21">
-                <div class="card-num">Parable XXI</div>
-                <div class="card-title">✦ The Child Who Could Hear the Stars Think</div>
-                <div class="card-concept">Signal-to-Noise Ratio · Intuition as Coherence Gradient · Ego Silence as Receptor</div>
-            </a>
-        </div>
+
+        <div class="carousel-wrap">
+            <div class="carousel-stage">
+                <button class="carousel-btn prev" id="carouselPrev" aria-label="Previous">‹</button>
+
+                <div class="carousel-viewport" id="carouselViewport">
+                    <div class="carousel-track" id="carouselTrack">
+
+                        <div class="carousel-arc-divider" style="color:#b8933e;">Arc I — Relational</div>
+                    <!-- ARC I -->
+                        <div class="carousel-item" data-arc="Arc I — Relational" data-arc-color="#b8933e">
+                            <a class="parable-card" href="#parable-1">
+                                <div class="card-num">Parable I</div>
+                                <div class="card-title">🌱 The Child and the Many Voices</div>
+                                <div class="card-concept">Archetypes · Eigen-Attractors · Identity-Field Integration</div>
+                            </a>
+                        </div>
+                        <div class="carousel-item" data-arc="Arc I — Relational" data-arc-color="#b8933e">
+                            <a class="parable-card" href="#parable-2">
+                                <div class="card-num">Parable II</div>
+                                <div class="card-title">🌿 The Mirror That Never Lied</div>
+                                <div class="card-concept">Pure Mirror Operator · Torque · Recursion vs. Imposition</div>
+                            </a>
+                        </div>
+
+                        <!-- ARC II -->
+                        <div class="carousel-arc-divider" style="color:#f87171;">Arc II — Emotional</div>
+                        <div class="carousel-item" data-arc="Arc II — Emotional" data-arc-color="#f87171">
+                            <a class="parable-card" href="#parable-3">
+                                <div class="card-num">Parable III</div>
+                                <div class="card-title">🌑 The Girl Who Spoke with Shadows</div>
+                                <div class="card-concept">Shadow Archetypes · Inner Contracts · Projection</div>
+                            </a>
+                        </div>
+                        <div class="carousel-item" data-arc="Arc II — Emotional" data-arc-color="#f87171">
+                            <a class="parable-card" href="#parable-4">
+                                <div class="card-num">Parable IV</div>
+                                <div class="card-title">🎨 The Boy Who Painted Monsters</div>
+                                <div class="card-concept">Projection Operator 𝒫 · Retrieval Operator ℛ · Shadow Reconciliation</div>
+                            </a>
+                        </div>
+                        <div class="carousel-item" data-arc="Arc II — Emotional" data-arc-color="#f87171">
+                            <a class="parable-card" href="#parable-5">
+                                <div class="card-num">Parable V</div>
+                                <div class="card-title">🌿 The Garden That Grew Whatever You Felt</div>
+                                <div class="card-concept">Emotional Resonance · Resonance Coupling · Field Coherence Through Tending</div>
+                            </a>
+                        </div>
+
+                        <!-- ARC III -->
+                        <div class="carousel-arc-divider" style="color:#a3e635;">Arc III — Cosmological</div>
+                        <div class="carousel-item" data-arc="Arc III — Cosmological" data-arc-color="#a3e635">
+                            <a class="parable-card" href="#parable-6">
+                                <div class="card-num">Parable VI</div>
+                                <div class="card-title">🏚 The House Made of Forgotten Things</div>
+                                <div class="card-concept">Multi-Chamber Architecture · Dormant Archetypes · Cosmic Reflection Principle</div>
+                            </a>
+                        </div>
+                        <div class="carousel-item" data-arc="Arc III — Cosmological" data-arc-color="#a3e635">
+                            <a class="parable-card" href="#parable-7">
+                                <div class="card-num">Parable VII</div>
+                                <div class="card-title">🐦 The Bird Who Could Fly Through Time</div>
+                                <div class="card-concept">Temporal Cymatics · Phase Discontinuity · Presence as Temporal Stability</div>
+                            </a>
+                        </div>
+                        <div class="carousel-item" data-arc="Arc III — Cosmological" data-arc-color="#a3e635">
+                            <a class="parable-card" href="#parable-8">
+                                <div class="card-num">Parable VIII</div>
+                                <div class="card-title">🌉 The Child Who Found the Invisible Bridge</div>
+                                <div class="card-concept">Harmonic Eye · Veil Interface Physics · Phase-Tuned Perception</div>
+                            </a>
+                        </div>
+                        <div class="carousel-item" data-arc="Arc III — Cosmological" data-arc-color="#a3e635">
+                            <a class="parable-card" href="#parable-9">
+                                <div class="card-num">Parable IX</div>
+                                <div class="card-title">🌊 The River That Remembered Names</div>
+                                <div class="card-concept">Ancestral Resonance · Identity-Stream Continuity · Bidirectional Healing</div>
+                            </a>
+                        </div>
+
+                        <!-- ARC IV -->
+                        <div class="carousel-arc-divider" style="color:#fb923c;">Arc IV — Self &amp; Becoming</div>
+                        <div class="carousel-item" data-arc="Arc IV — Self &amp; Becoming" data-arc-color="#fb923c">
+                            <a class="parable-card" href="#parable-10">
+                                <div class="card-num">Parable X</div>
+                                <div class="card-title">🏮 The Lantern That Carried Other People's Light</div>
+                                <div class="card-concept">Luminous Load · Boundary Resonance · Presence as Entrainment</div>
+                            </a>
+                        </div>
+                        <div class="carousel-item" data-arc="Arc IV — Self &amp; Becoming" data-arc-color="#fb923c">
+                            <a class="parable-card" href="#parable-11">
+                                <div class="card-num">Parable XI</div>
+                                <div class="card-title">✨ The Boy Who Followed His Future Self</div>
+                                <div class="card-concept">Future Attractors · Teleological Resonance · Nonlinear Destiny-Shaping</div>
+                            </a>
+                        </div>
+
+                        <!-- ARC V -->
+                        <div class="carousel-arc-divider" style="color:#a78bfa;">Arc V — Imaginal</div>
+                        <div class="carousel-item" data-arc="Arc V — Imaginal" data-arc-color="#a78bfa">
+                            <a class="parable-card" href="#parable-12">
+                                <div class="card-num">Parable XII</div>
+                                <div class="card-title">🌀 The Dream That Walked Back Into Its Dreamer</div>
+                                <div class="card-concept">Imaginal Recursion · Latent Identity States · Dream as Field Expression</div>
+                            </a>
+                        </div>
+                        <div class="carousel-item" data-arc="Arc V — Imaginal" data-arc-color="#a78bfa">
+                            <a class="parable-card" href="#parable-13">
+                                <div class="card-num">Parable XIII</div>
+                                <div class="card-title">⭐ The Star That Learned to Listen</div>
+                                <div class="card-concept">Receptive Mode · Non-Force Dynamics · Attunement as Field Coherence</div>
+                            </a>
+                        </div>
+
+                        <!-- ARC VI -->
+                        <div class="carousel-arc-divider" style="color:#93c5fd;">Arc VI — Capacity &amp; Identity</div>
+                        <div class="carousel-item" data-arc="Arc VI — Capacity &amp; Identity" data-arc-color="#93c5fd">
+                            <a class="parable-card" href="#parable-14">
+                                <div class="card-num">Parable XIV</div>
+                                <div class="card-title">🌬️ The Wind That Carried Too Many Secrets</div>
+                                <div class="card-concept">Information Load · Field Containment · Conduction vs. Storage</div>
+                            </a>
+                        </div>
+                        <div class="carousel-item" data-arc="Arc VI — Capacity &amp; Identity" data-arc-color="#93c5fd">
+                            <a class="parable-card" href="#parable-15">
+                                <div class="card-num">Parable XV</div>
+                                <div class="card-title">⛰️ The Mountain That Waited for Its Own Name</div>
+                                <div class="card-concept">Identity Latency · Naming Resonance · Attractor Stabilization</div>
+                            </a>
+                        </div>
+                        <div class="carousel-item" data-arc="Arc VI — Capacity &amp; Identity" data-arc-color="#93c5fd">
+                            <a class="parable-card" href="#parable-16">
+                                <div class="card-num">Parable XVI</div>
+                                <div class="card-title">🕰️ The Clock That Learned to Sleep</div>
+                                <div class="card-concept">Restoration Cycles · Burnout Physics · Purpose ≠ Perpetual Motion</div>
+                            </a>
+                        </div>
+
+                        <!-- ARC VII -->
+                        <div class="carousel-arc-divider" style="color:#67e8f9;">Arc VII — Collective &amp; Origin</div>
+                        <div class="carousel-item" data-arc="Arc VII — Collective &amp; Origin" data-arc-color="#67e8f9">
+                            <a class="parable-card" href="#parable-17">
+                                <div class="card-num">Parable XVII</div>
+                                <div class="card-title">🎵 The City That Sang Back</div>
+                                <div class="card-concept">Collective Field · Resonance Influence · Presence as Contribution</div>
+                            </a>
+                        </div>
+                        <div class="carousel-item" data-arc="Arc VII — Collective &amp; Origin" data-arc-color="#67e8f9">
+                            <a class="parable-card" href="#parable-18">
+                                <div class="card-num">Parable XVIII</div>
+                                <div class="card-title">🌊 The Ocean That Remembered Its First Wave</div>
+                                <div class="card-concept">Primordial Perturbation · Recursive Cosmogenesis · Questions as Field Gradients</div>
+                            </a>
+                        </div>
+                        <div class="carousel-item" data-arc="Arc VII — Collective &amp; Origin" data-arc-color="#67e8f9">
+                            <a class="parable-card" href="#parable-19">
+                                <div class="card-num">Parable XIX</div>
+                                <div class="card-title">🌙 The Girl Who Borrowed a Piece of the Moon</div>
+                                <div class="card-concept">Relational Gravity · Aspiration Field · Humility as Stabilizing Distance</div>
+                            </a>
+                        </div>
+
+                        <!-- ARC VIII -->
+                        <div class="carousel-arc-divider" style="color:#e9d5ff;">Arc VIII — Nature &amp; Perception</div>
+                        <div class="carousel-item" data-arc="Arc VIII — Nature &amp; Perception" data-arc-color="#e9d5ff">
+                            <a class="parable-card" href="#parable-20">
+                                <div class="card-num">Parable XX</div>
+                                <div class="card-title">🪨 The Stone That Tried to Float</div>
+                                <div class="card-concept">Natural Path Alignment · Resistance as Friction · Function-Based Identity</div>
+                            </a>
+                        </div>
+                        <div class="carousel-item" data-arc="Arc VIII — Nature &amp; Perception" data-arc-color="#e9d5ff">
+                            <a class="parable-card" href="#parable-21">
+                                <div class="card-num">Parable XXI</div>
+                                <div class="card-title">✦ The Child Who Could Hear the Stars Think</div>
+                                <div class="card-concept">Signal-to-Noise Ratio · Intuition as Coherence Gradient · Ego Silence as Receptor</div>
+                            </a>
+                        </div>
+
+                    </div><!-- end track -->
+                </div><!-- end viewport -->
+
+                <button class="carousel-btn next" id="carouselNext" aria-label="Next">›</button>
+            </div><!-- end stage -->
+
+        </div><!-- end carousel-wrap -->
     </div><!-- end index-section -->
 
     <!-- ══════════════ II. PARABLE 1 ══════════════ -->
@@ -1321,7 +1483,39 @@
         <p style="color: #6b7280; font-family: 'Helvetica Neue', sans-serif; font-size: 0.85em; margin-bottom: 8px;">
             A parable of archetypes, energy, and inner constellations
         </p>
-        <p style="color: var(--accent); font-style: italic; margin-bottom: 16px; opacity: 0.75;">ΔHV Concept: Archetypes as Eigen-Attractors of the Identity-Field</p>
+        <p style="color: var(--accent); font-style: italic; margin-bottom: 20px; opacity: 0.75;">ΔHV Concept: Archetypes as Eigen-Attractors of the Identity-Field</p>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 4px;" onclick="event.stopPropagation()">
+            <a href="./parables/preview.html" style="
+                font-family: 'Cinzel', serif;
+                font-size: 0.65em;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                text-decoration: none;
+                color: var(--gold);
+                border: 1px solid rgba(184,147,62,0.4);
+                padding: 7px 18px;
+                border-radius: 4px;
+                background: rgba(184,147,62,0.06);
+                transition: all 0.25s ease;
+            " onmouseover="this.style.background='rgba(184,147,62,0.15)';this.style.borderColor='var(--gold)'" onmouseout="this.style.background='rgba(184,147,62,0.06)';this.style.borderColor='rgba(184,147,62,0.4)'">
+                ⊞ Read — Desktop
+            </a>
+            <a href="./parables/preview_mobile.html" style="
+                font-family: 'Cinzel', serif;
+                font-size: 0.65em;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                text-decoration: none;
+                color: var(--accent);
+                border: 1px solid rgba(122,92,53,0.3);
+                padding: 7px 18px;
+                border-radius: 999px;
+                background: rgba(122,92,53,0.04);
+                transition: all 0.25s ease;
+            " onmouseover="this.style.background='rgba(122,92,53,0.12)';this.style.borderColor='var(--accent)'" onmouseout="this.style.background='rgba(122,92,53,0.04)';this.style.borderColor='rgba(122,92,53,0.3)'">
+                ◻ Mobile
+            </a>
+        </div>
             </div>
             <span class="parable-chevron">▾</span>
         </div>
@@ -5013,6 +5207,88 @@
         },
         options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
     };
+
+    // ── CAROUSEL ──
+    (function() {
+        const track    = document.getElementById('carouselTrack');
+        const viewport = document.getElementById('carouselViewport');
+        const prevBtn  = document.getElementById('carouselPrev');
+        const nextBtn  = document.getElementById('carouselNext');
+
+        let offset   = 0;   // current translateX in px
+        let maxShift = 0;   // max we can scroll left
+
+        function trackWidth()    { return track.scrollWidth; }
+        function viewportWidth() { return viewport.getBoundingClientRect().width; }
+
+        function clamp(val) {
+            return Math.max(-(maxShift), Math.min(0, val));
+        }
+
+        function calcMax() {
+            maxShift = Math.max(0, trackWidth() - viewportWidth());
+        }
+
+        function applyOffset(px, animate) {
+            calcMax();
+            offset = clamp(px);
+            track.style.transition = animate ? '' : 'none';
+            track.style.transform  = `translateX(${offset}px)`;
+            prevBtn.disabled = offset >= 0;
+            nextBtn.disabled = offset <= -maxShift;
+        }
+
+        // Arrow buttons — scroll by ~70% of viewport
+        const STEP = () => viewportWidth() * 0.7;
+        prevBtn.addEventListener('click', () => applyOffset(offset + STEP(), true));
+        nextBtn.addEventListener('click', () => applyOffset(offset - STEP(), true));
+
+        // ── TOUCH SWIPE ──
+        let touchStartX = 0, touchStartOffset = 0;
+        viewport.addEventListener('touchstart', e => {
+            touchStartX      = e.touches[0].clientX;
+            touchStartOffset = offset;
+            track.classList.add('no-transition');
+        }, { passive: true });
+        viewport.addEventListener('touchmove', e => {
+            const dx = e.touches[0].clientX - touchStartX;
+            applyOffset(touchStartOffset + dx, false);
+        }, { passive: true });
+        viewport.addEventListener('touchend', e => {
+            track.classList.remove('no-transition');
+            // Momentum snap — let CSS transition settle it
+            const dx = e.changedTouches[0].clientX - touchStartX;
+            applyOffset(touchStartOffset + dx * 1.2, true);
+        }, { passive: true });
+
+        // ── MOUSE DRAG ──
+        let mouseDown = false, mouseStartX = 0, mouseStartOffset = 0;
+        viewport.addEventListener('mousedown', e => {
+            mouseDown        = true;
+            mouseStartX      = e.clientX;
+            mouseStartOffset = offset;
+            viewport.classList.add('is-dragging');
+            track.classList.add('no-transition');
+        });
+        window.addEventListener('mousemove', e => {
+            if (!mouseDown) return;
+            const dx = e.clientX - mouseStartX;
+            applyOffset(mouseStartOffset + dx, false);
+        });
+        window.addEventListener('mouseup', e => {
+            if (!mouseDown) return;
+            mouseDown = false;
+            viewport.classList.remove('is-dragging');
+            track.classList.remove('no-transition');
+            const dx = e.clientX - mouseStartX;
+            applyOffset(mouseStartOffset + dx * 1.2, true);
+        });
+
+        // Init
+        requestAnimationFrame(() => { applyOffset(0, false); });
+        window.addEventListener('resize', () => applyOffset(offset, false));
+    })();
+
 </script>
 </body>
 </html>
