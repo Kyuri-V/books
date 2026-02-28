@@ -525,7 +525,7 @@
       <button id="audioBtn" aria-label="Play narration" onclick="
         var a = document.getElementById('skyAudio');
         var btn = document.getElementById('audioBtn');
-        if (a.paused) { a.play(); btn.innerHTML = '&#9646;&#9646;&nbsp; Narration'; }
+        if (a.paused) { a.volume = document.getElementById('volSlider').value; a.play(); btn.innerHTML = '&#9646;&#9646;&nbsp; Narration'; }
         else { a.pause(); btn.innerHTML = '&#9654;&nbsp; Narration'; }
         a.onended = function(){ btn.innerHTML = '&#9654;&nbsp; Narration'; };
       " style="
@@ -541,7 +541,7 @@
         opacity: 0.85;
         transition: opacity 0.2s;
       " onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.85">&#9654;&nbsp; Narration</button>
-      <input id="volSlider" type="range" min="0" max="1" step="0.05" value="1"
+      <input id="volSlider" type="range" min="0" max="1" step="0.05" value="0.15"
         aria-label="Volume"
         oninput="document.getElementById('skyAudio').volume = this.value"
         style="
