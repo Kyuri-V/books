@@ -420,7 +420,7 @@
     </header>
 
     <!-- Audio Player -->
-    <div style="margin: 16px auto 0; text-align: center;">
+    <div style="margin: 16px auto 0; text-align: center; display: flex; align-items: center; justify-content: center; gap: 10px;">
       <audio id="skyAudio" src="books/parables/sky.mp3" preload="none"></audio>
       <button id="audioBtn" aria-label="Play narration" onclick="
         var a = document.getElementById('skyAudio');
@@ -441,7 +441,40 @@
         opacity: 0.85;
         transition: opacity 0.2s;
       " onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.85">&#9654;&nbsp; Narration</button>
+      <input id="volSlider" type="range" min="0" max="1" step="0.05" value="1"
+        aria-label="Volume"
+        oninput="document.getElementById('skyAudio').volume = this.value"
+        style="
+          -webkit-appearance: none;
+          appearance: none;
+          width: 72px;
+          height: 3px;
+          background: linear-gradient(to right, var(--gold) 0%, var(--gold) 100%);
+          border-radius: 2px;
+          outline: none;
+          opacity: 0.7;
+          cursor: pointer;
+          transition: opacity 0.2s;
+        "
+        onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.7"
+      />
     </div>
+    <style>
+      #volSlider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 10px; height: 10px;
+        border-radius: 50%;
+        background: var(--gold);
+        cursor: pointer;
+      }
+      #volSlider::-moz-range-thumb {
+        width: 10px; height: 10px;
+        border-radius: 50%;
+        background: var(--gold);
+        border: none;
+        cursor: pointer;
+      }
+    </style>
 
     <div class="stage">
       <div class="book-wrap">
