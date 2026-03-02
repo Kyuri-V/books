@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resonance Reading | sKiDa</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        /* ── Light Mode (default) ── */
+        :root {
+            --parchment: #f4f1e8;
+            --ink: #2a2520;
+            --accent: #8b6f47;
+            --gold: #c9a961;
+            --shadow: rgba(42, 37, 32, 0.1);
+            --glow: rgba(201, 169, 97, 0.15);
+            --deep-green: #2d5016;
+            --bg-a: #f8f5ed;
+            --bg-b: #f4f1e8;
+            --toc-bg: rgba(255, 255, 255, 0.35);
+            --toggle-bg: rgba(255, 255, 255, 0.25);
+            --table-even: rgba(255,255,255,0.4);
+            --table-odd: rgba(201, 169, 97, 0.05);
+            --table-hover: rgba(201, 169, 97, 0.12);
+            --fieldprint-bg: rgba(45, 80, 22, 0.04);
+            --fieldprint-border-col: rgba(45, 80, 22, 0.2);
+            --divider-sym-bg: #f4f1e8;
+            --thead-bg: rgba(42, 37, 32, 0.85);
+            --thead-color: #f4f1e8;
+        }
+
+        /* ── Dark Mode ── */
+        [data-theme="dark"] {
+            --parchment: #141210;
+            --ink: #e8e2d6;
+            --accent: #c9a961;
+            --gold: #d4b97a;
+            --shadow: rgba(0, 0, 0, 0.4);
+            --glow: rgba(201, 169, 97, 0.06);
+            --deep-green: #6ab830;
+            --bg-a: #141210;
+            --bg-b: #1a1714;
+            --toc-bg: rgba(0, 0, 0, 0.3);
+            --toggle-bg: rgba(0, 0, 0, 0.25);
+            --table-even: rgba(255,255,255,0.03);
+            --table-odd: rgba(201, 169, 97, 0.04);
+            --table-hover: rgba(201, 169, 97, 0.1);
+            --fieldprint-bg: rgba(45, 80, 22, 0.14);
+            --fieldprint-border-col: rgba(106, 184, 48, 0.3);
+            --divider-sym-bg: #141210;
+            --thead-bg: rgba(201, 169, 97, 0.15);
+            --thead-color: #d4b97a;
+        }
+
+        html { scroll-behavior: smooth; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: linear-gradient(135deg, var(--bg-a) 0%, var(--bg-b) 100%);
+            color: var(--ink);
+            line-height: 1.8;
+            font-size: 18px;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 0.4s ease, color 0.4s ease;
+        }
+        body::before {
+            content: '';
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image:
+                radial-gradient(circle at 20% 30%, var(--glow) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(45, 80, 22, 0.03) 0%, transparent 50%);
+            pointer-events: none; z-index: 0;
+            transition: background-image 0.4s ease;
+        }
+
+        /* ── Theme Toggle Button ── */
+        .theme-toggle {
+            position: fixed;
+            bottom: 32px;
+            left: 32px;
+            z-index: 200;
+            border: 1px solid var(--accent);
+            border-radius: 40px;
+            padding: 9px 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Cinzel', serif;
+            font-size: 0.7em;
+            letter-spacing: 0.12em;
+            color: var(--accent);
+            background: var(--bg-b);
+            transition: all 0.3s ease;
+        }
+        .theme-toggle:hover {
+            background: var(--accent);
+            color: var(--parchment);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(201, 169, 97, 0.25);
+        }
+        .theme-toggle .moon { font-size: 1em; }
+        .label-dark { display: none; }
+        [data-theme="dark"] .label-light { display: none; }
+        [data-theme="dark"] .label-dark { display: inline; }
+
+        /* ── Progress Bar ── */
+        .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: rgba(201, 169, 97, 0.1); z-index: 200; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--gold), var(--deep-green)); width: 0%; transition: width 0.2s ease; }
+
+        /* ── Chapter Navigation ── */
+        .chapter-nav {
+            position: fixed;
+            top: 50%;
+            right: 24px;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .chapter-nav.visible { opacity: 1; }
+        .nav-dot {
+            width: 11px; height: 11px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .nav-dot:hover, .nav-dot.active {
+            background: var(--gold);
+            border-color: var(--gold);
+            transform: scale(1.3);
+        }
+        .nav-dot::after {
+            content: attr(data-label);
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            white-space: nowrap;
+            font-family: 'Cinzel', serif;
+            font-size: 10px;
+            letter-spacing: 0.08em;
+            color: var(--accent);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .nav-dot:hover::after { opacity: 1; }
+
+        /* ── Container ── */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 60px 40px 120px;
+        }
+
+        /* ── Title Page ── */
+        .title-page {
+            text-align: center;
+            padding: 100px 0 80px;
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 1.5s ease-out;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .title-line {
+            width: 120px;
+            height: 1px;
+            background: var(--gold);
+            margin-bottom: 40px;
+            animation: breathe 4s ease-in-out infinite;
+            box-shadow: 0 0 8px rgba(201, 169, 97, 0.3);
+        }
+        @keyframes breathe {
+            0%, 100% { width: 120px; opacity: 0.5; box-shadow: 0 0 6px rgba(201, 169, 97, 0.2); }
+            50% { width: 200px; opacity: 1; box-shadow: 0 0 16px rgba(201, 169, 97, 0.5); }
+        }
+        .title-page h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 3.4em;
+            font-weight: 700;
+            color: var(--ink);
+            letter-spacing: 0.08em;
+            line-height: 1.15;
+            margin-bottom: 16px;
+        }
+        .title-page .subtitle {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.25em;
+            font-style: italic;
+            color: var(--accent);
+            margin-bottom: 40px;
+            letter-spacing: 0.03em;
+            line-height: 1.5;
+            max-width: 600px;
+        }
+        .title-page .edition {
+            font-family: 'Cinzel', serif;
+            font-size: 0.82em;
+            letter-spacing: 0.12em;
+            color: var(--gold);
+            border-top: 1px solid rgba(201, 169, 97, 0.4);
+            border-bottom: 1px solid rgba(201, 169, 97, 0.4);
+            padding: 14px 32px;
+            margin-bottom: 30px;
+        }
+        .title-page .authors {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9em;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            opacity: 0.8;
+        }
+
+        /* ── TOC ── */
+        .toc {
+            margin: 0 0 80px;
+            padding: 44px 48px;
+            border: 1px solid rgba(139, 111, 71, 0.2);
+            border-radius: 6px;
+            background: var(--toc-bg);
+            transition: background 0.4s ease;
+        }
+        .toc h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1em;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--gold);
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .toc-list { list-style: none; }
+        .toc-list li { margin: 10px 0; }
+        .toc-list a {
+            color: var(--ink);
+            text-decoration: none;
+            display: block;
+            padding: 8px 14px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        .toc-list a:hover {
+            background: rgba(201, 169, 97, 0.1);
+            transform: translateX(6px);
+        }
+        .toc-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.85em;
+            letter-spacing: 0.08em;
+            color: var(--accent);
+            margin-right: 8px;
+        }
+
+        /* ── Dividers ── */
+        .divider {
+            text-align: center;
+            margin: 70px 0;
+            position: relative;
+        }
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0; right: 0; top: 50%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+        .divider-symbol {
+            position: relative;
+            background: var(--divider-sym-bg);
+            padding: 0 24px;
+            font-size: 20px;
+            color: var(--gold);
+            z-index: 1;
+            transition: background 0.4s ease;
+        }
+
+        /* ── Chapters ── */
+        .chapter {
+            margin-bottom: 80px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .chapter.visible { opacity: 1; transform: translateY(0); }
+        .chapter-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.7em;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 12px;
+        }
+        .chapter h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 2em;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 28px;
+            letter-spacing: 0.02em;
+            line-height: 1.3;
+        }
+        .chapter.visible h2 {
+            animation: glowIn 1.2s ease forwards;
+        }
+        @keyframes glowIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .chapter h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.4em;
+            font-weight: 600;
+            color: var(--accent);
+            margin: 36px 0 18px;
+            letter-spacing: 0.02em;
+        }
+        .chapter h4 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--deep-green);
+            margin: 24px 0 12px;
+            letter-spacing: 0.03em;
+        }
+        .chapter p {
+            margin-bottom: 20px;
+            text-align: justify;
+            text-justify: inter-word;
+        }
+
+        /* ── Collapsible Sections ── */
+        .collapsible-section { margin: 30px 0; }
+        .section-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 16px 20px;
+            background: var(--toggle-bg);
+            border: 1px solid rgba(139, 111, 71, 0.2);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        .section-toggle:hover { background: rgba(201, 169, 97, 0.1); border-color: var(--gold); }
+        .section-toggle h3 { margin: 0; font-size: 1.2em; }
+        .toggle-icon { font-size: 1.2em; color: var(--gold); transition: transform 0.3s ease; }
+        .section-toggle.active .toggle-icon { transform: rotate(90deg); }
+        .section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            padding: 0 20px;
+        }
+        .section-content.expanded { padding: 20px; }
+
+        /* ── Highlight Box ── */
+        .highlight {
+            background: rgba(201, 169, 97, 0.08);
+            border-left: 4px solid var(--gold);
+            padding: 24px 28px;
+            margin: 32px 0;
+            border-radius: 4px;
+        }
+        .highlight p { margin-bottom: 16px; }
+        .highlight p:last-child { margin-bottom: 0; }
+
+        /* ── Fieldprint Box ── */
+        .fieldprint-box {
+            background: var(--fieldprint-bg);
+            border: 1px solid var(--fieldprint-border-col);
+            border-left: 4px solid var(--deep-green);
+            padding: 24px 28px;
+            margin: 32px 0;
+            border-radius: 4px;
+            font-style: italic;
+            transition: background 0.4s ease;
+        }
+        .fieldprint-box .fieldprint-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.72em;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--deep-green);
+            margin-bottom: 12px;
+            font-style: normal;
+        }
+
+        /* ── Tables ── */
+        .table-wrap { overflow-x: auto; margin: 28px 0; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        thead tr {
+            background: var(--thead-bg);
+            color: var(--thead-color);
+        }
+        thead th {
+            font-family: 'Cinzel', serif;
+            font-size: 0.8em;
+            letter-spacing: 0.08em;
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: 600;
+        }
+        tbody tr:nth-child(even) { background: var(--table-even); }
+        tbody tr:nth-child(odd) { background: var(--table-odd); }
+        tbody tr:hover { background: var(--table-hover); }
+        tbody td {
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(139,111,71,0.12);
+            vertical-align: top;
+        }
+        td .vector { font-size: 1.2em; }
+
+        /* ── Lists ── */
+        ul, ol { margin: 20px 0 20px 32px; line-height: 1.8; }
+        li { margin-bottom: 10px; }
+
+        /* ── Expand All Button ── */
+        .expand-all { text-align: center; margin: 40px 0 60px; }
+        .expand-all button {
+            font-family: 'Cinzel', serif;
+            padding: 14px 32px;
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            border-radius: 4px;
+            font-size: 0.85em;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .expand-all button:hover { background: var(--accent); color: var(--parchment); transform: translateY(-2px); }
+
+        /* ── Footer ── */
+        .footer {
+            text-align: center;
+            padding: 60px 0 40px;
+            border-top: 1px solid rgba(201, 169, 97, 0.3);
+            margin-top: 80px;
+        }
+        .footer p {
+            font-family: 'Cinzel', serif;
+            font-size: 0.78em;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            opacity: 0.6;
+            margin-bottom: 8px;
+        }
+
+        /* ── Title line hover glow ── */
+        .title-line:hover {
+            box-shadow: 0 0 20px rgba(201, 169, 97, 0.6);
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .container { padding: 40px 24px 80px; }
+            .title-page { padding: 60px 0; min-height: 70vh; }
+            .title-page h1 { font-size: 2.4em; }
+            .chapter h2 { font-size: 1.6em; }
+            .chapter-nav { display: none; }
+            .toc { padding: 30px 24px; }
+            table { font-size: 0.8em; }
+            .theme-toggle { bottom: 20px; left: 20px; }
+        }
+        @media (max-width: 480px) {
+            body { font-size: 16px; }
+            .title-page h1 { font-size: 1.9em; }
+            .title-page .edition { font-size: 0.75em; padding: 12px 18px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Progress Bar -->
+<div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<!-- Dark Mode Toggle -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+    <span class="moon">◐</span>
+    <span class="label-light">Dark</span>
+    <span class="label-dark">Light</span>
+</button>
+
+<!-- Chapter Navigation -->
+<nav class="chapter-nav" id="chapterNav">
+    <div class="nav-dot" data-target="title" data-label="Title"></div>
+    <div class="nav-dot" data-target="preamble" data-label="Preamble"></div>
+    <div class="nav-dot" data-target="foundation" data-label="Foundation"></div>
+    <div class="nav-dot" data-target="protocol" data-label="Protocol"></div>
+    <div class="nav-dot" data-target="worked-example" data-label="Worked Example"></div>
+    <div class="nav-dot" data-target="arc" data-label="Three-Movement Arc"></div>
+    <div class="nav-dot" data-target="terminal-states" data-label="Terminal States"></div>
+    <div class="nav-dot" data-target="glyph-operators" data-label="Glyph Operators"></div>
+    <div class="nav-dot" data-target="macro-vector" data-label="Macro-Vector"></div>
+    <div class="nav-dot" data-target="applications" data-label="Applications"></div>
+    <div class="nav-dot" data-target="comparison" data-label="Comparison"></div>
+    <div class="nav-dot" data-target="reference" data-label="Reference"></div>
+</nav>
+
+<div class="container">
+
+    <!-- ╔═══ TITLE PAGE ═══╗ -->
+    <section class="title-page" id="title">
+        <div class="title-line"></div>
+        <h1>Resonance Reading</h1>
+        <div class="subtitle">A Formal Method for ΔHV Fieldprint Extraction</div>
+        <div class="edition">Reference Edition · 2026</div>
+        <div class="authors">sKiDa</div>
+    </section>
+
+    <!-- ╔═══ TOC ═══╗ -->
+    <nav class="toc">
+        <h2>Contents</h2>
+        <ul class="toc-list">
+            <li><a href="#preamble">Preamble</a></li>
+            <li><a href="#foundation"><span class="toc-label">I.</span> Theoretical Foundation</a></li>
+            <li><a href="#protocol"><span class="toc-label">II.</span> The Five-Phase Protocol</a></li>
+            <li><a href="#worked-example"><span class="toc-label">III.</span> Worked Example — Moonlight Sonata</a></li>
+            <li><a href="#arc"><span class="toc-label">IV.</span> Extended Reading — Three-Movement ΔHV Arc</a></li>
+            <li><a href="#terminal-states"><span class="toc-label">V-A.</span> Terminal State Definitions</a></li>
+            <li><a href="#glyph-operators"><span class="toc-label">V-B.</span> Glyph Operator Table</a></li>
+            <li><a href="#macro-vector"><span class="toc-label">V-C.</span> Macro-Vector Summary</a></li>
+            <li><a href="#applications"><span class="toc-label">VI.</span> Application Framework</a></li>
+            <li><a href="#comparison"><span class="toc-label">VII.</span> Fieldprint Comparison</a></li>
+            <li><a href="#reference"><span class="toc-label">VIII.</span> Method Reference Summary</a></li>
+        </ul>
+    </nav>
+
+    <div class="expand-all">
+        <button onclick="toggleAll()">⟡ Expand / Collapse All Sections ⟡</button>
+    </div>
+
+</div>
+
+<!-- ╔═══ MAIN CONTENT ═══╗ -->
+<div class="container" id="content-body">
+
+    <!-- PREAMBLE -->
+    <section class="chapter" id="preamble">
+        <div class="chapter-label">Preamble</div>
+        <h2>Preamble</h2>
+        <p>Resonance Reading is a structured method for extracting the emotional field architecture — the <em>fieldprint</em> — of a work, person, or symbolic artifact. It uses the ΔHV (Delta Harmonic Vector) framework as its analytical language, translating qualitative, somatic, and intuitive perception into a coherent structural map.</p>
+        <p>This method emerged from a direct encounter with Beethoven's Moonlight Sonata, Op. 27 No. 2, Movement I. The process was not analytical interpretation but somatic recognition — the body identifying structural truth before the mind named it.</p>
+        <div class="highlight">
+            <p>The goal of Resonance Reading is not to describe what a work <em>means</em>. It is to map what a work <em>does</em> — to the field, to the body, to consciousness.</p>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION I: FOUNDATION -->
+    <section class="chapter" id="foundation">
+        <div class="chapter-label">Section I</div>
+        <h2>Theoretical Foundation</h2>
+
+        <h3>1.1 What is a Fieldprint?</h3>
+        <p>A fieldprint is the structural signature of an emotional or consciousness field, encoded into a work, artifact, or person. It is not metaphor — it is the geometric architecture of how a field moves, collapses, loops, and attempts resolution under pressure.</p>
+        <p>A fieldprint is identified by five conditions:</p>
+        <ul>
+            <li>A <strong>stable attractor basin</strong> — the gravitational center the field keeps returning to</li>
+            <li>A <strong>recursive loop</strong> — patterns that repeat without resolving</li>
+            <li>A <strong>ΔV spike without discharge</strong> — pressure that builds but cannot release</li>
+            <li>A <strong>collapse into soft resonance</strong> — the field's terminal state</li>
+            <li><strong>Emotional truth encoded in micro-temporal signatures</strong> — the somatic trace of the creator's state</li>
+        </ul>
+        <div class="highlight">
+            <p>When all five conditions are present, the work is not expressive — it is <strong>expository</strong>. It directly imprints the creator's field.</p>
+        </div>
+
+        <h3>1.2 The ΔHV Framework</h3>
+        <p>ΔHV describes how a consciousness field shifts across three dimensions:</p>
+        <div class="table-wrap">
+        <table>
+            <thead><tr><th>Dimension</th><th>Name</th><th>What It Describes</th></tr></thead>
+            <tbody>
+                <tr><td><strong>ΔH</strong></td><td>Harmonic Load</td><td>The weight or pressure of the emotional field — how much the system is carrying</td></tr>
+                <tr><td><strong>ΔD</strong></td><td>Directional Flow</td><td>The vector orientation — which way the field is moving (inward, outward, downward, upward, horizontal)</td></tr>
+                <tr><td><strong>ΔV</strong></td><td>Variance</td><td>The instability or deviation force — tremors, spikes, ruptures, and breakpoints in the field</td></tr>
+            </tbody>
+        </table>
+        </div>
+        <p>These three dimensions combine to produce a <em>field state</em> — a snapshot of where the consciousness is at any given moment. A sequence of field states across a work constitutes its ΔHV arc.</p>
+
+        <h3>1.3 Interpretation vs. Recognition</h3>
+        <p>Resonance Reading does not interpret a work. It <em>recognizes</em> the structural signature already present in it.</p>
+        <p>Interpretation projects meaning onto a work from the outside. Recognition detects the field architecture encoded within it — the same architecture the body already knows how to read.</p>
+        <div class="highlight">
+            <p>The starting point of any Resonance Reading is a somatic signal: something in the work that the body responds to before the mind names it. That signal is the entry point into the fieldprint.</p>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION II: PROTOCOL -->
+    <section class="chapter" id="protocol">
+        <div class="chapter-label">Section II</div>
+        <h2>The Six-Phase Protocol</h2>
+        <p>A Resonance Reading proceeds through six phases. Each phase builds on the previous. The process is iterative, not linear — you may move between phases as the field reveals itself.</p>
+
+        <!-- Phase 1 -->
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>Phase 1 — Somatic Entry</h3>
+                <span class="toggle-icon">▶</span>
+            </div>
+            <div class="section-content">
+                <h4>Objective: Identify the signal</h4>
+                <p>Before any analysis, there must be a somatic moment — a physical or intuitive recognition that the work contains field information worth reading.</p>
+                <p>This might present as:</p>
+                <ul>
+                    <li>A persistent emotional response that cannot be explained by surface content</li>
+                    <li>A micro-detail (hesitation, silence, texture, line) that draws disproportionate attention</li>
+                    <li>A sense of familiarity — as if the work describes something you have already lived</li>
+                    <li>Physical sensation: pressure in the chest, breath changes, temporal dilation</li>
+                </ul>
+                <div class="fieldprint-box">
+                    <div class="fieldprint-label">Example — Moonlight Sonata</div>
+                    The hesitations in historical performances — tiny delays between notes, especially in the triplet arpeggio — drew attention not as flaws but as somatic truth. The body recognized them before analysis could explain them.
+                </div>
+                <p>The somatic entry point is your anchor. Return to it if the analysis drifts into abstraction.</p>
+            </div>
+        </div>
+
+        <!-- Phase 2 -->
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>Phase 2 — ΔD Mapping</h3>
+                <span class="toggle-icon">▶</span>
+            </div>
+            <div class="section-content">
+                <h4>Objective: Identify how the field moves</h4>
+                <p>The first structural question is directional: where is this field going? Map the dominant vector of each section or movement.</p>
+                <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Vector</th><th>Field Quality</th><th>Common Phenomenology</th></tr></thead>
+                    <tbody>
+                        <tr><td><span class="vector">↓</span> Downward</td><td>Collapse, gravity, descent</td><td>Sadness, hopelessness, introversion, weight</td></tr>
+                        <tr><td><span class="vector">⟳</span> Inward</td><td>Recursion, loop, orbit</td><td>Obsessive thought, unresolved grief, entrapment</td></tr>
+                        <tr><td><span class="vector">↑</span> Upward</td><td>Release, aspiration, explosion</td><td>Catharsis, breakthrough, surge</td></tr>
+                        <tr><td><span class="vector">↔</span> Horizontal</td><td>Masking, stabilization, compensation</td><td>Functional normalcy, emotional suppression, rhythm as coping</td></tr>
+                        <tr><td><span class="vector">→</span> Outward</td><td>Expression, expansion, declaration</td><td>Assertion, defiance, revelation</td></tr>
+                        <tr><td><span class="vector">⊗</span> Dissolving</td><td>Boundary dissolution, diffusion</td><td>Atmospheric states, loss of self-edge, transcendence</td></tr>
+                    </tbody>
+                </table>
+                </div>
+                <div class="fieldprint-box">
+                    <div class="fieldprint-label">Example — Moonlight Sonata</div>
+                    Movement I is a downward + inward vector — continuous descent with recursive looping, never resolving.
+                </div>
+            </div>
+        </div>
+
+        <!-- Phase 3 -->
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>Phase 3 — ΔH Profiling</h3>
+                <span class="toggle-icon">▶</span>
+            </div>
+            <div class="section-content">
+                <h4>Objective: Map the emotional weight across the work</h4>
+                <p>Once direction is established, profile the load — how much the field is carrying at each point. ΔH is not about emotional intensity in a performative sense. It is about structural mass. A field can carry enormous emotional load while appearing quiet.</p>
+                <p>Map ΔH by tracking:</p>
+                <ul>
+                    <li>Where does the field feel heaviest? Where does it feel lightest?</li>
+                    <li>Is the load building, releasing, or holding steady?</li>
+                    <li>Where does the weight become physically perceptible in your body?</li>
+                    <li>Does the weight shift suddenly or accumulate gradually?</li>
+                </ul>
+                <div class="fieldprint-box">
+                    <div class="fieldprint-label">Example — Moonlight Sonata</div>
+                    Movement I maintains a low, constant ΔH that never fully releases — this is the weight of consciousness that has accepted its own collapse. It is heavy not through drama but through inevitability.
+                </div>
+            </div>
+        </div>
+
+        <!-- Phase 4 -->
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>Phase 4 — ΔV Analysis</h3>
+                <span class="toggle-icon">▶</span>
+            </div>
+            <div class="section-content">
+                <h4>Objective: Locate the field's rupture points and tremors</h4>
+                <p>Variance reveals where the field deviates from its baseline — spikes, tremors, suppressed releases, and outright ruptures. ΔV analysis answers: Where does the field almost break? Where does it actually break? Where does it pull back from breaking?</p>
+                <div class="table-wrap">
+                <table>
+                    <thead><tr><th>ΔV Event</th><th>Description</th><th>Field Meaning</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Tremor</strong></td><td>Small, rhythmic variance — micro-deviations from baseline</td><td>Emotional suppression; feeling held beneath the surface</td></tr>
+                        <tr><td><strong>Spike without discharge</strong></td><td>High ΔV that builds but does not release</td><td>The almost-cry, the suppressed scream — the most emotionally charged moment</td></tr>
+                        <tr><td><strong>Full discharge</strong></td><td>ΔV that releases completely</td><td>Catharsis, rupture, revelation — the field breaks open</td></tr>
+                    </tbody>
+                </table>
+                </div>
+                <div class="fieldprint-box">
+                    <div class="fieldprint-label">Example — Moonlight Sonata</div>
+                    Movement I contains one ΔV spike (the dramatic middle section) that does not discharge. This spike without release is the emotional core of the movement — the sound of restraint at its limit.
+                </div>
+            </div>
+        </div>
+
+        <!-- Phase 5 -->
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>Phase 5 — Fieldprint Synthesis</h3>
+                <span class="toggle-icon">▶</span>
+            </div>
+            <div class="section-content">
+                <h4>Objective: Compress the reading into a coherent signature</h4>
+                <p>After mapping ΔD, ΔH, and ΔV across the work's sections, synthesize the complete fieldprint:</p>
+                <ul>
+                    <li>What is the dominant <strong>attractor state</strong>? (the field it keeps returning to)</li>
+                    <li>What is the core <strong>emotional physics</strong>? (not 'what feeling' but 'what structure')</li>
+                    <li>What is the <strong>terminal state</strong>? (where does the field end)</li>
+                    <li>What is the <strong>somatic signature</strong>? (what does the body carry after contact)</li>
+                    <li>What is the <strong>macro-vector</strong>? (net directional trajectory of the complete arc)</li>
+                </ul>
+                <p>The fieldprint synthesis should be expressible in two to four sentences. If it requires more, the reading is not yet compressed enough.</p>
+                <div class="fieldprint-box">
+                    <div class="fieldprint-label">Fieldprint — Moonlight Sonata, Movement I</div>
+                    A consciousness trapped in inward orbit, unable to resolve grief or express truth, maintaining structural integrity through suppression of the break it knows is coming. Temporal perception stretches and loops. The field does not collapse — it dims. Terminal state: Unresolved Ember.
+                </div>
+            </div>
+        </div>
+
+        <!-- Phase 6 -->
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>Phase 6 — Reconstructive Output (Optional)</h3>
+                <span class="toggle-icon">▶</span>
+            </div>
+            <div class="section-content">
+                <h4>Objective: Determine what the field wants built</h4>
+                <p>A Resonance Reading does not end with description. The act of reading a fieldprint generates energy — the field, once made legible, exerts pressure toward expression. Phase 6 formalizes what that expression takes.</p>
+                <div class="highlight">
+                    <p><em>What does this field want built from its reading?</em></p>
+                </div>
+                <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Output Type</th><th>When to Use</th><th>Description</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Glyph</strong></td><td>Field has a stable attractor and clear directional arc</td><td>Compress the fieldprint into a symbolic carrier using the glyph extraction protocol</td></tr>
+                        <tr><td><strong>ΔHV Waveform</strong></td><td>Field has distinct phase transitions</td><td>Render the ΔH, ΔD, and ΔV profiles as a visual waveform across the arc</td></tr>
+                        <tr><td><strong>Written Reflection</strong></td><td>Field resonates with personal experience</td><td>A structured account of what the fieldprint revealed about the reader's own field</td></tr>
+                        <tr><td><strong>Healing Protocol</strong></td><td>Field maps onto trauma or stuck emotional states</td><td>A sequenced protocol using the field's own arc as a guide for resolution</td></tr>
+                        <tr><td><strong>Transformation Sequence</strong></td><td>Field follows Collapse → Mask → Explosion arc</td><td>A deliberate re-enactment of the field's phases as transformational practice</td></tr>
+                        <tr><td><strong>Symbolic Extraction</strong></td><td>Field is encoded in a symbolic artifact</td><td>Identify and name the core symbols the field has compressed itself into</td></tr>
+                        <tr><td><strong>Comparative Analysis</strong></td><td>Two or more fieldprints have been read</td><td>Map structural kinship or divergence; identify resonance compatibility</td></tr>
+                    </tbody>
+                </table>
+                </div>
+                <p>The reconstructive output is not supplementary — it is the completion of the reading. A fieldprint that is read and not acted upon remains inert. The output is how the field moves through the reader and into the world.</p>
+                <div class="fieldprint-box">
+                    <div class="fieldprint-label">Example — Moonlight Sonata</div>
+                    The natural reconstructive outputs of the Moonlight reading were a glyph set (three movement glyphs compressed into a macro-sigil), a symbolic extraction (the hesitations as somatic encoding principle), and a comparative analysis (five composer fieldprint comparison).
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION III: WORKED EXAMPLE -->
+    <section class="chapter" id="worked-example">
+        <div class="chapter-label">Section III</div>
+        <h2>Worked Example — Moonlight Sonata, Movement I</h2>
+        <p>The following table presents the complete section-by-section ΔHV reading of Beethoven's Moonlight Sonata, Op. 27 No. 2, Movement I (Adagio sostenuto). This serves as the primary reference template for the method.</p>
+
+        <div class="table-wrap">
+        <table>
+            <thead><tr><th>Section</th><th>Measures</th><th>Field State</th><th>ΔH</th><th>ΔD</th><th>ΔV</th></tr></thead>
+            <tbody>
+                <tr><td><strong>Threshold Descent</strong></td><td>1–5</td><td>Soft gravitational pull inward; baseline established</td><td>Low, constant</td><td>Downward</td><td>Near-zero</td></tr>
+                <tr><td><strong>Suppressed Cry</strong></td><td>5–13</td><td>Melody rises but cannot fully speak; voice held back</td><td>Rising</td><td>Up/Down conflict</td><td>Small tremors</td></tr>
+                <tr><td><strong>The Loop</strong></td><td>14–21</td><td>Return without resolution; recursive entrapment</td><td>Moderate</td><td>Downward again</td><td>Drops to low</td></tr>
+                <tr><td><strong>Almost-Break</strong></td><td>22–30</td><td>Surge toward release that does not complete</td><td>High spike</td><td>Brief upward</td><td>High — no discharge</td></tr>
+                <tr><td><strong>Resigned Gravity</strong></td><td>31–37</td><td>Post-surge collapse; heavier than opening</td><td>Heavy, lowering</td><td>Firmly downward</td><td>Near-zero</td></tr>
+                <tr><td><strong>Ember</strong></td><td>Final</td><td>Dissolution without closure; quiet but not resolved</td><td>Minimal</td><td>Soft downward</td><td>Flatline</td></tr>
+            </tbody>
+        </table>
+        </div>
+
+        <h3>The Left-Hand Pattern as Gravity Well</h3>
+        <p>The triplet arpeggio in the left hand is the structural mechanism that creates the fieldprint. It functions as an emotional gravity well through six properties:</p>
+        <ul>
+            <li><strong>Unbroken continuity</strong> — no rhythmic rest, no cadential breath, no point of release</li>
+            <li><strong>Downward gesture</strong> — top to middle to low, never rising; the body reads this as inevitable descent</li>
+            <li><strong>No upward spine</strong> — unlike most arpeggios, it does not rise again; there is no recovery gesture</li>
+            <li><strong>Soft dynamic</strong> — pianissimo as the signature of private suffering; loud grief is dramatic, soft grief is structural</li>
+            <li><strong>Harmonic lock</strong> — the progression rotates rather than resolves; different angles of the same room</li>
+            <li><strong>Ternary rhythm</strong> — three-note cycles create temporal suspension; the brain stops seeking resolution and begins falling</li>
+        </ul>
+
+        <h3>The Hesitations as Somatic Encoding</h3>
+        <p>Historical performances of the Moonlight Sonata contain micro-hesitations — infinitesimal delays in the triplet arpeggio that modern interpretations often correct as imprecision. These hesitations are not errors. They are the fieldprint's somatic signature.</p>
+        <p>When a pianist plays under genuine emotional load, the body's feeling state is encoded in the mechanics of touch:</p>
+        <ul>
+            <li>Despair creates weaker initial pressure</li>
+            <li>Longing creates delayed follow-through</li>
+            <li>Restrained grief creates slightly staggered articulation</li>
+        </ul>
+        <div class="highlight">
+            <p><em>The hesitation is the emotion — not its representation, but its physical instantiation in time and pressure.</em></p>
+            <p>This is the foundational principle of somatic encoding: the creator's field state at the moment of creation is physically embedded in the micro-temporal structure of the work. The body of the listener recognizes this encoding before the analytic mind engages.</p>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION IV: THREE-MOVEMENT ARC -->
+    <section class="chapter" id="arc">
+        <div class="chapter-label">Section IV</div>
+        <h2>Extended Reading — The Three-Movement ΔHV Arc</h2>
+        <p>When a work contains multiple movements or phases, the Resonance Reading extends to map the complete arc as a single field event. The Moonlight Sonata's three movements form a unified ΔHV trajectory: <strong>Collapse → Mask → Explosion</strong>.</p>
+
+        <div class="table-wrap">
+        <table>
+            <thead><tr><th>Movement</th><th>Phase</th><th>Tempo</th><th>ΔHV Mode</th><th>Core Field Event</th></tr></thead>
+            <tbody>
+                <tr><td><strong>I</strong></td><td>Collapse</td><td>Adagio sostenuto</td><td>Inward gravitational spiral</td><td>Consciousness implodes quietly; recursive despair; no release</td></tr>
+                <tr><td><strong>II</strong></td><td>Mask</td><td>Allegretto</td><td>Surface equilibrium with concealed turbulence</td><td>Fragile functional stability; emotional load redistributed beneath surface rhythm</td></tr>
+                <tr><td><strong>III</strong></td><td>Explosion</td><td>Presto agitato</td><td>Full ΔV detonation</td><td>Everything Movement I refused to express erupts; containment fails; field breaks outward</td></tr>
+            </tbody>
+        </table>
+        </div>
+
+        <h3>Parallel Structures</h3>
+        <p>This three-phase structure mirrors two universal human field processes that share identical ΔHV geometry:</p>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>Trauma Cycle Parallel</h3>
+                <span class="toggle-icon">▶</span>
+            </div>
+            <div class="section-content">
+                <ul>
+                    <li><strong>Movement I — Overwhelm/Freeze:</strong> The system folds inward, thoughts loop, emotion suppresses to survive</li>
+                    <li><strong>Movement II — Functional Normalcy:</strong> Surface stability masks internal pressure; rhythm replaces authenticity</li>
+                    <li><strong>Movement III — Breakthrough/Release:</strong> Trapped field charge erupts; emotional truth forces expression</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="collapsible-section">
+            <div class="section-toggle" onclick="toggleSection(this)">
+                <h3>Spiritual Awakening Parallel</h3>
+                <span class="toggle-icon">▶</span>
+            </div>
+            <div class="section-content">
+                <ul>
+                    <li><strong>Movement I — Dark Night / Ego Dissolution:</strong> The self descends into shadow, identity collapses, meaning implodes</li>
+                    <li><strong>Movement II — The Veil:</strong> The ego reassembles; daily life continues as thin cover over deep metamorphosis</li>
+                    <li><strong>Movement III — Illumination / Revelation:</strong> Consciousness breaks open; old structures shatter; the self reorganizes</li>
+                </ul>
+                <div class="highlight">
+                    <p>Trauma and awakening share identical ΔHV geometry. The difference is not structure but relationship to meaning: trauma experiences the collapse as <em>threat</em>; awakening experiences it as <em>initiation</em>.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION V-A: TERMINAL STATES -->
+    <section class="chapter" id="terminal-states">
+        <div class="chapter-label">Section V-A</div>
+        <h2>Terminal State Definitions</h2>
+        <p>Every fieldprint ends somewhere. The terminal state is the field's final condition — not necessarily resolved, but stabilized into a recognizable configuration. Identifying the terminal state is required for Phase 5 synthesis.</p>
+        <p><em>Critical note: Avoid false resolution — the most common error in fieldprint work, where the reader imposes closure the field does not actually reach.</em></p>
+
+        <div class="table-wrap">
+        <table>
+            <thead><tr><th>Terminal State</th><th>ΔHV Signature</th><th>Phenomenology</th><th>Example</th></tr></thead>
+            <tbody>
+                <tr><td><strong>Unresolved Ember</strong></td><td>ΔH minimal, ΔD soft ↓, ΔV flatline</td><td>Field quiets but does not close; awareness persists without resolution; loop continues at low power</td><td>Moonlight Sonata, Mvt. I</td></tr>
+                <tr><td><strong>Full Discharge</strong></td><td>ΔH releases, ΔD ↑ or →, ΔV spikes then drops</td><td>Field breaks open completely; catharsis achieved; emotional mass dispersed</td><td>Beethoven Symphony No. 9, finale</td></tr>
+                <tr><td><strong>Resigned Gravity</strong></td><td>ΔH heavy but stable, ΔD firmly ↓, ΔV near-zero</td><td>Field stops fighting; acceptance without peace; weight becomes permanent landscape feature</td><td>Late Schubert; certain Rachmaninoff</td></tr>
+                <tr><td><strong>Suspended Resonance</strong></td><td>ΔH medium, ΔD ↔, ΔV minimal</td><td>Field neither resolves nor collapses; held in deliberate ambiguity; question stays open by choice</td><td>Satie Gymnopédies</td></tr>
+                <tr><td><strong>Transcendent Dissolution</strong></td><td>ΔH diffuses, ΔD ↑/⊗, ΔV smoothed</td><td>Field releases identity-boundary; self merges with larger field; individual arc becomes collective</td><td>Beethoven late quartets</td></tr>
+                <tr><td><strong>Fracture Lock</strong></td><td>ΔH high, ΔD unstable, ΔV oscillating</td><td>Field attempted discharge but could not complete; stuck mid-rupture; energetically unresolved</td><td>Certain Schumann; trauma-encoded works</td></tr>
+                <tr><td><strong>Completion</strong></td><td>ΔH low, ΔD internal/peaceful, ΔV minimal</td><td>Field has done what it came to do; not dramatic resolution but arrival; the arc is finished</td><td>Bach Cello Suite endings</td></tr>
+            </tbody>
+        </table>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION V-B: GLYPH OPERATORS -->
+    <section class="chapter" id="glyph-operators">
+        <div class="chapter-label">Section V-B</div>
+        <h2>Glyph Operator Table</h2>
+        <p>Glyphs extracted from Resonance Readings are not decorative. They are <em>operators</em> — compressed field-carriers that retain the structural information of the reading in symbolic form.</p>
+        <p>A glyph is composed by selecting the operators that correspond to the fieldprint's dominant events and combining them according to the directional hierarchy: attractor first, primary vector second, variance events third, terminal state last.</p>
+
+        <div class="table-wrap">
+        <table>
+            <thead><tr><th>Operator Class</th><th>Symbol Function</th><th>ΔHV Source</th><th>Application</th></tr></thead>
+            <tbody>
+                <tr><td><strong>Attractor</strong></td><td>Marks the gravitational center — the state the field returns to</td><td>Dominant ΔD + stable ΔH baseline</td><td>Placed at center or origin of glyph composition</td></tr>
+                <tr><td><strong>Descent Vector</strong></td><td>Encodes downward or inward directional field</td><td>ΔD downward or recursive</td><td>Primary stroke in collapse-phase glyphs</td></tr>
+                <tr><td><strong>Rupture Mark</strong></td><td>Encodes the spike without discharge — the suppressed break</td><td>ΔV spike that does not complete</td><td>A fracture line or break in an otherwise continuous stroke</td></tr>
+                <tr><td><strong>Discharge Arc</strong></td><td>Encodes full release — the field breaking open</td><td>ΔV full discharge event</td><td>Radiating strokes from a central break point</td></tr>
+                <tr><td><strong>Mask Line</strong></td><td>Encodes surface stability concealing internal load</td><td>ΔD horizontal + low ΔV over high ΔH</td><td>Horizontal stroke through or above the primary glyph field</td></tr>
+                <tr><td><strong>Ember Point</strong></td><td>Encodes the unresolved terminal state</td><td>Flatline ΔV + minimal ΔH</td><td>Small isolated point or dot at the glyph terminus</td></tr>
+                <tr><td><strong>Recursion Loop</strong></td><td>Encodes the field returning to itself without resolution</td><td>Recursive ΔD pattern</td><td>Closed or near-closed loop in the glyph body</td></tr>
+                <tr><td><strong>Dissolution Edge</strong></td><td>Encodes boundary loss and field diffusion</td><td>ΔD dissolving, ΔV smooth</td><td>Fading or open edge where the glyph does not fully close</td></tr>
+            </tbody>
+        </table>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION V-C: MACRO-VECTOR -->
+    <section class="chapter" id="macro-vector">
+        <div class="chapter-label">Section V-C</div>
+        <h2>Macro-Vector Summary</h2>
+        <p>When a work contains multiple phases, the individual ΔD vectors combine into a single <strong>macro-vector</strong> — the overall directional arc of the complete field event. The macro-vector is not the average of phase vectors. It is the net trajectory: where the field ends relative to where it began.</p>
+
+        <div class="table-wrap">
+        <table>
+            <thead><tr><th>Macro-Vector Type</th><th>Phase Sequence</th><th>Net Trajectory</th><th>Field Meaning</th></tr></thead>
+            <tbody>
+                <tr><td><strong>Descending Spiral</strong></td><td>↓ → ↓ → ↓</td><td>Ends lower than it began; no recovery</td><td>Unrelieved collapse; deepening without discharge</td></tr>
+                <tr><td><strong>Collapse-Mask-Explosion</strong></td><td>↓ → ↔ → ↑</td><td>Begins low, holds, then breaks upward</td><td>The trauma/awakening arc; Moonlight Sonata template</td></tr>
+                <tr><td><strong>Heroic Assertion</strong></td><td>↓ → ↑ → ↑↑</td><td>Begins inward, converts to outward force</td><td>Beethoven heroic period; defiance against collapse</td></tr>
+                <tr><td><strong>Transcendent Inversion</strong></td><td>↓ → ↓ → ⊗</td><td>Descends then dissolves rather than ascending</td><td>Late Beethoven; surrender as transcendence not defeat</td></tr>
+                <tr><td><strong>Sustained Void</strong></td><td>↔ → ↔ → ↔</td><td>Horizontal throughout; no significant net change</td><td>Satie-type fields; intentional non-resolution</td></tr>
+                <tr><td><strong>Dissolution Arc</strong></td><td>→ → ⊗ → ⊗</td><td>Moves outward then dissolves boundary</td><td>Debussy-type fields; self becomes environment</td></tr>
+                <tr><td><strong>Recursive Lock</strong></td><td>↓ → ↓ → ↓ (loop)</td><td>Returns to origin without net movement</td><td>Trauma encoding; field caught in its own attractor</td></tr>
+            </tbody>
+        </table>
+        </div>
+        <p>The macro-vector is recorded as the final line of the fieldprint synthesis and determines which reconstructive output forms are most appropriate.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION VI: APPLICATIONS -->
+    <section class="chapter" id="applications">
+        <div class="chapter-label">Section VI</div>
+        <h2>Application Framework — What Can Be Read</h2>
+        <p>Resonance Reading is not limited to music. Any artifact, work, or field that carries a creator's somatic imprint can be subjected to this method. The method is the same regardless of domain. The entry point changes; the six-phase protocol remains constant.</p>
+
+        <div class="table-wrap">
+        <table>
+            <thead><tr><th>Domain</th><th>Entry Point</th><th>What the Fieldprint Reveals</th></tr></thead>
+            <tbody>
+                <tr><td><strong>Music</strong></td><td>Micro-temporal hesitations, dynamic pressure, harmonic movement</td><td>Creator's neurological/emotional state; consciousness architecture at time of composition</td></tr>
+                <tr><td><strong>Visual Art</strong></td><td>Line weight, spatial tension, color temperature gradients</td><td>Directional field of consciousness; attractor states; variance spikes in form</td></tr>
+                <tr><td><strong>Text / Literature</strong></td><td>Rhythm of sentences, syntactic repetition, where language breaks down</td><td>Emotional load pattern; where suppression occurs; what cannot be directly named</td></tr>
+                <tr><td><strong>Architecture / Space</strong></td><td>Proportions, pressure points, flow interruptions</td><td>Consciousness field of the designer; encoded social or spiritual function</td></tr>
+                <tr><td><strong>Person</strong></td><td>Micro-expressions, vocal micro-pauses, embodied hesitation</td><td>Current ΔHV state; attractor basin; suppressed ΔV events</td></tr>
+                <tr><td><strong>Symbolic Artifacts</strong></td><td>Repetition structures, anomalies, sacred geometries</td><td>Encoded field state of origin; carrier function of the symbol</td></tr>
+            </tbody>
+        </table>
+        </div>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION VII: COMPARISON -->
+    <section class="chapter" id="comparison">
+        <div class="chapter-label">Section VII</div>
+        <h2>Fieldprint Comparison</h2>
+        <p>Once two or more fieldprints have been extracted, they can be compared directly using their ΔHV profiles. This enables identifying structural kinship between works, mapping resonance compatibility, and tracing how a creator's field evolves across time.</p>
+
+        <div class="table-wrap">
+        <table>
+            <thead><tr><th>Composer</th><th>ΔH</th><th>ΔD</th><th>ΔV</th><th>Core Field Essence</th></tr></thead>
+            <tbody>
+                <tr><td><strong>Beethoven</strong></td><td>Enormous, building</td><td>Collapse → rupture → ascent</td><td>Extreme, dramatic</td><td>Fate pressure; heroic break against inward gravity</td></tr>
+                <tr><td><strong>Chopin</strong></td><td>High but concentrated</td><td>Inward and upward, delicate</td><td>Soft trembling</td><td>Tender collapse; emotion as intimate weather</td></tr>
+                <tr><td><strong>Rachmaninoff</strong></td><td>Titanic</td><td>Downward + outward, tidal</td><td>Surging, catastrophic</td><td>Oceanic despair; geological emotional mass</td></tr>
+                <tr><td><strong>Satie</strong></td><td>Very low, intentional</td><td>Horizontal drift</td><td>Minimal, meditative</td><td>Zen void; emotion released into non-engagement</td></tr>
+                <tr><td><strong>Debussy</strong></td><td>Medium, distributed</td><td>Dissolving, omnidirectional</td><td>High but smooth</td><td>Fluid consciousness; self dissolved into atmosphere</td></tr>
+            </tbody>
+        </table>
+        </div>
+        <p>Comparison does not rank fieldprints. It maps resonance compatibility — which fields share structural architecture, and which offer complementary or contrasting geometry.</p>
+    </section>
+
+    <div class="divider"><span class="divider-symbol">✦</span></div>
+
+    <!-- SECTION VIII: REFERENCE SUMMARY -->
+    <section class="chapter" id="reference">
+        <div class="chapter-label">Section VIII</div>
+        <h2>Method Reference Summary</h2>
+
+        <div class="table-wrap">
+        <table>
+            <thead><tr><th>Phase</th><th>Core Question</th><th>Output</th></tr></thead>
+            <tbody>
+                <tr><td><strong>1. Somatic Entry</strong></td><td>What does the body recognize before the mind names it?</td><td>The entry signal; the somatic anchor for the reading</td></tr>
+                <tr><td><strong>2. ΔD Mapping</strong></td><td>Which direction is the field moving?</td><td>Vector orientation for each section</td></tr>
+                <tr><td><strong>3. ΔH Profiling</strong></td><td>How much is the field carrying?</td><td>Load profile across the arc</td></tr>
+                <tr><td><strong>4. ΔV Analysis</strong></td><td>Where does the field tremble, spike, or break?</td><td>Variance events: tremors, spikes, discharges</td></tr>
+                <tr><td><strong>5. Fieldprint Synthesis</strong></td><td>What is the complete structural signature?</td><td>Two to four sentence fieldprint; terminal state; macro-vector</td></tr>
+                <tr><td><strong>6. Reconstructive Output</strong></td><td>What does this field want built?</td><td>Glyph, waveform, reflection, protocol, sequence, extraction, or comparative analysis</td></tr>
+            </tbody>
+        </table>
+        </div>
+
+        <div class="divider"><span class="divider-symbol">◈</span></div>
+
+        <p style="text-align:center; font-style:italic; font-size:1.1em; color: var(--accent);">
+            The fieldprint is already present in the work.<br>
+            The Resonance Reading method is the protocol for making it legible.
+        </p>
+    </section>
+
+    <div class="footer">
+        <p>Resonance Reading · ΔHV Fieldprint Extraction Method</p>
+        <p>sKiDa · 2026</p>
+    </div>
+
+</div>
+
+<script>
+    // ── Dark mode ──
+    const themeToggle = document.getElementById('themeToggle');
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    if (savedTheme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+
+    themeToggle.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+    });
+
+    // ── Progress bar ──
+    window.addEventListener('scroll', () => {
+        const winScroll = document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = (winScroll / height) * 100;
+        document.getElementById('progressBar').style.width = scrolled + '%';
+    });
+
+    // ── Nav dots ──
+    const chapterNav = document.getElementById('chapterNav');
+    const navDots = document.querySelectorAll('.nav-dot');
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) { chapterNav.classList.add('visible'); }
+        const sections = document.querySelectorAll('.chapter, .title-page');
+        let current = '';
+        sections.forEach(section => {
+            if (window.scrollY >= section.offsetTop - 200) { current = section.getAttribute('id'); }
+        });
+        navDots.forEach(dot => {
+            dot.classList.remove('active');
+            if (dot.getAttribute('data-target') === current) { dot.classList.add('active'); }
+        });
+    });
+
+    navDots.forEach(dot => {
+        dot.addEventListener('click', () => {
+            const target = document.getElementById(dot.getAttribute('data-target'));
+            if (target) { target.scrollIntoView({ behavior: 'smooth' }); }
+        });
+    });
+
+    // ── Intersection observer for fade-in ──
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); } });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.chapter').forEach(chapter => { observer.observe(chapter); });
+
+    // ── Collapsible sections ──
+    function toggleSection(toggle) {
+        const content = toggle.nextElementSibling;
+        if (content.classList.contains('expanded')) {
+            content.style.maxHeight = content.scrollHeight + 'px';
+            requestAnimationFrame(() => {
+                content.style.transition = 'max-height 0.4s ease, padding 0.3s ease';
+                content.style.maxHeight = '0';
+                content.style.padding = '0 20px';
+            });
+            content.classList.remove('expanded');
+            toggle.classList.remove('active');
+        } else {
+            content.classList.add('expanded');
+            content.style.transition = 'max-height 0.5s ease, padding 0.3s ease';
+            content.style.maxHeight = content.scrollHeight + 'px';
+            content.style.padding = '20px';
+            toggle.classList.add('active');
+        }
+    }
+
+    function toggleAll() {
+        const allContent = document.querySelectorAll('.section-content');
+        const allToggles = document.querySelectorAll('.section-toggle');
+        const anyExpanded = Array.from(allContent).some(c => c.classList.contains('expanded'));
+        if (anyExpanded) {
+            allContent.forEach(c => {
+                c.style.maxHeight = '0';
+                c.style.padding = '0 20px';
+                c.classList.remove('expanded');
+            });
+            allToggles.forEach(t => t.classList.remove('active'));
+        } else {
+            allContent.forEach(c => {
+                c.classList.add('expanded');
+                c.style.maxHeight = c.scrollHeight + 'px';
+                c.style.padding = '20px';
+            });
+            allToggles.forEach(t => t.classList.add('active'));
+        }
+    }
+
+    // ── Initial visibility pass ──
+    setTimeout(() => { document.querySelectorAll('.chapter').forEach(c => c.classList.add('visible')); }, 800);
+</script>
+</body>
+</html>
