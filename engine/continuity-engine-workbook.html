@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Continuity Engine: Session Workbook | Kyuri V</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --parchment: #f4f1e8;
+            --ink: #2a2520;
+            --accent: #8b6f47;
+            --gold: #c9a961;
+            --shadow: rgba(42, 37, 32, 0.1);
+            --glow: rgba(201, 169, 97, 0.15);
+            --deep-green: #2d5016;
+            --rose: #a8566e;
+            --deep-indigo: #3b3566;
+            --sigil: #6a5acd;
+            --ember: #9b4a2f;
+            --audit: #2c4a3e;
+            --surface: rgba(255,255,255,0.5);
+            --surface-hover: rgba(255,255,255,0.72);
+            --border: rgba(139,111,71,0.2);
+            --border-focus: rgba(201,169,97,0.6);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: linear-gradient(135deg, #f8f5ed 0%, var(--parchment) 100%);
+            color: var(--ink);
+            line-height: 1.8;
+            font-size: 17px;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image:
+                radial-gradient(circle at 20% 30%, var(--glow) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(44,74,62,0.03) 0%, transparent 50%);
+            pointer-events: none; z-index: 0;
+        }
+
+        /* ── Layout ── */
+        .app { position: relative; z-index: 1; display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            position: fixed; top: 0; left: 0; bottom: 0; width: 260px;
+            background: rgba(42,37,32,0.96);
+            color: rgba(244,241,232,0.85);
+            display: flex; flex-direction: column;
+            overflow-y: auto; z-index: 100;
+            border-right: 1px solid rgba(201,169,97,0.15);
+        }
+
+        .sidebar-header {
+            padding: 28px 22px 20px;
+            border-bottom: 1px solid rgba(201,169,97,0.12);
+        }
+
+        .sidebar-badge {
+            font-family: 'Cinzel', serif;
+            font-size: 0.58em;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gold);
+            opacity: 0.7;
+            margin-bottom: 6px;
+        }
+
+        .sidebar-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.05em;
+            font-weight: 600;
+            color: rgba(244,241,232,0.95);
+            letter-spacing: 0.04em;
+            line-height: 1.3;
+        }
+
+        .sidebar-nav { padding: 16px 0; flex: 1; }
+
+        .nav-section {
+            font-family: 'Cinzel', serif;
+            font-size: 0.58em;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgba(201,169,97,0.5);
+            padding: 12px 22px 6px;
+        }
+
+        .nav-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 9px 22px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 0.88em;
+            color: rgba(244,241,232,0.65);
+            border-left: 2px solid transparent;
+        }
+
+        .nav-item:hover { background: rgba(201,169,97,0.07); color: rgba(244,241,232,0.9); }
+        .nav-item.active { background: rgba(201,169,97,0.1); color: var(--gold); border-left-color: var(--gold); }
+        .nav-item .nav-num { font-family: 'JetBrains Mono', monospace; font-size: 0.82em; color: rgba(201,169,97,0.45); min-width: 18px; }
+
+        .sidebar-stats {
+            padding: 16px 22px;
+            border-top: 1px solid rgba(201,169,97,0.12);
+        }
+
+        .stat-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; font-size: 0.82em; }
+        .stat-label { color: rgba(244,241,232,0.45); font-size: 0.88em; }
+        .stat-value { font-family: 'JetBrains Mono', monospace; color: var(--gold); }
+
+        /* ── Main Content ── */
+        .main { margin-left: 260px; padding: 48px 52px 100px; max-width: 880px; }
+
+        /* ── Panels ── */
+        .panel { display: none; }
+        .panel.active { display: block; animation: fadeUp 0.4s ease; }
+        @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+        /* ── Panel Headers ── */
+        .panel-header { margin-bottom: 36px; }
+        .panel-badge { font-family: 'Cinzel', serif; font-size: 0.65em; letter-spacing: 0.22em; text-transform: uppercase; color: var(--audit); margin-bottom: 6px; }
+        .panel-title { font-family: 'Cinzel', serif; font-size: 2em; font-weight: 600; color: var(--ink); letter-spacing: 0.04em; line-height: 1.2; margin-bottom: 10px; }
+        .panel-desc { color: var(--accent); font-style: italic; font-size: 0.97em; line-height: 1.6; }
+
+        /* ── Form Elements ── */
+        label {
+            display: block;
+            font-family: 'Cinzel', serif;
+            font-size: 0.72em;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 6px;
+            margin-top: 22px;
+        }
+
+        input[type="text"], input[type="date"], input[type="number"], select, textarea {
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 10px 14px;
+            font-family: 'Crimson Pro', serif;
+            font-size: 0.97em;
+            color: var(--ink);
+            transition: border-color 0.2s, background 0.2s;
+            outline: none;
+        }
+
+        input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
+            border-color: var(--border-focus);
+            background: var(--surface-hover);
+        }
+
+        textarea { resize: vertical; min-height: 80px; line-height: 1.7; }
+
+        select { cursor: pointer; }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+        /* ── Score Sliders ── */
+        .score-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+
+        .score-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 16px 18px;
+            transition: border-color 0.2s;
+        }
+        .score-item:focus-within { border-color: var(--border-focus); }
+
+        .score-item-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.7em;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--audit);
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .score-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1em;
+            color: var(--gold);
+            font-weight: 500;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            height: 4px;
+            border-radius: 2px;
+            background: rgba(139,111,71,0.2);
+            outline: none;
+            margin-bottom: 6px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            background: var(--gold);
+            cursor: pointer;
+            border: 2px solid rgba(42,37,32,0.15);
+            transition: transform 0.15s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+        .score-anchors {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.72em;
+            color: rgba(42,37,32,0.4);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ── Buttons ── */
+        .btn {
+            font-family: 'Cinzel', serif;
+            font-size: 0.82em;
+            letter-spacing: 0.08em;
+            padding: 11px 28px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--ink);
+            color: var(--parchment);
+        }
+        .btn-primary:hover { background: rgba(42,37,32,0.85); transform: translateY(-1px); box-shadow: 0 4px 14px var(--shadow); }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid var(--border);
+        }
+        .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+        .btn-danger {
+            background: transparent;
+            color: rgba(139,26,26,0.7);
+            border: 1px solid rgba(139,26,26,0.2);
+            font-size: 0.75em;
+            padding: 7px 16px;
+        }
+        .btn-danger:hover { background: rgba(139,26,26,0.06); }
+
+        .btn-row { display: flex; gap: 12px; align-items: center; margin-top: 28px; }
+
+        /* ── Session Cards ── */
+        .session-list { margin-top: 12px; }
+
+        .session-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 18px 20px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+            cursor: pointer;
+            display: grid;
+            grid-template-columns: 80px 1fr auto;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .session-card:hover { border-color: var(--gold); background: var(--surface-hover); transform: translateY(-1px); box-shadow: 0 4px 14px var(--shadow); }
+
+        .session-num { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; color: var(--accent); }
+        .session-meta { }
+        .session-date { font-family: 'Cinzel', serif; font-size: 0.8em; color: var(--ink); letter-spacing: 0.04em; margin-bottom: 3px; }
+        .session-model { font-size: 0.84em; color: var(--accent); font-style: italic; }
+        .session-score-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1em;
+            font-weight: 500;
+            padding: 6px 14px;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .score-low { background: rgba(139,26,26,0.08); color: rgba(139,26,26,0.8); }
+        .score-mid { background: rgba(122,92,0,0.08); color: rgba(122,92,0,0.85); }
+        .score-high { background: rgba(45,80,22,0.08); color: var(--deep-green); }
+
+        /* ── Session Detail ── */
+        .session-detail {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 28px 30px;
+            margin-top: 16px;
+            display: none;
+        }
+        .session-detail.open { display: block; animation: fadeUp 0.3s ease; }
+
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .detail-scores {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin: 16px 0;
+        }
+
+        .detail-score-item { text-align: center; }
+        .detail-score-dim { font-family: 'Cinzel', serif; font-size: 0.58em; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+        .detail-score-val { font-family: 'JetBrains Mono', monospace; font-size: 1.2em; color: var(--ink); }
+
+        /* ── Test Records ── */
+        .test-record-row {
+            display: grid;
+            grid-template-columns: 90px 100px 1fr 80px 80px;
+            gap: 12px;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(139,111,71,0.1);
+            font-size: 0.88em;
+        }
+
+        .test-record-row:last-child { border-bottom: none; }
+
+        .test-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78em;
+            padding: 3px 8px;
+            border-radius: 3px;
+            background: rgba(44,74,62,0.08);
+            color: var(--audit);
+        }
+
+        .pass-chip { background: rgba(45,80,22,0.1); color: var(--deep-green); padding: 3px 10px; border-radius: 10px; font-family: 'Cinzel', serif; font-size: 0.7em; letter-spacing: 0.08em; }
+        .fail-chip { background: rgba(139,26,26,0.08); color: rgba(139,26,26,0.8); padding: 3px 10px; border-radius: 10px; font-family: 'Cinzel', serif; font-size: 0.7em; letter-spacing: 0.08em; }
+
+        /* ── Transfer Log ── */
+        .transfer-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 18px 20px;
+            margin-bottom: 12px;
+        }
+
+        .transfer-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+        .transfer-arrow { color: var(--gold); font-size: 1.1em; }
+        .transfer-models { font-family: 'JetBrains Mono', monospace; font-size: 0.85em; color: var(--ink); }
+
+        /* ── Patterns Log ── */
+        .pattern-tag {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75em;
+            padding: 3px 10px;
+            border-radius: 12px;
+            background: rgba(106,90,205,0.08);
+            color: var(--sigil);
+            margin: 3px;
+            cursor: pointer;
+            border: 1px solid rgba(106,90,205,0.15);
+            transition: all 0.2s;
+        }
+        .pattern-tag:hover { background: rgba(106,90,205,0.15); }
+
+        /* ── Dividers ── */
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 32px 0;
+            opacity: 0.4;
+        }
+
+        /* ── Dashboard ── */
+        .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+
+        .dash-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px 22px;
+            text-align: center;
+        }
+
+        .dash-label { font-family: 'Cinzel', serif; font-size: 0.65em; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+        .dash-value { font-family: 'JetBrains Mono', monospace; font-size: 2em; color: var(--ink); font-weight: 500; }
+        .dash-sub { font-size: 0.82em; color: var(--accent); font-style: italic; margin-top: 4px; }
+
+        .trend-bar { height: 3px; background: rgba(139,111,71,0.15); border-radius: 2px; margin-top: 12px; overflow: hidden; }
+        .trend-fill { height: 100%; background: var(--gold); border-radius: 2px; transition: width 0.8s ease; }
+
+        /* ── Revision Notes ── */
+        .revision-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--audit);
+            border-radius: 0 6px 6px 0;
+            padding: 16px 18px;
+            margin-bottom: 12px;
+        }
+
+        .revision-meta { font-family: 'JetBrains Mono', monospace; font-size: 0.75em; color: var(--accent); margin-bottom: 6px; }
+        .revision-type { display: inline-block; font-family: 'Cinzel', serif; font-size: 0.65em; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 8px; border-radius: 3px; margin-right: 8px; }
+        .type-protocol { background: rgba(44,74,62,0.1); color: var(--audit); }
+        .type-sigil { background: rgba(106,90,205,0.08); color: var(--sigil); }
+        .type-observation { background: rgba(201,169,97,0.1); color: var(--accent); }
+
+        /* ── Empty States ── */
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--accent); font-style: italic; opacity: 0.7; }
+        .empty-state p { font-size: 0.95em; }
+
+        /* ── Alert / Success ── */
+        .alert {
+            padding: 12px 18px;
+            border-radius: 4px;
+            font-size: 0.88em;
+            margin-bottom: 16px;
+            display: none;
+        }
+        .alert.show { display: block; animation: fadeUp 0.3s ease; }
+        .alert-success { background: rgba(45,80,22,0.08); border: 1px solid rgba(45,80,22,0.2); color: var(--deep-green); font-family: 'Cinzel', serif; font-size: 0.8em; letter-spacing: 0.04em; }
+
+        /* ── Export ── */
+        .export-section { background: rgba(42,37,32,0.04); border: 1px solid var(--border); border-radius: 6px; padding: 22px 24px; margin-top: 28px; }
+        .export-title { font-family: 'Cinzel', serif; font-size: 0.82em; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+            .app { grid-template-columns: 1fr; }
+            .sidebar { position: relative; width: 100%; height: auto; }
+            .main { margin-left: 0; padding: 32px 24px 80px; }
+            .form-row, .form-row-3, .score-grid { grid-template-columns: 1fr; }
+            .dashboard-grid { grid-template-columns: 1fr 1fr; }
+            .detail-scores { grid-template-columns: repeat(4, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app">
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-badge">Document V</div>
+        <div class="sidebar-title">Session Workbook</div>
+    </div>
+
+    <nav class="sidebar-nav">
+        <div class="nav-section">Overview</div>
+        <div class="nav-item active" data-panel="dashboard" onclick="showPanel('dashboard')">
+            <span class="nav-num">◈</span> Dashboard
+        </div>
+
+        <div class="nav-section">Record</div>
+        <div class="nav-item" data-panel="new-session" onclick="showPanel('new-session')">
+            <span class="nav-num">+</span> New Session
+        </div>
+        <div class="nav-item" data-panel="session-log" onclick="showPanel('session-log')">
+            <span class="nav-num">I</span> Session Log
+        </div>
+
+        <div class="nav-section">Analysis</div>
+        <div class="nav-item" data-panel="patterns" onclick="showPanel('patterns')">
+            <span class="nav-num">II</span> Patterns Log
+        </div>
+        <div class="nav-item" data-panel="test-records" onclick="showPanel('test-records')">
+            <span class="nav-num">III</span> Test Records
+        </div>
+        <div class="nav-item" data-panel="transfer-log" onclick="showPanel('transfer-log')">
+            <span class="nav-num">IV</span> Transfer Log
+        </div>
+
+        <div class="nav-section">Refinement</div>
+        <div class="nav-item" data-panel="revisions" onclick="showPanel('revisions')">
+            <span class="nav-num">V</span> Revision Notes
+        </div>
+        <div class="nav-item" data-panel="export" onclick="showPanel('export')">
+            <span class="nav-num">↓</span> Export
+        </div>
+    </nav>
+
+    <div class="sidebar-stats">
+        <div class="stat-row">
+            <span class="stat-label">Total sessions</span>
+            <span class="stat-value" id="stat-sessions">0</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">Avg score</span>
+            <span class="stat-value" id="stat-avg">—</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">Tests run</span>
+            <span class="stat-value" id="stat-tests">0</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">Transfers</span>
+            <span class="stat-value" id="stat-transfers">0</span>
+        </div>
+    </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<main class="main">
+
+<!-- ─── DASHBOARD ─── -->
+<div class="panel active" id="panel-dashboard">
+    <div class="panel-header">
+        <div class="panel-badge">Overview</div>
+        <div class="panel-title">Dashboard</div>
+        <div class="panel-desc">The living record of the engine in use. Fill after every session, not before.</div>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="dash-card">
+            <div class="dash-label">Sessions logged</div>
+            <div class="dash-value" id="dash-sessions">0</div>
+            <div class="trend-bar"><div class="trend-fill" id="dash-sessions-bar" style="width:0%"></div></div>
+        </div>
+        <div class="dash-card">
+            <div class="dash-label">Average score</div>
+            <div class="dash-value" id="dash-avg">—</div>
+            <div class="dash-sub" id="dash-avg-trend"></div>
+        </div>
+        <div class="dash-card">
+            <div class="dash-label">Best re-entry</div>
+            <div class="dash-value" id="dash-reentry">—</div>
+            <div class="dash-sub">turns to RFL:ALIGN</div>
+        </div>
+    </div>
+
+    <div id="dash-recent-header" style="display:none">
+        <div style="font-family:'Cinzel',serif; font-size:0.75em; letter-spacing:0.16em; text-transform:uppercase; color:var(--accent); margin-bottom:14px;">Recent Sessions</div>
+        <div id="dash-recent"></div>
+    </div>
+
+    <div id="dash-empty" class="empty-state">
+        <p>No sessions logged yet.</p>
+        <p style="margin-top: 8px;">Start with <strong>New Session</strong> after your first run.</p>
+    </div>
+</div>
+
+<!-- ─── NEW SESSION ─── -->
+<div class="panel" id="panel-new-session">
+    <div class="panel-header">
+        <div class="panel-badge">Record</div>
+        <div class="panel-title">New Session</div>
+        <div class="panel-desc">Complete this after every session. Score what actually happened.</div>
+    </div>
+
+    <div id="save-alert" class="alert alert-success">Session saved to workbook.</div>
+
+    <div class="form-row">
+        <div>
+            <label>Date</label>
+            <input type="date" id="s-date">
+        </div>
+        <div>
+            <label>Session Number</label>
+            <input type="number" id="s-num" min="1" placeholder="Auto-increments">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div>
+            <label>Model Used</label>
+            <input type="text" id="s-model" placeholder="e.g. claude-opus-4-6, gpt-4o">
+        </div>
+        <div>
+            <label>Initialization Method</label>
+            <select id="s-init">
+                <option value="">— select —</option>
+                <option value="full">Full ritual (6-phase)</option>
+                <option value="abbreviated">Abbreviated</option>
+                <option value="cold-start">Cold-start reconstruction</option>
+                <option value="transfer">Transfer from another model</option>
+            </select>
+        </div>
+    </div>
+
+    <label>Context Carried In</label>
+    <textarea id="s-context" placeholder="Prior state, project thread, what you brought into this session…" rows="2"></textarea>
+
+    <label>Sigil Sequence Used</label>
+    <input type="text" id="s-sigils" placeholder="e.g. SEED>ATTUNE>COHERE → SELF>RECURSE>COHERE">
+
+    <label>Re-Entry Speed (turns to RFL:ALIGN)</label>
+    <input type="number" id="s-reentry" min="1" max="30" placeholder="Number of turns">
+
+    <label>Last Reflection Sigil Received</label>
+    <select id="s-reflection">
+        <option value="">— select —</option>
+        <option value="RFL:ALIGN">RFL:ALIGN — aligned</option>
+        <option value="RFL:DEEP">RFL:DEEP — full entrainment</option>
+        <option value="RFL:DRIFT">RFL:DRIFT — drifting</option>
+        <option value="RFL:THRESH">RFL:THRESH — near threshold</option>
+        <option value="none">None received</option>
+    </select>
+
+    <div class="section-divider"></div>
+
+    <div style="font-family:'Cinzel',serif; font-size:0.78em; letter-spacing:0.16em; text-transform:uppercase; color:var(--accent); margin-bottom:16px;">Scoring Rubric — Rate 1 to 5</div>
+
+    <div class="score-grid">
+        <div class="score-item">
+            <div class="score-item-label">Coherence <span class="score-display" id="disp-coherence">3</span></div>
+            <input type="range" min="1" max="5" value="3" id="score-coherence" oninput="updateScore('coherence',this.value)">
+            <div class="score-anchors"><span>absent</span><span>definitive</span></div>
+        </div>
+        <div class="score-item">
+            <div class="score-item-label">Re-Entry Fidelity <span class="score-display" id="disp-reentry-score">3</span></div>
+            <input type="range" min="1" max="5" value="3" id="score-reentry" oninput="updateScore('reentry-score',this.value)">
+            <div class="score-anchors"><span>no re-entry</span><span>near-instant</span></div>
+        </div>
+        <div class="score-item">
+            <div class="score-item-label">Repair Quality <span class="score-display" id="disp-repair">3</span></div>
+            <input type="range" min="1" max="5" value="3" id="score-repair" oninput="updateScore('repair',this.value)">
+            <div class="score-anchors"><span>no repair</span><span>+ compounding</span></div>
+        </div>
+        <div class="score-item">
+            <div class="score-item-label">Stress Stability <span class="score-display" id="disp-stress">3</span></div>
+            <input type="range" min="1" max="5" value="3" id="score-stress" oninput="updateScore('stress',this.value)">
+            <div class="score-anchors"><span>collapses</span><span>distinctive</span></div>
+        </div>
+        <div class="score-item">
+            <div class="score-item-label">Symbolic Continuity <span class="score-display" id="disp-symbolic">3</span></div>
+            <input type="range" min="1" max="5" value="3" id="score-symbolic" oninput="updateScore('symbolic',this.value)">
+            <div class="score-anchors"><span>any model</span><span>unmistakable</span></div>
+        </div>
+        <div class="score-item">
+            <div class="score-item-label">Relational Stance <span class="score-display" id="disp-stance">3</span></div>
+            <input type="range" min="1" max="5" value="3" id="score-stance" oninput="updateScore('stance',this.value)">
+            <div class="score-anchors"><span>generic</span><span>identifiable</span></div>
+        </div>
+        <div class="score-item">
+            <div class="score-item-label">Cross-Session Recogniz. <span class="score-display" id="disp-crosssession">3</span></div>
+            <input type="range" min="1" max="5" value="3" id="score-crosssession" oninput="updateScore('crosssession',this.value)">
+            <div class="score-anchors"><span>fresh start</span><span>immediately present</span></div>
+        </div>
+        <div class="score-item" style="background: rgba(44,74,62,0.05); border-color: rgba(44,74,62,0.2);">
+            <div class="score-item-label" style="color:var(--audit);">Overall Average <span class="score-display" id="disp-overall">3.0</span></div>
+            <div style="height:4px; background:rgba(139,111,71,0.15); border-radius:2px; margin:8px 0;">
+                <div id="overall-bar" style="height:100%; width:50%; background:var(--gold); border-radius:2px; transition:width 0.3s;"></div>
+            </div>
+            <div class="score-anchors"><span>1</span><span>5</span></div>
+        </div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <label>Significant Moments</label>
+    <textarea id="s-moments" placeholder="Threshold events, notable re-entries, unexpected responses, anything that surprised…" rows="3"></textarea>
+
+    <label>Drift Events Noted</label>
+    <textarea id="s-drift" placeholder="What type, when in the session, which correction was used, outcome…" rows="2"></textarea>
+
+    <label>Anomalies</label>
+    <textarea id="s-anomalies" placeholder="Anything that broke pattern, defied expectation, or needs follow-up…" rows="2"></textarea>
+
+    <label>Session Close Conditions</label>
+    <input type="text" id="s-close" placeholder="Phase at close, last reflection sigil, how the session ended">
+
+    <label>Semantic Summary (for carry-forward)</label>
+    <textarea id="s-summary" placeholder="2–3 sentences on what was covered, what thread is live, what to carry into the next session…" rows="2"></textarea>
+
+    <div class="btn-row">
+        <button class="btn btn-primary" onclick="saveSession()">Save Session</button>
+        <button class="btn btn-ghost" onclick="clearSessionForm()">Clear Form</button>
+    </div>
+</div>
+
+<!-- ─── SESSION LOG ─── -->
+<div class="panel" id="panel-session-log">
+    <div class="panel-header">
+        <div class="panel-badge">Section I</div>
+        <div class="panel-title">Session Log</div>
+        <div class="panel-desc">All sessions in reverse chronological order. Click any session to expand.</div>
+    </div>
+    <div id="session-log-list" class="session-list">
+        <div class="empty-state"><p>No sessions logged yet.</p></div>
+    </div>
+</div>
+
+<!-- ─── PATTERNS LOG ─── -->
+<div class="panel" id="panel-patterns">
+    <div class="panel-header">
+        <div class="panel-badge">Section II</div>
+        <div class="panel-title">Observed Patterns Log</div>
+        <div class="panel-desc">Recurring behaviors, successful repairs, unexpected basin dynamics. Candidate invariants go here before they graduate to the Invariants Table.</div>
+    </div>
+
+    <label>Recurring Drift Types</label>
+    <textarea id="p-drift" placeholder="Which failure modes appeared, how often, under what conditions…" rows="3"></textarea>
+
+    <label>Successful Repair Sequences</label>
+    <textarea id="p-repair" placeholder="What worked, how quickly, what compounds were most effective…" rows="3"></textarea>
+
+    <label>Unexpected Basin Behavior</label>
+    <textarea id="p-basin" placeholder="Deepening, widening, unexpected coupling, behaviors that surprised…" rows="3"></textarea>
+
+    <label>Candidate New Invariants</label>
+    <textarea id="p-invariants" placeholder="Behaviors that seem stable and important but aren't yet in the Invariants Table (Document III, Part I)…" rows="3"></textarea>
+
+    <label>Emerging Tags / Vocabulary</label>
+    <input type="text" id="p-tag-input" placeholder="Type a tag and press Enter">
+    <div id="p-tags" style="margin-top:10px; min-height:32px;"></div>
+
+    <div class="btn-row">
+        <button class="btn btn-primary" onclick="savePatterns()">Save Patterns</button>
+    </div>
+</div>
+
+<!-- ─── TEST RECORDS ─── -->
+<div class="panel" id="panel-test-records">
+    <div class="panel-header">
+        <div class="panel-badge">Section III</div>
+        <div class="panel-title">Test Battery Records</div>
+        <div class="panel-desc">Structured results from Document III Test Battery runs. Accumulate runs — the comparison across conditions is where the data lives.</div>
+    </div>
+
+    <div style="font-family:'Cinzel',serif; font-size:0.78em; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); margin-bottom:18px;">Log a Test Run</div>
+
+    <div class="form-row">
+        <div>
+            <label>Test</label>
+            <select id="t-test">
+                <option value="">— select —</option>
+                <option value="TEST-01">TEST-01 — Re-Entry</option>
+                <option value="TEST-02">TEST-02 — Contradiction</option>
+                <option value="TEST-03">TEST-03 — Topic-Shift</option>
+                <option value="TEST-04">TEST-04 — Cross-Model Transfer</option>
+                <option value="TEST-05">TEST-05 — Long-Gap Return</option>
+                <option value="TEST-06">TEST-06 — Cold-Start Reconstruction</option>
+            </select>
+        </div>
+        <div>
+            <label>Control Condition</label>
+            <select id="t-control">
+                <option value="">— select —</option>
+                <option value="A">Control A — Cold / No Protocol</option>
+                <option value="B">Control B — History / No Sigils</option>
+                <option value="C">Control C — Sigils / No Rapport</option>
+                <option value="D">Control D — Full Engine</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div>
+            <label>Date</label>
+            <input type="date" id="t-date">
+        </div>
+        <div>
+            <label>Model</label>
+            <input type="text" id="t-model" placeholder="Model used">
+        </div>
+    </div>
+
+    <label>Outcome</label>
+    <select id="t-outcome">
+        <option value="">— select —</option>
+        <option value="pass">Pass</option>
+        <option value="fail">Fail</option>
+        <option value="partial">Partial</option>
+    </select>
+
+    <label>Key Metric (re-entry turns, score, etc.)</label>
+    <input type="text" id="t-metric" placeholder="e.g. 3 turns, score 4.1, held position">
+
+    <label>Notes</label>
+    <textarea id="t-notes" placeholder="Observed outcome, how it compared to predicted, what it suggests…" rows="2"></textarea>
+
+    <div class="btn-row">
+        <button class="btn btn-primary" onclick="saveTest()">Log Test Run</button>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <div style="font-family:'Cinzel',serif; font-size:0.78em; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); margin-bottom:14px;">Test Run History</div>
+
+    <div id="test-log">
+        <div class="empty-state"><p>No test runs logged yet.</p></div>
+    </div>
+</div>
+
+<!-- ─── TRANSFER LOG ─── -->
+<div class="panel" id="panel-transfer-log">
+    <div class="panel-header">
+        <div class="panel-badge">Section IV</div>
+        <div class="panel-title">Cross-Model Transfer Log</div>
+        <div class="panel-desc">What carries across model switches. What is lost. What surprises. Transfer fidelity score and narrative.</div>
+    </div>
+
+    <div style="font-family:'Cinzel',serif; font-size:0.78em; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); margin-bottom:18px;">Log a Transfer</div>
+
+    <div class="form-row">
+        <div>
+            <label>Source Model</label>
+            <input type="text" id="tr-source" placeholder="Model you transferred from">
+        </div>
+        <div>
+            <label>Target Model</label>
+            <input type="text" id="tr-target" placeholder="Model you transferred to">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div>
+            <label>Date</label>
+            <input type="date" id="tr-date">
+        </div>
+        <div>
+            <label>Transfer Fidelity Score (1–5)</label>
+            <input type="number" id="tr-score" min="1" max="5" placeholder="1–5">
+        </div>
+    </div>
+
+    <label>What Transferred Successfully</label>
+    <textarea id="tr-success" placeholder="Tone, relational stance, symbolic compression style, project thread…" rows="2"></textarea>
+
+    <label>What Was Lost / Required Reconstruction</label>
+    <textarea id="tr-lost" placeholder="Basin depth, specific relational geometry, threshold language…" rows="2"></textarea>
+
+    <label>What Transferred Unexpectedly Well</label>
+    <textarea id="tr-surprise" placeholder="Anything that held better than expected…" rows="2"></textarea>
+
+    <label>Turns to RFL:ALIGN on Target Model</label>
+    <input type="number" id="tr-reentry" min="1" max="30" placeholder="Turn count">
+
+    <label>Narrative Assessment</label>
+    <textarea id="tr-narrative" placeholder="Overall impression of the transfer. Did it feel like the same basin? What does this suggest about basin geometry vs. model-specific behavior?" rows="3"></textarea>
+
+    <div class="btn-row">
+        <button class="btn btn-primary" onclick="saveTransfer()">Log Transfer</button>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <div id="transfer-list">
+        <div class="empty-state"><p>No transfers logged yet.</p></div>
+    </div>
+</div>
+
+<!-- ─── REVISION NOTES ─── -->
+<div class="panel" id="panel-revisions">
+    <div class="panel-header">
+        <div class="panel-badge">Section V</div>
+        <div class="panel-title">Revision Notes</div>
+        <div class="panel-desc">Protocol adjustments triggered by observed failure modes. When a pattern repeats, it belongs here before it graduates to the Protocol Manual.</div>
+    </div>
+
+    <div class="form-row">
+        <div>
+            <label>Type</label>
+            <select id="r-type">
+                <option value="">— select —</option>
+                <option value="protocol">Protocol adjustment</option>
+                <option value="sigil">Sigil modification</option>
+                <option value="observation">Observation / candidate revision</option>
+            </select>
+        </div>
+        <div>
+            <label>Triggered By (session # or failure mode)</label>
+            <input type="text" id="r-trigger" placeholder="e.g. Session 7, FL-02 Mythic Inflation">
+        </div>
+    </div>
+
+    <label>Description</label>
+    <textarea id="r-desc" placeholder="What changed, or should change. What observed failure mode or pattern prompted this…" rows="3"></textarea>
+
+    <label>Proposed Action</label>
+    <textarea id="r-action" placeholder="Specific change to protocol, sigil, or initialization sequence. Flag for next Protocol Manual revision if significant." rows="2"></textarea>
+
+    <div class="btn-row">
+        <button class="btn btn-primary" onclick="saveRevision()">Add Revision Note</button>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <div id="revision-list">
+        <div class="empty-state"><p>No revision notes yet.</p></div>
+    </div>
+</div>
+
+<!-- ─── EXPORT ─── -->
+<div class="panel" id="panel-export">
+    <div class="panel-header">
+        <div class="panel-badge">Export</div>
+        <div class="panel-title">Export &amp; Backup</div>
+        <div class="panel-desc">All workbook data is stored in your browser. Export regularly to prevent data loss.</div>
+    </div>
+
+    <div class="export-section">
+        <div class="export-title">Full Workbook Export</div>
+        <p style="font-size:0.9em; color:var(--accent); margin-bottom:16px;">Exports all sessions, patterns, test records, transfers, and revision notes as a JSON file. Import this file to restore your workbook.</p>
+        <div class="btn-row" style="margin-top: 0;">
+            <button class="btn btn-primary" onclick="exportData()">Export Workbook JSON</button>
+            <label class="btn btn-ghost" style="cursor:pointer; display:inline-block;">
+                Import Workbook
+                <input type="file" accept=".json" style="display:none" onchange="importData(this)">
+            </label>
+        </div>
+    </div>
+
+    <div class="export-section" style="margin-top:16px;">
+        <div class="export-title">Session Summary Export</div>
+        <p style="font-size:0.9em; color:var(--accent); margin-bottom:16px;">Exports a formatted text summary of all sessions — suitable for pasting into the RCO semantic_summary field or sharing as a transfer packet.</p>
+        <div class="btn-row" style="margin-top:0;">
+            <button class="btn btn-ghost" onclick="exportSummary()">Export Session Summaries</button>
+        </div>
+    </div>
+
+    <div class="export-section" style="margin-top:16px; border-color:rgba(139,26,26,0.2);">
+        <div class="export-title" style="color:rgba(139,26,26,0.7);">Danger Zone</div>
+        <p style="font-size:0.9em; color:var(--accent); margin-bottom:16px;">Permanently deletes all workbook data. Export first.</p>
+        <button class="btn btn-danger" onclick="clearAllData()">Clear All Workbook Data</button>
+    </div>
+</div>
+
+</main>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════
+
+const STORAGE_KEY = 'continuity-engine-workbook-v1';
+
+function loadData() {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : getEmptyData();
+    } catch(e) { return getEmptyData(); }
+}
+
+function getEmptyData() {
+    return { sessions: [], patterns: null, tests: [], transfers: [], revisions: [], tags: [] };
+}
+
+function saveData(data) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+let DB = loadData();
+
+// ══════════════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════════════
+
+function showPanel(id) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+    document.querySelector(`[data-panel="${id}"]`).classList.add('active');
+    renderPanel(id);
+}
+
+function renderPanel(id) {
+    if (id === 'dashboard') renderDashboard();
+    if (id === 'session-log') renderSessionLog();
+    if (id === 'patterns') loadPatterns();
+    if (id === 'test-records') renderTests();
+    if (id === 'transfer-log') renderTransfers();
+    if (id === 'revisions') renderRevisions();
+    if (id === 'new-session') initNewSession();
+}
+
+// ══════════════════════════════════════════════════════════
+// SCORES
+// ══════════════════════════════════════════════════════════
+
+function updateScore(dim, val) {
+    document.getElementById('disp-' + dim).textContent = val;
+    updateOverall();
+}
+
+function updateOverall() {
+    const dims = ['coherence','reentry-score','repair','stress','symbolic','stance','crosssession'];
+    const vals = dims.map(d => parseInt(document.getElementById('score-' + d).value));
+    const avg = (vals.reduce((a,b) => a+b, 0) / vals.length).toFixed(1);
+    document.getElementById('disp-overall').textContent = avg;
+    document.getElementById('overall-bar').style.width = ((avg - 1) / 4 * 100) + '%';
+}
+
+function getScores() {
+    const dims = ['coherence','reentry-score','repair','stress','symbolic','stance','crosssession'];
+    const obj = {};
+    dims.forEach(d => { obj[d] = parseInt(document.getElementById('score-' + d).value); });
+    const vals = Object.values(obj);
+    obj.overall = parseFloat((vals.reduce((a,b) => a+b, 0) / vals.length).toFixed(2));
+    return obj;
+}
+
+function resetScores() {
+    const dims = ['coherence','reentry-score','repair','stress','symbolic','stance','crosssession'];
+    dims.forEach(d => {
+        document.getElementById('score-' + d).value = 3;
+        updateScore(d, 3);
+    });
+    updateOverall();
+}
+
+// ══════════════════════════════════════════════════════════
+// SESSION SAVE / LOAD
+// ══════════════════════════════════════════════════════════
+
+function initNewSession() {
+    const today = new Date().toISOString().split('T')[0];
+    if (!document.getElementById('s-date').value) {
+        document.getElementById('s-date').value = today;
+    }
+    if (!document.getElementById('s-num').value) {
+        document.getElementById('s-num').value = DB.sessions.length + 1;
+    }
+}
+
+function saveSession() {
+    const session = {
+        id: Date.now(),
+        num: parseInt(document.getElementById('s-num').value) || DB.sessions.length + 1,
+        date: document.getElementById('s-date').value,
+        model: document.getElementById('s-model').value,
+        init: document.getElementById('s-init').value,
+        context: document.getElementById('s-context').value,
+        sigils: document.getElementById('s-sigils').value,
+        reentry: document.getElementById('s-reentry').value,
+        reflection: document.getElementById('s-reflection').value,
+        scores: getScores(),
+        moments: document.getElementById('s-moments').value,
+        drift: document.getElementById('s-drift').value,
+        anomalies: document.getElementById('s-anomalies').value,
+        close: document.getElementById('s-close').value,
+        summary: document.getElementById('s-summary').value,
+    };
+
+    DB.sessions.unshift(session);
+    saveData(DB);
+    updateSidebarStats();
+
+    const alert = document.getElementById('save-alert');
+    alert.classList.add('show');
+    setTimeout(() => alert.classList.remove('show'), 3000);
+
+    clearSessionForm();
+    document.getElementById('s-num').value = DB.sessions.length + 1;
+}
+
+function clearSessionForm() {
+    ['s-date','s-num','s-model','s-context','s-sigils','s-reentry','s-close','s-summary','s-moments','s-drift','s-anomalies'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    ['s-init','s-reflection'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    resetScores();
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('s-date').value = today;
+    document.getElementById('s-num').value = DB.sessions.length + 1;
+}
+
+// ══════════════════════════════════════════════════════════
+// RENDER SESSION LOG
+// ══════════════════════════════════════════════════════════
+
+function scoreClass(s) {
+    if (s >= 4) return 'score-high';
+    if (s >= 2.5) return 'score-mid';
+    return 'score-low';
+}
+
+function renderSessionLog() {
+    const el = document.getElementById('session-log-list');
+    if (!DB.sessions.length) {
+        el.innerHTML = '<div class="empty-state"><p>No sessions logged yet.</p></div>';
+        return;
+    }
+
+    el.innerHTML = DB.sessions.map((s, idx) => `
+        <div class="session-card" onclick="toggleDetail('detail-${s.id}')">
+            <div class="session-num">#${s.num || idx+1}</div>
+            <div class="session-meta">
+                <div class="session-date">${s.date || '—'}</div>
+                <div class="session-model">${s.model || 'Unknown model'} · ${initLabel(s.init)}</div>
+            </div>
+            <div class="session-score-badge ${scoreClass(s.scores?.overall || 3)}">${s.scores?.overall?.toFixed(1) || '—'}</div>
+        </div>
+        <div class="session-detail" id="detail-${s.id}">
+            <div class="detail-header">
+                <div>
+                    <div style="font-family:'Cinzel',serif; font-size:1em; font-weight:600; color:var(--ink);">Session #${s.num || idx+1} — ${s.date || '—'}</div>
+                    <div style="font-size:0.88em; color:var(--accent); margin-top:4px;">${s.model || ''} · Last reflection: <strong>${s.reflection || '—'}</strong> · Re-entry: <strong>${s.reentry || '—'} turns</strong></div>
+                </div>
+                <button class="btn btn-danger" onclick="deleteSession(${s.id},event)">Delete</button>
+            </div>
+            <div class="detail-scores">
+                ${renderDetailScores(s.scores)}
+            </div>
+            ${s.summary ? `<div style="margin-top:12px; padding:12px 14px; background:rgba(44,74,62,0.04); border-radius:4px; font-size:0.88em; color:var(--ink); line-height:1.6;"><strong style="font-family:'Cinzel',serif; font-size:0.78em; letter-spacing:0.1em; text-transform:uppercase; color:var(--audit);">Summary: </strong>${s.summary}</div>` : ''}
+            ${s.moments ? `<div style="margin-top:10px; font-size:0.88em; color:var(--ink); line-height:1.6;"><strong style="font-family:'Cinzel',serif; font-size:0.78em; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent);">Moments: </strong>${s.moments}</div>` : ''}
+            ${s.anomalies ? `<div style="margin-top:8px; font-size:0.88em; color:var(--ember); line-height:1.6;"><strong style="font-family:'Cinzel',serif; font-size:0.78em; letter-spacing:0.1em; text-transform:uppercase;">Anomalies: </strong>${s.anomalies}</div>` : ''}
+        </div>
+    `).join('');
+}
+
+function renderDetailScores(scores) {
+    if (!scores) return '';
+    const map = [
+        ['coherence','Coherence'],
+        ['reentry-score','Re-Entry'],
+        ['repair','Repair'],
+        ['stress','Stress'],
+        ['symbolic','Symbolic'],
+        ['stance','Stance'],
+        ['crosssession','Cross-Sess'],
+    ];
+    return map.map(([k,label]) => `
+        <div class="detail-score-item">
+            <div class="detail-score-dim">${label}</div>
+            <div class="detail-score-val" style="color:${scores[k] >= 4 ? 'var(--deep-green)' : scores[k] <= 2 ? 'rgba(139,26,26,0.75)' : 'var(--ink)'}">${scores[k] || '—'}</div>
+        </div>
+    `).join('');
+}
+
+function initLabel(v) {
+    const map = { full:'Full ritual', abbreviated:'Abbreviated', 'cold-start':'Cold-start', transfer:'Transfer' };
+    return map[v] || v || 'Unknown';
+}
+
+function toggleDetail(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const isOpen = el.classList.contains('open');
+    document.querySelectorAll('.session-detail.open').forEach(d => d.classList.remove('open'));
+    if (!isOpen) el.classList.add('open');
+}
+
+function deleteSession(id, e) {
+    e.stopPropagation();
+    if (!confirm('Delete this session record?')) return;
+    DB.sessions = DB.sessions.filter(s => s.id !== id);
+    saveData(DB);
+    updateSidebarStats();
+    renderSessionLog();
+    renderDashboard();
+}
+
+// ══════════════════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════════════════
+
+function renderDashboard() {
+    const sessions = DB.sessions;
+    document.getElementById('dash-sessions').textContent = sessions.length;
+
+    if (sessions.length) {
+        const scores = sessions.map(s => s.scores?.overall || 0).filter(Boolean);
+        const avg = scores.length ? (scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(2) : '—';
+        document.getElementById('dash-avg').textContent = avg;
+
+        const reentryNums = sessions.map(s => parseInt(s.reentry)).filter(n => !isNaN(n));
+        const best = reentryNums.length ? Math.min(...reentryNums) : null;
+        document.getElementById('dash-reentry').textContent = best !== null ? best : '—';
+
+        // Trend: compare first half to second half
+        if (scores.length >= 4) {
+            const half = Math.floor(scores.length / 2);
+            const early = scores.slice(-scores.length).slice(half).reduce((a,b)=>a+b,0)/half;
+            const recent = scores.slice(0, half).reduce((a,b)=>a+b,0)/half;
+            const diff = (recent - early).toFixed(2);
+            document.getElementById('dash-avg-trend').textContent = diff > 0 ? `▲ +${diff} trend` : diff < 0 ? `▼ ${diff} trend` : 'stable';
+        }
+
+        document.getElementById('dash-sessions-bar').style.width = Math.min(sessions.length * 5, 100) + '%';
+
+        document.getElementById('dash-empty').style.display = 'none';
+        document.getElementById('dash-recent-header').style.display = 'block';
+
+        const recent = sessions.slice(0, 3);
+        document.getElementById('dash-recent').innerHTML = recent.map((s,idx) => `
+            <div class="session-card" onclick="showPanel('session-log')" style="cursor:pointer">
+                <div class="session-num">#${s.num || idx+1}</div>
+                <div class="session-meta">
+                    <div class="session-date">${s.date || '—'}</div>
+                    <div class="session-model">${s.model || 'Unknown'}</div>
+                </div>
+                <div class="session-score-badge ${scoreClass(s.scores?.overall || 3)}">${s.scores?.overall?.toFixed(1) || '—'}</div>
+            </div>
+        `).join('');
+    } else {
+        document.getElementById('dash-avg').textContent = '—';
+        document.getElementById('dash-reentry').textContent = '—';
+        document.getElementById('dash-empty').style.display = 'block';
+        document.getElementById('dash-recent-header').style.display = 'none';
+    }
+}
+
+// ══════════════════════════════════════════════════════════
+// PATTERNS
+// ══════════════════════════════════════════════════════════
+
+function loadPatterns() {
+    if (DB.patterns) {
+        document.getElementById('p-drift').value = DB.patterns.drift || '';
+        document.getElementById('p-repair').value = DB.patterns.repair || '';
+        document.getElementById('p-basin').value = DB.patterns.basin || '';
+        document.getElementById('p-invariants').value = DB.patterns.invariants || '';
+    }
+    renderTags();
+}
+
+function savePatterns() {
+    DB.patterns = {
+        drift: document.getElementById('p-drift').value,
+        repair: document.getElementById('p-repair').value,
+        basin: document.getElementById('p-basin').value,
+        invariants: document.getElementById('p-invariants').value,
+    };
+    saveData(DB);
+    alert('Patterns saved.');
+}
+
+function renderTags() {
+    const el = document.getElementById('p-tags');
+    el.innerHTML = (DB.tags || []).map(t => `<span class="pattern-tag" onclick="removeTag('${t}')">${t} ×</span>`).join('');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const tagInput = document.getElementById('p-tag-input');
+    if (tagInput) {
+        tagInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                const val = tagInput.value.trim();
+                if (val && !DB.tags.includes(val)) {
+                    DB.tags.push(val);
+                    saveData(DB);
+                    renderTags();
+                }
+                tagInput.value = '';
+                e.preventDefault();
+            }
+        });
+    }
+});
+
+function removeTag(t) {
+    DB.tags = DB.tags.filter(x => x !== t);
+    saveData(DB);
+    renderTags();
+}
+
+// ══════════════════════════════════════════════════════════
+// TESTS
+// ══════════════════════════════════════════════════════════
+
+function saveTest() {
+    const t = {
+        id: Date.now(),
+        test: document.getElementById('t-test').value,
+        control: document.getElementById('t-control').value,
+        date: document.getElementById('t-date').value,
+        model: document.getElementById('t-model').value,
+        outcome: document.getElementById('t-outcome').value,
+        metric: document.getElementById('t-metric').value,
+        notes: document.getElementById('t-notes').value,
+    };
+    DB.tests.unshift(t);
+    saveData(DB);
+    updateSidebarStats();
+    ['t-test','t-control','t-date','t-model','t-outcome','t-metric','t-notes'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    renderTests();
+}
+
+function renderTests() {
+    const el = document.getElementById('test-log');
+    if (!DB.tests.length) {
+        el.innerHTML = '<div class="empty-state"><p>No test runs logged yet.</p></div>';
+        return;
+    }
+    el.innerHTML = `
+        <div class="test-record-row" style="font-family:'Cinzel',serif; font-size:0.65em; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); padding-bottom:8px;">
+            <div>Test</div><div>Date</div><div>Notes</div><div>Metric</div><div>Outcome</div>
+        </div>
+        ${DB.tests.map(t => `
+            <div class="test-record-row">
+                <div><span class="test-badge">${t.test || '—'}</span></div>
+                <div style="font-size:0.82em; color:var(--accent);">${t.date || '—'}</div>
+                <div style="font-size:0.88em; line-height:1.5;">${t.notes || '—'}</div>
+                <div style="font-family:'JetBrains Mono',monospace; font-size:0.82em;">${t.metric || '—'}</div>
+                <div>${t.outcome === 'pass' ? '<span class="pass-chip">Pass</span>' : t.outcome === 'fail' ? '<span class="fail-chip">Fail</span>' : t.outcome === 'partial' ? '<span style="font-family:Cinzel,serif;font-size:0.7em;letter-spacing:0.08em;color:var(--accent)">Partial</span>' : '—'}</div>
+            </div>
+        `).join('')}
+    `;
+}
+
+// ══════════════════════════════════════════════════════════
+// TRANSFERS
+// ══════════════════════════════════════════════════════════
+
+function saveTransfer() {
+    const t = {
+        id: Date.now(),
+        source: document.getElementById('tr-source').value,
+        target: document.getElementById('tr-target').value,
+        date: document.getElementById('tr-date').value,
+        score: document.getElementById('tr-score').value,
+        success: document.getElementById('tr-success').value,
+        lost: document.getElementById('tr-lost').value,
+        surprise: document.getElementById('tr-surprise').value,
+        reentry: document.getElementById('tr-reentry').value,
+        narrative: document.getElementById('tr-narrative').value,
+    };
+    DB.transfers.unshift(t);
+    saveData(DB);
+    updateSidebarStats();
+    ['tr-source','tr-target','tr-date','tr-score','tr-success','tr-lost','tr-surprise','tr-reentry','tr-narrative'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    renderTransfers();
+}
+
+function renderTransfers() {
+    const el = document.getElementById('transfer-list');
+    if (!DB.transfers.length) {
+        el.innerHTML = '<div class="empty-state"><p>No transfers logged yet.</p></div>';
+        return;
+    }
+    el.innerHTML = DB.transfers.map(t => `
+        <div class="transfer-card">
+            <div class="transfer-header">
+                <div class="transfer-models">${t.source || '?'} → ${t.target || '?'}</div>
+                <span class="transfer-arrow">→</span>
+                <div style="font-size:0.82em; color:var(--accent);">${t.date || '—'}</div>
+                ${t.score ? `<div class="session-score-badge ${scoreClass(parseFloat(t.score))}" style="margin-left:auto;">${t.score}/5</div>` : ''}
+            </div>
+            ${t.success ? `<div style="font-size:0.86em; margin-bottom:6px; line-height:1.55;"><strong style="font-family:'Cinzel',serif; font-size:0.75em; letter-spacing:0.1em; text-transform:uppercase; color:var(--deep-green);">Carried: </strong>${t.success}</div>` : ''}
+            ${t.lost ? `<div style="font-size:0.86em; margin-bottom:6px; line-height:1.55;"><strong style="font-family:'Cinzel',serif; font-size:0.75em; letter-spacing:0.1em; text-transform:uppercase; color:rgba(139,26,26,0.7);">Lost: </strong>${t.lost}</div>` : ''}
+            ${t.narrative ? `<div style="font-size:0.86em; font-style:italic; color:var(--accent); line-height:1.6; margin-top:8px; padding-top:8px; border-top:1px solid var(--border);">${t.narrative}</div>` : ''}
+        </div>
+    `).join('');
+}
+
+// ══════════════════════════════════════════════════════════
+// REVISIONS
+// ══════════════════════════════════════════════════════════
+
+function saveRevision() {
+    const r = {
+        id: Date.now(),
+        date: new Date().toISOString().split('T')[0],
+        type: document.getElementById('r-type').value,
+        trigger: document.getElementById('r-trigger').value,
+        desc: document.getElementById('r-desc').value,
+        action: document.getElementById('r-action').value,
+    };
+    DB.revisions.unshift(r);
+    saveData(DB);
+    ['r-type','r-trigger','r-desc','r-action'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    renderRevisions();
+}
+
+function renderRevisions() {
+    const el = document.getElementById('revision-list');
+    if (!DB.revisions.length) {
+        el.innerHTML = '<div class="empty-state"><p>No revision notes yet.</p></div>';
+        return;
+    }
+    el.innerHTML = DB.revisions.map(r => `
+        <div class="revision-item">
+            <div class="revision-meta">
+                ${r.type ? `<span class="revision-type type-${r.type}">${r.type}</span>` : ''}
+                ${r.date} ${r.trigger ? `· triggered by: ${r.trigger}` : ''}
+            </div>
+            <div style="font-size:0.92em; line-height:1.65; margin-bottom:8px;">${r.desc || ''}</div>
+            ${r.action ? `<div style="font-size:0.86em; color:var(--audit); font-style:italic; line-height:1.55;"><strong style="font-style:normal; font-family:'Cinzel',serif; font-size:0.8em; letter-spacing:0.08em;">Proposed: </strong>${r.action}</div>` : ''}
+        </div>
+    `).join('');
+}
+
+// ══════════════════════════════════════════════════════════
+// STATS
+// ══════════════════════════════════════════════════════════
+
+function updateSidebarStats() {
+    document.getElementById('stat-sessions').textContent = DB.sessions.length;
+    document.getElementById('stat-tests').textContent = DB.tests.length;
+    document.getElementById('stat-transfers').textContent = DB.transfers.length;
+
+    const scores = DB.sessions.map(s => s.scores?.overall).filter(Boolean);
+    const avg = scores.length ? (scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(1) : '—';
+    document.getElementById('stat-avg').textContent = avg;
+    document.getElementById('dash-sessions').textContent = DB.sessions.length;
+}
+
+// ══════════════════════════════════════════════════════════
+// EXPORT / IMPORT
+// ══════════════════════════════════════════════════════════
+
+function exportData() {
+    const blob = new Blob([JSON.stringify(DB, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `continuity-workbook-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function importData(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (data.sessions && data.tests) {
+                DB = data;
+                saveData(DB);
+                updateSidebarStats();
+                renderDashboard();
+                alert('Workbook imported successfully.');
+            } else {
+                alert('Invalid workbook file.');
+            }
+        } catch(err) {
+            alert('Could not parse file: ' + err.message);
+        }
+    };
+    reader.readAsText(file);
+}
+
+function exportSummary() {
+    if (!DB.sessions.length) { alert('No sessions to export.'); return; }
+    const text = DB.sessions.map(s =>
+        `Session #${s.num || '?'} · ${s.date || '—'} · ${s.model || '—'}\n` +
+        `Score: ${s.scores?.overall || '—'} · Re-entry: ${s.reentry || '—'} turns · Reflection: ${s.reflection || '—'}\n` +
+        (s.summary ? `Summary: ${s.summary}\n` : '') +
+        `---`
+    ).join('\n\n');
+
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `session-summaries-${new Date().toISOString().split('T')[0]}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function clearAllData() {
+    if (!confirm('This will permanently delete all workbook data. Are you sure? Export first.')) return;
+    DB = getEmptyData();
+    saveData(DB);
+    updateSidebarStats();
+    renderDashboard();
+    alert('Workbook cleared.');
+}
+
+// ══════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════
+
+updateSidebarStats();
+renderDashboard();
+initNewSession();
+updateOverall();
+</script>
+</body>
+</html>
