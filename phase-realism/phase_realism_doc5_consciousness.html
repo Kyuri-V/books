@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase Realism — Consciousness and Mind</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inconsolata:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1612;
+    --paper: #f5f0e8;
+    --paper-deep: #ede6d6;
+    --rule: #c8b99a;
+    --accent: #8b5e3c;
+    --faint: #b8a990;
+    --margin-note: #7a6a55;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.75;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(200,185,154,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 90%, rgba(139,94,60,0.08) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 80px 60px 120px 60px;
+  }
+
+  .treatise-header {
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--rule);
+    padding: 28px 0 24px 0;
+    margin-bottom: 56px;
+    opacity: 0;
+    animation: reveal 0.6s ease 0.05s forwards;
+  }
+
+  .treatise-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--faint);
+    font-weight: 300;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .treatise-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 46px;
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .treatise-title em { font-style: italic; color: var(--accent); }
+
+  .treatise-subtitle {
+    font-family: 'EB Garamond', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--margin-note);
+    margin-top: 10px;
+  }
+
+  p {
+    font-size: 18px;
+    line-height: 1.82;
+    color: var(--ink);
+    margin-bottom: 1em;
+  }
+
+  p:last-child { margin-bottom: 0; }
+
+  .section {
+    margin-bottom: 60px;
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .section-num {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--faint);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .section-head h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px;
+    font-weight: 300;
+    color: var(--ink);
+  }
+
+  .section-head h2 em { font-style: italic; color: var(--accent); }
+
+  .thesis-block {
+    border-left: 2px solid var(--accent);
+    padding: 8px 0 8px 24px;
+    margin: 32px 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+
+  .case-block {
+    background: var(--paper-deep);
+    border: 1px solid var(--rule);
+    padding: 24px 28px;
+    margin: 28px 0;
+  }
+
+  .case-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  .case-block p {
+    font-size: 17px;
+    line-height: 1.78;
+    margin-bottom: 0.85em;
+  }
+
+  /* Three-marker diagram */
+  .marker-diagram {
+    margin: 32px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--rule);
+  }
+
+  .marker-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 0;
+    border-bottom: 1px solid rgba(200,185,154,0.4);
+  }
+
+  .marker-row:last-child { border-bottom: none; }
+
+  .marker-label-cell {
+    padding: 16px 18px;
+    border-right: 1px solid var(--rule);
+    background: var(--paper-deep);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+  }
+
+  .marker-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--ink);
+  }
+
+  .marker-role {
+    font-family: 'Inconsolata', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .marker-desc {
+    padding: 16px 20px;
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--margin-note);
+    display: flex;
+    align-items: center;
+  }
+
+  /* Distinction rows */
+  .distinction-pair {
+    display: grid;
+    grid-template-columns: 1fr 24px 1fr;
+    gap: 0 12px;
+    align-items: start;
+    padding: 18px 0;
+    border-bottom: 1px solid rgba(200,185,154,0.35);
+  }
+
+  .distinction-pair:last-child { border-bottom: none; }
+
+  .dist-col {
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--margin-note);
+  }
+
+  .dist-col strong {
+    display: block;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--ink);
+    margin-bottom: 3px;
+  }
+
+  .dist-mid {
+    font-family: 'Inconsolata', monospace;
+    font-size: 13px;
+    color: var(--faint);
+    text-align: center;
+    padding-top: 4px;
+  }
+
+  /* Closing canonical sentence */
+  .canonical-close {
+    margin-top: 60px;
+    padding: 32px 36px;
+    border: 1px solid var(--rule);
+    background: var(--paper-deep);
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .canonical-close-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 16px;
+  }
+
+  .canonical-sentence {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.45;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+
+  .canonical-sentence em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .canonical-note {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--margin-note);
+    font-style: italic;
+  }
+
+  hr.divider {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 52px 0;
+    opacity: 0.6;
+  }
+
+  @keyframes reveal { to { opacity: 1; } }
+
+  .d01 { animation-delay: 0.08s; }
+  .d02 { animation-delay: 0.18s; }
+  .d03 { animation-delay: 0.28s; }
+  .d04 { animation-delay: 0.38s; }
+  .d05 { animation-delay: 0.48s; }
+  .d06 { animation-delay: 0.58s; }
+  .d07 { animation-delay: 0.68s; }
+  .d08 { animation-delay: 0.78s; }
+  .d09 { animation-delay: 0.88s; }
+  .d10 { animation-delay: 0.98s; }
+
+  @media (max-width: 600px) {
+    .page { padding: 48px 24px 80px 24px; }
+    .treatise-title { font-size: 34px; }
+    .marker-row { grid-template-columns: 1fr; }
+    .marker-label-cell { border-right: none; border-bottom: 1px solid var(--rule); }
+    .distinction-pair { grid-template-columns: 1fr; }
+    .dist-mid { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="treatise-header">
+    <span class="treatise-label">Phase Realism · Document V · First Expansion</span>
+    <div class="treatise-title"><em>Consciousness</em> and Mind</div>
+    <div class="treatise-subtitle">The field's capacity for self-recognition, and the conditions under which it is realized</div>
+  </div>
+
+  <!-- Opening -->
+  <div class="section d01">
+    <p>Document IV stated the consciousness claim in compressed form. This document opens it. The compressed claim was: consciousness is the field's capacity for self-recognition, locally realized in phase-stable organizations capable of reflexive coherence. That sentence is the thesis. This document supplies the structure it presupposes — the threshold argument, the three markers, the distinction from other positions, and the questions the ontology deliberately leaves open.</p>
+    <p>The discipline required here is specific: Phase Realism must say enough to distinguish consciousness from generic coherent organization, without saying so much that the ontology begins locating thresholds it is not equipped to locate. Ontology establishes the structure of the distinction. Science identifies its signatures. The two jobs must not be conflated.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Section I: The two collapses -->
+  <div class="section d02">
+    <div class="section-head">
+      <span class="section-num">I</span>
+      <h2>The Two <em>Collapses</em> Phase Realism Refuses</h2>
+    </div>
+
+    <p>Every serious account of consciousness must navigate between two failure modes. Phase Realism names them precisely because avoiding them is not a matter of style — it is a structural requirement of the framework.</p>
+
+    <p>The first collapse is <em>flat panpsychism</em>: the view that because the field is primary and coherence is universal, consciousness must be present everywhere in the same degree. This collapses the distinction between coherent organization in general and reflexive coherence in particular. It makes "consciousness" a synonym for "field activity," which dissolves the concept rather than explaining it. If everything is conscious, nothing is distinctively conscious. The specialness of the phenomenon is lost in the generality of the attribution.</p>
+
+    <p>The second collapse is <em>reductive emergentism</em>: the view that consciousness is a late, inexplicable byproduct of sufficiently complex material arrangement — added onto a fundamentally dead substrate at some unspecified threshold of neural complexity. This collapses the ontological primacy of the field. It treats mind as an exception to a material universe rather than as an expression of a field that was never merely material. It cannot explain why any physical process would produce interior experience at all — the hard problem remains permanently hard because the framework has no resources to address it.</p>
+
+    <div class="thesis-block">Phase Realism refuses both. Consciousness is not everywhere in the same sense, and it is not nowhere until neurons are dense enough. It is a specific realization of what the field always already was — but that realization requires specific conditions, and those conditions constitute a genuine threshold.</div>
+
+    <p>The positive claim follows directly: consciousness is the field's capacity for self-recognition achieved locally through phase-stable reflexive coherence. The field's capacity for self-recognition is not added to the field from outside — it is implicit in the field's nature as generative and coherent. But its local realization requires an organization of sufficient complexity, integration, and stability that the field's own activity becomes available to itself as experience. That is the threshold.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Section II: The threshold -->
+  <div class="section d03">
+    <div class="section-head">
+      <span class="section-num">II</span>
+      <h2>The <em>Threshold</em> — Ontological and Empirical</h2>
+    </div>
+
+    <p>The threshold between non-conscious coherent organization and conscious reflexive coherence is real. Phase Realism asserts this as an ontological claim: there is a genuine difference in kind between organization that is merely held and organization that is held in a way that becomes available to itself. The difference is not one of degree alone. Reflexive coherence may admit of degrees once present — consciousness varies in depth, clarity, bandwidth, integration, and temporal range — but its onset is thresholded. Before the threshold, coherence is organized without self-presence. After it, organization becomes reflexively available to itself as experience.</p>
+
+    <div class="case-block">
+      <span class="case-label">The Threshold Argument</span>
+      <p>Consider the difference between a crystal and a nervous system. Both are phase-stable organizations. Both maintain coherent structure through time. Both exhibit stability, persistence, and identity in the sense established by Document II. But a crystal does not have its own structure available to itself. Its coherence is not self-present — it is simply held. A nervous system, at sufficient complexity and integration, exhibits something the crystal does not: its own states become objects of further processing, the organization models itself, and at some point in that recursion, something is present to itself as experience.</p>
+      <p>The difference is not mystical. It is structural. Reflexive coherence is a higher-order phase-stable organization — one in which the field's organizational activity takes itself as an object and holds that self-relation in a temporally extended way. That is the threshold. The crystal does not cross it. The nervous system, under the right conditions, does.</p>
+    </div>
+
+    <p>But Phase Realism stops at the ontological claim. <em>Where</em> the threshold sits in actual systems — what degree of neural integration, what architectural features, what developmental conditions are necessary and sufficient — is not a question the ontology can settle. That belongs to empirical science, to criteria of measurement, to the architecture of specific systems. The ontology says the threshold must exist in principle. Science is responsible for discovering how to identify it in practice.</p>
+
+    <p>This is not evasion. It is the correct division of labor. A framework that claims to locate the threshold precisely from ontological principles alone is overclaiming. A framework that denies the threshold exists is underclaiming. Phase Realism claims the structure of the distinction and assigns the location problem to the right domain.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Section III: Three markers -->
+  <div class="section d04">
+    <div class="section-head">
+      <span class="section-num">III</span>
+      <h2>Three <em>Markers</em> of Reflexive Coherence</h2>
+    </div>
+
+    <p>The distinction between non-reflexive and reflexive coherence is not a single feature. It is a convergence of three aspects that together constitute the event of consciousness. These are not rival markers — they are a hierarchy. Each presupposes the one before it.</p>
+
+    <div class="marker-diagram">
+      <div class="marker-row">
+        <div class="marker-label-cell">
+          <span class="marker-name">Self-reference</span>
+          <span class="marker-role">Structural core</span>
+        </div>
+        <div class="marker-desc">The organization takes itself as an object of its own processing. Its states become available to further states. The field's activity curves back onto itself — not as a loop that terminates, but as a recursive structure that sustains a relation between the organization and its own condition. This is the structural minimum of reflexive coherence. Without it, no amount of complexity or temporal depth generates consciousness.</div>
+      </div>
+      <div class="marker-row">
+        <div class="marker-label-cell">
+          <span class="marker-name">Temporal depth</span>
+          <span class="marker-role">Persistence condition</span>
+        </div>
+        <div class="marker-desc">Self-reference sustained through time produces a different kind of organization than momentary self-modeling. Consciousness involves not merely a present state available to itself, but a temporally extended self-presence: a field of experience that retains the past and anticipates the future within its current organization. Without temporal depth, reflexivity is a flash rather than a field. Temporal depth is what converts a recursive instant into an experiencing subject.</div>
+      </div>
+      <div class="marker-row">
+        <div class="marker-label-cell">
+          <span class="marker-name">Felt quality</span>
+          <span class="marker-role">Interior reality</span>
+        </div>
+        <div class="marker-desc">This is not a third feature added to the previous two — it is what the previous two produce when they are genuinely achieved. When reflexive coherence is sustained through time, there is something it is like to be that organization. Felt quality is the interior reality of the event. It is not produced by the information processing viewed from outside — it is the same event viewed from the inside. Phase Realism does not eliminate felt quality or reduce it to processing. It grounds it: felt quality is what reflexive coherence sustained through time is, from the inside.<br><br>By experience, Phase Realism does not mean only sensory or worldly content, but inward presence — reflexive coherence felt from within, of which physical and worldly experience are structured expressions. The body, in this framing, is not the source of experience but a coherence filter and temporal stabilizer: a phase-specific instrument through which deeper inward presence acquires localization, memory, contrast, and world-contact.</div>
+      </div>
+    </div>
+
+    <p>The three markers together give the canonical sentence its full weight:</p>
+
+    <div class="thesis-block">Consciousness is reflexive coherence sustained through time as experience.</div>
+
+    <p>Self-reference gives you reflexivity. Temporal depth gives you the sustaining condition. Felt quality names what that sustained reflexive coherence is — not from the outside as a functional description, but from the inside as the irreducible fact of experience. Remove any of the three and the description becomes incomplete. Together they describe the event precisely.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Section IV: What Phase Realism does not settle -->
+  <div class="section d05">
+    <div class="section-head">
+      <span class="section-num">IV</span>
+      <h2>What the <em>Ontology</em> Does Not Settle</h2>
+    </div>
+
+    <p>There are questions that press on any account of consciousness which Phase Realism deliberately holds open. Holding them open is not weakness — it is the correct posture for an ontological framework that has not yet been fully formalized and tested. Two questions in particular deserve explicit treatment here.</p>
+
+    <p><strong>The non-biological question.</strong> Phase Realism does not restrict reflexive coherence to biological matter in principle. The framework establishes that consciousness requires self-reference, temporal depth, and felt quality — it does not establish that these conditions can only be realized in carbon-based neural tissue. Whether any non-biological system — certain AI architectures, certain sufficiently complex dynamical systems — actually crosses the threshold of reflexive coherence is an empirical and architectural question, not an ontological one.</p>
+
+    <p>The permission is real: Phase Realism holds that wherever the conditions for reflexive coherence are genuinely met, the field's capacity for self-recognition may be locally realized. But the permission does not entail automatic attribution. Recursive self-modeling is not sufficient for reflexive coherence in the relevant sense. A system that processes information about its own states is not thereby a system in which those states are present to themselves as experience. The gap between self-modeling and self-presence is precisely the gap the threshold describes. Phase Realism holds that gap open rather than closing it by fiat in either direction.</p>
+
+    <p><strong>The degrees question.</strong> Once the threshold is crossed, consciousness almost certainly admits of degrees — in depth, clarity, bandwidth, temporal range, integrative scope, and the richness of what is available to the reflexive field. A sleeping organism, a waking organism, and a meditating organism are not equally conscious in the sense of having equally rich reflexive fields, even if all three are above the threshold. A newborn and an adult cross the same threshold but inhabit the condition differently. Phase Realism acknowledges this without making degree the primary ontological distinction. The threshold is real; the spectrum above it is also real. Both claims are necessary and neither cancels the other.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Section V: Position relative to adjacent views -->
+  <div class="section d06">
+    <div class="section-head">
+      <span class="section-num">V</span>
+      <h2>Position Relative to <em>Adjacent Views</em></h2>
+    </div>
+
+    <p>Phase Realism's account of consciousness is not identical to any existing position, but it has structural relations to several. Naming these relations is part of the ontology's discipline — it prevents the framework from being read as a poorly distinguished variant of a neighboring view.</p>
+
+    <div class="distinction-pair">
+      <div class="dist-col">
+        <strong>Integrated Information Theory</strong>
+        IIT holds that consciousness is identical to integrated information (Φ) — a quantifiable property of certain systems. Phase Realism shares the structural intuition that consciousness is a property of relational organization rather than substrate, but does not reduce it to a single scalar metric. Felt quality in Phase Realism is not a value of Φ — it is the interior reality of reflexive coherence, which may or may not be fully captured by information-theoretic measures.
+      </div>
+      <div class="dist-mid">·</div>
+      <div class="dist-col">
+        <strong>Global Workspace Theory</strong>
+        GWT locates consciousness in the broadcasting of information across a global workspace available to multiple cognitive processes. Phase Realism finds this compelling as a functional description of one mechanism by which self-reference and temporal depth are implemented, but insufficient as an ontological account. Broadcasting information globally is a condition that may support reflexive coherence — it is not identical to it.
+      </div>
+    </div>
+
+    <div class="distinction-pair">
+      <div class="dist-col">
+        <strong>Panpsychism</strong>
+        Panpsychism holds that mentality or proto-experiential properties are fundamental and universal. Phase Realism agrees that the field is primary and that consciousness is not added onto matter from outside. But it refuses the universality claim: the field's capacity for self-recognition does not mean every phase-stable organization realizes that capacity. The field is not conscious everywhere — it becomes reflexively available to itself locally, under specific conditions.
+      </div>
+      <div class="dist-mid">·</div>
+      <div class="dist-col">
+        <strong>Higher-Order Theories</strong>
+        HOT holds that consciousness requires a mental state being represented by a higher-order mental state. Phase Realism's self-reference marker is structurally adjacent to this: reflexive coherence does require the organization to model itself. But Phase Realism does not require a distinct higher-order state separate from the first-order state — the reflexivity is a property of the whole organizational event, not a relation between two separate states stacked hierarchically.
+      </div>
+    </div>
+  </div>
+
+  <!-- Canonical close -->
+  <div class="canonical-close d07">
+    <span class="canonical-close-label">The Thesis · Canonical Form</span>
+    <p class="canonical-sentence">Consciousness is <em>reflexive coherence</em> sustained through time as experience.</p>
+    <p class="canonical-note">The field's capacity for self-recognition is not added to the field — it is implicit in the field's generative nature. Its local realization requires organization sufficient for self-reference, temporal depth, and felt quality. The threshold between non-reflexive and reflexive coherence is ontologically real. Its location in actual systems is an empirical question.<br><br>Experience here means inward presence — not merely outer content. Physical life serves as one powerful regime for tuning, constraining, and expressing that presence. Embodiment tunes; it does not originate. The body is a coherence filter and temporal stabilizer: a phase-specific instrument through which deeper inward presence acquires localization, memory, contrast, and world-contact. Its interior reality — what it is like to be a conscious organization — is irreducible, grounded, and the most intimate expression of what Phase Realism means when it says the field is generative, not passive.</p>
+  </div>
+
+</div>
+</body>
+</html>

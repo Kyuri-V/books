@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase Realism — Canonical Lexicon</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inconsolata:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1612;
+    --paper: #f5f0e8;
+    --paper-deep: #ede6d6;
+    --rule: #c8b99a;
+    --accent: #8b5e3c;
+    --faint: #b8a990;
+    --margin-note: #7a6a55;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'EB Garamond', Georgia, serif;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at 20% 10%, rgba(200,185,154,0.18) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 64px 60px 100px 60px;
+  }
+
+  /* Header */
+  .header {
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--rule);
+    padding: 20px 0 18px 0;
+    margin-bottom: 44px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    opacity: 0;
+    animation: reveal 0.5s ease 0.05s forwards;
+  }
+
+  .header-left {}
+
+  .header-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+
+  .header-title em { font-style: italic; color: var(--accent); }
+
+  .header-sub {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin-top: 6px;
+    display: block;
+  }
+
+  .header-right {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--faint);
+    text-align: right;
+    line-height: 1.8;
+  }
+
+  /* Two-column layout */
+  .columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 48px;
+  }
+
+  /* Section labels */
+  .col-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--rule);
+    opacity: 0;
+    animation: reveal 0.5s ease forwards;
+  }
+
+  /* Term entries — compact */
+  .term {
+    margin-bottom: 22px;
+    opacity: 0;
+    animation: reveal 0.5s ease forwards;
+  }
+
+  .term-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 3px;
+  }
+
+  .term-def {
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: var(--margin-note);
+  }
+
+  .term-def em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  /* Causal modes block */
+  .causal-block {
+    margin-bottom: 22px;
+    opacity: 0;
+    animation: reveal 0.5s ease forwards;
+  }
+
+  .causal-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 3px;
+  }
+
+  .causal-def {
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: var(--margin-note);
+    margin-bottom: 8px;
+  }
+
+  .causal-sub {
+    padding-left: 12px;
+    border-left: 1.5px solid var(--rule);
+  }
+
+  .causal-sub-row {
+    display: grid;
+    grid-template-columns: 88px 1fr;
+    gap: 0 8px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    margin-bottom: 3px;
+  }
+
+  .causal-sub-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--accent);
+    font-size: 14.5px;
+  }
+
+  .causal-sub-def {
+    color: var(--margin-note);
+  }
+
+  /* Distinctions */
+  .distinction {
+    display: grid;
+    grid-template-columns: 90px 16px 1fr;
+    gap: 0 6px;
+    align-items: baseline;
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(200,185,154,0.35);
+    opacity: 0;
+    animation: reveal 0.5s ease forwards;
+  }
+
+  .distinction:last-child { border-bottom: none; }
+
+  .dist-a {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--accent);
+    font-size: 16px;
+    text-align: right;
+  }
+
+  .dist-sep {
+    font-family: 'Inconsolata', monospace;
+    font-size: 12px;
+    color: var(--faint);
+    text-align: center;
+  }
+
+  .dist-note {
+    font-size: 13px;
+    color: var(--margin-note);
+    line-height: 1.5;
+  }
+
+  /* Governing sentences footer */
+  .footer {
+    margin-top: 44px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 48px;
+    opacity: 0;
+    animation: reveal 0.5s ease forwards;
+  }
+
+  .footer-item {}
+
+  .footer-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 9px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .footer-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14.5px;
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+
+  hr.mid {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 28px 0;
+    opacity: 0.6;
+    grid-column: 1 / -1;
+  }
+
+  @keyframes reveal {
+    to { opacity: 1; }
+  }
+
+  .d01 { animation-delay: 0.08s; }
+  .d02 { animation-delay: 0.13s; }
+  .d03 { animation-delay: 0.18s; }
+  .d04 { animation-delay: 0.23s; }
+  .d05 { animation-delay: 0.28s; }
+  .d06 { animation-delay: 0.33s; }
+  .d07 { animation-delay: 0.38s; }
+  .d08 { animation-delay: 0.43s; }
+  .d09 { animation-delay: 0.48s; }
+  .d10 { animation-delay: 0.53s; }
+  .d11 { animation-delay: 0.58s; }
+  .d12 { animation-delay: 0.63s; }
+  .d13 { animation-delay: 0.68s; }
+  .d14 { animation-delay: 0.73s; }
+  .d15 { animation-delay: 0.78s; }
+  .d16 { animation-delay: 0.83s; }
+  .d17 { animation-delay: 0.88s; }
+  .d18 { animation-delay: 0.93s; }
+  .d19 { animation-delay: 0.98s; }
+  .d20 { animation-delay: 1.03s; }
+  .d21 { animation-delay: 1.08s; }
+  .d22 { animation-delay: 1.13s; }
+  .d23 { animation-delay: 1.18s; }
+
+  @media (max-width: 620px) {
+    .page { padding: 40px 20px 72px 20px; }
+    .columns { grid-template-columns: 1fr; gap: 0; }
+    .footer { grid-template-columns: 1fr; gap: 24px 0; }
+    .header { flex-direction: column; gap: 10px; }
+    .header-right { text-align: left; }
+    .header-title { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div class="header-left">
+      <div class="header-title"><em>Canonical</em> Lexicon</div>
+      <span class="header-sub">Phase Realism · Pocket Reference · Synchronized with Documents I–III</span>
+    </div>
+    <div class="header-right">
+      Primary definitions<br>
+      Causal grammar<br>
+      Critical distinctions<br>
+      Governing sentences
+    </div>
+  </div>
+
+  <div class="columns">
+
+    <!-- LEFT COLUMN: Definitions + Causal Grammar -->
+    <div>
+      <span class="col-label d01">Primary Definitions</span>
+
+      <div class="term d02">
+        <div class="term-name">Field</div>
+        <div class="term-def">The continuous generative substrate of reality. Not a container — the prior condition from which all organized expressions arise. <em>Not derived.</em></div>
+      </div>
+
+      <div class="term d03">
+        <div class="term-name">Coherence</div>
+        <div class="term-def">The field's <em>intrinsic capacity</em> for ordered relational organization, expressed dynamically through the primary causal dynamics of alignment, entrainment, and compression, and observable in the enduring patterns of stabilization and persistence. Ontologically a capacity; phenomenologically a process.</div>
+      </div>
+
+      <div class="term d04">
+        <div class="term-name">Phase</div>
+        <div class="term-def">A <em>regime of organized expression</em> within the field. The field under a particular mode of self-organization. Phase boundaries are real transition zones.</div>
+      </div>
+
+      <div class="term d05">
+        <div class="term-name">Distinction</div>
+        <div class="term-def">A real difference between two organized expressions of the field. Not projection, not error. <em>The field's nature expressing itself as articulate form.</em> Distinction is not the field's failure to remain one.</div>
+      </div>
+
+      <div class="term d06">
+        <div class="term-name">Relation</div>
+        <div class="term-def">The mode by which distinct expressions are organized into coherent structure. <em>Prior to substance.</em> Relation preserves distinction while establishing connection — not fusion.</div>
+      </div>
+
+      <div class="term d07">
+        <div class="term-name">Stability</div>
+        <div class="term-def">The <em>resistance</em> of a coherent phase-pattern to perturbation. Not permanence, not rigidity — the depth of a coherence well.</div>
+      </div>
+
+      <div class="term d08">
+        <div class="term-name">Persistence</div>
+        <div class="term-def">The <em>endurance</em> of a stable pattern through time or transformation. Continuation of organizing coherence, not sameness of material.</div>
+      </div>
+
+      <div class="term d09">
+        <div class="term-name">Identity</div>
+        <div class="term-def">The <em>recognizability</em> of a persistent organization across change. Downstream of persistence. Not a primitive — the observable face of coherence held through time.</div>
+      </div>
+
+      <hr class="mid" style="grid-column: unset; margin: 24px 0;">
+
+      <span class="col-label d10">Causal Grammar</span>
+
+      <div class="causal-block d11">
+        <div class="causal-name">Coupling</div>
+        <div class="causal-def">The general condition of causal-relational linkage between phase-organized structures. <em>Umbrella term.</em></div>
+        <div class="causal-sub">
+          <div class="causal-sub-row">
+            <span class="causal-sub-name">Alignment</span>
+            <span class="causal-sub-def">increase of structural compatibility within coupling</span>
+          </div>
+          <div class="causal-sub-row">
+            <span class="causal-sub-name">Entrainment</span>
+            <span class="causal-sub-def">synchronization of phase-patterns within coupling</span>
+          </div>
+          <div class="causal-sub-row">
+            <span class="causal-sub-name">Compression</span>
+            <span class="causal-sub-def">intensification of relational constraint toward reorganization</span>
+          </div>
+          <div class="causal-sub-row" style="margin-top:6px; padding-top:6px; border-top: 1px solid rgba(200,185,154,0.35);">
+            <span class="causal-sub-name" style="font-style:normal; color: var(--margin-note);">→ Phase transition</span>
+            <span class="causal-sub-def">threshold event of reorganization into a new regime</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: Critical Distinctions -->
+    <div>
+      <span class="col-label d12">Critical Distinctions</span>
+
+      <div class="distinction d13">
+        <span class="dist-a">Field</span>
+        <span class="dist-sep">≠</span>
+        <span class="dist-note">Phase — the field is the substrate; a phase is a mode of organization within it</span>
+      </div>
+
+      <div class="distinction d14">
+        <span class="dist-a">Phase</span>
+        <span class="dist-sep">≠</span>
+        <span class="dist-note">Coherence — a phase is a regime; coherence is the capacity that makes phases possible</span>
+      </div>
+
+      <div class="distinction d15">
+        <span class="dist-a">Coherence</span>
+        <span class="dist-sep">≠</span>
+        <span class="dist-note">Stability — coherence is the ordering capacity; stability is resistance of a specific configuration</span>
+      </div>
+
+      <div class="distinction d16">
+        <span class="dist-a">Stability</span>
+        <span class="dist-sep">≠</span>
+        <span class="dist-note">Persistence — stability is structural resistance at a moment; persistence is continuation across time</span>
+      </div>
+
+      <div class="distinction d17">
+        <span class="dist-a">Persistence</span>
+        <span class="dist-sep">≠</span>
+        <span class="dist-note">Identity — persistence is endurance of pattern; identity is recognizability across change</span>
+      </div>
+
+      <div class="distinction d18">
+        <span class="dist-a">Relation</span>
+        <span class="dist-sep">≠</span>
+        <span class="dist-note">Fusion — relation preserves distinction while connecting; fusion erases the terms</span>
+      </div>
+
+      <div class="distinction d19">
+        <span class="dist-a">Distinction</span>
+        <span class="dist-sep">≠</span>
+        <span class="dist-note">Separation — distinction is real difference within the field; separation implies sealed-off independence</span>
+      </div>
+
+      <hr class="mid" style="grid-column: unset; margin: 24px 0;">
+
+      <span class="col-label d20">Signature Inversion</span>
+
+      <div style="padding: 16px 20px; border: 1px solid var(--rule); background: var(--paper-deep); opacity:0; animation: reveal 0.5s ease 1.03s forwards;">
+        <p style="font-family: 'Cormorant Garamond', serif; font-size: 18px; line-height: 1.6; color: var(--ink); margin-bottom: 8px;">Difference is not the opposite of unity.<br>Difference is how unity becomes real.</p>
+        <p style="font-family: 'Inconsolata', monospace; font-size: 10px; letter-spacing: 0.15em; color: var(--faint); text-transform: uppercase;">Phase Realism · Document I</p>
+      </div>
+
+      <div style="margin-top: 20px; opacity:0; animation: reveal 0.5s ease 1.08s forwards;">
+        <span style="font-family: 'Inconsolata', monospace; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--faint); display: block; margin-bottom: 10px;">Framework Stack</span>
+        <div style="font-size: 14px; line-height: 2; color: var(--margin-note);">
+          <div style="display:flex; gap: 10px; align-items: baseline;">
+            <span style="font-family:'Inconsolata',monospace; font-size:9px; color:var(--accent); letter-spacing:0.1em; text-transform:uppercase; min-width:80px;">Ontology</span>
+            <span style="font-family:'Cormorant Garamond',serif; font-size:15px; color:var(--ink);">Phase Realism</span>
+          </div>
+          <div style="display:flex; gap: 10px; align-items: baseline;">
+            <span style="font-family:'Inconsolata',monospace; font-size:9px; color:var(--accent); letter-spacing:0.1em; text-transform:uppercase; min-width:80px;">Mechanism</span>
+            <span style="font-family:'Cormorant Garamond',serif; font-size:15px; color:var(--ink);">Resonant Physics</span>
+          </div>
+          <div style="display:flex; gap: 10px; align-items: baseline;">
+            <span style="font-family:'Inconsolata',monospace; font-size:9px; color:var(--accent); letter-spacing:0.1em; text-transform:uppercase; min-width:80px;">Development</span>
+            <span style="font-family:'Cormorant Garamond',serif; font-size:15px; color:var(--ink);">Harmonic Realization Theory</span>
+          </div>
+          <div style="display:flex; gap: 10px; align-items: baseline;">
+            <span style="font-family:'Inconsolata',monospace; font-size:9px; color:var(--accent); letter-spacing:0.1em; text-transform:uppercase; min-width:80px;">Metrics</span>
+            <span style="font-family:'Cormorant Garamond',serif; font-size:15px; color:var(--ink);">ΔHV Framework</span>
+          </div>
+          <div style="display:flex; gap: 10px; align-items: baseline;">
+            <span style="font-family:'Inconsolata',monospace; font-size:9px; color:var(--accent); letter-spacing:0.1em; text-transform:uppercase; min-width:80px;">Epistemology</span>
+            <span style="font-family:'Cormorant Garamond',serif; font-size:15px; color:var(--ink);">Convergent Coherence Analysis</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer: governing sentences -->
+  <div class="footer d22">
+    <div class="footer-item">
+      <span class="footer-label">Thesis</span>
+      <p class="footer-text">Phase Realism holds that reality is a continuous generative field whose distinctions are real as phase-stable organizations of relation.</p>
+    </div>
+    <div class="footer-item">
+      <span class="footer-label">Challenge Sentence · Governing Filter</span>
+      <p class="footer-text">If a claim in this library cannot be expressed as a consequence, formalization, or application of phase-stable relational reality, it does not belong in the core framework.</p>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

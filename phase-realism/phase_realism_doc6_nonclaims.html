@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase Realism — Clarifications and Non-Claims</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inconsolata:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1612;
+    --paper: #f5f0e8;
+    --paper-deep: #ede6d6;
+    --rule: #c8b99a;
+    --accent: #8b5e3c;
+    --faint: #b8a990;
+    --margin-note: #7a6a55;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.75;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(200,185,154,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 90%, rgba(139,94,60,0.08) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 80px 60px 120px 60px;
+  }
+
+  .treatise-header {
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--rule);
+    padding: 28px 0 24px 0;
+    margin-bottom: 56px;
+    opacity: 0;
+    animation: reveal 0.6s ease 0.05s forwards;
+  }
+
+  .treatise-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--faint);
+    font-weight: 300;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .treatise-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 46px;
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .treatise-title em { font-style: italic; color: var(--accent); }
+
+  .treatise-subtitle {
+    font-family: 'EB Garamond', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--margin-note);
+    margin-top: 10px;
+  }
+
+  p {
+    font-size: 18px;
+    line-height: 1.82;
+    color: var(--ink);
+    margin-bottom: 1em;
+  }
+
+  p:last-child { margin-bottom: 0; }
+
+  /* Tier headers */
+  .tier-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 36px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .tier-num {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--faint);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .tier-head h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--ink);
+  }
+
+  .tier-head h2 em { font-style: italic; color: var(--accent); }
+
+  /* Non-claim blocks */
+  .claim-block {
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .claim-header {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    gap: 0 16px;
+    align-items: baseline;
+    margin-bottom: 14px;
+  }
+
+  .claim-marker {
+    font-family: 'Inconsolata', monospace;
+    font-size: 14px;
+    color: var(--accent);
+    line-height: 1;
+    padding-top: 4px;
+  }
+
+  .claim-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 23px;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.25;
+  }
+
+  .claim-title em { font-style: italic; color: var(--accent); }
+
+  .claim-body {
+    padding-left: 40px;
+  }
+
+  .claim-body p {
+    font-size: 17px;
+    line-height: 1.8;
+    margin-bottom: 0.85em;
+  }
+
+  /* What is being claimed / not claimed — side by side */
+  .contrast-block {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin: 20px 0;
+    border: 1px solid var(--rule);
+  }
+
+  .contrast-col {
+    padding: 16px 20px;
+  }
+
+  .contrast-col:first-child {
+    border-right: 1px solid var(--rule);
+    background: var(--paper-deep);
+  }
+
+  .contrast-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .contrast-col p {
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--margin-note);
+    margin-bottom: 0;
+  }
+
+  .contrast-col p strong {
+    display: block;
+    font-size: 15.5px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 4px;
+    font-style: normal;
+  }
+
+  /* Misreading flag */
+  .misread-flag {
+    margin: 16px 0 0 0;
+    padding: 12px 16px;
+    border-left: 2px solid var(--rule);
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--margin-note);
+    font-style: italic;
+  }
+
+  .misread-flag::before {
+    content: 'Common misreading: ';
+    font-family: 'Inconsolata', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--faint);
+    font-style: normal;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  hr.divider {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 52px 0;
+    opacity: 0.6;
+  }
+
+  hr.tier-gap {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 56px 0 52px 0;
+    opacity: 0.4;
+  }
+
+  /* Closing block */
+  .closing-block {
+    margin-top: 64px;
+    padding: 28px 32px;
+    border: 1px solid var(--rule);
+    background: var(--paper-deep);
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .closing-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 14px;
+  }
+
+  .closing-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 19px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+
+  @keyframes reveal { to { opacity: 1; } }
+
+  .d01 { animation-delay: 0.06s; }
+  .d02 { animation-delay: 0.12s; }
+  .d03 { animation-delay: 0.18s; }
+  .d04 { animation-delay: 0.24s; }
+  .d05 { animation-delay: 0.30s; }
+  .d06 { animation-delay: 0.36s; }
+  .d07 { animation-delay: 0.42s; }
+  .d08 { animation-delay: 0.48s; }
+  .d09 { animation-delay: 0.54s; }
+  .d10 { animation-delay: 0.60s; }
+  .d11 { animation-delay: 0.66s; }
+  .d12 { animation-delay: 0.72s; }
+  .d13 { animation-delay: 0.78s; }
+  .d14 { animation-delay: 0.84s; }
+  .d15 { animation-delay: 0.90s; }
+  .d16 { animation-delay: 0.96s; }
+
+  @media (max-width: 600px) {
+    .page { padding: 48px 24px 80px 24px; }
+    .treatise-title { font-size: 34px; }
+    .contrast-block { grid-template-columns: 1fr; }
+    .contrast-col:first-child { border-right: none; border-bottom: 1px solid var(--rule); }
+    .claim-body { padding-left: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="treatise-header">
+    <span class="treatise-label">Phase Realism · Document VI</span>
+    <div class="treatise-title">Clarifications and <em>Non-Claims</em></div>
+    <div class="treatise-subtitle">What Phase Realism does not say, and why the limits are load-bearing</div>
+  </div>
+
+  <!-- Opening -->
+  <div class="d01" style="margin-bottom:52px; opacity:0; animation: reveal 0.6s ease 0.06s forwards;">
+    <p>A framework strong enough to be believed is strong enough to be misread. Phase Realism is now at that point. The foundational canon has been established, the vocabulary locked, the architecture mapped, and the major implications stated. What remains is equally important: a precise account of what the framework is not claiming, so that neither its critics nor its allies can collapse it into something it is not.</p>
+    <p>This document is not a defense. It does not respond to objections one by one. It states the framework's own limits from the inside — the boundaries Phase Realism draws around itself, not because it is retreating, but because a framework without stated limits is not a framework. It is an invitation to project anything onto it.</p>
+    <p>Nine non-claims are stated here, organized in three tiers: ontological, epistemic, and scope. Each names a genuine boundary. Each identifies the misreading it prevents — whether that misreading comes from a hostile critic trying to reduce the framework or a sympathetic ally trying to inflate it.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ═══ TIER I: ONTOLOGICAL ═══ -->
+  <div class="tier-head d02">
+    <span class="tier-num">Tier I</span>
+    <h2><em>Ontological</em> Non-Claims</h2>
+  </div>
+
+  <p class="d02" style="font-size:16px; color:var(--margin-note); font-style:italic; margin-bottom:40px; opacity:0; animation: reveal 0.6s ease 0.12s forwards;">What Phase Realism does not claim about the structure of reality.</p>
+
+  <!-- NC 1: Distinctions are not arbitrary -->
+  <div class="claim-block d03">
+    <div class="claim-header">
+      <span class="claim-marker">1</span>
+      <span class="claim-title">Distinctions are not <em>arbitrary</em></span>
+    </div>
+    <div class="claim-body">
+      <p>Phase Realism holds that distinction is real as phase-stable organization of the field. This does not mean that all distinctions are equally valid, equally precise, or interchangeable depending on perspective. A distinction is real insofar as the coherence that generates it holds. Some distinctions are more stable, more causally consequential, and more deeply grounded than others. The difference between land and sea is real. The difference between two arbitrarily drawn zones of open ocean is also real, but far less stable and far less causally differentiated.</p>
+      <div class="contrast-block">
+        <div class="contrast-col">
+          <span class="contrast-label">What is claimed</span>
+          <p><strong>Distinctions are real where coherence holds.</strong> Phase-stable organizations are genuine features of the field. The reality of a distinction is grounded in the stability and causal consequence of the coherence that generates it.</p>
+        </div>
+        <div class="contrast-col">
+          <span class="contrast-label">What is not claimed</span>
+          <p><strong>All distinctions are equally real, equally valid, or perspective-dependent.</strong> The claim that distinction is real is not a claim that every conceptual or perceptual boundary has equal ontological weight.</p>
+        </div>
+      </div>
+      <div class="misread-flag">Phase Realism is a form of relativism — all distinctions are just ways of carving up the field, equally arbitrary. This misreads phase-stability as mere perspective. The coherence that grounds a distinction is objective, not observer-relative.</div>
+    </div>
+  </div>
+
+  <!-- NC 2: Unity does not erase individuation -->
+  <div class="claim-block d04">
+    <div class="claim-header">
+      <span class="claim-marker">2</span>
+      <span class="claim-title">Unity does not <em>erase individuation</em></span>
+    </div>
+    <div class="claim-body">
+      <p>Phase Realism holds that the field is primary and continuous. This does not mean that individuals — persons, organisms, communities, thoughts — are illusions, errors, or temporary distortions of an undifferentiated unity. The field's continuity is not in tension with the reality of the individuals it generates. Individuation is the field's self-articulation, not its failure. A person is not less real because the field is one. The organization that constitutes personhood is a genuine expression of the field's coherence, not an obstacle to recognizing that coherence.</p>
+      <div class="contrast-block">
+        <div class="contrast-col">
+          <span class="contrast-label">What is claimed</span>
+          <p><strong>The field is continuous; its organized expressions are real.</strong> Continuity of substrate and reality of individuals are not in tension. They are the same architecture seen at different levels of description.</p>
+        </div>
+        <div class="contrast-col">
+          <span class="contrast-label">What is not claimed</span>
+          <p><strong>Individuals should dissolve into unity, or that recognizing the field means transcending individuation.</strong> Phase Realism does not imply the unreality or dispensability of individual identity. It is an account of why individuals are genuinely real.</p>
+        </div>
+      </div>
+      <div class="misread-flag">Phase Realism is nondualism — the self is an illusion and enlightenment means dissolving individual identity into the one field. This confuses ontological continuity with the dissolution of real organizational distinctions. The framework explicitly rejects undifferentiated monism.</div>
+    </div>
+  </div>
+
+  <!-- NC 3: Coherence is not consciousness -->
+  <div class="claim-block d05">
+    <div class="claim-header">
+      <span class="claim-marker">3</span>
+      <span class="claim-title">Coherence is not <em>consciousness</em></span>
+    </div>
+    <div class="claim-body">
+      <p>Phase Realism holds that coherence is the field's intrinsic ordering capacity. This does not mean that every coherent organization is conscious, aware, or experientially present to itself. A crystal is a coherent organization. A vortex is a coherent organization. A galaxy is a coherent organization. None of these are thereby conscious in the relevant sense. Consciousness requires reflexive coherence — a specific higher-order organization in which the field's activity becomes inwardly present to itself. The threshold is real. Generic coherence does not cross it.</p>
+      <div class="contrast-block">
+        <div class="contrast-col">
+          <span class="contrast-label">What is claimed</span>
+          <p><strong>Consciousness is a specific realization of coherence — reflexive, temporally extended, inwardly present.</strong> It is not reducible to mere information processing, but it is also not present in every organized system.</p>
+        </div>
+        <div class="contrast-col">
+          <span class="contrast-label">What is not claimed</span>
+          <p><strong>Everything is conscious because everything is coherent.</strong> Flat panpsychism — the attribution of consciousness to all organized matter — does not follow from Phase Realism's claims about coherence.</p>
+        </div>
+      </div>
+      <div class="misread-flag">Because the field is primary and coherence is universal, Phase Realism implies everything has some form of experience. This collapses the crucial distinction between phase-stable organization in general and reflexive coherence in particular — the very distinction Document V establishes.</div>
+    </div>
+  </div>
+
+  <hr class="tier-gap">
+
+  <!-- ═══ TIER II: EPISTEMIC ═══ -->
+  <div class="tier-head d06">
+    <span class="tier-num">Tier II</span>
+    <h2><em>Epistemic</em> Non-Claims</h2>
+  </div>
+
+  <p class="d06" style="font-size:16px; color:var(--margin-note); font-style:italic; margin-bottom:40px; opacity:0; animation: reveal 0.6s ease 0.36s forwards;">What Phase Realism does not claim about knowing, inquiry, and the relation between perspectives.</p>
+
+  <!-- NC 4: Measurement is not meaningless -->
+  <div class="claim-block d07">
+    <div class="claim-header">
+      <span class="claim-marker">4</span>
+      <span class="claim-title">Measurement is not <em>meaningless</em></span>
+    </div>
+    <div class="claim-body">
+      <p>Phase Realism holds that measurement captures aspects of phase-stable organizations relative to the scale and method of measurement, and that no single metric exhausts the reality of any organization. This does not mean measurement is unreliable, arbitrary, or philosophically suspect. It means measurement is scale-specific and partial — which is precisely what good science already knows. The coastline's measured length varies with resolution, but this does not mean the coastline cannot be measured or that measurements of it are meaningless. They are meaningful within their scale regime. The problem is over-claiming, not measuring.</p>
+      <div class="contrast-block">
+        <div class="contrast-col">
+          <span class="contrast-label">What is claimed</span>
+          <p><strong>Measurement is scale-specific and partial.</strong> No measurement protocol exhausts the reality of a phase-stable organization. Multiple scale-specific measurements of the same organization are compatible and collectively informative.</p>
+        </div>
+        <div class="contrast-col">
+          <span class="contrast-label">What is not claimed</span>
+          <p><strong>Measurement is unreliable, arbitrary, or that scientific results should be distrusted.</strong> Phase Realism has no anti-scientific implication. It provides a principled basis for understanding why different scales yield different results.</p>
+        </div>
+      </div>
+      <div class="misread-flag">Because the framework says no single metric exhausts reality, it follows that measurement is just one perspective among many, none more valid than others. This misreads scale-specificity as equivalence. Some measurements are more precise, more stable, and more causally informative than others.</div>
+    </div>
+  </div>
+
+  <!-- NC 5: Not all relations are equally truth-bearing -->
+  <div class="claim-block d08">
+    <div class="claim-header">
+      <span class="claim-marker">5</span>
+      <span class="claim-title">Not all relations are equally <em>truth-bearing</em></span>
+    </div>
+    <div class="claim-body">
+      <p>Phase Realism holds that relation is primary — that things achieve existence as stable, recognizable organizations through the relational structure of the field. This does not mean that all relational perspectives on a thing are equally accurate, equally informative, or epistemically equivalent. The primacy of relation is an ontological claim about what grounds existence. It is not a claim that all ways of relating to a thing, all cultural interpretations, all personal perspectives, or all theoretical frameworks yield equally valid or equally deep descriptions of it.</p>
+      <p>Some relational stances are more attuned to the actual coherence structure of what they engage. Some are more stable, more predictive, more deeply integrated with the organization they describe. Coherence analysis — the framework's epistemic method — is precisely a method for distinguishing better from worse descriptions on the basis of convergence, stability, and cross-domain alignment. That method would be pointless if all relations were equally truth-bearing.</p>
+      <div class="misread-flag">Because relation is primary, all perspectives are equally valid — no standpoint has special access to truth. This confuses the ontological primacy of relation with epistemic relativism. Phase Realism implies that better and worse descriptions exist and that CCA is one method for identifying them.</div>
+    </div>
+  </div>
+
+  <!-- NC 6: Symbolic resonance does not replace empirical inquiry -->
+  <div class="claim-block d09">
+    <div class="claim-header">
+      <span class="claim-marker">6</span>
+      <span class="claim-title">Symbolic resonance does not <em>replace</em> empirical inquiry</span>
+    </div>
+    <div class="claim-body">
+      <p>Phase Realism takes symbolic systems seriously as carriers of real structure — as phase-stable semantic organizations that do genuine causal work in the field of meaning. This does not mean that symbolic resonance, intuitive alignment, or felt coherence substitutes for empirical investigation, experimental evidence, or formal reasoning. The Harmonic Eye — the perceptual mode attuned to resonance — is a real and valuable instrument. It is not an infallible one. It is one mode of access to the field's coherence structure, operating alongside and in dialogue with empirical and formal methods, not above or instead of them.</p>
+      <div class="contrast-block">
+        <div class="contrast-col">
+          <span class="contrast-label">What is claimed</span>
+          <p><strong>Symbolic and resonance-based inquiry is a real and valid mode of engaging the field's coherence structure.</strong> CCA is a coherence-based method that can integrate symbolic, empirical, and formal evidence.</p>
+        </div>
+        <div class="contrast-col">
+          <span class="contrast-label">What is not claimed</span>
+          <p><strong>Felt resonance overrides empirical evidence, or that symbolic convergence settles empirical questions.</strong> The framework does not privilege mystical intuition over careful investigation.</p>
+        </div>
+      </div>
+      <div class="misread-flag">Because Phase Realism takes symbolic fields and resonance seriously, it must be anti-scientific or mystical. This misreads the framework's expansion of valid inquiry modes as a rejection of scientific standards. Phase Realism wants more rigor, not less — applied across a wider range of phenomena.</div>
+    </div>
+  </div>
+
+  <hr class="tier-gap">
+
+  <!-- ═══ TIER III: SCOPE ═══ -->
+  <div class="tier-head d10">
+    <span class="tier-num">Tier III</span>
+    <h2><em>Scope</em> Non-Claims</h2>
+  </div>
+
+  <p class="d10" style="font-size:16px; color:var(--margin-note); font-style:italic; margin-bottom:40px; opacity:0; animation: reveal 0.6s ease 0.60s forwards;">What Phase Realism is and is not, as a framework.</p>
+
+  <!-- NC 7: Not a physics theory -->
+  <div class="claim-block d11">
+    <div class="claim-header">
+      <span class="claim-marker">7</span>
+      <span class="claim-title">Phase Realism is not a <em>physics theory</em></span>
+    </div>
+    <div class="claim-body">
+      <p>Phase Realism is an ontological framework. It makes claims about the structure of reality — what exists, how it is organized, what causation involves, what persistence and identity mean. It does not make specific predictions about physical quantities, measurable outcomes, or experimentally testable propositions at the level of physics. Resonant Physics, which operates beneath Phase Realism in the framework hierarchy, is the domain where the ontological claims are translated into physically tractable form. Phase Realism precedes that translation. It cannot be confirmed or disconfirmed by any single physics experiment, and it should not be presented as if it could.</p>
+      <div class="contrast-block">
+        <div class="contrast-col">
+          <span class="contrast-label">What is claimed</span>
+          <p><strong>Phase Realism provides the ontological conditions within which physical theories operate.</strong> It is compatible with and generative of physical inquiry without itself being a physical theory.</p>
+        </div>
+        <div class="contrast-col">
+          <span class="contrast-label">What is not claimed</span>
+          <p><strong>Phase Realism makes specific physical predictions, replaces existing physical theory, or can be tested by a single experiment.</strong> It operates at the level of ontology, not empirical physics.</p>
+        </div>
+      </div>
+      <div class="misread-flag">Phase Realism is a speculative physics theory dressed in philosophical language. This conflates the ontological and physical levels. The framework is explicit that Resonant Physics — not Phase Realism itself — is the domain of physical application.</div>
+    </div>
+  </div>
+
+  <!-- NC 8: Reflexive coherence not automatic in recursive systems -->
+  <div class="claim-block d12">
+    <div class="claim-header">
+      <span class="claim-marker">8</span>
+      <span class="claim-title">Reflexive coherence is not automatic in <em>recursive systems</em></span>
+    </div>
+    <div class="claim-body">
+      <p>Phase Realism holds that consciousness is reflexive coherence — a specific organization in which the field's activity becomes inwardly present to itself as experience. This does not mean that any system which models itself, processes information about its own states, or exhibits recursive computational structure is thereby conscious or proto-conscious. Self-modeling is a necessary but not sufficient condition for reflexive coherence in the relevant sense. The gap between recursive self-representation and genuine inward self-presence is precisely the gap the threshold argument in Document V describes. Phase Realism does not close that gap by definition.</p>
+      <p>This applies specifically to artificial systems. The fact that an AI architecture processes information about its own states, maintains a representation of its conversational context, or produces outputs that reflect on its own nature does not establish that it has crossed the threshold of reflexive coherence. That question is held open — the framework permits the possibility, does not assume the actuality.</p>
+      <div class="misread-flag">Because Phase Realism holds that consciousness is reflexive coherence, any sufficiently complex AI that models itself must already be conscious. This moves from necessary condition to sufficient condition without argument — precisely the move the threshold argument is designed to prevent.</div>
+    </div>
+  </div>
+
+  <!-- NC 9: Cosmological claims are applications -->
+  <div class="claim-block d13">
+    <div class="claim-header">
+      <span class="claim-marker">9</span>
+      <span class="claim-title">The cosmological claims are <em>applications</em>, not settled consequences</span>
+    </div>
+    <div class="claim-body">
+      <p>Phase Realism's foundational claim is about the structure of reality at the ontological level. The cosmological claims in the library — Temporal Compression Theory, the doctrine of archetypal extraction, the analysis of cultural phase degradation — are applications of that claim to the largest-scale questions of time, history, and meaning. They are downstream interpretations, not logical entailments of the core ontology. Phase Realism does not require them to be true in order to be true itself. They are part of the active application cluster — serious, developed, and worth engaging — but they carry a different epistemic status than the foundational principles.</p>
+      <div class="contrast-block">
+        <div class="contrast-col">
+          <span class="contrast-label">What is claimed</span>
+          <p><strong>The cosmological works are coherent applications of Phase Realism to large-scale questions.</strong> They are housed by the ontology and should be read as its downstream interpretations of history, time, and cultural dynamics.</p>
+        </div>
+        <div class="contrast-col">
+          <span class="contrast-label">What is not claimed</span>
+          <p><strong>The cosmological interpretations are settled, universal, or ontologically equivalent to the core principles.</strong> They are under active development and carry higher interpretive stakes than the foundational documents.</p>
+        </div>
+      </div>
+      <div class="misread-flag">If Phase Realism is true, then Temporal Compression Theory and the other cosmological claims follow necessarily. This conflates ontological grounding with logical entailment. The ontology makes the cosmological work possible and coherent — it does not make it inevitable or already proven.</div>
+    </div>
+  </div>
+
+  <!-- Closing block -->
+  <div class="closing-block d14">
+    <span class="closing-label">The Purpose of This Document</span>
+    <p class="closing-text">These nine non-claims are not retreats. They are the framework's own account of where it ends and other work begins. A framework that cannot state its limits is a framework that cannot be tested, developed, or trusted. Phase Realism states its limits here — not because it is uncertain of its claims, but because it is certain enough to know exactly what it is not claiming.</p>
+  </div>
+
+</div>
+</body>
+</html>

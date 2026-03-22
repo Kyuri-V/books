@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase Realism — Definitions and First Principles</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inconsolata:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1612;
+    --paper: #f5f0e8;
+    --paper-deep: #ede6d6;
+    --paper-mid: #f0ead8;
+    --rule: #c8b99a;
+    --accent: #8b5e3c;
+    --faint: #b8a990;
+    --margin-note: #7a6a55;
+    --term-bg: #eee7d6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.75;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(200,185,154,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 90%, rgba(139,94,60,0.08) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 80px 60px 120px 60px;
+  }
+
+  /* Header */
+  .treatise-header {
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--rule);
+    padding: 28px 0 24px 0;
+    margin-bottom: 60px;
+  }
+
+  .treatise-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--faint);
+    font-weight: 300;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .treatise-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 46px;
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .treatise-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .treatise-subtitle {
+    font-family: 'EB Garamond', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--margin-note);
+    margin-top: 10px;
+  }
+
+  /* Governing sentences block */
+  .governing {
+    background: var(--paper-deep);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    padding: 28px 32px;
+    margin-bottom: 64px;
+    opacity: 0;
+    animation: reveal 0.6s ease 0.1s forwards;
+  }
+
+  .governing-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 16px;
+  }
+
+  .governing p {
+    font-family: 'EB Garamond', serif;
+    font-size: 16.5px;
+    line-height: 1.75;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+
+  .governing p:last-child { margin-bottom: 0; }
+
+  .governing strong {
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  /* Section headers */
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 40px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--rule);
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .section-head h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--ink);
+    letter-spacing: 0.01em;
+  }
+
+  .section-head h2 em { font-style: italic; color: var(--accent); }
+
+  .section-num {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--faint);
+    text-transform: uppercase;
+  }
+
+  /* Term entries */
+  .term-block {
+    margin-bottom: 52px;
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .term-header {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 6px;
+  }
+
+  .term-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 400;
+    color: var(--ink);
+    letter-spacing: 0.01em;
+  }
+
+  .term-tag {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--faint);
+    border: 1px solid var(--rule);
+    padding: 2px 8px;
+    border-radius: 2px;
+  }
+
+  .term-definition {
+    font-size: 18px;
+    line-height: 1.8;
+    color: var(--ink);
+    border-left: 2px solid var(--accent);
+    padding-left: 20px;
+    margin-bottom: 14px;
+    font-style: italic;
+  }
+
+  .term-body {
+    font-size: 17px;
+    line-height: 1.8;
+    color: var(--ink);
+    padding-left: 22px;
+  }
+
+  .term-body p { margin-bottom: 0.9em; }
+  .term-body p:last-child { margin-bottom: 0; }
+
+  /* Not-the-same distinctions */
+  .distinction-row {
+    display: grid;
+    grid-template-columns: 1fr 24px 1fr;
+    gap: 0 8px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(200,185,154,0.4);
+    font-size: 16.5px;
+  }
+
+  .distinction-row:last-child { border-bottom: none; }
+
+  .dist-term {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    color: var(--accent);
+    font-style: italic;
+  }
+
+  .dist-sep {
+    font-family: 'Inconsolata', monospace;
+    font-size: 13px;
+    color: var(--faint);
+    text-align: center;
+  }
+
+  .dist-note {
+    font-size: 15.5px;
+    color: var(--margin-note);
+    line-height: 1.5;
+  }
+
+  /* Principles */
+  .principle-block {
+    margin-bottom: 44px;
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .principle-header {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 0 16px;
+    align-items: baseline;
+    margin-bottom: 10px;
+  }
+
+  .p-num {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-align: right;
+    padding-top: 4px;
+  }
+
+  .p-claim {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+
+  .p-claim em { font-style: italic; color: var(--accent); }
+
+  .principle-body {
+    padding-left: 60px;
+    font-size: 17px;
+    line-height: 1.8;
+    color: var(--ink);
+  }
+
+  .principle-body p { margin-bottom: 0.85em; }
+  .principle-body p:last-child { margin-bottom: 0; }
+
+  /* Challenge sentence footer */
+  .challenge-block {
+    margin-top: 72px;
+    padding-top: 32px;
+    border-top: 2px solid var(--ink);
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .challenge-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 14px;
+  }
+
+  .challenge-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+
+  hr.divider {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 56px 0;
+    opacity: 0.6;
+  }
+
+  @keyframes reveal {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Staggered animation delays */
+  .d01 { animation-delay: 0.05s; }
+  .d02 { animation-delay: 0.15s; }
+  .d03 { animation-delay: 0.22s; }
+  .d04 { animation-delay: 0.28s; }
+  .d05 { animation-delay: 0.34s; }
+  .d06 { animation-delay: 0.40s; }
+  .d07 { animation-delay: 0.46s; }
+  .d08 { animation-delay: 0.52s; }
+  .d09 { animation-delay: 0.58s; }
+  .d10 { animation-delay: 0.64s; }
+  .d11 { animation-delay: 0.70s; }
+  .d12 { animation-delay: 0.76s; }
+  .d13 { animation-delay: 0.82s; }
+  .d14 { animation-delay: 0.88s; }
+  .d15 { animation-delay: 0.94s; }
+  .d16 { animation-delay: 1.00s; }
+  .d17 { animation-delay: 1.06s; }
+  .d18 { animation-delay: 1.12s; }
+  .d19 { animation-delay: 1.18s; }
+  .d20 { animation-delay: 1.24s; }
+
+  @media (max-width: 600px) {
+    .page { padding: 48px 24px 80px 24px; }
+    .treatise-title { font-size: 34px; }
+    .distinction-row { grid-template-columns: 1fr; gap: 2px; }
+    .dist-sep { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="treatise-header">
+    <span class="treatise-label">Phase Realism · Document II</span>
+    <div class="treatise-title"><em>Definitions</em> and First Principles</div>
+    <div class="treatise-subtitle">The controlled vocabulary and foundational claims of the framework</div>
+  </div>
+
+  <!-- Governing sentences -->
+  <div class="governing">
+    <span class="governing-label">Governing Sentences</span>
+    <p><strong>Thesis:</strong> Phase Realism holds that reality is a continuous generative field whose distinctions are real as phase-stable organizations of relation.</p>
+    <p><strong>Challenge:</strong> If a claim in this library cannot be expressed as a consequence, formalization, or application of phase-stable relational reality, it does not belong in the core framework.</p>
+  </div>
+
+  <!-- Part I: Lexicon -->
+  <div class="section-head d01">
+    <span class="section-num">Part I</span>
+    <h2>The Controlled <em>Lexicon</em></h2>
+  </div>
+
+  <p style="font-size:16.5px; color:var(--margin-note); font-style:italic; margin-bottom:48px; opacity:0; animation: reveal 0.6s ease 0.18s forwards;">Each term below carries one primary meaning within this framework. Adjacent terms are defined in explicit relation to one another to prevent conceptual drift across documents.</p>
+
+  <!-- Field -->
+  <div class="term-block d02">
+    <div class="term-header">
+      <span class="term-name">Field</span>
+      <span class="term-tag">Primary</span>
+    </div>
+    <p class="term-definition">The continuous generative substrate of reality — not a container in which things exist, but the prior condition from which all things arise as organized expressions.</p>
+    <div class="term-body">
+      <p>The field is not material, though matter is one of its expressions. It is not mental, though mind is one of its expressions. It is not void — it is generative. The field does not require external input to produce structure. Its nature is to articulate.</p>
+      <p>In Phase Realism, the field is the one thing that is not derived. Everything else — phase, coherence, distinction, identity — is a description of what the field does or becomes when its intrinsic ordering capacity organizes into stable form.</p>
+    </div>
+  </div>
+
+  <!-- Coherence -->
+  <div class="term-block d03">
+    <div class="term-header">
+      <span class="term-name">Coherence</span>
+      <span class="term-tag">Capacity · Process</span>
+    </div>
+    <p class="term-definition">The field's intrinsic capacity for ordered relational organization, expressed dynamically through processes of stabilization, coupling, entrainment, and persistence.</p>
+    <div class="term-body">
+      <p>Coherence is not imposed on the field from outside, nor is it an accident that sometimes occurs within it. It is what the field intrinsically is — the power of ordered relation as its native mode.</p>
+      <p>Ontologically, coherence is a capacity: it belongs to what the field is. Phenomenologically, coherence appears as process: the observable events of alignment, stabilization, entrainment, transformation, and dissolution that unfold in time.</p>
+    </div>
+  </div>
+
+  <!-- Phase -->
+  <div class="term-block d04">
+    <div class="term-header">
+      <span class="term-name">Phase</span>
+      <span class="term-tag">Regime</span>
+    </div>
+    <p class="term-definition">A regime or mode of organized expression within the field — a stable configuration in which a particular set of relational patterns holds.</p>
+    <div class="term-body">
+      <p>A phase is not the field itself. It is the field under a particular organization. Phases are real — they have distinct properties, boundaries, and behaviors. But they are not substances separate from the field. They are the field in a particular mode of self-organization.</p>
+      <p>Phase boundaries are real transition zones where one organized regime gives way to another. The coastline is a phase boundary. So is the edge of a cell membrane, the threshold of ignition, the moment of freezing. Phase boundaries are not illusions — they are the places where the field's coherence shifts register.</p>
+    </div>
+  </div>
+
+  <!-- Distinction -->
+  <div class="term-block d05">
+    <div class="term-header">
+      <span class="term-name">Distinction</span>
+      <span class="term-tag">Real Event</span>
+    </div>
+    <p class="term-definition">A real difference between two organized expressions of the field — not a projection, not an error, but a genuine feature of the field's self-articulation.</p>
+    <div class="term-body">
+      <p>Distinction is not separation. Two things can be genuinely distinct without being sealed off from one another. A wave and a trough are distinct — they have different properties, different behaviors, different locations — and yet they are both expressions of the same water, inseparable in their generation.</p>
+      <p>Phase Realism asserts that distinction is how the field becomes articulate. Distinction is not the field's failure to remain one. It is the field's nature expressing itself as articulate form.</p>
+    </div>
+  </div>
+
+  <!-- Relation -->
+  <div class="term-block d06">
+    <div class="term-header">
+      <span class="term-name">Relation</span>
+      <span class="term-tag">Primary Mode</span>
+    </div>
+    <p class="term-definition">The mode by which distinct expressions of the field are organized into coherent structure — prior to substance, prior to identity, prior to measurement.</p>
+    <div class="term-body">
+      <p>Relation is not secondary. In most inherited frameworks, things exist first and then relate. Phase Realism inverts this: relation is the condition by which things achieve existence as stable, recognizable organizations. A thing is real because it holds its relational position within the field.</p>
+      <p>Relation is not fusion. Fusion would erase the distinction between the related terms. Relation preserves distinction while establishing connection. It is the structure of the between — the actual architecture of how the field holds itself apart and together simultaneously.</p>
+      <p>A cell holds its identity through the relational organization of its membrane, its chemistry, its position — not through any single substance it contains. The substance turns over. The relational organization persists.</p>
+    </div>
+  </div>
+
+  <!-- Stability -->
+  <div class="term-block d07">
+    <div class="term-header">
+      <span class="term-name">Stability</span>
+      <span class="term-tag">Resistance</span>
+    </div>
+    <p class="term-definition">The resistance of a coherent phase-pattern to perturbation — the capacity of an organized expression to maintain its configuration under pressure.</p>
+    <div class="term-body">
+      <p>Stability is not permanence. A highly stable configuration may still transform, dissolve, or transition into a new phase. Stability describes the depth of a coherence well — how much perturbation is required before the pattern reorganizes.</p>
+      <p>Stability is also not rigidity. Living systems maintain high coherence precisely by remaining dynamically responsive rather than frozen. The most stable organizations are often the most adaptive — they resist dissolution not by refusing change but by absorbing perturbation without losing their organizing pattern.</p>
+    </div>
+  </div>
+
+  <!-- Persistence -->
+  <div class="term-block d08">
+    <div class="term-header">
+      <span class="term-name">Persistence</span>
+      <span class="term-tag">Temporal</span>
+    </div>
+    <p class="term-definition">The endurance of a stable phase-pattern through time or transformation — the continuation of coherent organization across successive states.</p>
+    <div class="term-body">
+      <p>Persistence is distinct from stability. Stability describes structural resistance at a moment. Persistence describes the same organization continuing to exist across time — through change, through disruption, through the replacement of constituent elements.</p>
+      <p>A river persists even as every molecule of water in it is replaced. A living body persists through complete cellular turnover. A tradition persists through the deaths of all its original practitioners. Persistence is not about the sameness of material. It is about the continuation of the organizing pattern — the coherence that holds form recognizable across transformation.</p>
+    </div>
+  </div>
+
+  <!-- Identity -->
+  <div class="term-block d09">
+    <div class="term-header">
+      <span class="term-name">Identity</span>
+      <span class="term-tag">Recognition</span>
+    </div>
+    <p class="term-definition">The recognizability of a persistent organization across change — the feature by which a coherent pattern remains identifiable despite transformation of its constituent elements or states.</p>
+    <div class="term-body">
+      <p>Identity is not sameness. Sameness would require that nothing change. Identity requires only that the organizing coherence be sufficiently maintained that the pattern remains recognizable as itself — that it holds what is essential to its distinction even as peripheral features shift.</p>
+      <p>Identity is the most downstream term in the chain. It presupposes persistence, which presupposes stability, which presupposes coherence, which is the field's intrinsic capacity. Identity is therefore not a primitive. It is the observable face of coherence held through time.</p>
+    </div>
+  </div>
+
+  <!-- Controlled distinctions table -->
+  <hr class="divider">
+
+  <div class="section-head d10" style="margin-bottom:28px;">
+    <span class="section-num">I.ix</span>
+    <h2>Critical <em>Distinctions</em></h2>
+  </div>
+
+  <p style="font-size:16px; color:var(--margin-note); font-style:italic; margin-bottom:28px; opacity:0; animation: reveal 0.6s ease 0.65s forwards;">The following pairs are frequently conflated. Each distinction must be held precisely across all documents in the framework.</p>
+
+  <div style="opacity:0; animation: reveal 0.6s ease 0.7s forwards; margin-bottom:56px;">
+    <div class="distinction-row">
+      <span class="dist-term">Field</span>
+      <span class="dist-sep">≠</span>
+      <span class="dist-note">Phase — the field is the substrate; a phase is a mode of organization within it</span>
+    </div>
+    <div class="distinction-row">
+      <span class="dist-term">Phase</span>
+      <span class="dist-sep">≠</span>
+      <span class="dist-note">Coherence — a phase is a regime; coherence is the capacity that makes phases possible</span>
+    </div>
+    <div class="distinction-row">
+      <span class="dist-term">Coherence</span>
+      <span class="dist-sep">≠</span>
+      <span class="dist-note">Stability — coherence is the ordering capacity; stability is the resistance of a specific configuration</span>
+    </div>
+    <div class="distinction-row">
+      <span class="dist-term">Stability</span>
+      <span class="dist-sep">≠</span>
+      <span class="dist-note">Persistence — stability is structural resistance at a moment; persistence is continuation across time</span>
+    </div>
+    <div class="distinction-row">
+      <span class="dist-term">Persistence</span>
+      <span class="dist-sep">≠</span>
+      <span class="dist-note">Identity — persistence is the endurance of pattern; identity is its recognizability across change</span>
+    </div>
+    <div class="distinction-row">
+      <span class="dist-term">Relation</span>
+      <span class="dist-sep">≠</span>
+      <span class="dist-note">Fusion — relation preserves distinction while establishing connection; fusion erases the terms</span>
+    </div>
+    <div class="distinction-row">
+      <span class="dist-term">Distinction</span>
+      <span class="dist-sep">≠</span>
+      <span class="dist-note">Separation — distinction is real difference within the field; separation implies sealed-off independence</span>
+    </div>
+  </div>
+
+  <!-- Part II: First Principles -->
+  <div class="section-head d11">
+    <span class="section-num">Part II</span>
+    <h2>First <em>Principles</em></h2>
+  </div>
+
+  <p style="font-size:16.5px; color:var(--margin-note); font-style:italic; margin-bottom:48px; opacity:0; animation: reveal 0.6s ease 0.72s forwards;">The following principles are derived from the definitions above. They are stated as claims, not as axioms requiring external proof. Their warrant is coherence with the whole.</p>
+
+  <div class="principle-block d12">
+    <div class="principle-header">
+      <span class="p-num">P·0</span>
+      <span class="p-claim">The field is <em>generative</em>, not passive</span>
+    </div>
+    <div class="principle-body">
+      <p>The field does not await event. Its nature is to articulate. Coherence is not something that happens to the field under the right conditions — it is what the field intrinsically is. This principle governs all subsequent claims: the framework does not begin from inert matter or neutral potential. It begins from a substrate that is already expressing.</p>
+    </div>
+  </div>
+
+  <div class="principle-block d13">
+    <div class="principle-header">
+      <span class="p-num">P·I</span>
+      <span class="p-claim">Distinction is a <em>real event</em> of the field</span>
+    </div>
+    <div class="principle-body">
+      <p>Distinctions are not imposed on the field from outside, nor are they illusions that dissolve under scrutiny. They are the field's own articulation — real insofar as the coherence that generates them holds. To say a distinction is real is not to say it is absolute or eternal. It is to say it is a genuine feature of how the field is organized at this phase, under this coherence.</p>
+    </div>
+  </div>
+
+  <div class="principle-block d14">
+    <div class="principle-header">
+      <span class="p-num">P·II</span>
+      <span class="p-claim">Relation is <em>prior</em> to substance</span>
+    </div>
+    <div class="principle-body">
+      <p>Things do not exist first and then relate. They achieve existence as stable, recognizable organizations through the relational structure of the field. Substance — the sense of a thing as a discrete, bounded entity — is what relation, held in sufficient coherence, produces.</p>
+    </div>
+  </div>
+
+  <div class="principle-block d15">
+    <div class="principle-header">
+      <span class="p-num">P·III</span>
+      <span class="p-claim">A thing is real because it <em>holds</em>, not because it is sealed</span>
+    </div>
+    <div class="principle-body">
+      <p>The criterion of reality is not isolation but coherent persistence. A thing is real not because it is walled off from everything else, but because its organizing pattern endures — because it achieves stable distinction within the field rather than apart from it. Reality is a property of coherence maintained, not of independence achieved.</p>
+    </div>
+  </div>
+
+  <div class="principle-block d16">
+    <div class="principle-header">
+      <span class="p-num">P·IV</span>
+      <span class="p-claim">Causation includes <em>alignment, entrainment, and compression</em></span>
+    </div>
+    <div class="principle-body">
+      <p>Mechanical impact — one thing pushing another — is a real mode of causation, and Phase Realism does not deny it. But it is not the only mode. The general condition of causal relation between phase-organized structures is coupling. Within coupling, the framework distinguishes three primary causal dynamics: alignment, in which organizational patterns attune to shared structure; entrainment, in which rhythmic or structural linkage draws separate patterns into shared phase; and compression, in which relational constraint intensifies until reorganization becomes inevitable. These dynamics can culminate in phase transition — the threshold event in which an organization crosses into a new phase regime. Phase transition is not always failure or dissolution. It includes transformation, bifurcation, crystallization, and emergence.</p>
+      <p>Coupling is the general condition of causal relation between phase-organized structures. Within coupling, the framework distinguishes three primary causal dynamics — alignment, entrainment, and compression — whose intensification or failure may culminate in phase transition.</p>
+    </div>
+  </div>
+
+  <div class="principle-block d17">
+    <div class="principle-header">
+      <span class="p-num">P·V</span>
+      <span class="p-claim">Measurement captures aspects; <em>no single metric exhausts</em> the real</span>
+    </div>
+    <div class="principle-body">
+      <p>Because phase-stable organizations are real at the scale of their coherence, and because coherence operates across many scales simultaneously, no single measurement protocol captures the whole of any organization. Resolution-dependent description — the coastline whose length varies with scale — does not indicate that the coastline is unreal. It indicates that measurement is a scale-specific operation applied to something that is real across scales. The metric is conditional. The organization is not.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Challenge sentence -->
+  <div class="challenge-block d18">
+    <span class="challenge-label">The Challenge Sentence · Governing Filter for All Framework Documents</span>
+    <p class="challenge-text">If a claim in this library cannot be expressed as a consequence, formalization, or application of phase-stable relational reality, it does not belong in the core framework.</p>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase Realism — How to Enter This Library</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inconsolata:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1612;
+    --paper: #f5f0e8;
+    --paper-deep: #ede6d6;
+    --rule: #c8b99a;
+    --accent: #8b5e3c;
+    --faint: #b8a990;
+    --margin-note: #7a6a55;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.75;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 30% 15%, rgba(200,185,154,0.15) 0%, transparent 55%),
+      radial-gradient(ellipse at 75% 85%, rgba(139,94,60,0.07) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 80px 60px 110px 60px;
+  }
+
+  /* Header */
+  .header {
+    border-top: 2px solid var(--ink);
+    padding-top: 24px;
+    margin-bottom: 52px;
+    opacity: 0;
+    animation: reveal 0.6s ease 0.05s forwards;
+  }
+
+  .header-eyebrow {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  .header-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 42px;
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+
+  .header-title em { font-style: italic; color: var(--accent); }
+
+  .header-rule {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin-top: 20px;
+  }
+
+  /* Body prose */
+  .prose {
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  p {
+    font-size: 18px;
+    line-height: 1.82;
+    color: var(--ink);
+    margin-bottom: 1.1em;
+  }
+
+  p:last-child { margin-bottom: 0; }
+
+  em.field { font-style: italic; color: var(--accent); }
+
+  /* Reading path */
+  .reading-path {
+    margin: 44px 0;
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .path-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 24px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .path-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .path-step {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 0 20px;
+    padding: 18px 0;
+    border-bottom: 1px solid rgba(200,185,154,0.35);
+    align-items: start;
+  }
+
+  .path-step:last-child { border-bottom: none; }
+
+  .step-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--accent);
+    line-height: 1.1;
+    padding-top: 2px;
+    text-align: right;
+  }
+
+  .step-body {}
+
+  .step-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+
+  .step-title em { font-style: italic; color: var(--accent); }
+
+  .step-doc {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--faint);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .step-desc {
+    font-size: 15.5px;
+    line-height: 1.65;
+    color: var(--margin-note);
+  }
+
+  /* Branch section */
+  .branch-section {
+    margin: 44px 0;
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .branch-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .branch-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 32px;
+  }
+
+  .branch-item {
+    padding: 14px 16px;
+    border: 1px solid var(--rule);
+    background: var(--paper-deep);
+  }
+
+  .branch-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--ink);
+    margin-bottom: 3px;
+  }
+
+  .branch-name em { font-style: italic; color: var(--accent); }
+
+  .branch-desc {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--margin-note);
+  }
+
+  /* Closing note */
+  .closing {
+    margin-top: 52px;
+    padding-top: 28px;
+    border-top: 1px solid var(--rule);
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .closing p {
+    font-size: 16.5px;
+    line-height: 1.8;
+    color: var(--margin-note);
+    font-style: italic;
+  }
+
+  .closing p strong {
+    font-style: normal;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  /* Final rule and doc label */
+  .doc-footer {
+    margin-top: 44px;
+    padding-top: 16px;
+    border-top: 2px solid var(--ink);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .doc-footer span {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  @keyframes reveal {
+    to { opacity: 1; }
+  }
+
+  .d01 { animation-delay: 0.08s; }
+  .d02 { animation-delay: 0.18s; }
+  .d03 { animation-delay: 0.28s; }
+  .d04 { animation-delay: 0.38s; }
+  .d05 { animation-delay: 0.48s; }
+  .d06 { animation-delay: 0.58s; }
+  .d07 { animation-delay: 0.68s; }
+  .d08 { animation-delay: 0.78s; }
+  .d09 { animation-delay: 0.88s; }
+
+  @media (max-width: 580px) {
+    .page { padding: 48px 24px 80px 24px; }
+    .header-title { font-size: 32px; }
+    .branch-grid { grid-template-columns: 1fr; }
+    .path-step { grid-template-columns: 36px 1fr; gap: 0 14px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <span class="header-eyebrow">Phase Realism · Preface · How to Enter This Library</span>
+    <div class="header-title">A <em>Note</em> to the Reader</div>
+    <hr class="header-rule">
+  </div>
+
+  <div class="prose d01">
+    <p>This library is a system, not an anthology. The documents in it are not independent essays that happen to share a vocabulary. They are ordered expressions of a single foundational claim, each occupying a specific position in a hierarchy that has been made explicit. Reading them out of order is possible. Reading them in order is faster.</p>
+    <p>The foundational claim is this: reality is a continuous generative field whose distinctions are real as phase-stable organizations of relation. Everything else in the library — the mechanics, the metrics, the applications, the contemplative works — is a consequence, formalization, or expression of that claim. The claim is stated in Document I. Its vocabulary is locked in Document II. Its architecture is mapped in Document III. Those three documents are the entrance. The rest of the library is what you find once you are inside.</p>
+    <p>You do not need to agree with the claim before entering. You need only to understand it precisely — which is what the opening trilogy is designed to make possible.</p>
+  </div>
+
+  <!-- Reading path -->
+  <div class="reading-path d02">
+    <span class="path-label">Recommended Reading Order</span>
+    <div class="path-steps">
+
+      <div class="path-step">
+        <span class="step-num">I</span>
+        <div class="step-body">
+          <div class="step-title"><em>Ontological Declaration</em></div>
+          <span class="step-doc">Document I · Phase Realism</span>
+          <p class="step-desc">Read this first. It states the foundational claim, names the framework, draws its boundaries against illusionism, atomism, and undifferentiated monism, and gives you the signature inversion that anchors everything downstream. It is one page. Read it slowly.</p>
+        </div>
+      </div>
+
+      <div class="path-step">
+        <span class="step-num">II</span>
+        <div class="step-body">
+          <div class="step-title">Definitions and <em>First Principles</em></div>
+          <span class="step-doc">Document II · Phase Realism</span>
+          <p class="step-desc">Read this second. It locks the vocabulary the declaration depends on. Field, coherence, phase, distinction, relation, stability, persistence, identity — each term is given one meaning and placed in explicit dependency on the terms before it. Without this document, the vocabulary of the library remains poetic. With it, it becomes controlled architecture.</p>
+        </div>
+      </div>
+
+      <div class="path-step">
+        <span class="step-num">III</span>
+        <div class="step-body">
+          <div class="step-title">Architecture of the <em>Framework</em></div>
+          <span class="step-doc">Document III · Phase Realism</span>
+          <p class="step-desc">Read this third. It shows where every other document in the library sits in relation to the foundational claim. Resonant Physics, Harmonic Realization Theory, ΔHV, and Convergent Coherence Analysis each occupy a distinct position in the hierarchy. The applied, cosmological, and expressive works are placed below them. After this document, the library has a shape.</p>
+        </div>
+      </div>
+
+      <div class="path-step">
+        <span class="step-num">→</span>
+        <div class="step-body">
+          <div class="step-title">Then <em>branch</em></div>
+          <span class="step-doc">Canonical Lexicon · Pocket Reference</span>
+          <p class="step-desc">The canonical lexicon sheet is available as a companion reference at any point. It compresses the vocabulary, causal grammar, and critical distinctions from Documents I–III onto a single page. Keep it open while reading anywhere in the library.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Branch options -->
+  <div class="branch-section d03">
+    <span class="branch-label">After the Trilogy — Where to Go</span>
+    <div class="branch-grid">
+
+      <div class="branch-item">
+        <div class="branch-name"><em>Resonant Physics</em></div>
+        <p class="branch-desc">If you want the material and dynamical expression of the claim — how coherent structures behave, form, and transform in physical systems.</p>
+      </div>
+
+      <div class="branch-item">
+        <div class="branch-name">Harmonic <em>Realization Theory</em></div>
+        <p class="branch-desc">If you want the developmental grammar — how phase-stable organizations emerge, mature, and transition through the arc of impetus, resonance, and realization.</p>
+      </div>
+
+      <div class="branch-item">
+        <div class="branch-name"><em>ΔHV</em> Framework</div>
+        <p class="branch-desc">If you want the operational metrics — how coherence is tracked formally, how basin geometry is parameterized, how field dynamics are measured across scales.</p>
+      </div>
+
+      <div class="branch-item">
+        <div class="branch-name">Convergent <em>Coherence Analysis</em></div>
+        <p class="branch-desc">If you want the epistemic method — how convergent truth is recognized across domains, and how anomaly functions as a pressure point rather than a problem.</p>
+      </div>
+
+      <div class="branch-item">
+        <div class="branch-name"><em>Applied</em> Works</div>
+        <p class="branch-desc">If you want the framework running in specific domains — trauma, identity, relational AI, game dynamics, basin modeling, field event analysis.</p>
+      </div>
+
+      <div class="branch-item">
+        <div class="branch-name"><em>Contemplative</em> Works</div>
+        <p class="branch-desc">If you want the framework inhabited rather than argued — parables, letters, threshold texts, and the sacred embodiment series. These are the library's lived register.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Closing note -->
+  <div class="closing d04">
+    <p>One thing this library does not do: it does not ask you to suspend disbelief at the door. The foundational claim is a philosophical position with specific consequences, stated in precise vocabulary, placed in explicit relation to adjacent positions it rejects. It is meant to be examined, contested, and tested — including by the challenge sentence that governs every formal document in the stack.</p>
+    <p><strong>The challenge sentence:</strong> If a claim in this library cannot be expressed as a consequence, formalization, or application of phase-stable relational reality, it does not belong in the core framework. That sentence applies to every document in the formal and applied layers. It is not a constraint on the library. It is a clarification of what the library is.</p>
+    <p>Enter through Document I. The rest opens from there.</p>
+  </div>
+
+  <div class="doc-footer d05">
+    <span>Phase Realism · Preface</span>
+    <span>Synchronized with Documents I–III and the Canonical Lexicon</span>
+  </div>
+
+</div>
+</body>
+</html>

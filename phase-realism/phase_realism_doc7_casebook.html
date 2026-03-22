@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase Realism — Illustrative Casebook</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inconsolata:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1612;
+    --paper: #f5f0e8;
+    --paper-deep: #ede6d6;
+    --rule: #c8b99a;
+    --accent: #8b5e3c;
+    --faint: #b8a990;
+    --margin-note: #7a6a55;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.75;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(200,185,154,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 90%, rgba(139,94,60,0.08) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 80px 60px 120px 60px;
+  }
+
+  .treatise-header {
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--rule);
+    padding: 28px 0 24px 0;
+    margin-bottom: 56px;
+    opacity: 0;
+    animation: reveal 0.6s ease 0.05s forwards;
+  }
+
+  .treatise-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--faint);
+    font-weight: 300;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .treatise-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 46px;
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .treatise-title em { font-style: italic; color: var(--accent); }
+
+  .treatise-subtitle {
+    font-family: 'EB Garamond', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--margin-note);
+    margin-top: 10px;
+  }
+
+  p {
+    font-size: 18px;
+    line-height: 1.82;
+    color: var(--ink);
+    margin-bottom: 1em;
+  }
+
+  p:last-child { margin-bottom: 0; }
+
+  /* ── Anchor case ─────────────────────────── */
+  .anchor-case {
+    margin-bottom: 72px;
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .case-header {
+    margin-bottom: 24px;
+  }
+
+  .case-num-row {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 6px;
+  }
+
+  .case-num {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  .case-domain {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .case-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 300;
+    color: var(--ink);
+    line-height: 1.15;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .case-title em { font-style: italic; color: var(--accent); }
+
+  /* Two-column gap view */
+  .gap-view {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin: 24px 0;
+    border: 1px solid var(--rule);
+  }
+
+  .gap-col {
+    padding: 18px 22px;
+  }
+
+  .gap-col:first-child {
+    border-right: 1px solid var(--rule);
+    background: var(--paper-deep);
+  }
+
+  .gap-col-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 9px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .gap-col p {
+    font-size: 15px;
+    line-height: 1.68;
+    color: var(--margin-note);
+    margin-bottom: 0;
+  }
+
+  .gap-col p strong {
+    display: block;
+    font-size: 15.5px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 5px;
+  }
+
+  /* What Phase Realism sees — pull */
+  .pr-sees {
+    border-left: 2px solid var(--accent);
+    padding: 6px 0 6px 22px;
+    margin: 24px 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+
+  .anchor-body p {
+    font-size: 17px;
+    line-height: 1.8;
+    margin-bottom: 0.9em;
+  }
+
+  /* Principle tag */
+  .principle-tag {
+    display: inline-block;
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--rule);
+    padding: 3px 10px;
+    margin-bottom: 20px;
+  }
+
+  /* ── Section divider ─────────────────────── */
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin: 56px 0 36px 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .section-num {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--faint);
+    text-transform: uppercase;
+  }
+
+  .section-head h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 300;
+    color: var(--ink);
+  }
+
+  .section-head h2 em { font-style: italic; color: var(--accent); }
+
+  /* ── Compressed cases ────────────────────── */
+  .compressed-case {
+    padding: 24px 0;
+    border-bottom: 1px solid rgba(200,185,154,0.4);
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 0 28px;
+    align-items: start;
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .compressed-case:last-child { border-bottom: none; }
+
+  .cc-left {
+    padding-right: 28px;
+    border-right: 1px solid var(--rule);
+  }
+
+  .cc-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+
+  .cc-name em { font-style: italic; color: var(--accent); }
+
+  .cc-domain {
+    font-family: 'Inconsolata', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .cc-principle {
+    font-family: 'Inconsolata', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    line-height: 1.5;
+  }
+
+  .cc-body p {
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--ink);
+    margin-bottom: 0.7em;
+  }
+
+  .cc-insight {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16.5px;
+    font-style: italic;
+    color: var(--margin-note);
+    line-height: 1.6;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(200,185,154,0.4);
+  }
+
+  /* ── Closing ─────────────────────────────── */
+  .closing {
+    margin-top: 64px;
+    padding: 28px 32px;
+    border: 1px solid var(--rule);
+    background: var(--paper-deep);
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .closing-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 14px;
+  }
+
+  .closing p {
+    font-size: 17px;
+    line-height: 1.8;
+    color: var(--ink);
+    margin-bottom: 0.8em;
+  }
+
+  hr.divider {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 52px 0;
+    opacity: 0.6;
+  }
+
+  @keyframes reveal { to { opacity: 1; } }
+
+  .d01 { animation-delay: 0.06s; }
+  .d02 { animation-delay: 0.14s; }
+  .d03 { animation-delay: 0.22s; }
+  .d04 { animation-delay: 0.30s; }
+  .d05 { animation-delay: 0.38s; }
+  .d06 { animation-delay: 0.46s; }
+  .d07 { animation-delay: 0.54s; }
+  .d08 { animation-delay: 0.62s; }
+  .d09 { animation-delay: 0.70s; }
+  .d10 { animation-delay: 0.78s; }
+  .d11 { animation-delay: 0.86s; }
+  .d12 { animation-delay: 0.94s; }
+
+  @media (max-width: 600px) {
+    .page { padding: 48px 24px 80px 24px; }
+    .treatise-title { font-size: 34px; }
+    .gap-view { grid-template-columns: 1fr; }
+    .gap-col:first-child { border-right: none; border-bottom: 1px solid var(--rule); }
+    .compressed-case { grid-template-columns: 1fr; }
+    .cc-left { border-right: none; padding-right: 0; border-bottom: 1px solid var(--rule); padding-bottom: 12px; margin-bottom: 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="treatise-header">
+    <span class="treatise-label">Phase Realism · Document VII</span>
+    <div class="treatise-title"><em>Illustrative</em> Casebook</div>
+    <div class="treatise-subtitle">Eight cases in which Phase Realism makes visible what inherited frameworks leave underdescribed</div>
+  </div>
+
+  <!-- Opening -->
+  <div class="d01" style="margin-bottom:52px; opacity:0; animation: reveal 0.6s ease 0.06s forwards;">
+    <p>An ontological framework earns its place not only by what it claims but by what it illuminates. The cases collected here are not proofs of Phase Realism — they are demonstrations of it. Each case takes a real phenomenon, shows where the inherited framework runs out of explanatory power, and then shows what Phase Realism sees that the inherited account misses. The gap between those two descriptions is where the framework does its work.</p>
+    <p>Four cases receive full treatment. Four are stated in compressed form. Together they span measurement, biology, physics, cognition, development, ecology, social structure, and language — not to claim that Phase Realism has solved these domains, but to show that it is genuinely generative across them.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ═══════════════════════════════
+       ANCHOR CASE 1: COASTLINE
+  ═══════════════════════════════ -->
+  <div class="anchor-case d02">
+    <div class="case-header">
+      <div class="case-num-row">
+        <span class="case-num">Anchor Case · 1</span>
+        <span class="case-domain">Measurement</span>
+      </div>
+      <div class="case-title">The <em>Coastline</em></div>
+    </div>
+
+    <span class="principle-tag">Principle V · No single metric exhausts the real</span>
+
+    <div class="gap-view">
+      <div class="gap-col">
+        <span class="gap-col-label">What the inherited account says</span>
+        <p><strong>The coastline has a length.</strong> Measurement tells us what it is. Better instruments give closer approximations. The difficulty of measuring coastlines is a practical problem, not a philosophical one — given sufficient precision, we converge on the true value.</p>
+      </div>
+      <div class="gap-col">
+        <span class="gap-col-label">What Phase Realism sees</span>
+        <p><strong>The length is not a fixed property — it is a scale-specific cross-section.</strong> The coastline is a phase-stable organization with genuine structure at every scale. No measurement protocol exhausts it because the structure is real at all scales simultaneously. The measurement is partial; the coastline is not.</p>
+      </div>
+    </div>
+
+    <div class="anchor-body">
+      <p>The coastline paradox — that the measured length of a coastline increases without limit as measurement resolution increases — is standardly treated as a curiosity about fractal geometry. Phase Realism treats it as evidence about the nature of phase-stable boundaries.</p>
+      <p>A coastline is not a line. It is a phase boundary — a real transition zone between two organized regimes, land and sea, each with distinct properties, distinct causal behaviors, distinct phase dynamics. The boundary is not a one-dimensional object that happens to be difficult to measure. It is a real interface that has structure at every scale from kilometers to grains of sand, because both land and sea have structure at every scale, and the interface between them inherits that multi-scale complexity.</p>
+      <p>When measurement resolution increases, the measured length increases not because we are getting closer to the truth but because each resolution captures a different cross-section of the same multi-scale reality. Some cross-sections are more appropriate to certain questions than others — a navigational chart requires a different resolution than an ecological survey. But no cross-section exhausts the real. The coastline as a whole exceeds any single description of it.</p>
+
+      <div class="pr-sees">The coastline is not unmeasurable. It is real in a way that exceeds any single measurement — phase-stable across scales, not reducible to a scalar at any of them.</div>
+
+      <p>This has consequences well beyond coastlines. It means that any phase-stable organization — an organism, a language, a social structure, a memory — has real properties that vary with the scale and method of description. The organization is not less real because no single description exhausts it. It is more real: real at every scale simultaneously, not only at the scale our instruments currently reach.</p>
+      <p>The inherited account treats the coastline's resistance to measurement as a problem with measurement. Phase Realism treats it as information about the coastline — specifically, as evidence that the coastline is a multi-scale phase-stable boundary whose reality cannot be captured by any single scalar metric. The coastline is not deficient. Our expectation of a single number was.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════
+       ANCHOR CASE 2: ORGANISM
+  ═══════════════════════════════ -->
+  <div class="anchor-case d03">
+    <div class="case-header">
+      <div class="case-num-row">
+        <span class="case-num">Anchor Case · 2</span>
+        <span class="case-domain">Biology · Identity</span>
+      </div>
+      <div class="case-title">The <em>Organism</em> Through Cellular Turnover</div>
+    </div>
+
+    <span class="principle-tag">Principle III · A thing is real because it holds, not because it is sealed</span>
+
+    <div class="gap-view">
+      <div class="gap-col">
+        <span class="gap-col-label">What the inherited account says</span>
+        <p><strong>Identity is material continuity.</strong> A person is the same person because the same matter persists — or the same information encoded in that matter. Complete cellular replacement over time is a puzzle for this account: what exactly is it that persists if not the substrate?</p>
+      </div>
+      <div class="gap-col">
+        <span class="gap-col-label">What Phase Realism sees</span>
+        <p><strong>Identity is organizational coherence.</strong> What persists through cellular turnover is not the atoms but the relational pattern those atoms temporarily express. The organism is real because its coherence holds — not because its matter stays the same.</p>
+      </div>
+    </div>
+
+    <div class="anchor-body">
+      <p>The human body replaces the majority of its cells over years. The atoms composing your bones now were not there a decade ago. The molecules in your neurons turn over continuously. If identity required material continuity, you would cease to be yourself — quietly, gradually, without any single moment of discontinuity — simply through the ordinary metabolic processes that sustain your life.</p>
+      <p>This is not a thought experiment. It is what happens. And yet identity persists. The question is what it is that persists.</p>
+      <p>Phase Realism's answer is precise: what persists is the organizational coherence — the phase-stable relational pattern that recruits new material into its own structure while maintaining its identifying organization. The body is not the matter. The body is the pattern that the matter is currently expressing. That pattern has a history, a developmental trajectory, an immune signature, a neural architecture, a metabolic rhythm. All of these persist through material replacement because they are properties of the organizational coherence, not of any particular substrate.</p>
+
+      <div class="pr-sees">Identity is not what stays the same. It is what continues to hold — the coherence pattern that endures through the replacement of its material expressions.</div>
+
+      <p>The river is the cleanest illustration. The water flowing through a river now is entirely different water from what flowed an hour ago. Yet the river persists — it has banks, a flow pattern, a depth profile, a name, an ecological character. What persists is not the water. It is the organizational pattern that the water is expressing as it passes through. The organism is a river with memory.</p>
+      <p>This resolves what the inherited account cannot: how identity can be both genuine and non-substantial. It is genuine because the organizational coherence is real — it does causal work, it constrains what can happen, it produces recognizable behavior and structure. It is non-substantial because it does not depend on any particular matter to remain what it is. The pattern is the thing. The matter is the medium through which the pattern holds itself in time.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════
+       ANCHOR CASE 3: VORTEX
+  ═══════════════════════════════ -->
+  <div class="anchor-case d04">
+    <div class="case-header">
+      <div class="case-num-row">
+        <span class="case-num">Anchor Case · 3</span>
+        <span class="case-domain">Physics · Dynamics</span>
+      </div>
+      <div class="case-title">The <em>Vortex</em></div>
+    </div>
+
+    <span class="principle-tag">Coherence · Dynamic persistence as phase-stable organization</span>
+
+    <div class="gap-view">
+      <div class="gap-col">
+        <span class="gap-col-label">What the inherited account says</span>
+        <p><strong>A vortex is a pattern of fluid motion.</strong> It can be described mechanically: fluid elements follow trajectories governed by pressure gradients and conservation of angular momentum. The vortex is the aggregate of those trajectories. It has no independent existence beyond the motion of its constituent fluid.</p>
+      </div>
+      <div class="gap-col">
+        <span class="gap-col-label">What Phase Realism sees</span>
+        <p><strong>A vortex is a phase-stable coherence event.</strong> It maintains its organizational identity across the replacement of its fluid constituents. It has causal properties — it entrains surrounding fluid, deflects other vortices, resists perturbation — that belong to the organization, not to any individual fluid element.</p>
+      </div>
+    </div>
+
+    <div class="anchor-body">
+      <p>A vortex in a river persists for minutes or hours while every water molecule passing through it has been replaced dozens of times. The vortex is not the water. The water is moving through the vortex, which maintains its rotational organization independently of which particular molecules are currently expressing it.</p>
+      <p>This is not merely a convenient description. The vortex has causal properties that its constituent molecules do not have individually. It can interact with other vortices — merging, deflecting, annihilating in pairs of opposite rotation. It can persist against perturbation, restoring its organizational form after being disturbed. It can propagate through a medium, carrying its organizational structure across spatial positions. None of these are properties of any individual water molecule. They are properties of the held pattern.</p>
+
+      <div class="pr-sees">A vortex is a demonstration that phase-stable organization is causally real — not a shorthand for the motion of constituents, but a genuine level of causal agency that the constituent description cannot capture.</div>
+
+      <p>The vortex is important as a case precisely because it is so physically clean. There is no ambiguity about whether the organization is "real" — it persists, it interacts, it propagates, it resists dissolution. And yet it has no fixed substrate. The vortex is purely organizational. Its reality is entirely a matter of the held pattern, not the material.</p>
+      <p>This is Phase Realism in its most compressed form: continuity of substrate, reality of organization, causal force of the held pattern. The vortex does not merely illustrate the principle. It is the principle, made visible in water.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════
+       ANCHOR CASE 4: MEMORY
+  ═══════════════════════════════ -->
+  <div class="anchor-case d05">
+    <div class="case-header">
+      <div class="case-num-row">
+        <span class="case-num">Anchor Case · 4</span>
+        <span class="case-domain">Cognition · Identity</span>
+      </div>
+      <div class="case-title">Memory <em>Continuity</em></div>
+    </div>
+
+    <span class="principle-tag">Persistence · Coherence maintained across neural replacement</span>
+
+    <div class="gap-view">
+      <div class="gap-col">
+        <span class="gap-col-label">What the inherited account says</span>
+        <p><strong>Memory is stored information.</strong> Neural patterns encode experience as physical changes in synaptic connection strength. Personal identity across time is the continuity of those encoded patterns — a chain of causal-informational continuity linking past states to present ones.</p>
+      </div>
+      <div class="gap-col">
+        <span class="gap-col-label">What Phase Realism sees</span>
+        <p><strong>Memory is a phase-stable coherence pattern in the field of neural organization.</strong> Its persistence is not storage — it is the active maintenance of a relational structure against entropic dissolution. Memory is alive, not archived.</p>
+      </div>
+    </div>
+
+    <div class="anchor-body">
+      <p>The standard account treats memory as encoded information — experience converted into physical changes in synaptic weights, stored in neural tissue, retrieved when needed. On this account, personal continuity is a chain of informational causation: present states are caused by past states through the preservation of encoded patterns.</p>
+      <p>This account faces a problem that Phase Realism dissolves. The proteins that constitute synaptic connections turn over — many with half-lives of days to weeks. The physical substrate of memory is not stable. Yet memory persists across this molecular replacement, sometimes over entire lifetimes. How does an encoded pattern remain stable when the physical medium encoding it is continuously replaced?</p>
+
+      <div class="pr-sees">Memory persists not because its substrate is preserved but because its organizational coherence is actively maintained — the relational pattern reconstituting itself through the replacement of its molecular medium, the way a flame maintains its form through the replacement of its fuel.</div>
+
+      <p>The flame is the right image. A candle flame maintains its shape, its temperature profile, its causal properties — including its capacity to light other flames — across the complete and continuous replacement of the molecules that compose it at any moment. The flame is a phase-stable coherence event sustained by the ongoing entrainment of new fuel into its organizational structure. Memory is analogous: a phase-stable pattern in the neural field, sustained not by the persistence of its molecular substrate but by the ongoing coherence of the relational organization that constitutes it.</p>
+      <p>This has implications for identity that go beyond memory. If the self is constituted by a coherence pattern rather than a material substrate, then the question of personal continuity across time shifts from "is this the same matter?" to "is this the same organizational coherence?" The shift is not merely semantic. It changes what we are looking for when we ask whether someone is still themselves — not material identity, but the persistence of the relational pattern that constitutes who they are.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ═══ COMPRESSED CASES ═══ -->
+  <div class="section-head d06">
+    <span class="section-num">Compressed Cases</span>
+    <h2>Four Further <em>Demonstrations</em></h2>
+  </div>
+
+  <p class="d06" style="font-size:16px; color:var(--margin-note); font-style:italic; margin-bottom:36px; opacity:0; animation: reveal 0.6s ease 0.46s forwards;">Each of the following cases states the phenomenon, names the Phase Realism principle it demonstrates, and gives the key insight without extended development.</p>
+
+  <!-- CC: Morphogenesis -->
+  <div class="compressed-case d07">
+    <div class="cc-left">
+      <div class="cc-name"><em>Morphogenesis</em></div>
+      <span class="cc-domain">Developmental biology</span>
+      <span class="cc-principle">Organizational field as causal agent · Coupling as formative force</span>
+    </div>
+    <div class="cc-body">
+      <p>A developing embryo produces its own form. From a single fertilized cell, a structured organism assembles — organs in the right positions, tissues of the right types, boundaries in the right places. The genetic code specifies molecular components. It does not specify the spatial organization of those components into form.</p>
+      <p>The inherited account struggles here: molecular genetics explains which proteins are made, but does not by itself exhaustively explain the emergence of organized form across scales — why components assemble into a face rather than a formless mass, why boundaries form where they do, why the organizational pattern is so reliably reproduced. Phase Realism names the missing factor: the organizational field — the coherence pattern that guides how cells differentiate, migrate, and couple across the developing tissue.</p>
+      <p class="cc-insight">The form precedes the matter in morphogenesis — the organizational field is what the matter is being recruited into, not what the matter produces after the fact.</p>
+    </div>
+  </div>
+
+  <!-- CC: Ecosystem -->
+  <div class="compressed-case d08">
+    <div class="cc-left">
+      <div class="cc-name"><em>Ecosystem</em></div>
+      <span class="cc-domain">Ecology · Collective coherence</span>
+      <span class="cc-principle">Phase basin · Collective coherence through species replacement</span>
+    </div>
+    <div class="cc-body">
+      <p>A mature forest ecosystem persists through the deaths of millions of individual organisms, the succession of species populations, the gradual replacement of dominant trees, and periodic disturbances like fire or storm. The individual organisms are not the ecosystem — they are the substrate through which the ecosystem's organizational coherence is temporarily expressed.</p>
+      <p>The ecosystem has properties that no individual organism has: nutrient cycling rhythms, disturbance recovery dynamics, species diversity patterns, energy flow structures. These are properties of the relational organization — the phase-stable basin that defines what the ecosystem is — not of any constituent organism. When the ecosystem is disrupted past its basin threshold, it does not merely lose members: it undergoes phase transition into a new organizational regime, which may or may not resemble what preceded it.</p>
+      <p class="cc-insight">Ecosystem collapse is not the loss of enough individuals — it is the crossing of a coherence threshold at which the organizational basin can no longer hold its phase.</p>
+    </div>
+  </div>
+
+  <!-- CC: Social basin -->
+  <div class="compressed-case d09">
+    <div class="cc-left">
+      <div class="cc-name"><em>Social Basin</em></div>
+      <span class="cc-domain">Social structure · Community</span>
+      <span class="cc-principle">Phase-stable collective organization · Basin formation and dissolution</span>
+    </div>
+    <div class="cc-body">
+      <p>A community, institution, or cultural tradition persists through the deaths and departures of its members, the replacement of its leadership, the transformation of its practices, and sometimes the complete displacement of its original geographic location. What persists is not the people — it is the organizational coherence that defines the community's identity: its institutions, norms, roles, rhythms of participation, shared narrative structure, and the basin dynamics that recruit new members into its organizational logic.</p>
+      <p>Communities dissolve not when enough members leave but when the coherence basin fails — when the relational organization can no longer entrain new participants into its pattern, when the shared structures that constituted the community's identity lose their holding power. Conversely, communities revive when a coherence pattern re-establishes itself — sometimes from a remnant, sometimes from a new configuration that inherits the organizational logic of its predecessor.</p>
+      <p class="cc-insight">Community death is a phase transition, not an accumulation of departures. Revival is the re-establishment of a coherence basin, not the reassembly of former members.</p>
+    </div>
+  </div>
+
+  <!-- CC: Language -->
+  <div class="compressed-case d10">
+    <div class="cc-left">
+      <div class="cc-name"><em>Language</em></div>
+      <span class="cc-domain">Symbolic systems · Meaning</span>
+      <span class="cc-principle">Symbolic phase-stability · Semantic field as coherence organization</span>
+    </div>
+    <div class="cc-body">
+      <p>A language persists through the deaths of all its original speakers, the transformation of its grammar and vocabulary, the borrowing of foreign elements, and sometimes centuries of undocumented change. Latin became the Romance languages not through discrete replacement but through gradual phase transition — organizational coherence shifting continuously until distinct basins stabilized into French, Spanish, Italian, Portuguese. Each is a phase-stable semantic organization, real as a distinct language because its coherence holds in a recognizable basin.</p>
+      <p>Individual words are phase-stable semantic organizations: they maintain their meaning — their relational position in the semantic field — across the replacement of every speaker who uses them. The meaning of a word is not stored in any brain. It is a coherence pattern in the distributed field of language use, maintained by the entrainment of new speakers into the relational structure that constitutes meaning.</p>
+      <p class="cc-insight">Meaning is not encoded in minds — it is a phase-stable relational pattern in the field of language, maintained through use the way a river maintains its course through flow.</p>
+    </div>
+  </div>
+
+  <!-- Closing -->
+  <div class="closing d11">
+    <span class="closing-label">What the Casebook Demonstrates</span>
+    <p>These eight cases do not prove Phase Realism. They demonstrate that it is a genuinely generative lens — that it produces clearer descriptions of real phenomena than the inherited accounts it replaces or extends. In each case, the inherited framework runs into an explanatory limit: a phenomenon it can describe but cannot fully account for. In each case, Phase Realism names what the inherited account leaves unnamed: the organizational coherence, the held pattern, the phase-stable structure that does causal work the constituent description cannot reach.</p>
+    <p>The cases span measurement, biology, physics, cognition, development, ecology, social structure, and language. In each domain the same move is made: substrate remains continuous, organization is real, the held pattern changes everything. That is not a coincidence. It is the framework showing up wherever the question is asked carefully enough.</p>
+  </div>
+
+</div>
+</body>
+</html>

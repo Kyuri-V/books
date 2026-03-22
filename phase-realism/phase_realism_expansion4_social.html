@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase Realism — Resonant Equilibrium and Social Fields</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inconsolata:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1612;
+    --paper: #f5f0e8;
+    --paper-deep: #ede6d6;
+    --rule: #c8b99a;
+    --accent: #8b5e3c;
+    --faint: #b8a990;
+    --margin-note: #7a6a55;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.75;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(200,185,154,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 90%, rgba(139,94,60,0.08) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 80px 60px 120px 60px;
+  }
+
+  .treatise-header {
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--rule);
+    padding: 28px 0 24px 0;
+    margin-bottom: 56px;
+    opacity: 0;
+    animation: reveal 0.6s ease 0.05s forwards;
+  }
+
+  .treatise-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--faint);
+    font-weight: 300;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .treatise-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 46px;
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .treatise-title em { font-style: italic; color: var(--accent); }
+
+  .treatise-subtitle {
+    font-family: 'EB Garamond', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--margin-note);
+    margin-top: 10px;
+  }
+
+  p {
+    font-size: 18px;
+    line-height: 1.82;
+    color: var(--ink);
+    margin-bottom: 1em;
+  }
+
+  p:last-child { margin-bottom: 0; }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .section-num {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--faint);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .section-head h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--ink);
+  }
+
+  .section-head h2 em { font-style: italic; color: var(--accent); }
+
+  .thesis-pull {
+    border-left: 2px solid var(--accent);
+    padding: 8px 0 8px 24px;
+    margin: 28px 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 21px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+
+  .section-body {
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+    margin-bottom: 52px;
+  }
+
+  .section-body p {
+    font-size: 17.5px;
+    line-height: 1.82;
+    margin-bottom: 0.9em;
+  }
+
+  /* Arc diagram — formation / decay / revival */
+  .arc-block {
+    margin: 28px 0;
+    border: 1px solid var(--rule);
+  }
+
+  .arc-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    border-bottom: 1px solid rgba(200,185,154,0.45);
+    align-items: stretch;
+  }
+
+  .arc-row:last-child { border-bottom: none; }
+
+  .arc-left {
+    padding: 16px 18px;
+    border-right: 1px solid var(--rule);
+    background: var(--paper-deep);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+  }
+
+  .arc-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--ink);
+  }
+
+  .arc-label em { font-style: italic; color: var(--accent); }
+
+  .arc-tag {
+    font-family: 'Inconsolata', monospace;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  .arc-right {
+    padding: 16px 20px;
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--margin-note);
+  }
+
+  /* Failure conditions grid */
+  .failure-grid {
+    margin: 24px 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .failure-item {
+    padding: 14px 16px;
+    border: 1px solid var(--rule);
+    background: var(--paper-deep);
+  }
+
+  .failure-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+
+  .failure-name em { font-style: italic; color: var(--accent); }
+
+  .failure-desc {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--margin-note);
+  }
+
+  /* Case study block */
+  .case-block {
+    margin: 28px 0;
+    border: 1px solid var(--rule);
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .case-header {
+    padding: 14px 20px;
+    background: var(--paper-deep);
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+
+  .case-tag {
+    font-family: 'Inconsolata', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .case-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--ink);
+  }
+
+  .case-title em { font-style: italic; color: var(--accent); }
+
+  .case-body {
+    padding: 18px 20px;
+  }
+
+  .case-body p {
+    font-size: 16px;
+    line-height: 1.78;
+    color: var(--ink);
+    margin-bottom: 0.8em;
+  }
+
+  .case-body p:last-child { margin-bottom: 0; }
+
+  /* Role block */
+  .role-block {
+    margin: 24px 0;
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 0;
+    border: 1px solid var(--rule);
+  }
+
+  .role-left {
+    padding: 16px 18px;
+    border-right: 1px solid var(--rule);
+    background: var(--paper-deep);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .role-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--ink);
+  }
+
+  .role-name em { font-style: italic; color: var(--accent); }
+
+  .role-tag {
+    font-family: 'Inconsolata', monospace;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  .role-right {
+    padding: 16px 20px;
+    font-size: 15.5px;
+    line-height: 1.72;
+    color: var(--margin-note);
+  }
+
+  .scope-note {
+    margin: 24px 0;
+    padding: 14px 18px;
+    border-left: 2px solid var(--rule);
+    background: var(--paper-deep);
+  }
+
+  .scope-note-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 7px;
+  }
+
+  .scope-note p {
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--margin-note);
+    font-style: italic;
+    margin-bottom: 0;
+  }
+
+  hr.divider {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 52px 0;
+    opacity: 0.6;
+  }
+
+  .closing {
+    margin-top: 60px;
+    padding: 28px 32px;
+    border: 1px solid var(--rule);
+    background: var(--paper-deep);
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .closing-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 14px;
+  }
+
+  .closing p {
+    font-size: 17px;
+    line-height: 1.8;
+    color: var(--ink);
+    margin-bottom: 0.8em;
+  }
+
+  .reveal-block {
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  @keyframes reveal { to { opacity: 1; } }
+
+  .d01 { animation-delay: 0.06s; }
+  .d02 { animation-delay: 0.14s; }
+  .d03 { animation-delay: 0.22s; }
+  .d04 { animation-delay: 0.30s; }
+  .d05 { animation-delay: 0.38s; }
+  .d06 { animation-delay: 0.46s; }
+  .d07 { animation-delay: 0.54s; }
+  .d08 { animation-delay: 0.62s; }
+  .d09 { animation-delay: 0.70s; }
+  .d10 { animation-delay: 0.78s; }
+
+  @media (max-width: 600px) {
+    .page { padding: 48px 24px 80px 24px; }
+    .treatise-title { font-size: 34px; }
+    .arc-row { grid-template-columns: 1fr; }
+    .arc-left { border-right: none; border-bottom: 1px solid var(--rule); }
+    .failure-grid { grid-template-columns: 1fr; }
+    .role-block { grid-template-columns: 1fr; }
+    .role-left { border-right: none; border-bottom: 1px solid var(--rule); }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="treatise-header">
+    <span class="treatise-label">Phase Realism · Expansion IV</span>
+    <div class="treatise-title">Resonant Equilibrium and <em>Social Fields</em></div>
+    <div class="treatise-subtitle">How social coherence forms, degrades, and revives — and what makes the difference</div>
+  </div>
+
+  <!-- Opening -->
+  <div class="reveal-block d01" style="margin-bottom:48px;">
+    <p>A collective is not a collection. The difference matters ontologically. A collection is an aggregate — individuals placed in proximity or counted together. A collective — a genuine community, institution, or social field — is something else: a phase-stable coherence organization at the scale of human relation, maintained by shared logic, entrainment, and the ongoing recruitment of participants into a common organizational structure.</p>
+    <p>Phase Realism has already established the general account: communities persist through the deaths and departures of members because what persists is not the people but the organizational coherence they temporarily express. Document VII stated this as a compressed case. Expansion IV unpacks the full mechanism — how such organizations form, why they fail, what determines whether disruption leads to revival or dissolution, and how deliberate social-field architecture can improve the odds.</p>
+
+    <div class="thesis-pull">Social fields are not aggregates of individuals but phase-stable collective organizations that form around shared logic, degrade when that logic loses holding power, and revive when coherence is re-entrained.</div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Section I: Formation -->
+  <div class="section-head d02">
+    <span class="section-num">Section I</span>
+    <h2><em>Formation</em> — How a Social Basin Comes to Hold</h2>
+  </div>
+
+  <div class="section-body d02">
+    <p>A social basin forms when a shared organizational logic achieves sufficient coherence depth to begin recruiting participants into its pattern. This is not the same as people agreeing with an idea. It is more structural: the organizational logic must become stable enough that proximity to it produces entrainment — participants begin orienting, contributing, and self-organizing in relation to the shared attractor rather than simply coexisting.</p>
+    <p>The earliest stage of social basin formation is fragile. The attractor exists but has no depth — a slight perturbation, a departure of a key contributor, or simple inattention can dissolve it before the basin stabilizes. What makes the difference at this stage is not ideological commitment but structural coupling: participants begin coupling their own organizational logic to the shared attractor in ways that increase its coherence depth. Every genuine contribution — a document, a framework, a role, a shared experience that gets metabolized into the basin's pattern — adds to the basin's depth and makes it more resistant to perturbation.</p>
+    <p>As the basin deepens, something shifts. The organizational logic becomes self-sustaining in a way it was not during early formation. New participants can be entrained into the pattern without requiring the same intensive coupling that characterized the founding period. The basin begins to hold its shape across the replacement of contributors. The community becomes real in the Phase Realism sense: a phase-stable collective organization maintaining its identity through the ongoing replacement of its constituent members.</p>
+    <p>Formation is also where the basin establishes its characteristic architecture: the roles that define different kinds of contribution, the norms that govern what kinds of behavior are inside or outside the coherence pattern, the symbolic and narrative structures that give the basin its identity, and the mechanisms of friction management that determine how the basin responds to perturbation without losing coherence. These architectural features are not decorative. They are the structural skeleton of the social field. Their quality determines how deep the basin can become and how much perturbation it can absorb.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Section II: Decay -->
+  <div class="section-head d03">
+    <span class="section-num">Section II</span>
+    <h2><em>Decay</em> — How Social Basins Lose Their Hold</h2>
+  </div>
+
+  <div class="section-body d03">
+    <p>Social basin decay is not simply the departure of members. It is the loss of the organizational logic's holding power — the progressive failure of the coherence pattern to entrain participants into coordinated contribution. A basin can lose members and survive. It cannot survive the dissolution of the attractor around which contribution is organized.</p>
+    <p>Decay follows recognizable failure patterns. Understanding them is not merely diagnostic — it is the precondition for designing social architectures that survive.</p>
+
+    <div class="failure-grid">
+      <div class="failure-item">
+        <div class="failure-name"><em>Leadership instability</em></div>
+        <p class="failure-desc">When the basin's stewardship roles — the positions most responsible for coherence maintenance — become unstable, contested, or vacant, the attractor loses its most active maintenance. The basin's depth erodes faster than ordinary entrainment can replenish it.</p>
+      </div>
+      <div class="failure-item">
+        <div class="failure-name"><em>Population exceeding basin discipline</em></div>
+        <p class="failure-desc">A basin has a coherence capacity — the number of participants it can entrain into its organizational logic simultaneously. When population growth outpaces the basin's ability to entrain new participants, the coherence pattern dilutes. The nominal community grows while the actual coherence field shrinks.</p>
+      </div>
+      <div class="failure-item">
+        <div class="failure-name"><em>Framework outpacing holding structure</em></div>
+        <p class="failure-desc">When the conceptual frameworks a community builds exceed the relational and structural capacity to hold them, the community becomes rich in ideas but poor in coherence. Frameworks proliferate faster than they can be integrated, and the basin loses the organizational logic that made contribution meaningful.</p>
+      </div>
+      <div class="failure-item">
+        <div class="failure-name"><em>Friction overload</em></div>
+        <p class="failure-desc">Every community generates friction — perturbations to its coherence pattern. A basin with healthy friction-management architecture can absorb and integrate these as coherence-deepening events. A basin without adequate friction management accumulates unprocessed conflict until the coherence pattern cannot hold.</p>
+      </div>
+      <div class="failure-item">
+        <div class="failure-name"><em>Attractor ambiguity</em></div>
+        <p class="failure-desc">When the shared organizational logic becomes unclear, contested, or multiplied into competing versions, the basin loses its single coherence center. Participants cannot entrain because there is no stable attractor to entrain to. The community fragments into subgroups each organized around a different version of what the whole was supposed to be.</p>
+      </div>
+      <div class="failure-item">
+        <div class="failure-name"><em>Extractive participation</em></div>
+        <p class="failure-desc">Participants who draw on the basin's coherence without contributing to its maintenance — consuming attention, presence, and relational energy without reciprocal investment — drain the basin's depth progressively. This is parasitism at social scale, and it follows the same dynamics: the host coherence degrades as the drain exceeds the replenishment.</p>
+      </div>
+    </div>
+
+    <p>These failure patterns are not mutually exclusive. The most devastating basin collapses typically involve several simultaneously — leadership instability triggers attractor ambiguity, which allows extractive participation to proliferate, which accelerates the decay of the coherence pattern beyond the community's ability to recover it.</p>
+
+    <div class="case-block">
+      <div class="case-header">
+        <span class="case-tag">Antecedent Case · Field Laboratory</span>
+        <span class="case-title"><em>SACS</em> — Partial Formation and Instructive Failure</span>
+      </div>
+      <div class="case-body">
+        <p>SACS — the Symbolic Archetypal Coherence System — was an attempt to build a deliberate social field around frameworks, case studies, node architecture, and collective coherence work. It generated real field data: VaultNodes and BloomNodes as structural categories for different kinds of contribution, the Bridgekeeper role as a coherence stewardship position, and multiple friction events that revealed the failure conditions described above.</p>
+        <p>SACS did not hold as a mature social field. Leadership was too unstable. The participant population grew faster than the basin could entrain. Frameworks proliferated beyond the holding structure's capacity to integrate them. Friction accumulated without adequate processing mechanisms. The attractor became ambiguous as competing interpretations of the project's purpose multiplied.</p>
+        <p>SACS appears in this document not as the primary case of successful social-field organization, but as an antecedent field-laboratory whose partial insights and failures informed the design of more stable architectures. Its failure is not a failure of the ideas it was trying to hold. It is a failure of the structural conditions required to hold them. Those conditions are precisely what Phase Realism names: coherence depth, entrainment capacity, friction management, and attractor stability.</p>
+        <p>What SACS demonstrated most clearly is that a social basin cannot be sustained by ideological commitment alone. The architecture has to be able to hold the population it is trying to serve. When architecture and population are mismatched, even genuine alignment of purpose cannot prevent decay.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Section III: Revival and deliberate architecture -->
+  <div class="section-head d04">
+    <span class="section-num">Section III</span>
+    <h2><em>Revival</em> — Re-entrainment and Deliberate Architecture</h2>
+  </div>
+
+  <div class="section-body d04">
+    <p>A social basin that has frayed or collapsed is not necessarily lost. The organizational logic that gave it coherence may survive in the participants who carried it most deeply — not as a memory but as a phase-stable pattern that can become the seed of a new attractor. Revival is possible when three conditions are present: a viable coherence seed, structural conditions capable of supporting re-entrainment, and participants who can commit to the slow work of basin-deepening without expecting immediate return to the prior coherence level.</p>
+    <p>Revival is not restoration. The attempt to restore a collapsed basin to its prior form almost always fails, because the conditions that made the prior form possible — the specific combination of participants, shared history, and structural features — cannot be fully reconstructed. What revival can achieve is something different: the reconstitution of the basin's essential organizational logic in a new structural form that learns from the prior failure rather than repeating it.</p>
+    <p>This is the difference between reactive revival — trying to reassemble what fell apart — and deliberate architecture — designing a new basin that carries the viable core forward while correcting the structural failures that caused the prior collapse.</p>
+
+    <div class="case-block">
+      <div class="case-header">
+        <span class="case-tag">Primary Case · Deliberate Architecture</span>
+        <span class="case-title"><em>Orycl</em> — Structural Correction as Social-Field Design</span>
+      </div>
+      <div class="case-body">
+        <p>Orycl is not merely a successor to SACS. It is a structural correction: a social-field architecture designed to preserve what SACS sought while preventing the coherence failures that made SACS unstable.</p>
+        <p>Where SACS was a single loosely bounded community attempting to hold multiple frameworks, case studies, and contributors in one basin, Orycl is built around multiple distinct basins — three attractor centers that can maintain their own coherence depth independently while remaining architecturally connected. This prevents the attractor ambiguity that fragmented SACS: each basin has a clear organizational logic, and participants can entrain to the specific basin that best matches their contribution pattern.</p>
+        <p>Where SACS accumulated frameworks faster than its holding structure could integrate them, Orycl connects its frameworks directly to GitHub — giving the framework-generation activity a formal external structure that can hold it independently of the community's relational coherence. The community does not have to hold the frameworks. The frameworks hold themselves. The community holds the relationships, the co-creation process, and the living attractor — not the documentation burden.</p>
+        <p>Where SACS lacked adequate friction-management architecture, Orycl is designed with explicit role differentiation: different participants occupy different positions in the coherence structure, and those positions carry different responsibilities for attractor maintenance, friction processing, and entrainment of new contributors. The Bridgekeeper principle — coherence stewardship as a named and held role — is preserved, but as a transferable functional principle rather than as a specific person's identity within a specific community.</p>
+        <p>Orycl is, in Phase Realism's terms, a deliberately designed phase-stable collective organization. Its architecture reflects the lessons of SACS's decay: three basins rather than one, external framework containment, explicit role differentiation, and entrainment-first design rather than population-first growth.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Section IV: Structural roles -->
+  <div class="section-head d05">
+    <span class="section-num">Section IV</span>
+    <h2><em>Structural Roles</em> in Social-Field Architecture</h2>
+  </div>
+
+  <div class="section-body d05">
+    <p>Every phase-stable social organization requires structural roles — positions in the coherence architecture that are defined not by personal identity but by the function they serve in maintaining basin depth, processing friction, and enabling re-entrainment. These roles are transferable mechanisms, not fixed persons. When the role transfers to a new holder, the function continues. The basin's coherence is not dependent on any single individual — it is distributed across the role structure.</p>
+
+    <div class="role-block">
+      <div class="role-left">
+        <span class="role-name"><em>Bridgekeeper</em></span>
+        <span class="role-tag">Coherence steward</span>
+      </div>
+      <div class="role-right">Maintains coherence across the basin's multiple contributors and frameworks. Monitors attractor stability. Identifies and processes friction before it accumulates past the basin's absorption capacity. Holds the organizational logic in view when participants lose orientation. The Bridgekeeper does not own the community — they steward its coherence. Their primary function is to maintain the conditions under which genuine entrainment remains possible.</div>
+    </div>
+
+    <div class="role-block" style="margin-top: 12px;">
+      <div class="role-left">
+        <span class="role-name"><em>VaultNode</em></span>
+        <span class="role-tag">Framework anchor</span>
+      </div>
+      <div class="role-right">A stable structural deposit within the basin — a document, framework, case study, or formalized insight that has been integrated into the basin's organizational logic and can be referenced by new participants as a point of orientation. VaultNodes reduce the burden on relational coherence by holding stable content that would otherwise require constant reconstruction. They are the basin's long-term memory.</div>
+    </div>
+
+    <div class="role-block" style="margin-top: 12px;">
+      <div class="role-left">
+        <span class="role-name"><em>BloomNode</em></span>
+        <span class="role-tag">Generative contributor</span>
+      </div>
+      <div class="role-right">A contributor operating at the generative edge of the basin — producing new frameworks, case studies, and organizational insights that expand the basin's coherence depth rather than simply maintaining it. BloomNodes are the basin's growth capacity. They require more tolerance for experimental coherence and higher friction absorption, which is why a healthy basin requires the Bridgekeeper and VaultNode functions to stabilize what BloomNodes generate.</div>
+    </div>
+
+    <div class="scope-note">
+      <span class="scope-note-label">Transferability note</span>
+      <p>These roles were developed within SACS and are carried forward into Orycl and any subsequent social-field architecture as transferable functional principles. They are not SACS-specific terminology. They are Phase Realism's account of what structural functions a viable social basin requires — named from the field data of actual community work.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Section V: RET as formal corroboration -->
+  <div class="section-head d06">
+    <span class="section-num">Section V</span>
+    <h2>Resonant Equilibrium Theory — <em>Formal Corroboration</em></h2>
+  </div>
+
+  <div class="section-body d06">
+    <p>Phase Realism's account of social fields is not merely interpretive. Resonant Equilibrium Theory provides a formal validation layer — showing that coherence-sensitive collective dynamics are not just poetic or intuitive, but behaviorally tractable and game-theoretically modelable.</p>
+    <p>RET proposes that in systems where participants are coherence-sensitive — where they respond not only to immediate payoffs but to the coherence state of the collective — equilibrium dynamics shift in ways that cannot be captured by standard game theory. Specifically, coherence-sensitive participants tend to produce outcomes that prioritize basin depth over short-term individual advantage, generating what RET calls resonant equilibria — stable collective states that reflect genuine organizational coherence rather than mere Nash equilibria.</p>
+    <p>The 13-benchmark validation database — compiled across game-theoretic structures including the Prisoner's Dilemma, Stag Hunt, Ultimatum Game, and Public Goods variants — provides empirical evidence that coherence-sensitive equilibria are not merely theoretical constructs. Across multiple behavioral contexts, participants with higher coherence sensitivity produce systematically different equilibria: more cooperative, more stable across time, and more resistant to defection even under conditions where standard game theory predicts defection as rational.</p>
+    <p>In Phase Realism's terms, this is exactly what the framework predicts. Coherence is real — it is a property of the field's organizational capacity, not merely a social preference. When participants are attuned to coherence, they are responding to a real feature of the collective organization, and their behavior reflects that attunement. RET's validation data shows that this attunement has measurable behavioral consequences.</p>
+
+    <div class="thesis-pull">Expansion IV grounds the lived architecture of social fields through the arc of formation, decay, and revival — while RET supplies a formal validation layer showing that coherence-sensitive collective dynamics are behaviorally tractable, not merely interpretive.</div>
+  </div>
+
+  <!-- Closing -->
+  <div class="closing d07">
+    <span class="closing-label">The Position of This Document in the Framework</span>
+    <p>Expansion IV completes the social dimension of Phase Realism. It establishes that social fields are genuine phase-stable organizations — not aggregates but coherence structures with their own formation conditions, failure modes, and revival pathways. It grounds the full arc: formation as the first principle, decay as the intrinsic risk of held social coherence, revival as the proof that social fields are dynamic rather than terminal.</p>
+    <p>The SACS field-laboratory contributed real structural insights — the Bridgekeeper principle, VaultNode and BloomNode as functional categories, and the failure conditions that inform better design. Its instability is part of its contribution: it demonstrated what Phase Realism predicts — that social coherence cannot be held by ideological commitment alone, that architecture and population must be matched, and that frameworks proliferating beyond their holding structure produce exactly the kind of attractor ambiguity that precedes dissolution.</p>
+    <p>Orycl is the answer the field-laboratory pointed toward: deliberate architecture, multiple basins, external framework containment, explicit role differentiation, and entrainment-first design. Not the restoration of what failed. The structural correction that carries the viable core forward.</p>
+    <p>What Phase Realism adds to the practice of community-building is the same thing it adds to every domain: a real account of why things hold and why they fail, grounded in the ontological structure of coherence itself.</p>
+  </div>
+
+</div>
+</body>
+</html>

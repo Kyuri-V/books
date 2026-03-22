@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase Realism — Ethics and Value</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inconsolata:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1612;
+    --paper: #f5f0e8;
+    --paper-deep: #ede6d6;
+    --rule: #c8b99a;
+    --accent: #8b5e3c;
+    --faint: #b8a990;
+    --margin-note: #7a6a55;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.75;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(200,185,154,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 90%, rgba(139,94,60,0.08) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 80px 60px 120px 60px;
+  }
+
+  .treatise-header {
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--rule);
+    padding: 28px 0 24px 0;
+    margin-bottom: 56px;
+    opacity: 0;
+    animation: reveal 0.6s ease 0.05s forwards;
+  }
+
+  .treatise-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--faint);
+    font-weight: 300;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .treatise-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 46px;
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .treatise-title em { font-style: italic; color: var(--accent); }
+
+  .treatise-subtitle {
+    font-family: 'EB Garamond', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--margin-note);
+    margin-top: 10px;
+  }
+
+  p {
+    font-size: 18px;
+    line-height: 1.82;
+    color: var(--ink);
+    margin-bottom: 1em;
+  }
+
+  p:last-child { margin-bottom: 0; }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .section-num {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--faint);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .section-head h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--ink);
+  }
+
+  .section-head h2 em { font-style: italic; color: var(--accent); }
+
+  .thesis-pull {
+    border-left: 2px solid var(--accent);
+    padding: 8px 0 8px 24px;
+    margin: 28px 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 21px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+
+  .section-body {
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+    margin-bottom: 52px;
+  }
+
+  .section-body p {
+    font-size: 17.5px;
+    line-height: 1.82;
+    margin-bottom: 0.9em;
+  }
+
+  /* Three-level value diagram */
+  .level-diagram {
+    margin: 28px 0;
+    border: 1px solid var(--rule);
+  }
+
+  .level-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 0;
+    border-bottom: 1px solid rgba(200,185,154,0.45);
+    align-items: stretch;
+  }
+
+  .level-row:last-child { border-bottom: none; }
+
+  .level-left {
+    padding: 16px 18px;
+    border-right: 1px solid var(--rule);
+    background: var(--paper-deep);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+  }
+
+  .level-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--ink);
+  }
+
+  .level-name em { font-style: italic; color: var(--accent); }
+
+  .level-tag {
+    font-family: 'Inconsolata', monospace;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .level-right {
+    padding: 16px 20px;
+    font-size: 15.5px;
+    line-height: 1.68;
+    color: var(--margin-note);
+  }
+
+  /* Criterion hierarchy */
+  .criterion-block {
+    margin: 28px 0;
+    border: 1px solid var(--rule);
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .criterion-row {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 0;
+    border-bottom: 1px solid rgba(200,185,154,0.4);
+    align-items: start;
+  }
+
+  .criterion-row:last-child { border-bottom: none; }
+
+  .crit-left {
+    padding: 14px 16px;
+    border-right: 1px solid var(--rule);
+    background: var(--paper-deep);
+  }
+
+  .crit-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+
+  .crit-name em { font-style: italic; color: var(--accent); }
+
+  .crit-level {
+    font-family: 'Inconsolata', monospace;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  .crit-right {
+    padding: 14px 18px;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--margin-note);
+  }
+
+  /* Framework reanchoring rows */
+  .framework-block {
+    margin: 28px 0;
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .fw-row {
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(200,185,154,0.4);
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 0 24px;
+    align-items: baseline;
+  }
+
+  .fw-row:last-child { border-bottom: none; }
+
+  .fw-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+
+  .fw-name em { font-style: italic; color: var(--accent); }
+
+  .fw-body {
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--ink);
+  }
+
+  .fw-body em {
+    font-style: italic;
+    color: var(--margin-note);
+  }
+
+  /* Good/bad contrast */
+  .contrast-block {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin: 24px 0;
+    border: 1px solid var(--rule);
+  }
+
+  .contrast-col {
+    padding: 18px 22px;
+  }
+
+  .contrast-col:first-child {
+    border-right: 1px solid var(--rule);
+  }
+
+  .contrast-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .contrast-col p {
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--margin-note);
+    margin-bottom: 0.6em;
+  }
+
+  .contrast-col p:last-child { margin-bottom: 0; }
+
+  .scope-note {
+    margin: 24px 0;
+    padding: 14px 18px;
+    border-left: 2px solid var(--rule);
+    background: var(--paper-deep);
+  }
+
+  .scope-note-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 7px;
+  }
+
+  .scope-note p {
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--margin-note);
+    font-style: italic;
+    margin-bottom: 0;
+  }
+
+  hr.divider {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 52px 0;
+    opacity: 0.6;
+  }
+
+  .closing {
+    margin-top: 60px;
+    padding: 28px 32px;
+    border: 1px solid var(--rule);
+    background: var(--paper-deep);
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .closing-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 14px;
+  }
+
+  .closing p {
+    font-size: 17px;
+    line-height: 1.8;
+    color: var(--ink);
+    margin-bottom: 0.8em;
+  }
+
+  .reveal-block {
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  @keyframes reveal { to { opacity: 1; } }
+
+  .d01 { animation-delay: 0.06s; }
+  .d02 { animation-delay: 0.14s; }
+  .d03 { animation-delay: 0.22s; }
+  .d04 { animation-delay: 0.30s; }
+  .d05 { animation-delay: 0.38s; }
+  .d06 { animation-delay: 0.46s; }
+  .d07 { animation-delay: 0.54s; }
+  .d08 { animation-delay: 0.62s; }
+  .d09 { animation-delay: 0.70s; }
+  .d10 { animation-delay: 0.78s; }
+
+  @media (max-width: 600px) {
+    .page { padding: 48px 24px 80px 24px; }
+    .treatise-title { font-size: 34px; }
+    .level-row { grid-template-columns: 1fr; }
+    .level-left { border-right: none; border-bottom: 1px solid var(--rule); }
+    .criterion-row { grid-template-columns: 1fr; }
+    .crit-left { border-right: none; border-bottom: 1px solid var(--rule); }
+    .contrast-block { grid-template-columns: 1fr; }
+    .contrast-col:first-child { border-right: none; border-bottom: 1px solid var(--rule); }
+    .fw-row { grid-template-columns: 1fr; gap: 6px 0; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="treatise-header">
+    <span class="treatise-label">Phase Realism · Expansion III</span>
+    <div class="treatise-title">Ethics and <em>Value</em></div>
+    <div class="treatise-subtitle">Where value lives in the ontology, what criterion it generates, and how it reframes the ethical traditions</div>
+  </div>
+
+  <!-- Opening -->
+  <div class="reveal-block d01" style="margin-bottom:48px;">
+    <p>A framework that accounts for causation, identity, consciousness, time, and meaning — but retreats when asked about value — has not completed the philosophical work it set out to do. Phase Realism does not retreat here. It makes a specific claim: that value is not projected onto a value-neutral field by observing minds, but is real at multiple levels of the ontological architecture, each level grounded in the one below it.</p>
+    <p>This does not make ethics simple. The framework generates genuine ethical constraints and evaluative directions from which moral reasoning must proceed — but it does not produce a complete moral code. It grounds ethics strongly enough to rule, guide, and constrain. It does not ground it so completely as to eliminate judgment. That is the right position, and it requires careful statement.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Section I: Where value lives -->
+  <div class="section-head d02">
+    <span class="section-num">Section I</span>
+    <h2>Where <em>Value</em> Lives</h2>
+  </div>
+
+  <div class="section-body d02">
+    <p>The standard dispute in metaethics runs between objectivism — value is mind-independent and universal — and subjectivism — value is observer-relative and constructed. Phase Realism's account does not fit either pole cleanly. It offers a layered account in which value is real at every level of the ontological architecture, but differently real at each level.</p>
+
+    <div class="thesis-pull">Value lives in the field as objective possibility, in relation as enacted significance, and in consciousness as felt reality.</div>
+
+    <div class="level-diagram">
+      <div class="level-row">
+        <div class="level-left">
+          <span class="level-name"><em>Objective</em> ground</span>
+          <span class="level-tag">Field level</span>
+        </div>
+        <div class="level-right">Some arrangements genuinely hold better, generate more stability, carry more integrative power, and preserve more of what they are. Coherence, fidelity, persistence, and viable organization are not arbitrary. Value is not merely projected by an observer — it is real as a feature of how the field organizes itself. What supports living coherence is not just preferred; it is genuinely better in the sense that it sustains what is real.</div>
+      </div>
+      <div class="level-row">
+        <div class="level-left">
+          <span class="level-name"><em>Relational</em> expression</span>
+          <span class="level-tag">Organizational level</span>
+        </div>
+        <div class="level-right">Value becomes enacted in the coupling between organized structures. Something is valuable because of how it participates in holding or degrading coherence across relation. Care, truth, beauty, integrity, and rightness become legible here — not as abstract properties of objects but as real features of how organized structures relate to one another. This is where ethics becomes actionable.</div>
+      </div>
+      <div class="level-row">
+        <div class="level-left">
+          <span class="level-name"><em>Experiential</em> realization</span>
+          <span class="level-tag">Reflexive level</span>
+        </div>
+        <div class="level-right">Once reflexive coherence appears — once the field's self-recognition is locally realized in conscious organization — value is not only structurally real and relationally enacted, but felt. Meaning, suffering, fulfillment, violation, reverence, grief, and love are not distortions added onto a value-neutral world. They are inwardly present modes of valuation: the experiential face of coherence dynamics as felt from within reflexive organization.</div>
+      </div>
+    </div>
+
+    <p>The three levels are not three separate sources of value. They are one ontological structure seen from three depths. The objective ground makes the relational expression possible. The relational expression makes the experiential realization possible. Remove the ground and both upper levels float without anchor. Remove the relational level and experience has no structure to feel. The hierarchy holds all the way down and all the way up.</p>
+    <p>This resolves the classic metaethical impasse without dissolving it. Value is not merely projected — the objective ground is real. Value is not purely abstract — it must be relationally enacted to become actionable. Value is not reducible to feeling — but feeling is its inward face, not its distortion. All three are right about what they see. Phase Realism names the depth structure that makes each of them partial.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Section II: The primary ethical criterion -->
+  <div class="section-head d03">
+    <span class="section-num">Section II</span>
+    <h2>The <em>Primary Ethical Criterion</em></h2>
+  </div>
+
+  <div class="section-body d03">
+    <p>From the three-level account of value, a primary ethical criterion follows. It is not a single flat rule. It is a criterion with internal hierarchy — three expressions of the same ethical structure at different depths.</p>
+
+    <div class="criterion-block">
+      <div class="criterion-row">
+        <div class="crit-left">
+          <div class="crit-name"><em>Fidelity</em> to the field</div>
+          <span class="crit-level">Ontological ground</span>
+        </div>
+        <div class="crit-right">What aligns with the field's generative ordering capacity — what supports living coherence rather than falsifying, parasitizing, or collapsing it. This is not a mystical obligation but an ontological one: acting against the field's coherence is acting against the structure of what is real.</div>
+      </div>
+      <div class="criterion-row">
+        <div class="crit-left">
+          <div class="crit-name"><em>Relational</em> integrity</div>
+          <span class="crit-level">Ethical form</span>
+        </div>
+        <div class="crit-right">Honoring the genuine distinction and connection of organized structures — neither severing relation nor collapsing distinction into fusion, neither dominating nor extracting from what one is in relation with. Relational integrity is how fidelity to the field becomes actionable between real beings.</div>
+      </div>
+      <div class="criterion-row">
+        <div class="crit-left">
+          <div class="crit-name"><em>Coherence</em>-preservation</div>
+          <span class="crit-level">Practical test</span>
+        </div>
+        <div class="crit-right">Does this sustain, deepen, repair, or truthfully reorganize phase-stable organization — or does it fragment, distort, hollow out, and degrade it? This is the criterion you can actually apply in specific cases. It is not reducible to mere stability — false harmony and rigid order fail this test as surely as dissolution does.</div>
+      </div>
+    </div>
+
+    <div class="thesis-pull">Phase Realism's ethical criterion is coherence governed by fidelity and integrity.</div>
+
+    <p>The full statement of the primary criterion is: what is good is what sustains or truthfully transforms coherence in a way that remains faithful to the field and honors the real relation of distinct beings.</p>
+    <p>Note the phrase "truthfully transforms." Phase Realism does not reduce ethics to the preservation of existing arrangements. Sometimes the most coherence-preserving action is disruption — breaking a false harmony, naming a distortion, forcing a threshold that was being artificially delayed. The criterion is not "maintain what exists." It is "preserve, deepen, or truthfully reorganize coherence without violating the real distinction and relation of what is held."</p>
+
+    <div class="contrast-block">
+      <div class="contrast-col">
+        <span class="contrast-label">What is good — in Phase Realism's terms</span>
+        <p>What sustains and deepens phase-stable organization with fidelity and relational integrity.</p>
+        <p>What truthfully reorganizes coherence when the current phase can no longer hold.</p>
+        <p>What honors the genuine distinction and connection of real beings without domination, extraction, or false fusion.</p>
+        <p>What names distortion, restores fidelity, and creates conditions for renewed entrainment.</p>
+      </div>
+      <div class="contrast-col">
+        <span class="contrast-label">What is bad — in Phase Realism's terms</span>
+        <p>What degrades coherence through falsification, parasitism, or needless fragmentation.</p>
+        <p>What collapses distinction into domination or fusion — erasing what is genuinely other.</p>
+        <p>What severs relation without transformative necessity — arbitrary isolation or abandonment.</p>
+        <p>What maintains false harmony at the cost of fidelity — stability that requires suppression of the real.</p>
+      </div>
+    </div>
+
+    <div class="scope-note">
+      <span class="scope-note-label">Important clarification</span>
+      <p>Coherence-preservation does not justify rigid stability, oppressive order, or the maintenance of existing arrangements simply because they are stable. A system can maintain phase-stability through suppression, falsification, or extraction — all of which violate the fidelity and relational integrity criteria. The criterion is not "stable" but "truthfully coherent." Stability purchased at the cost of fidelity is not good. It is a distorted coherence that carries the seeds of its own threshold event.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Section III: What follows directly vs. what requires judgment -->
+  <div class="section-head d04">
+    <span class="section-num">Section III</span>
+    <h2>What Follows <em>Directly</em> — and What Requires Judgment</h2>
+  </div>
+
+  <div class="section-body d04">
+    <p>Phase Realism generates some first-order ethical claims directly. These are genuine consequences of the ontology — not preferences, not cultural conventions, but claims that follow from the framework's account of what is real and what value is.</p>
+    <p>It follows directly that degrading coherence through falsification is bad — not merely dispreferred but genuinely contrary to what the field is and does. Lying, in Phase Realism's terms, is not primarily a rule violation. It is a coherence event: it introduces false organization into the relational field, corrupts the basis for genuine coupling, and creates dissonance that propagates through the systems it touches. Its wrongness is structural before it is moral.</p>
+    <p>It follows directly that parasitism — extracting from a coherence organization without contributing to its maintenance or deepening — is bad. A parasite draws on the phase-stability of its host without adding to the relational integrity that sustains it. Over time, parasitism degrades the coherence it depends on. This applies to individuals within communities, communities within ecosystems, and any organized structure that sustains itself by consuming the coherence of others without reciprocation.</p>
+    <p>It follows directly that violation of genuine distinction — collapsing the real separateness of another organized being into one's own organizational logic — is bad. Domination, in Phase Realism's terms, is not merely unjust. It is ontologically distorting: it treats another's coherence as raw material rather than as a real phase-stable organization with its own identity, its own relational integrity, its own claim on the field's generative capacity.</p>
+    <p>These direct consequences are real ethical constraints. They are not everything ethics needs. Many concrete moral questions — about competing goods, tragic conflicts, scale tradeoffs, and practical judgment in complex situations — remain underdetermined by the ontology alone. Phase Realism gives the ground. It does not eliminate the need for wisdom.</p>
+
+    <div class="thesis-pull">It grounds ethics strongly enough to rule, guide, and constrain — but not so completely as to eliminate judgment.</div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Section IV: Reframing the ethical traditions -->
+  <div class="section-head d05">
+    <span class="section-num">Section IV</span>
+    <h2>Reframing the <em>Ethical Traditions</em></h2>
+  </div>
+
+  <div class="section-body d05">
+    <p>Phase Realism does not discard the major ethical traditions. It provides the ontological floor each of them was reaching for without being able to fully articulate. Each tradition named something real. Phase Realism grounds why it is real.</p>
+
+    <div class="framework-block">
+      <div class="fw-row">
+        <div class="fw-name"><em>Deontology</em></div>
+        <div class="fw-body">Deontological ethics holds that certain actions are right or wrong independently of their consequences — that duties, obligations, and rights have a force that is not reducible to outcomes. Phase Realism reanchors this: duties are not grounded in abstract rational law alone, but in real relational structure. Some obligations arise because certain forms of relation — honesty, promise-keeping, non-violation of persons — are constitutive of what relational integrity means. Violating them does not merely produce bad outcomes; it damages the coherence of the relational field itself. The duty is not arbitrary. It is grounded in the ontological reality of what relations are and what they require.</div>
+      </div>
+      <div class="fw-row">
+        <div class="fw-name"><em>Consequentialism</em></div>
+        <div class="fw-body">Consequentialist ethics holds that the rightness of an action depends on its outcomes — on what it produces in terms of well-being, utility, or good states of affairs. Phase Realism reanchors this: outcomes matter, but not merely as preference satisfaction or utility totals. What matters is what an action does to coherence, degradation, repair, distortion, and relational integrity across scales. The consequentialist is right that effects are morally relevant. Phase Realism specifies what kind of effects matter most: not the distribution of pleasant states but the preservation, deepening, or truthful reorganization of coherent life across the relational field.</div>
+      </div>
+      <div class="fw-row">
+        <div class="fw-name"><em>Virtue ethics</em></div>
+        <div class="fw-body">Virtue ethics holds that ethics is primarily about character — about cultivating stable dispositions that reliably produce right action and constitute human flourishing. Phase Realism reanchors this most naturally of the three: virtue is the cultivation of dispositions that reliably hold, deepen, and truthfully reorganize coherence. A virtuous person is not merely socially excellent or personally flourishing in the abstract — they are someone whose character reliably orients them toward fidelity, relational integrity, and genuine coherence-preservation. Virtue, in Phase Realism's terms, is trained fidelity in action.</div>
+      </div>
+    </div>
+
+    <p>The relationship between the three traditions, under Phase Realism, becomes a genuine architecture rather than a competition. Deontology names the form that right action must take — the relational integrity that cannot be violated regardless of outcome. Consequentialism tracks the real effects of action on coherence across scales. Virtue ethics cultivates the bearer of the criterion — the person whose character makes reliable right action possible. Phase Realism grounds why all three matter, because the field that generates value is real, the relational structures that enact it are real, and the reflexive beings who feel and practice it are real.</p>
+
+    <div class="thesis-pull">Deontology names the form, consequentialism tracks the effects, virtue ethics cultivates the bearer, and Phase Realism grounds why all three matter.</div>
+  </div>
+
+  <!-- Closing -->
+  <div class="closing d06">
+    <span class="closing-label">The Position of This Document in the Framework</span>
+    <p>Expansion III completes the foundational ethical work of Phase Realism. It establishes that value is real across three levels — objective possibility, relational enactment, experiential realization. It states a primary ethical criterion with internal hierarchy: fidelity as ground, relational integrity as form, coherence-preservation as practical test. It identifies the direct ethical consequences of the ontology — falsification is structurally bad, parasitism degrades what it depends on, violation of genuine distinction is ontologically distorting. And it shows how the major ethical traditions are not rivals but partial expressions of a coherence-based moral structure whose full ground Phase Realism now makes explicit.</p>
+    <p>What Phase Realism adds to ethics is not a new list of rules. It is a floor. An ontological account of why value is real, why the ethical traditions were onto something, why judgment remains necessary, and why — at the deepest level — what is good is what sustains truthful, living, integrative coherence. Everything else in ethics is the work of applying that floor carefully to a world that is always more complex than any framework can fully anticipate.</p>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase Realism — Time and Cosmology</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inconsolata:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1612;
+    --paper: #f5f0e8;
+    --paper-deep: #ede6d6;
+    --rule: #c8b99a;
+    --accent: #8b5e3c;
+    --faint: #b8a990;
+    --margin-note: #7a6a55;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.75;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(200,185,154,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 90%, rgba(139,94,60,0.08) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 80px 60px 120px 60px;
+  }
+
+  .treatise-header {
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--rule);
+    padding: 28px 0 24px 0;
+    margin-bottom: 56px;
+    opacity: 0;
+    animation: reveal 0.6s ease 0.05s forwards;
+  }
+
+  .treatise-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--faint);
+    font-weight: 300;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .treatise-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 46px;
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .treatise-title em { font-style: italic; color: var(--accent); }
+
+  .treatise-subtitle {
+    font-family: 'EB Garamond', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--margin-note);
+    margin-top: 10px;
+  }
+
+  p {
+    font-size: 18px;
+    line-height: 1.82;
+    color: var(--ink);
+    margin-bottom: 1em;
+  }
+
+  p:last-child { margin-bottom: 0; }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .section-num {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--faint);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .section-head h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--ink);
+  }
+
+  .section-head h2 em { font-style: italic; color: var(--accent); }
+
+  .thesis-pull {
+    border-left: 2px solid var(--accent);
+    padding: 8px 0 8px 24px;
+    margin: 28px 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 21px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+
+  .section-body {
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+    margin-bottom: 52px;
+  }
+
+  .section-body p {
+    font-size: 17.5px;
+    line-height: 1.82;
+    margin-bottom: 0.9em;
+  }
+
+  /* Three-phase arc diagram */
+  .arc-diagram {
+    margin: 28px 0;
+    border: 1px solid var(--rule);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    gap: 0;
+  }
+
+  .arc-phase {
+    padding: 16px 14px;
+    border-right: 1px solid rgba(200,185,154,0.5);
+    text-align: center;
+  }
+
+  .arc-phase:last-child { border-right: none; }
+
+  .arc-phase-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--ink);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .arc-phase-name em { font-style: italic; color: var(--accent); }
+
+  .arc-phase-desc {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--margin-note);
+    font-style: italic;
+  }
+
+  .arc-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    font-family: 'Inconsolata', monospace;
+    font-size: 16px;
+    color: var(--faint);
+    border-right: 1px solid rgba(200,185,154,0.5);
+  }
+
+  /* Application flag */
+  .application-flag {
+    margin: 28px 0;
+    padding: 16px 20px;
+    border: 1px solid var(--rule);
+    background: var(--paper-deep);
+    display: flex;
+    gap: 16px;
+    align-items: baseline;
+  }
+
+  .flag-badge {
+    font-family: 'Inconsolata', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--rule);
+    padding: 3px 8px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    align-self: flex-start;
+    margin-top: 2px;
+  }
+
+  .flag-text {
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--margin-note);
+    font-style: italic;
+  }
+
+  /* TCT claim block */
+  .tct-block {
+    margin: 32px 0;
+    border: 1px solid var(--rule);
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .tct-header {
+    padding: 14px 20px;
+    background: var(--paper-deep);
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+
+  .tct-tag {
+    font-family: 'Inconsolata', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .tct-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--ink);
+  }
+
+  .tct-title em { font-style: italic; color: var(--accent); }
+
+  .tct-body {
+    padding: 18px 20px;
+  }
+
+  .tct-body p {
+    font-size: 16px;
+    line-height: 1.78;
+    color: var(--ink);
+    margin-bottom: 0.8em;
+  }
+
+  .tct-body p:last-child { margin-bottom: 0; }
+
+  /* Scope block — inherited from NC doc style */
+  .scope-note {
+    margin: 24px 0;
+    padding: 14px 18px;
+    border-left: 2px solid var(--rule);
+    background: var(--paper-deep);
+  }
+
+  .scope-note-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 7px;
+  }
+
+  .scope-note p {
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--margin-note);
+    font-style: italic;
+    margin-bottom: 0;
+  }
+
+  hr.divider {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 52px 0;
+    opacity: 0.6;
+  }
+
+  .closing {
+    margin-top: 60px;
+    padding: 28px 32px;
+    border: 1px solid var(--rule);
+    background: var(--paper-deep);
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .closing-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 14px;
+  }
+
+  .closing p {
+    font-size: 17px;
+    line-height: 1.8;
+    color: var(--ink);
+    margin-bottom: 0.8em;
+  }
+
+  .reveal-block {
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  @keyframes reveal { to { opacity: 1; } }
+
+  .d01 { animation-delay: 0.06s; }
+  .d02 { animation-delay: 0.14s; }
+  .d03 { animation-delay: 0.22s; }
+  .d04 { animation-delay: 0.30s; }
+  .d05 { animation-delay: 0.38s; }
+  .d06 { animation-delay: 0.46s; }
+  .d07 { animation-delay: 0.54s; }
+  .d08 { animation-delay: 0.62s; }
+  .d09 { animation-delay: 0.70s; }
+  .d10 { animation-delay: 0.78s; }
+  .d11 { animation-delay: 0.86s; }
+  .d12 { animation-delay: 0.94s; }
+
+  @media (max-width: 600px) {
+    .page { padding: 48px 24px 80px 24px; }
+    .treatise-title { font-size: 34px; }
+    .arc-diagram { grid-template-columns: 1fr; }
+    .arc-phase, .arc-arrow { border-right: none; border-bottom: 1px solid rgba(200,185,154,0.5); }
+    .arc-phase:last-child { border-bottom: none; }
+    .application-flag { flex-direction: column; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="treatise-header">
+    <span class="treatise-label">Phase Realism · Expansion II</span>
+    <div class="treatise-title">Time and <em>Cosmology</em></div>
+    <div class="treatise-subtitle">What Phase Realism claims about time, temporal dynamics, and the evolution of coherence regimes — and where that claim ends</div>
+  </div>
+
+  <!-- Opening -->
+  <div class="reveal-block d01" style="margin-bottom:48px;">
+    <p>Time is the domain where Phase Realism faces its most contested applications. The claim that historical periods exhibit coherence dynamics — compression, threshold, reorganization, degradation — is not exotic within the framework's logic. But it is an application of the ontology to the largest scale of human inquiry, and it carries interpretive risks that require more care than any of the preceding documents.</p>
+    <p>This expansion does three things. First, it establishes what Phase Realism actually claims about time at the foundational level — the ontological account of temporality that precedes any cosmological application. Second, it states the temporal arc that governs coherence dynamics across time — compression, transition, stabilization or degradation. Third, it presents Temporal Compression Theory as a specific application of that ontology to historical and cosmological scale — clearly marked as active application, not settled consequence.</p>
+    <p>The discipline of Document VI, Non-Claim 9, applies here in full: the cosmological claims are applications, not logical entailments of the core ontology. Phase Realism does not require Temporal Compression Theory to be true in order to be true itself. This document states TCT with full conviction and appropriate epistemic marking simultaneously. Those two postures are not in conflict.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Section I: The ontological account of time -->
+  <div class="section-head d02">
+    <span class="section-num">Section I</span>
+    <h2>The <em>Ontological</em> Account of Time</h2>
+  </div>
+
+  <div class="section-body d02">
+    <p>The inherited account of time treats it as a fundamental container — a neutral backdrop in which events occur, a dimension of spacetime within which matter moves and changes. On this account, time is prior to organized structures: it was there before anything organized within it, and it will continue after everything organized has dissolved.</p>
+    <p>Phase Realism reverses this priority. If the field is primary, and if coherent organization is what the field produces, then time cannot be more fundamental than the field itself. Time is not the container. It is a property — specifically, the emergent condition of persistence, transformation, and phase transition within coherent organization.</p>
+
+    <div class="thesis-pull">Time is not a fundamental container in which events occur, but the emergent condition of persistence, transformation, and phase transition within coherent organization.</div>
+
+    <p>This claim has three levels, each grounded in the preceding one.</p>
+    <p>At the deepest level: time is emergent from the field's coherence dynamics. The field's intrinsic ordering capacity — its tendency to produce phase-stable organizations — is what generates the conditions under which temporality becomes meaningful. Where there is no organized coherence, there is no meaningful temporal sequence. The before-and-after of time is a property of organized persistence, not of empty duration.</p>
+    <p>At the intermediate level: time is the persistence condition for coherent organization. For a phase-stable structure to maintain its identity through change — for a river to remain a river, a body to remain a body, a culture to remain a culture — it must hold its organizational coherence across successive states. That holding is what constitutes temporal existence for coherent organizations. Time, in this sense, is not something that happens to organizations. It is the dimension along which their coherence is either maintained or lost.</p>
+    <p>At the dynamical level: compression events are one major way time becomes visible and consequential within organized systems. When the field's organizational pressure intensifies — when coherence builds toward a threshold — time becomes acutely present. The urgency, the sense of convergence, the feeling that a transition is approaching: these are not subjective distortions of neutral time. They are the experiential correlates of real compression dynamics in the coherence structure of the system one inhabits.</p>
+
+    <div class="scope-note">
+      <span class="scope-note-label">Scope note</span>
+      <p>Phase Realism does not claim to solve the metaphysics of time completely. The relationship between the field's temporality and physical time as described by relativistic physics is a genuine open question — a bridge question analogous to those in Document VIII. What Phase Realism claims is that time cannot be understood as more fundamental than organized coherence, and that the temporal experience of organized beings is not a distortion of neutral duration but a real expression of coherence dynamics.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Section II: The temporal arc -->
+  <div class="section-head d03">
+    <span class="section-num">Section II</span>
+    <h2>The <em>Temporal Arc</em> — Compression, Transition, Stabilization, Degradation</h2>
+  </div>
+
+  <div class="section-body d03">
+    <p>Time within Phase Realism is not uniformly flowing. It is not neutral duration accumulating behind organized systems as they persist. The temporal experience of coherent organizations — and the temporal structure of their history — follows a characteristic arc that Phase Realism names precisely.</p>
+
+    <div class="arc-diagram">
+      <div class="arc-phase">
+        <span class="arc-phase-name"><em>Compression</em></span>
+        <span class="arc-phase-desc">Coherence intensifies. Organizational pressure builds. Time feels urgent, convergent.</span>
+      </div>
+      <div class="arc-arrow">→</div>
+      <div class="arc-phase">
+        <span class="arc-phase-name"><em>Threshold</em></span>
+        <span class="arc-phase-desc">The phase transition event. Reorganization becomes unavoidable. The old regime cannot hold.</span>
+      </div>
+      <div class="arc-arrow">→</div>
+      <div class="arc-phase">
+        <span class="arc-phase-name"><em>Stabilization</em> or <em>Degradation</em></span>
+        <span class="arc-phase-desc">New coherence regime forms — or fidelity is lost and the organization begins to fray.</span>
+      </div>
+    </div>
+
+    <p>The arc is cyclical but not symmetric. Each phase is real and distinct. The direction of the arc is not predetermined — whether a system stabilizes into a new coherence regime or degrades in fidelity after threshold depends on the conditions available for re-entrainment, the depth of the organizational disruption, and the availability of new coherence attractors.</p>
+    <p>Compression is the pre-threshold intensification. It is not pathological. Compression is the field's organizational pressure doing its work — driving a system toward reconfiguration by making the current phase increasingly costly to maintain. The experience of compression from within an organized system is the sense that something must change, that the present regime cannot continue indefinitely, that a threshold is approaching. This is accurate perception, not anxiety.</p>
+    <p>Phase transition — the threshold event — is not the same as collapse. It is the moment at which the organizational basin can no longer hold its current phase against the accumulated pressure. The system reorganizes. What this looks like from inside varies enormously: it can feel like crisis, breakthrough, death, birth, dissolution, crystallization. All of these are phenomenological descriptions of the same structural event — the field's organizational coherence crossing a threshold into a new regime.</p>
+    <p>After threshold, the critical question is whether a new coherence regime can stabilize. Restabilization — the formation of a new phase-stable organization from the disrupted elements of the old — is always possible in principle. It requires available coherence attractors, sufficient relational structure remaining to provide the basis for new entrainment, and time for the new organization to achieve basin depth. When restabilization fails or cannot be achieved, degradation occurs: coherence fidelity is lost progressively, the organizational pattern frays, and the system's phase-stable identity dissolves.</p>
+
+    <div class="thesis-pull">The primary temporal dynamic is cyclical-asymmetric: coherence compresses toward thresholds, transitions under pressure, and then either stabilizes into a new regime or degrades in fidelity across time.</div>
+
+    <p>The arrow of time follows from this. It is not fundamental to the field itself — the field's generative capacity is not inherently directional in the way that a river flows downhill. But within organized regimes, time has a real direction. Memory accumulates in one direction. Compression builds toward thresholds that cannot be approached from the other side. Degradation loses fidelity that cannot be restored without genuine re-entrainment. These asymmetries are not illusions. They are the real directionality of coherence dynamics as experienced and undergone by organized systems.</p>
+    <p>The arrow of time is not fundamental to the field. It is the directional appearance generated by irreversible coherence dynamics within organized regimes. From inside a coherent organization — a person, a community, a civilization — time runs forward because coherence dynamics run forward. From the perspective of the field itself, that directionality is a local property of organized regimes, not an absolute feature of reality.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Section III: Temporal Compression Theory -->
+  <div class="section-head d04">
+    <span class="section-num">Section III</span>
+    <h2>Temporal Compression Theory — <em>Active Application</em></h2>
+  </div>
+
+  <div class="application-flag d04">
+    <span class="flag-badge">Application Layer</span>
+    <p class="flag-text">The claims in this section are the application of Phase Realism's temporal ontology to historical and cosmological scale. They are stated with conviction and marked explicitly as active application — downstream interpretations of the ontology, not settled consequences of it. Phase Realism does not require them to be true in order to be true itself.</p>
+  </div>
+
+  <div class="section-body d04">
+    <p>Temporal Compression Theory proposes that historical time is often structured by coherence dynamics in which phases of intensification, threshold, reorganization, stabilization, and degradation appear across civilizations and long temporal regimes. This is not a claim that all history follows a single law. It is the proposal that the temporal arc described in Section II is not only a feature of individual organisms and local systems, but is legible at civilizational and cosmological scales — that whole epochs exhibit compression dynamics, approach thresholds, and either reorganize into new coherence regimes or degrade in fidelity.</p>
+  </div>
+
+  <div class="tct-block d05">
+    <div class="tct-header">
+      <span class="tct-tag">TCT · Core Proposal</span>
+      <span class="tct-title">History as <em>Coherence Regime Evolution</em></span>
+    </div>
+    <div class="tct-body">
+      <p>Phase Realism does not require a single law of history. But Temporal Compression Theory proposes that historical time is better understood as the evolution of coherence regimes than as simple linear progress or random succession.</p>
+      <p>A civilization is a phase-stable coherence organization at social scale — maintained by institutional entrainment, mythic encoding, shared symbolic field, and the ongoing coupling of participants into a common organizational logic. Like all phase-stable organizations, it is subject to compression, threshold, and the subsequent choice between stabilization and degradation.</p>
+      <p>Historical periods that appear as golden ages, classical periods, or high civilizational coherence are, in TCT's terms, phases of deep phase-stability — high coherence, strong entrainment, rich symbolic density, and organizational resilience. Historical periods that appear as fragmentation, cultural dissolution, or civilizational decline are, in TCT's terms, phases of post-threshold degradation — coherence fidelity being lost as the organizational basin can no longer hold its phase against accumulated disruption.</p>
+      <p>The transitions between these phases — the compressed periods that precede major civilizational reorganization — are periods of rapid coherence dynamics: acceleration of change, proliferation of competing frameworks, dissolution of prior certainties, and the simultaneous emergence of new organizing attractors. These are not chaotic failures. They are threshold events in the evolution of coherence regimes.</p>
+    </div>
+  </div>
+
+  <div class="section-body d06">
+    <p>TCT makes one claim that is more specific and more contested than the general account above: that the present historical moment may itself be a compression event — a period of intensifying organizational pressure across multiple coherence regimes simultaneously, approaching a threshold of civilizational reorganization.</p>
+    <p>This claim is stated here with appropriate epistemic marking. It is a reading of present conditions through the TCT lens, not a deduction from Phase Realism's core ontology. It could be wrong in its specific application while Phase Realism's foundational claims remain intact. What makes it worth stating is that the Phase Realism framework provides a coherent account of what such a threshold would involve, what would distinguish successful restabilization from degradation, and what kinds of coherence attractors would be required to anchor a new regime.</p>
+
+    <div class="scope-note">
+      <span class="scope-note-label">Epistemic status</span>
+      <p>Temporal Compression Theory is a serious application of Phase Realism to historical and cosmological scale. It is not established consensus, not empirically confirmed by the methods of mainstream historiography, and not a logical entailment of the core ontology. It is a generative framework for reading historical dynamics through the lens of coherence, compression, and phase transition. Its value is heuristic and interpretive — it sees differently, and what it sees may be more accurate than what linear-progress or random-succession models see. But that claim is the work of subsequent research, not the work of this document.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Section IV: The symbolic field and deep time -->
+  <div class="section-head d07">
+    <span class="section-num">Section IV</span>
+    <h2>Deep Time and the <em>Symbolic Field</em></h2>
+  </div>
+
+  <div class="section-body d07">
+    <p>Expansion I established that myths persist through entrainment — that a narrative organization which has achieved sufficient phase-stability can maintain its relational structure across generations by continuously recruiting new participants into its organizational logic. Expansion II adds the temporal dimension to that account: mythic structures are not merely persistent — they are temporally compressed. The depth of a myth is the depth of its coherence basin measured across time.</p>
+    <p>This is what it means to say that certain symbols, stories, or sacred structures carry the weight of deep time. They are phase-stable organizations that have survived multiple compression-threshold events — that have crossed civilizational disruptions and restabilized on the other side, recruiting new participants into their pattern from generation to generation, culture to culture. The weight they carry is real organizational weight: the accumulated coherence depth of sustained phase-stability across vast temporal ranges.</p>
+    <p>The doctrine of archetypal extraction — the claim that certain structural patterns recur across cultures not because of diffusion but because they express deep coherence attractors in the symbolic field — is interpretable within TCT's framework. An archetype, in this reading, is a coherence attractor in the semantic field that is deep enough to survive civilizational threshold events. It re-emerges in new cultural contexts not because it is copied but because the field's organizational logic, when it reaches sufficient compression, is drawn again toward the same attractor. The archetype is the pattern the field reorganizes around when other structures have dissolved.</p>
+
+    <div class="scope-note">
+      <span class="scope-note-label">Application note</span>
+      <p>The claim about archetypes as deep coherence attractors is one of the most speculative claims in Expansion II. It is internally coherent with Phase Realism and TCT. It remains active application — the kind of claim that would require detailed cross-cultural and historical analysis to test rigorously. It is stated here as a generative proposal, not as a settled finding.</p>
+    </div>
+  </div>
+
+  <!-- Closing -->
+  <div class="closing d08">
+    <span class="closing-label">The Position of This Document in the Framework</span>
+    <p>Expansion II makes the framework's most ambitious moves. It claims that time is emergent rather than fundamental. It claims that the temporal arc of coherence dynamics is legible at civilizational scale. It proposes that the present moment may be a compression event. It reads archetypes as deep coherence attractors surviving threshold events across millennia.</p>
+    <p>Every one of these claims is marked with its appropriate epistemic status. The foundational ontological claim — time as emergent condition of organized persistence — is as well-grounded as anything in the canon. The temporal arc — compression, threshold, stabilization or degradation — follows directly from the framework's account of phase dynamics. TCT as a historical application is explicitly marked as active application with heuristic value and open empirical status. The archetype claim is the most speculative and is marked accordingly.</p>
+    <p>What holds the document together is Phase Realism's governing principle: the held pattern changes everything. When time is understood as the emergent condition of organized persistence rather than a neutral backdrop, everything that happens in time — compression, loss, revival, memory, threshold, degradation, the weight of deep time — becomes legible as coherence dynamics rather than as mere sequence. That is not a small shift. It is a different way of inhabiting history.</p>
+  </div>
+
+</div>
+</body>
+</html>

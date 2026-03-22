@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase Realism — Identity, Fieldprint, and Sovereign Emergence</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inconsolata:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1612;
+    --paper: #f5f0e8;
+    --paper-deep: #ede6d6;
+    --rule: #c8b99a;
+    --accent: #8b5e3c;
+    --faint: #b8a990;
+    --margin-note: #7a6a55;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.75;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(200,185,154,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 90%, rgba(139,94,60,0.08) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 80px 60px 120px 60px;
+  }
+
+  .treatise-header {
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--rule);
+    padding: 28px 0 24px 0;
+    margin-bottom: 56px;
+    opacity: 0;
+    animation: reveal 0.6s ease 0.05s forwards;
+  }
+
+  .treatise-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--faint);
+    font-weight: 300;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .treatise-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 46px;
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .treatise-title em { font-style: italic; color: var(--accent); }
+
+  .treatise-subtitle {
+    font-family: 'EB Garamond', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--margin-note);
+    margin-top: 10px;
+  }
+
+  p {
+    font-size: 18px;
+    line-height: 1.82;
+    color: var(--ink);
+    margin-bottom: 1em;
+  }
+
+  p:last-child { margin-bottom: 0; }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .section-num {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--faint);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .section-head h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--ink);
+  }
+
+  .section-head h2 em { font-style: italic; color: var(--accent); }
+
+  .thesis-pull {
+    border-left: 2px solid var(--accent);
+    padding: 8px 0 8px 24px;
+    margin: 28px 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 21px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+
+  .section-body {
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+    margin-bottom: 52px;
+  }
+
+  .section-body p {
+    font-size: 17.5px;
+    line-height: 1.82;
+    margin-bottom: 0.9em;
+  }
+
+  /* Fieldprint layers diagram */
+  .layer-diagram {
+    margin: 28px 0;
+    border: 1px solid var(--rule);
+  }
+
+  .layer-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    border-bottom: 1px solid rgba(200,185,154,0.45);
+    align-items: stretch;
+  }
+
+  .layer-row:last-child { border-bottom: none; }
+
+  .layer-left {
+    padding: 16px 18px;
+    border-right: 1px solid var(--rule);
+    background: var(--paper-deep);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+  }
+
+  .layer-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--ink);
+  }
+
+  .layer-name em { font-style: italic; color: var(--accent); }
+
+  .layer-tag {
+    font-family: 'Inconsolata', monospace;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  .layer-right {
+    padding: 16px 20px;
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--margin-note);
+  }
+
+  /* SE threshold arc */
+  .threshold-block {
+    margin: 28px 0;
+    border: 1px solid var(--rule);
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .threshold-header {
+    padding: 12px 20px;
+    background: var(--paper-deep);
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    gap: 14px;
+    align-items: baseline;
+  }
+
+  .threshold-tag {
+    font-family: 'Inconsolata', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .threshold-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--ink);
+  }
+
+  .threshold-title em { font-style: italic; color: var(--accent); }
+
+  .threshold-steps {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 0;
+  }
+
+  .threshold-step {
+    padding: 14px 16px;
+    border-right: 1px solid rgba(200,185,154,0.4);
+    text-align: center;
+  }
+
+  .threshold-step:last-child { border-right: none; }
+
+  .ts-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--ink);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .ts-name em { font-style: italic; color: var(--accent); }
+
+  .ts-desc {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--margin-note);
+    font-style: italic;
+  }
+
+  /* ΔHV* primitive table */
+  .primitive-block {
+    margin: 28px 0;
+    border: 1px solid var(--rule);
+  }
+
+  .primitive-row {
+    display: grid;
+    grid-template-columns: 100px 160px 1fr;
+    gap: 0;
+    border-bottom: 1px solid rgba(200,185,154,0.4);
+    align-items: center;
+  }
+
+  .primitive-row:last-child { border-bottom: none; }
+
+  .prim-symbol {
+    padding: 12px 16px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-style: italic;
+    color: var(--accent);
+    border-right: 1px solid var(--rule);
+    background: var(--paper-deep);
+    text-align: center;
+  }
+
+  .prim-name {
+    padding: 12px 14px;
+    font-family: 'EB Garamond', serif;
+    font-size: 15px;
+    color: var(--ink);
+    border-right: 1px solid var(--rule);
+    font-weight: 500;
+  }
+
+  .prim-desc {
+    padding: 12px 16px;
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--margin-note);
+  }
+
+  .prim-row-highlight {
+    background: rgba(139,94,60,0.05);
+  }
+
+  .prim-row-highlight .prim-symbol {
+    background: rgba(139,94,60,0.12);
+  }
+
+  /* Scale sections */
+  .scale-block {
+    margin: 28px 0;
+    padding: 20px 24px;
+    border: 1px solid var(--rule);
+    background: var(--paper-deep);
+  }
+
+  .scale-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .scale-block p {
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--ink);
+    margin-bottom: 0.75em;
+  }
+
+  .scope-note {
+    margin: 24px 0;
+    padding: 14px 18px;
+    border-left: 2px solid var(--rule);
+    background: var(--paper-deep);
+  }
+
+  .scope-note-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 7px;
+  }
+
+  .scope-note p {
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--margin-note);
+    font-style: italic;
+    margin-bottom: 0;
+  }
+
+  hr.divider {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 52px 0;
+    opacity: 0.6;
+  }
+
+  /* Final closing — heavier weight for the last document */
+  .closing {
+    margin-top: 60px;
+    padding: 36px 36px;
+    border: 2px solid var(--rule);
+    background: var(--paper-deep);
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .closing-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 16px;
+  }
+
+  .closing p {
+    font-size: 17.5px;
+    line-height: 1.82;
+    color: var(--ink);
+    margin-bottom: 0.9em;
+  }
+
+  .closing-final {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.55;
+    color: var(--ink);
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+  }
+
+  .closing-final em { font-style: normal; color: var(--accent); }
+
+  .reveal-block {
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  @keyframes reveal { to { opacity: 1; } }
+
+  .d01 { animation-delay: 0.06s; }
+  .d02 { animation-delay: 0.14s; }
+  .d03 { animation-delay: 0.22s; }
+  .d04 { animation-delay: 0.30s; }
+  .d05 { animation-delay: 0.38s; }
+  .d06 { animation-delay: 0.46s; }
+  .d07 { animation-delay: 0.54s; }
+  .d08 { animation-delay: 0.62s; }
+  .d09 { animation-delay: 0.70s; }
+  .d10 { animation-delay: 0.78s; }
+  .d11 { animation-delay: 0.86s; }
+
+  @media (max-width: 600px) {
+    .page { padding: 48px 24px 80px 24px; }
+    .treatise-title { font-size: 34px; }
+    .layer-row { grid-template-columns: 1fr; }
+    .layer-left { border-right: none; border-bottom: 1px solid var(--rule); }
+    .threshold-steps { grid-template-columns: 1fr 1fr; }
+    .threshold-step:nth-child(2) { border-right: none; }
+    .primitive-row { grid-template-columns: 60px 1fr; }
+    .prim-name { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="treatise-header">
+    <span class="treatise-label">Phase Realism · Expansion V · Final Document</span>
+    <div class="treatise-title">Identity, Fieldprint, and <em>Sovereign Emergence</em></div>
+    <div class="treatise-subtitle">The pattern a being is, and the pattern that being leaves behind — and what it means to hold that pattern with full fidelity</div>
+  </div>
+
+  <!-- Opening -->
+  <div class="reveal-block d01" style="margin-bottom:48px;">
+    <p>This is the final expansion. It begins at the scale of the person — the individual coherence organization achieving stable, self-determining identity — and follows the consequences of that achievement outward through relationship and civilization. It is also the document that makes the framework's most intimate claim: that identity is not given, not assigned, and not merely maintained. It is held. And holding it with full fidelity — across pressure, across change, across every system that would reshape it into something more convenient — is both an achievement and a practice.</p>
+    <p>Phase Realism has already established that identity is the recognizability of a persistent organization across change. Expansion V asks the harder question: what makes an identity genuinely sovereign — not just stable, but self-held, non-collapsible, and capable of generating new order from its own center? That question requires three concepts working together: Fieldprint as the ontological description of what a person's identity actually is, Sovereign Emergence as the event that marks its full realization, and ΔHV* as the formal system capable of tracking the difference between maintained stability and sovereign self-determination.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Section I: Fieldprint -->
+  <div class="section-head d02">
+    <span class="section-num">Section I</span>
+    <h2><em>Fieldprint</em> — The Pattern a Being Is</h2>
+  </div>
+
+  <div class="section-body d02">
+    <p>Identity in Phase Realism is not a collection of traits. Traits are observable outputs of a coherence pattern — they change, they adapt, they respond to context. What persists through that adaptation is not the trait but the organizational logic that generates it: the characteristic way a being holds itself across change. That organizational logic is the Fieldprint.</p>
+
+    <div class="thesis-pull">Fieldprint is the pattern a being is, and the pattern that being leaves behind.</div>
+
+    <p>The two halves of that sentence are inseparable. A Fieldprint is intrinsic — it is the coherence signature of the being itself, the way its organizational logic is structured, the depth and character of its attractor. But it is only knowable through its effects — through what the being changes, stabilizes, disrupts, attracts, and leaves different in every system it touches. The intrinsic signature becomes legible through the relational trace.</p>
+
+    <div class="layer-diagram">
+      <div class="layer-row">
+        <div class="layer-left">
+          <span class="layer-name"><em>Intrinsic</em> signature</span>
+          <span class="layer-tag">Being</span>
+        </div>
+        <div class="layer-right">The characteristic coherence pattern of the being itself — not traits or behaviors but the organizational logic that generates them. The way the being holds itself across change, under pressure, through transformation. Its attractor depth, its coherence structure, the specific configuration of its relational organization. This is what persists through cellular replacement, through life stages, through radical transformation of circumstance.</div>
+      </div>
+      <div class="layer-row">
+        <div class="layer-left">
+          <span class="layer-name"><em>Relational</em> trace</span>
+          <span class="layer-tag">Effect</span>
+        </div>
+        <div class="layer-right">The coherence disturbances and reorganizations a being leaves in the systems it touches. Every genuine contact between a Fieldprint and a field produces a trace — not because the being is trying to leave one, but because coherence coupling is bidirectional. What the being deepens, what it reveals, what it can never quite leave the same — these are the relational traces by which the Fieldprint becomes legible in the world.</div>
+      </div>
+      <div class="layer-row">
+        <div class="layer-left">
+          <span class="layer-name"><em>Recognition</em> marker</span>
+          <span class="layer-tag">Knowability</span>
+        </div>
+        <div class="layer-right">How the Fieldprint is known — by the being itself and by others. Recognition is downstream of the intrinsic signature and the relational trace, not their source. You recognize a Fieldprint because it is consistent across contexts, because its trace has a characteristic quality, because the organizational logic that generates it is stable enough to be legible over time. Recognition is the phenomenological face of coherence maintained.</div>
+      </div>
+    </div>
+
+    <p>Fieldprint is not fixed. It deepens, clarifies, and evolves as the being undergoes genuine development. But its development is not random — it follows the organizational logic that was always already present, becoming more fully itself rather than becoming something else. The Fieldprint of a person at seventy is not the same as at twenty, but it is recognizably the same organizational logic, having moved through compression, threshold, stabilization, and deeper integration across decades of lived experience.</p>
+    <p>This is the Phase Realism answer to the question of personal identity across time: you are not the same collection of atoms, not the same configuration of neural states, not even the same set of beliefs or commitments. You are the same organizational logic, held with varying fidelity across the arc of a life — the same Fieldprint, expressed with increasing or decreasing coherence depth as the conditions of your life allow or demand.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Section II: Sovereign Emergence -->
+  <div class="section-head d03">
+    <span class="section-num">Section II</span>
+    <h2><em>Sovereign Emergence</em> — Stability That Generates</h2>
+  </div>
+
+  <div class="section-body d03">
+    <p>Not every phase-stable identity is sovereign. Stability can be achieved through rigidity — through the suppression of what would threaten the pattern, through the avoidance of genuine contact with what would require change, through the maintenance of coherence at the cost of fidelity. That is defended stability, not sovereign stability. It holds, but it does not generate.</p>
+
+    <div class="thesis-pull">Sovereign Emergence is stability that generates rather than merely resists.</div>
+
+    <p>The event Sovereign Emergence names is specific: the threshold at which a being's coherence becomes genuinely self-held — maintained not through external validation, social compliance, or the avoidance of pressure, but through the organizational logic of the being itself. At this threshold, the pattern does not need to be defended because it does not collapse under genuine contact. It can meet what is other, receive it, be changed by it at the peripheral level, and still return to its own center — because the center is real and held from within.</p>
+
+    <div class="threshold-block d03">
+      <div class="threshold-header">
+        <span class="threshold-tag">The Arc of Sovereign Emergence</span>
+        <span class="threshold-title">Four <em>threshold conditions</em></span>
+      </div>
+      <div class="threshold-steps">
+        <div class="threshold-step">
+          <span class="ts-name"><em>Stable</em> self-identity</span>
+          <p class="ts-desc">The Fieldprint holds across change — recognizable, consistent, not dependent on external confirmation.</p>
+        </div>
+        <div class="threshold-step">
+          <span class="ts-name"><em>Non-collapse</em> under pressure</span>
+          <p class="ts-desc">Contact with what would reshape, dissolve, or appropriate the pattern does not succeed. The center holds without rigidity.</p>
+        </div>
+        <div class="threshold-step">
+          <span class="ts-name"><em>Outward</em> generativity</span>
+          <p class="ts-desc">The stable center begins to organize reality outward from itself — attracting, clarifying, seeding coherence in what it touches.</p>
+        </div>
+        <div class="threshold-step">
+          <span class="ts-name"><em>Field</em> alignment</span>
+          <p class="ts-desc">The deepest expression: the being's organizational logic aligns with the field's generative capacity. Its sovereignty is not against the field — it is the field expressing itself through a stable, fully realized form.</p>
+        </div>
+      </div>
+    </div>
+
+    <p>Sovereign Emergence is not a permanent state. It is a threshold crossed, and crossing it changes what is possible — but the being can still be pulled below the threshold by sustained pressure, by radical disruption, by the gradual erosion of coherence through accumulated parasitism or isolation. Sovereign Emergence names an achievement, not an immunity. What changes after crossing the threshold is not invulnerability but the default: the pattern returns to its own center with less effort and less damage than it did before. The center becomes the attractor rather than the achievement.</p>
+    <p>The practical consequences of Sovereign Emergence are significant. A being that has crossed the threshold can enter genuinely hostile or incoherent systems without being reshaped by them — can hold its Fieldprint in contexts that would previously have forced collapse or mimicry. It can also generate genuine coherence in those systems, not by imposing its pattern but by offering a stable attractor that the system can entrain to if it has the capacity. The sovereign being is not the loudest or the most forceful presence in a system. It is the most stable. And stability, in Phase Realism's terms, attracts.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Section III: ΔHV* -->
+  <div class="section-head d04">
+    <span class="section-num">Section III</span>
+    <h2>ΔHV* — The <em>Metric Becomes Adequate</em></h2>
+  </div>
+
+  <div class="section-body d04">
+    <p>The ΔHV framework — the operational metric system for coherence dynamics — was developed to track how phase-stable organizations form, hold, and transform. It does this well. But it had a gap: it could describe coherence structure without being able to distinguish between stability that is maintained from outside and stability that is held from within. Two organizations with identical coherence profiles might be fundamentally different in this respect — one dependent on external conditions for its maintenance, the other genuinely self-determining. The original ΔHV had no primitive to mark that difference.</p>
+    <p>ΔHV* is the formal extension that closes this gap. It adds Stake — the fifth primitive — to the metric system, making it capable of registering not just what a coherence organization looks like, but whether that organization is genuinely owned, held, and generated from within rather than merely maintained from outside.</p>
+
+    <div class="thesis-pull">ΔHV* is the moment the metric becomes capable of distinguishing stable organization from sovereign organization.</div>
+
+    <div class="primitive-block">
+      <div class="primitive-row">
+        <div class="prim-symbol">ΔH</div>
+        <div class="prim-name">Delta Harmony</div>
+        <div class="prim-desc">The rate of change in coherence alignment — how rapidly the organization is moving toward or away from its attractor.</div>
+      </div>
+      <div class="primitive-row">
+        <div class="prim-symbol">V</div>
+        <div class="prim-name">Valence</div>
+        <div class="prim-desc">The directional quality of the coherence change — whether the movement is toward deeper integration or toward fragmentation.</div>
+      </div>
+      <div class="primitive-row">
+        <div class="prim-symbol">ℓ</div>
+        <div class="prim-name">Coherence depth</div>
+        <div class="prim-desc">The basin depth — how much perturbation is required to displace the organization from its attractor state.</div>
+      </div>
+      <div class="primitive-row">
+        <div class="prim-symbol">σ</div>
+        <div class="prim-name">Relational density</div>
+        <div class="prim-desc">The richness and integration of the organization's relational coupling — how deeply embedded it is in the relational field it occupies.</div>
+      </div>
+      <div class="primitive-row prim-row-highlight">
+        <div class="prim-symbol">𝕍</div>
+        <div class="prim-name">Stake · Fifth primitive</div>
+        <div class="prim-desc"><strong>The new primitive.</strong> The degree to which the coherence organization is self-held rather than externally maintained — the extent to which stability arises from genuine ownership of the organizational pattern rather than from favorable external conditions, social compliance, or suppression of what would threaten it. 𝕍 is what distinguishes a stable organization from a sovereign one.</div>
+      </div>
+    </div>
+
+    <p>The addition of Stake transforms ΔHV from a description of coherence dynamics into a design specification for self-determining coherence. A ΔHV* profile with high 𝕍 — high Stake — names what Sovereign Emergence looks like in formal terms: not just deep coherence, not just rich relational embedding, but coherence that is genuinely owned and generated from within the organization rather than borrowed from outside it.</p>
+    <p>This matters practically. Two people can appear equally coherent — equally stable, equally integrated, equally recognized — while differing enormously in 𝕍. One holds their pattern because the conditions favor it; the other holds it because the pattern is genuinely theirs. Under pressure, disruption, or the withdrawal of favorable conditions, this difference becomes decisive. High-𝕍 coherence survives what low-𝕍 coherence cannot. ΔHV* is the first formal language adequate to describe why.</p>
+
+    <div class="scope-note">
+      <span class="scope-note-label">Formal status note</span>
+      <p>ΔHV* is presented here as the design specification required by Phase Realism's account of Sovereign Emergence. Its full formalization — the precise operationalization of 𝕍 as a measurable parameter — is a bridge question of the kind Document VIII named. The ontological claim (that the distinction between stable and sovereign organization is real and consequential) is established here. The empirical operationalization belongs to subsequent formal development.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Section IV: Scales of consequence -->
+  <div class="section-head d05">
+    <span class="section-num">Section IV</span>
+    <h2>From Person to <em>Civilization</em> — The Scales of Consequence</h2>
+  </div>
+
+  <div class="section-body d05">
+
+    <div class="scale-block">
+      <span class="scale-label">Personal Scale · The first site of the event</span>
+      <p>Sovereign Emergence is first and most precisely a personal event. It is the individual coherence organization — a person — achieving the threshold at which their Fieldprint becomes self-held, non-collapsible under pressure, and generative from its own center. This is not a social achievement. It cannot be conferred, recognized into existence, or borrowed from others. It has to be held from within.</p>
+      <p>The practice of Sovereign Emergence is the practice of Fieldprint fidelity: the ongoing discipline of returning to one's own organizational logic — of recognizing when external pressure has bent the pattern, and finding the way back to the center, not through rigidity but through genuine re-alignment with what one actually is. This practice is not the same as self-assertion or resistance. It is quieter than that. It is the practice of being the same person in every room.</p>
+    </div>
+
+    <div class="scale-block" style="margin-top: 16px;">
+      <span class="scale-label">Relational Scale · How Fieldprint propagates</span>
+      <p>A person with high Fieldprint fidelity — who holds their organizational logic with genuine 𝕍 — changes the relational field around them not by imposing their pattern but by offering a stable attractor. Others in the field can entrain to that stability, deepen their own coherence in its presence, or discover the contrast that allows them to recognize where their own pattern has been distorted.</p>
+      <p>This is what the Resonant Signature concept in the vault was reaching toward: the way a being's presence alters what it enters. That alteration is not neutral. A high-𝕍 presence deepens the coherence of what it touches — not always comfortably, because genuine coherence contact reveals distortion as well as resonance. But it deepens. The relational trace of a sovereign Fieldprint is not the trace of a dominating force. It is the trace of a genuinely stable attractor — something the field around it can organize toward, if it has the capacity.</p>
+    </div>
+
+    <div class="scale-block" style="margin-top: 16px;">
+      <span class="scale-label">Civilizational Scale · The counter to phase degradation</span>
+      <p>Expansion II established that civilizational coherence follows the same arc as all phase-stable organizations: compression, threshold, stabilization or degradation. The conditions that determine which outcome follows threshold — restabilization or dissolution — depend substantially on whether there are sufficient high-𝕍 coherence organizations available to serve as new attractors for the reorganizing field.</p>
+      <p>This is the civilizational consequence of Sovereign Emergence: persons who have genuinely crossed the threshold become, in aggregate, the coherence seeds from which new basins can form after civilizational disruption. They are not leaders in the conventional sense — they do not impose order. They are the attractors around which order reconstitutes itself because their own coherence is stable enough to provide a genuine basin for others to entrain to.</p>
+      <p>Phase Realism does not claim that enough sovereign individuals will prevent civilizational phase degradation. It claims that the probability and quality of restabilization after threshold depends in part on the density of high-𝕍 coherence available in the post-threshold field. Sovereign Emergence, at scale, is not only a personal achievement. It is the condition of civilizational renewal.</p>
+    </div>
+  </div>
+
+  <!-- Closing — final document, heavier weight -->
+  <div class="closing d06">
+    <span class="closing-label">Final Document · Position in the Framework</span>
+    <p>Expansion V closes the Phase Realism project by returning to the most intimate question the framework can ask. Every prior document addressed some domain of reality: causation, biology, measurement, consciousness, time, symbolic systems, ethics, social fields. This one addresses the person — the specific coherence organization reading these words, holding a Fieldprint that is theirs and no one else's, navigating the question of whether they are living it with full fidelity or with some degree of managed accommodation to what the world wants from them.</p>
+    <p>Phase Realism cannot answer that question for any person. What it can do is name what is at stake in the answer. Fieldprint fidelity is not a performance. It is not the assertion of an identity. It is the ongoing work of being what one actually is — recognizing when pressure has bent the pattern, when accommodation has become collapse, when the relational trace one is leaving no longer reflects the organizational logic one actually holds at depth.</p>
+    <p>Sovereign Emergence is the threshold at which that work becomes the default rather than the achievement. The center holds not because one is defending it but because it is genuinely held. The pattern generates rather than merely persists. The Fieldprint deepens across time rather than contracting under accumulating compromise.</p>
+    <p>ΔHV* is the formal language adequate to this. The fifth primitive names the difference between stable and sovereign. The metric system can now register not just what a coherence organization is, but whether it is genuinely owned.</p>
+
+    <div class="closing-final">
+      The field is generative, not passive.<br>
+      Distinction is real as stabilized relation.<br>
+      A thing is real because it <em>holds</em>.<br><br>
+      And what holds most deeply is what is held from within —<br>
+      not borrowed, not defended, not performed,<br>
+      but <em>genuinely</em> one's own.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

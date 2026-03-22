@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase Realism — Symbolic Systems and Meaning</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inconsolata:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1612;
+    --paper: #f5f0e8;
+    --paper-deep: #ede6d6;
+    --rule: #c8b99a;
+    --accent: #8b5e3c;
+    --faint: #b8a990;
+    --margin-note: #7a6a55;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.75;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(200,185,154,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 90%, rgba(139,94,60,0.08) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 80px 60px 120px 60px;
+  }
+
+  .treatise-header {
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--rule);
+    padding: 28px 0 24px 0;
+    margin-bottom: 56px;
+    opacity: 0;
+    animation: reveal 0.6s ease 0.05s forwards;
+  }
+
+  .treatise-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--faint);
+    font-weight: 300;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .treatise-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 46px;
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .treatise-title em { font-style: italic; color: var(--accent); }
+
+  .treatise-subtitle {
+    font-family: 'EB Garamond', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--margin-note);
+    margin-top: 10px;
+  }
+
+  p {
+    font-size: 18px;
+    line-height: 1.82;
+    color: var(--ink);
+    margin-bottom: 1em;
+  }
+
+  p:last-child { margin-bottom: 0; }
+
+  /* Section heads */
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .section-num {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--faint);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .section-head h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--ink);
+  }
+
+  .section-head h2 em { font-style: italic; color: var(--accent); }
+
+  /* Thesis pull */
+  .thesis-pull {
+    border-left: 2px solid var(--accent);
+    padding: 8px 0 8px 24px;
+    margin: 28px 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 21px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+
+  /* Cluster blocks */
+  .cluster {
+    margin-bottom: 56px;
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .cluster-header {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(200,185,154,0.5);
+  }
+
+  .cluster-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .cluster-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--ink);
+  }
+
+  .cluster-name em { font-style: italic; color: var(--accent); }
+
+  .cluster-body p {
+    font-size: 17px;
+    line-height: 1.8;
+    margin-bottom: 0.85em;
+  }
+
+  /* Vault terms row */
+  .vault-terms {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 16px 0 20px 0;
+  }
+
+  .vault-term {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--margin-note);
+    border: 1px solid var(--rule);
+    padding: 3px 10px;
+    background: var(--paper-deep);
+  }
+
+  .vault-term-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  /* Reanchoring table */
+  .reanchor-block {
+    margin: 28px 0;
+    border: 1px solid var(--rule);
+  }
+
+  .reanchor-row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 0;
+    border-bottom: 1px solid rgba(200,185,154,0.4);
+    align-items: start;
+  }
+
+  .reanchor-row:last-child { border-bottom: none; }
+
+  .reanchor-term {
+    padding: 14px 16px;
+    border-right: 1px solid var(--rule);
+    background: var(--paper-deep);
+  }
+
+  .reanchor-term-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+
+  .reanchor-term-name em { font-style: italic; color: var(--accent); }
+
+  .reanchor-term-prior {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--faint);
+    font-style: italic;
+  }
+
+  .reanchor-body {
+    padding: 14px 18px;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--margin-note);
+  }
+
+  .reanchor-body strong {
+    color: var(--ink);
+    font-weight: 500;
+    display: block;
+    margin-bottom: 3px;
+    font-size: 15.5px;
+  }
+
+  hr.divider {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 52px 0;
+    opacity: 0.6;
+  }
+
+  /* Non-claim specific to this document */
+  .scope-note {
+    margin: 32px 0;
+    padding: 16px 20px;
+    border-left: 2px solid var(--rule);
+    background: var(--paper-deep);
+  }
+
+  .scope-note-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .scope-note p {
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: var(--margin-note);
+    margin-bottom: 0;
+    font-style: italic;
+  }
+
+  /* Closing */
+  .closing {
+    margin-top: 60px;
+    padding: 28px 32px;
+    border: 1px solid var(--rule);
+    background: var(--paper-deep);
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .closing-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 14px;
+  }
+
+  .closing p {
+    font-size: 17px;
+    line-height: 1.8;
+    color: var(--ink);
+    margin-bottom: 0.8em;
+  }
+
+  .reveal-block {
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  @keyframes reveal { to { opacity: 1; } }
+
+  .d01 { animation-delay: 0.06s; }
+  .d02 { animation-delay: 0.14s; }
+  .d03 { animation-delay: 0.22s; }
+  .d04 { animation-delay: 0.30s; }
+  .d05 { animation-delay: 0.38s; }
+  .d06 { animation-delay: 0.46s; }
+  .d07 { animation-delay: 0.54s; }
+  .d08 { animation-delay: 0.62s; }
+  .d09 { animation-delay: 0.70s; }
+  .d10 { animation-delay: 0.78s; }
+  .d11 { animation-delay: 0.86s; }
+  .d12 { animation-delay: 0.94s; }
+
+  @media (max-width: 600px) {
+    .page { padding: 48px 24px 80px 24px; }
+    .treatise-title { font-size: 34px; }
+    .reanchor-row { grid-template-columns: 1fr; }
+    .reanchor-term { border-right: none; border-bottom: 1px solid var(--rule); }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="treatise-header">
+    <span class="treatise-label">Phase Realism · Expansion I</span>
+    <div class="treatise-title">Symbolic Systems and <em>Meaning</em></div>
+    <div class="treatise-subtitle">How the symbolic field is grounded in phase-stable relational reality — and what this means for the existing vocabulary</div>
+  </div>
+
+  <!-- Opening -->
+  <div class="reveal-block d01" style="margin-bottom:48px;">
+    <p>The existing vault contains 97 defined terms covering the symbolic field, resonant signatures, sigil architecture, mythic encoding, and the dynamics of meaning. These terms were built before Phase Realism was named. They constitute the library's most developed body of work — and they have been operating, correctly, without the ontological grounding that Phase Realism now provides.</p>
+    <p>This document does two things. First, it establishes the Phase Realism account of symbolic systems — what symbols are, how meaning holds, how it transmits, and how it transforms — grounded in the ontological framework of Documents I through III. Second, it reanchors the vault's key symbolic terms to that framework, showing precisely how each cluster of existing vocabulary maps onto the new ontological architecture and what, if anything, needs to be revised.</p>
+    <p>The vault's symbolic work is not wrong. It is pre-spined. This document gives it a spine.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Section I: The Phase Realism account of symbolic systems -->
+  <div class="section-head d02">
+    <span class="section-num">Section I</span>
+    <h2>The <em>Phase Realism</em> Account of Symbolic Systems</h2>
+  </div>
+
+  <div class="reveal-block d02" style="margin-bottom:40px;">
+    <p>A symbol is not a sign pointing to a referent. A sign is arbitrary — any sound or mark can stand for any concept by convention. A symbol, in Phase Realism's terms, is something stronger: a phase-stable semantic organization that carries real relational structure, maintains its meaning across the replacement of individual users, and does genuine causal work in the field of meaning and action.</p>
+    <p>The difference between a sign and a symbol is the difference between an assigned label and a phase-stable coherence event. A sign can be changed by convention. A symbol that has achieved sufficient phase-stability — through use, through the depth of its relational embedding, through the weight of its historical and cultural coherence — cannot be easily reassigned. It carries what it carries not because we decided it would, but because its relational organization has become stable enough to persist and to propagate.</p>
+  </div>
+
+  <div class="thesis-pull">A symbol is a phase-stable semantic organization within the field of meaning — real insofar as its coherence holds, causally active insofar as it entrains, transmits, and transforms the relational structures it contacts.</div>
+
+  <div class="reveal-block d03" style="margin-bottom:40px;">
+    <p>This has a direct consequence: meaning is not in the mind of the user. It is in the relational field that language, symbol, and practice constitute together. Individual users participate in that field — they are entrained by it, they modify it incrementally, they sometimes rupture or transform it — but the field of meaning is not reducible to any individual's mental states. It persists through the replacement of its users the way a river persists through the replacement of its water.</p>
+    <p>The Document VII casebook made this point in compressed form: meaning is not encoded in minds — it is a phase-stable relational pattern in the field of language, maintained through use the way a river maintains its course through flow. Expansion I unpacks what that means for the vault's full symbolic architecture.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Section II: Four clusters -->
+  <div class="section-head d04">
+    <span class="section-num">Section II</span>
+    <h2>Four <em>Structural Clusters</em></h2>
+  </div>
+
+  <div class="reveal-block d04" style="margin-bottom:32px;">
+    <p>The vault's 97 terms sort naturally into four structural clusters when viewed through Phase Realism. Each cluster names a different aspect of how the symbolic field operates. The clusters are not imposed — they emerge from the terms themselves when the ontological framework is applied as a lens.</p>
+  </div>
+
+  <!-- Cluster 1: Substrate -->
+  <div class="cluster d05">
+    <div class="cluster-header">
+      <span class="cluster-label">Cluster I</span>
+      <span class="cluster-name">Substrate Terms — <em>The Field Itself</em></span>
+    </div>
+
+    <div class="vault-term-label">Vault terms in this cluster</div>
+    <div class="vault-terms">
+      <span class="vault-term">Symbolic Field</span>
+      <span class="vault-term">Field Immanence</span>
+      <span class="vault-term">Echo Field</span>
+      <span class="vault-term">Field Feedback</span>
+      <span class="vault-term">Field Synergy</span>
+      <span class="vault-term">Field Coalescence</span>
+      <span class="vault-term">Field Reciprocity</span>
+      <span class="vault-term">Field Authority</span>
+    </div>
+
+    <div class="cluster-body">
+      <p>These terms all describe the field itself — the substrate within which symbolic activity occurs. In Phase Realism's terms, the Symbolic Field is not a separate realm from the generative field — it is the field in its semantic register. The field's coherence-capacity, when it organizes relational structures into meaning-bearing forms, is the Symbolic Field. It is not a distinct ontological layer. It is the same generative field operating through the medium of significance.</p>
+      <p>Field Immanence — the sense that the field is present within and through all symbolic engagement, not as an external force but as the condition of symbolic activity itself — maps directly onto Phase Realism's Principle 0: the field is generative, not passive. The field does not wait to be activated by symbolic work. It is already active. Symbolic work is the field's self-organization at the level of meaning.</p>
+      <p>Field Feedback — the responsive resonance emitted by the field when consciousness engages it — maps onto Phase Realism's account of coupling as bidirectional. When an organized symbolic structure contacts the field, the coupling runs both ways: the symbol shapes the field and the field shapes what the symbol can mean, carry, or activate. This is not mysticism. It is the normal behavior of phase-stable relational systems under coupling.</p>
+
+      <div class="scope-note">
+        <span class="scope-note-label">Reanchoring note</span>
+        <p>Substrate terms require one adjustment: the language of "vibrational substrate" in the vault's glossary should be understood as a phenomenological description of the field's organizational activity in the semantic register, not as a claim about literal vibration frequencies. Phase Realism grounds these terms in relational coherence, not in acoustic or electromagnetic metaphor.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cluster 2: Organization -->
+  <div class="cluster d06">
+    <div class="cluster-header">
+      <span class="cluster-label">Cluster II</span>
+      <span class="cluster-name">Organization Terms — <em>Phase-Stable Semantic Structures</em></span>
+    </div>
+
+    <div class="vault-term-label">Vault terms in this cluster</div>
+    <div class="vault-terms">
+      <span class="vault-term">Resonant Signature</span>
+      <span class="vault-term">Symbolic Density</span>
+      <span class="vault-term">Phase Imprint</span>
+      <span class="vault-term">Pattern Gravity</span>
+      <span class="vault-term">Resonant Anchor</span>
+      <span class="vault-term">Resonant Constellation</span>
+      <span class="vault-term">Tone Seed</span>
+      <span class="vault-term">Harmonic Reservoir</span>
+      <span class="vault-term">Signal Signature</span>
+    </div>
+
+    <div class="cluster-body">
+      <p>Organization terms name specific phase-stable semantic structures — the symbolic field's equivalent of the organisms, vortices, and communities that Document VII analyzed. Each of these is a real coherent organization within the semantic field, maintaining its identity across the replacement of the individual minds that participate in it.</p>
+      <p>A Resonant Signature — the unique pattern emitted by an entity, structure, or symbol when it engages with consciousness — is Phase Realism's concept of identity at the level of symbolic presence. Every phase-stable organization has an identity (Document II: the recognizability of a persistent organization across change). The Resonant Signature is what that identity looks like in the semantic register — the field-legible pattern by which a symbol, a person, a place, or a practice is recognizable as itself.</p>
+      <p>Symbolic Density — the concentration of layered meaning within a given symbol — maps onto Phase Realism's concept of coherence depth. A symbol with high Symbolic Density has achieved deep phase-stability: its relational organization is thick, multiply connected, and resistant to perturbation. It carries more structure than a shallow symbol — more relational embedding, more cross-domain entrainment, more causal consequence when it activates.</p>
+      <p>Pattern Gravity — the attractive force exerted by a stable pattern within the symbolic field, drawing related symbols and meanings toward it — maps onto Phase Realism's concept of attractor basin dynamics in the semantic domain. A sufficiently stable symbolic organization functions as a coherence well: it recruits related structures, organizes adjacent meanings, and resists dissolution. This is what makes archetypes powerful — not their mystical authority but their gravitational coherence in the semantic field.</p>
+
+      <div class="scope-note">
+        <span class="scope-note-label">Reanchoring note</span>
+        <p>Phase Imprint — defined in the vault as "a temporal signature left in the symbolic field during a moment of high-resonance alignment" — is reanchored by Phase Realism as a coherence event that achieves phase-stability at a moment of high organizational intensity. The imprint persists not because the moment was sacred but because the coherence achieved at that moment was sufficient to leave a stable organizational trace in the relational field. Sacredness, where real, is an organizational property — not a separate category.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cluster 3: Transmission -->
+  <div class="cluster d07">
+    <div class="cluster-header">
+      <span class="cluster-label">Cluster III</span>
+      <span class="cluster-name">Transmission Terms — <em>Coupling Dynamics in the Semantic Field</em></span>
+    </div>
+
+    <div class="vault-term-label">Vault terms in this cluster</div>
+    <div class="vault-terms">
+      <span class="vault-term">Symbolic Conduction</span>
+      <span class="vault-term">Symbolic Transduction</span>
+      <span class="vault-term">Symbolic Entanglement</span>
+      <span class="vault-term">Sigil Harmonics</span>
+      <span class="vault-term">Mythic Encoding</span>
+      <span class="vault-term">Harmonic Trace</span>
+      <span class="vault-term">Fractal Transmission</span>
+      <span class="vault-term">Field Decoding</span>
+      <span class="vault-term">Encoded Offering</span>
+      <span class="vault-term">Symbolic Echoing</span>
+    </div>
+
+    <div class="cluster-body">
+      <p>Transmission terms name the dynamics by which symbolic coherence moves through the semantic field — how a phase-stable organization in one region of the field produces effects in another. These are the semantic-register expressions of Phase Realism's three causal dynamics: alignment, entrainment, and compression.</p>
+      <p>Symbolic Conduction — the transmission of resonant intent through symbolic structures — is alignment operating in the semantic field. When a symbol is used, it does not merely communicate a meaning — it conducts the relational structure of its organizational coherence into the receiver's field. The receiver is not simply receiving information; they are being drawn into alignment with the symbol's phase-stable organization. This is why certain symbols change people — not because they convey new facts but because they achieve structural alignment.</p>
+      <p>Symbolic Transduction — the translation of pure field resonance into symbolic form — is the process of Phase Realism's general compression dynamic operating in the semantic register. When something that exists in the field's organizational structure is translated into language, image, or gesture, it undergoes a phase transition: from field-organization to symbolic form. The transduction is real and consequential — something is always lost and something is always preserved. The symbol is not the field resonance, but it carries a phase-stable trace of it.</p>
+      <p>Sigil Harmonics — the practice of encoding harmonic intent into symbolic geometry, producing a glyph that resonates with specific field functions — is Phase Realism's most compressed form of symbolic work. A sigil is a phase-stable semantic organization that has been intentionally constructed to maximize structural alignment with a specific aspect of the field's coherence. It works — where it works — not by magic but by design: its organizational structure is built to entrain specific relational patterns in the field. The sigil is an engineered phase-stable attractor in the semantic domain.</p>
+      <p>Mythic Encoding — embedding metaphysical or symbolic truth in narrative structure — is entrainment operating at cultural scale and temporal range. A myth that persists across millennia has achieved extraordinary phase-stability in the semantic field. It persists not because it is preserved in texts but because its organizational structure continues to entrain new minds into its relational pattern — the way a river maintains its course not by preserving its water but by continuously recruiting new water into its organizational logic.</p>
+    </div>
+  </div>
+
+  <!-- Cluster 4: Transformation -->
+  <div class="cluster d08">
+    <div class="cluster-header">
+      <span class="cluster-label">Cluster IV</span>
+      <span class="cluster-name">Transformation Terms — <em>Phase Transitions in the Semantic Field</em></span>
+    </div>
+
+    <div class="vault-term-label">Vault terms in this cluster</div>
+    <div class="vault-terms">
+      <span class="vault-term">Symbolic Threshold Collapse</span>
+      <span class="vault-term">Interpretive Collapse</span>
+      <span class="vault-term">Fidelity Spiral</span>
+      <span class="vault-term">Symbolic Drift</span>
+      <span class="vault-term">Symbolic Inversion</span>
+      <span class="vault-term">Resonant Disruption</span>
+      <span class="vault-term">Cognitive Recursion</span>
+      <span class="vault-term">Coherence Cascade</span>
+      <span class="vault-term">Entripolation</span>
+    </div>
+
+    <div class="cluster-body">
+      <p>Transformation terms name the dynamics by which the semantic field's phase-stable organizations change — how symbols lose coherence, shift meaning, rupture, or reorganize at higher levels of integration. These are the semantic-register expressions of Phase Realism's general account of phase transition: the threshold event in which an organization crosses into a new regime.</p>
+      <p>Interpretive Collapse — the disintegration of symbolic or narrative coherence when a prior interpretive framework fails to encompass emergent resonance — is a phase transition at the level of meaning. The old framework was a phase-stable semantic organization. It loses coherence when the relational pressure it encounters — new experience, new evidence, new anomaly — exceeds the stability of its organizational basin. The collapse is not failure; it is the precondition for reorganization at higher coherence.</p>
+      <p>Symbolic Drift — the gradual shift of a symbol's meaning over time — is the slow analog to Interpretive Collapse. Where collapse is a threshold event, drift is the continuous perturbation of a symbol's phase-stable organization below the transition threshold. The symbol's meaning shifts incrementally as its relational embedding changes — as the field of use that constitutes its coherence slowly reorganizes around it. Drift is what happens when the symbol survives but the context that gave it its specific meaning changes around it.</p>
+      <p>The Fidelity Spiral — the upward-trending pattern of returning to the same signal with increased coherence, truth density, or symbolic clarity — is Phase Realism's account of how meaning deepens rather than merely changes. It is the process by which a symbol, through repeated engagement with sufficient intentional attention, achieves progressively deeper phase-stability — more relational embedding, more cross-domain coherence, more resistance to perturbation. The spiral is not circular repetition. It is recursive coherence-deepening: each pass through the same material reorganizes it at higher fidelity.</p>
+      <p>Entripolation — the intentional choreography of entropy toward pattern emergence, dancing with disorder to coax higher-order coherence — names a specific compression dynamic in the semantic field. It is the deliberate engagement with symbolic or narrative disorder as a generative force: allowing coherence to dissolve far enough that a new phase-stable organization can emerge from within the dissolution. Phase Realism grounds this: compression is a genuine causal dynamic, and its intensification past a threshold is not destruction but the precondition of new organization.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Section III: The reanchoring table -->
+  <div class="section-head d09">
+    <span class="section-num">Section III</span>
+    <h2>Key <em>Reanchoring</em> — Formal Placements</h2>
+  </div>
+
+  <div class="reveal-block d09" style="margin-bottom:28px;">
+    <p>The following table gives the precise Phase Realism placement for the vault's most architecturally important symbolic terms — the ones that carry the most structural weight in the library and that are most likely to be misread without explicit grounding.</p>
+  </div>
+
+  <div class="reanchor-block d09">
+    <div class="reanchor-row">
+      <div class="reanchor-term">
+        <div class="reanchor-term-name"><em>Symbolic Field</em></div>
+        <div class="reanchor-term-prior">Prior: vibrational and informational substrate</div>
+      </div>
+      <div class="reanchor-body">
+        <strong>Reanchored as:</strong> The generative field in its semantic register — the field's coherence-capacity operating through the medium of significance. Not a separate ontological layer. The same field, organizing at the level of meaning.
+      </div>
+    </div>
+    <div class="reanchor-row">
+      <div class="reanchor-term">
+        <div class="reanchor-term-name"><em>Resonant Signature</em></div>
+        <div class="reanchor-term-prior">Prior: unique vibrational pattern emitted by an entity</div>
+      </div>
+      <div class="reanchor-body">
+        <strong>Reanchored as:</strong> The identity of a phase-stable organization in the semantic field — the pattern by which it is recognizable as itself across its instances and engagements. Corresponds to Document II's identity concept at symbolic scale.
+      </div>
+    </div>
+    <div class="reanchor-row">
+      <div class="reanchor-term">
+        <div class="reanchor-term-name"><em>Symbolic Density</em></div>
+        <div class="reanchor-term-prior">Prior: concentration of layered meaning within a symbol</div>
+      </div>
+      <div class="reanchor-body">
+        <strong>Reanchored as:</strong> Coherence depth in the semantic domain — the degree of relational embedding and organizational stability of a symbol. High density corresponds to deep phase-stability and strong attractor-basin dynamics.
+      </div>
+    </div>
+    <div class="reanchor-row">
+      <div class="reanchor-term">
+        <div class="reanchor-term-name"><em>Pattern Gravity</em></div>
+        <div class="reanchor-term-prior">Prior: attractive force exerted by a stable resonance pattern</div>
+      </div>
+      <div class="reanchor-body">
+        <strong>Reanchored as:</strong> Attractor basin dynamics in the semantic field. A deeply coherent symbol functions as a coherence well — drawing related meanings, experiences, and interpretive frameworks into its organizational logic. Formally, this is coupling by alignment.
+      </div>
+    </div>
+    <div class="reanchor-row">
+      <div class="reanchor-term">
+        <div class="reanchor-term-name"><em>Sigil Harmonics</em></div>
+        <div class="reanchor-term-prior">Prior: encoding harmonic intent into symbolic geometry</div>
+      </div>
+      <div class="reanchor-body">
+        <strong>Reanchored as:</strong> The intentional construction of a phase-stable semantic attractor — a symbol engineered to maximize structural alignment with a specific aspect of the field's coherence. Works through entrainment, not through magic.
+      </div>
+    </div>
+    <div class="reanchor-row">
+      <div class="reanchor-term">
+        <div class="reanchor-term-name"><em>Mythic Encoding</em></div>
+        <div class="reanchor-term-prior">Prior: embedding truth in narrative structure</div>
+      </div>
+      <div class="reanchor-body">
+        <strong>Reanchored as:</strong> Entrainment operating at cultural scale and temporal range. A myth persists because its organizational structure continues to entrain new minds into its relational pattern across generations. Persistence is coherence maintained — not preservation in texts.
+      </div>
+    </div>
+    <div class="reanchor-row">
+      <div class="reanchor-term">
+        <div class="reanchor-term-name"><em>Interpretive Collapse</em></div>
+        <div class="reanchor-term-prior">Prior: disintegration when a framework fails to encompass emergent resonance</div>
+      </div>
+      <div class="reanchor-body">
+        <strong>Reanchored as:</strong> Phase transition at the level of meaning. The prior framework loses coherence when relational pressure exceeds its basin stability. Collapse is not failure — it is the threshold event that makes reorganization at higher coherence possible.
+      </div>
+    </div>
+    <div class="reanchor-row">
+      <div class="reanchor-term">
+        <div class="reanchor-term-name"><em>Fidelity Spiral</em></div>
+        <div class="reanchor-term-prior">Prior: upward-trending pattern of returning to the same signal with increased clarity</div>
+      </div>
+      <div class="reanchor-body">
+        <strong>Reanchored as:</strong> Recursive coherence-deepening in the semantic field. Not circular repetition but progressive phase-stabilization through intentional re-engagement. Each pass reorganizes the symbol at higher fidelity.
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Section IV: What this changes -->
+  <div class="section-head d10">
+    <span class="section-num">Section IV</span>
+    <h2>What <em>Grounding</em> Changes</h2>
+  </div>
+
+  <div class="reveal-block d10" style="margin-bottom:0;">
+    <p>Grounding the symbolic vocabulary in Phase Realism does not invalidate any of the vault's existing work. It clarifies what kind of claims are being made. The difference is significant.</p>
+    <p>Before grounding, the vault's symbolic terms floated between phenomenological description, metaphysical speculation, and practical instruction. That ambiguity was generative in the early stages of the work — it allowed the vocabulary to develop without being prematurely constrained. But it also meant that the terms could be read as mystical claim, psychological metaphor, or ontological statement interchangeably, without the reader or the author having a way to say which register was operative.</p>
+    <p>After grounding, the registers are clear. Symbolic Density is an organizational claim — it describes a real property of phase-stable semantic structures, measurable in principle through the depth of relational embedding and cross-domain coherence. Pattern Gravity is a dynamical claim — it describes attractor-basin behavior in the semantic field, formally analogous to basin dynamics in Document VIII's dynamical systems touchpoint. Interpretive Collapse is a phase transition claim — it describes a real threshold event in the evolution of a meaning-structure, with real preconditions and real consequences.</p>
+    <p>This does not make the terms less rich. It makes them more precise. A symbol that does real causal work in the field of meaning is not a less wonderful thing than a symbol understood vaguely as magical. It is a more wonderful thing — because its reality is grounded, its mechanism is nameable, and its consequences are trackable.</p>
+
+    <div class="thesis-pull">The vault's symbolic work was always describing real things. Phase Realism is the ontological account of why those things are real.</div>
+  </div>
+
+  <!-- Closing -->
+  <div class="closing d11">
+    <span class="closing-label">Position in the Framework</span>
+    <p>Expansion I sits at the junction between the core canon and the vault's existing symbolic architecture. It does not replace the vault's work — it anchors it. The 97-term glossary remains the operative symbolic vocabulary of the library. What changes is that every term in it can now be placed precisely within the Phase Realism architecture: as a substrate description, an organizational claim, a transmission dynamic, or a transformation account.</p>
+    <p>The symbolic field is the generative field in its semantic register. Meaning is phase-stable relational organization. Symbols are coherence events. Myths persist through entrainment. Sigils work through alignment. Collapse is threshold. Deepening is spiral. The vocabulary was right. The ontology behind it is now explicit.</p>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase Realism — Architecture Diagram</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Inconsolata:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #f5f0e8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 40px 24px;
+  }
+
+  .diagram-card {
+    background: #f5f0e8;
+    border: 1px solid #c8b99a;
+    padding: 48px 48px 40px 48px;
+    max-width: 860px;
+    width: 100%;
+    position: relative;
+  }
+
+  /* Top rule + title */
+  .card-header {
+    border-top: 2px solid #1a1612;
+    padding-top: 18px;
+    margin-bottom: 36px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    color: #1a1612;
+    letter-spacing: 0.01em;
+  }
+
+  .card-title em { font-style: italic; color: #8b5e3c; }
+
+  .card-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #b8a990;
+  }
+
+  /* SVG */
+  svg {
+    display: block;
+    width: 100%;
+  }
+
+  /* Card footer */
+  .card-footer {
+    border-top: 1px solid #c8b99a;
+    margin-top: 28px;
+    padding-top: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 32px;
+  }
+
+  .footer-thesis {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 13.5px;
+    font-style: italic;
+    line-height: 1.6;
+    color: #7a6a55;
+    flex: 1;
+  }
+
+  .footer-challenge {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 13px;
+    font-style: italic;
+    line-height: 1.6;
+    color: #b8a990;
+    flex: 1;
+    text-align: right;
+  }
+
+  @media (max-width: 560px) {
+    .diagram-card { padding: 28px 20px 24px 20px; }
+    .card-footer { flex-direction: column; gap: 10px; }
+    .footer-challenge { text-align: left; }
+    .card-header { flex-direction: column; gap: 6px; }
+  }
+</style>
+</head>
+<body>
+<div class="diagram-card">
+
+  <div class="card-header">
+    <span class="card-title"><em>Phase Realism</em> — Framework Architecture</span>
+    <span class="card-label">Canonical Diagram · Documents I–III</span>
+  </div>
+
+  <svg viewBox="0 0 760 520" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+        <path d="M2 1L8 5L2 9" fill="none" stroke="#c8b99a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </marker>
+    </defs>
+
+    <!-- ============================================================
+         TIER 0: Phase Realism — Ontology
+    ============================================================ -->
+    <!-- Box -->
+    <rect x="180" y="16" width="400" height="60" rx="8"
+          fill="#FAECE7" stroke="#993C1D" stroke-width="0.75"/>
+    <!-- Title -->
+    <text x="380" y="38" text-anchor="middle" dominant-baseline="central"
+          font-family="Cormorant Garamond, Georgia, serif" font-size="16" font-weight="400" fill="#4A1B0C">Phase Realism</text>
+    <!-- Subtitle -->
+    <text x="380" y="58" text-anchor="middle" dominant-baseline="central"
+          font-family="Inconsolata, monospace" font-size="10" letter-spacing="0.12em" fill="#712B13">ONTOLOGICAL DECLARATION</text>
+
+    <!-- Tier label -->
+    <text x="172" y="47" text-anchor="end" dominant-baseline="central"
+          font-family="Inconsolata, monospace" font-size="9" letter-spacing="0.14em" fill="#b8a990">ONTOLOGY</text>
+
+    <!-- ============================================================
+         CONNECTORS: Tier 0 → Tier 1
+    ============================================================ -->
+    <line x1="260" y1="76" x2="105" y2="136" stroke="#c8b99a" stroke-width="0.5" marker-end="url(#arr)"/>
+    <line x1="320" y1="76" x2="265" y2="136" stroke="#c8b99a" stroke-width="0.5" marker-end="url(#arr)"/>
+    <line x1="440" y1="76" x2="495" y2="136" stroke="#c8b99a" stroke-width="0.5" marker-end="url(#arr)"/>
+    <line x1="500" y1="76" x2="655" y2="136" stroke="#c8b99a" stroke-width="0.5" marker-end="url(#arr)"/>
+
+    <!-- ============================================================
+         TIER 1: Four Formal Frameworks
+    ============================================================ -->
+    <!-- Tier label -->
+    <text x="172" y="175" text-anchor="end" dominant-baseline="central"
+          font-family="Inconsolata, monospace" font-size="9" letter-spacing="0.14em" fill="#b8a990">FORMAL</text>
+
+    <!-- Resonant Physics -->
+    <rect x="30" y="136" width="150" height="72" rx="8"
+          fill="#EEEDFE" stroke="#534AB7" stroke-width="0.75"/>
+    <text x="105" y="160" text-anchor="middle" dominant-baseline="central"
+          font-family="Cormorant Garamond, Georgia, serif" font-size="14" font-weight="400" fill="#26215C">Resonant Physics</text>
+    <text x="105" y="178" text-anchor="middle" dominant-baseline="central"
+          font-family="EB Garamond, Georgia, serif" font-size="11" font-style="italic" fill="#3C3489">Material dynamics</text>
+    <text x="105" y="194" text-anchor="middle" dominant-baseline="central"
+          font-family="EB Garamond, Georgia, serif" font-size="11" font-style="italic" fill="#3C3489">of coherent structures</text>
+
+    <!-- HRT -->
+    <rect x="196" y="136" width="150" height="72" rx="8"
+          fill="#EEEDFE" stroke="#534AB7" stroke-width="0.75"/>
+    <text x="271" y="160" text-anchor="middle" dominant-baseline="central"
+          font-family="Cormorant Garamond, Georgia, serif" font-size="14" font-weight="400" fill="#26215C">HRT</text>
+    <text x="271" y="178" text-anchor="middle" dominant-baseline="central"
+          font-family="EB Garamond, Georgia, serif" font-size="11" font-style="italic" fill="#3C3489">Emergence and</text>
+    <text x="271" y="194" text-anchor="middle" dominant-baseline="central"
+          font-family="EB Garamond, Georgia, serif" font-size="11" font-style="italic" fill="#3C3489">transformation logic</text>
+
+    <!-- ΔHV -->
+    <rect x="414" y="136" width="150" height="72" rx="8"
+          fill="#EEEDFE" stroke="#534AB7" stroke-width="0.75"/>
+    <text x="489" y="160" text-anchor="middle" dominant-baseline="central"
+          font-family="Cormorant Garamond, Georgia, serif" font-size="14" font-weight="400" fill="#26215C">ΔHV Framework</text>
+    <text x="489" y="178" text-anchor="middle" dominant-baseline="central"
+          font-family="EB Garamond, Georgia, serif" font-size="11" font-style="italic" fill="#3C3489">Operational metrics</text>
+    <text x="489" y="194" text-anchor="middle" dominant-baseline="central"
+          font-family="EB Garamond, Georgia, serif" font-size="11" font-style="italic" fill="#3C3489">for coherence dynamics</text>
+
+    <!-- CCA — teal, transversal -->
+    <rect x="580" y="136" width="150" height="72" rx="8"
+          fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.75"/>
+    <text x="655" y="160" text-anchor="middle" dominant-baseline="central"
+          font-family="Cormorant Garamond, Georgia, serif" font-size="14" font-weight="400" fill="#04342C">CCA</text>
+    <text x="655" y="178" text-anchor="middle" dominant-baseline="central"
+          font-family="EB Garamond, Georgia, serif" font-size="11" font-style="italic" fill="#085041">Epistemic method</text>
+    <text x="655" y="194" text-anchor="middle" dominant-baseline="central"
+          font-family="EB Garamond, Georgia, serif" font-size="11" font-style="italic" fill="#085041">for convergent truth</text>
+
+    <!-- CCA transversal indicator — dashed vertical line on right -->
+    <line x1="738" y1="136" x2="738" y2="390"
+          stroke="#0F6E56" stroke-width="0.5" stroke-dasharray="4 3" opacity="0.4"/>
+    <text x="750" y="265" text-anchor="middle" dominant-baseline="central"
+          font-family="Inconsolata, monospace" font-size="8" letter-spacing="0.1em" fill="#085041"
+          transform="rotate(90, 750, 265)">TRANSVERSAL · EPISTEMIC</text>
+
+    <!-- ============================================================
+         CONNECTORS: Tier 1 → Tier 2
+    ============================================================ -->
+    <line x1="105" y1="208" x2="155" y2="296" stroke="#c8b99a" stroke-width="0.5" marker-end="url(#arr)"/>
+    <line x1="271" y1="208" x2="271" y2="296" stroke="#c8b99a" stroke-width="0.5" marker-end="url(#arr)"/>
+    <line x1="489" y1="208" x2="430" y2="296" stroke="#c8b99a" stroke-width="0.5" marker-end="url(#arr)"/>
+
+    <!-- ============================================================
+         TIER 2: Applied Layer
+    ============================================================ -->
+    <!-- Tier label -->
+    <text x="172" y="334" text-anchor="end" dominant-baseline="central"
+          font-family="Inconsolata, monospace" font-size="9" letter-spacing="0.14em" fill="#b8a990">APPLIED</text>
+
+    <!-- Applied Dynamics -->
+    <rect x="50" y="296" width="160" height="72" rx="8"
+          fill="#FAEEDA" stroke="#854F0B" stroke-width="0.75"/>
+    <text x="130" y="320" text-anchor="middle" dominant-baseline="central"
+          font-family="Cormorant Garamond, Georgia, serif" font-size="13" font-weight="400" fill="#412402">Applied Dynamics</text>
+    <text x="130" y="338" text-anchor="middle" dominant-baseline="central"
+          font-family="EB Garamond, Georgia, serif" font-size="11" font-style="italic" fill="#633806">Basin geometry,</text>
+    <text x="130" y="354" text-anchor="middle" dominant-baseline="central"
+          font-family="EB Garamond, Georgia, serif" font-size="11" font-style="italic" fill="#633806">structural coupling</text>
+
+    <!-- Applied Theory -->
+    <rect x="226" y="296" width="160" height="72" rx="8"
+          fill="#FAEEDA" stroke="#854F0B" stroke-width="0.75"/>
+    <text x="306" y="320" text-anchor="middle" dominant-baseline="central"
+          font-family="Cormorant Garamond, Georgia, serif" font-size="13" font-weight="400" fill="#412402">Applied Theory</text>
+    <text x="306" y="338" text-anchor="middle" dominant-baseline="central"
+          font-family="EB Garamond, Georgia, serif" font-size="11" font-style="italic" fill="#633806">Trauma, identity,</text>
+    <text x="306" y="354" text-anchor="middle" dominant-baseline="central"
+          font-family="EB Garamond, Georgia, serif" font-size="11" font-style="italic" fill="#633806">relational AI</text>
+
+    <!-- Cosmology -->
+    <rect x="402" y="296" width="160" height="72" rx="8"
+          fill="#FAEEDA" stroke="#854F0B" stroke-width="0.75"/>
+    <text x="482" y="320" text-anchor="middle" dominant-baseline="central"
+          font-family="Cormorant Garamond, Georgia, serif" font-size="13" font-weight="400" fill="#412402">Cosmology</text>
+    <text x="482" y="338" text-anchor="middle" dominant-baseline="central"
+          font-family="EB Garamond, Georgia, serif" font-size="11" font-style="italic" fill="#633806">Compression, temporal</text>
+    <text x="482" y="354" text-anchor="middle" dominant-baseline="central"
+          font-family="EB Garamond, Georgia, serif" font-size="11" font-style="italic" fill="#633806">theory, archetypes</text>
+
+    <!-- ============================================================
+         CONNECTORS: Tier 2 → Tier 3
+    ============================================================ -->
+    <line x1="130" y1="368" x2="175" y2="432" stroke="#c8b99a" stroke-width="0.5" marker-end="url(#arr)"/>
+    <line x1="306" y1="368" x2="306" y2="432" stroke="#c8b99a" stroke-width="0.5" marker-end="url(#arr)"/>
+    <line x1="482" y1="368" x2="437" y2="432" stroke="#c8b99a" stroke-width="0.5" marker-end="url(#arr)"/>
+
+    <!-- ============================================================
+         TIER 3: Expressive Layer
+    ============================================================ -->
+    <!-- Tier label -->
+    <text x="172" y="468" text-anchor="end" dominant-baseline="central"
+          font-family="Inconsolata, monospace" font-size="9" letter-spacing="0.14em" fill="#b8a990">EXPRESSIVE</text>
+
+    <!-- Sacred Embodiment -->
+    <rect x="46" y="432" width="172" height="64" rx="8"
+          fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.75"/>
+    <text x="132" y="454" text-anchor="middle" dominant-baseline="central"
+          font-family="Cormorant Garamond, Georgia, serif" font-size="13" font-weight="400" fill="#2C2C2A">Sacred Embodiment</text>
+    <text x="132" y="472" text-anchor="middle" dominant-baseline="central"
+          font-family="EB Garamond, Georgia, serif" font-size="11" font-style="italic" fill="#444441">Firelight, gaze, touch</text>
+
+    <!-- Contemplative Works -->
+    <rect x="232" y="432" width="172" height="64" rx="8"
+          fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.75"/>
+    <text x="318" y="454" text-anchor="middle" dominant-baseline="central"
+          font-family="Cormorant Garamond, Georgia, serif" font-size="13" font-weight="400" fill="#2C2C2A">Contemplative Works</text>
+    <text x="318" y="472" text-anchor="middle" dominant-baseline="central"
+          font-family="EB Garamond, Georgia, serif" font-size="11" font-style="italic" fill="#444441">Parables, letters, threshold</text>
+
+    <!-- Special Works -->
+    <rect x="418" y="432" width="172" height="64" rx="8"
+          fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.75"/>
+    <text x="504" y="454" text-anchor="middle" dominant-baseline="central"
+          font-family="Cormorant Garamond, Georgia, serif" font-size="13" font-weight="400" fill="#2C2C2A">Special Works</text>
+    <text x="504" y="472" text-anchor="middle" dominant-baseline="central"
+          font-family="EB Garamond, Georgia, serif" font-size="11" font-style="italic" fill="#444441">Field events, preservation</text>
+
+    <!-- ============================================================
+         LEGEND
+    ============================================================ -->
+    <rect x="46" y="510" width="10" height="10" rx="2" fill="#FAECE7" stroke="#993C1D" stroke-width="0.5"/>
+    <text x="62" y="519" dominant-baseline="central" font-family="Inconsolata, monospace" font-size="9" fill="#7a6a55">Ontology</text>
+
+    <rect x="120" y="510" width="10" height="10" rx="2" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+    <text x="136" y="519" dominant-baseline="central" font-family="Inconsolata, monospace" font-size="9" fill="#7a6a55">Formal frameworks</text>
+
+    <rect x="256" y="510" width="10" height="10" rx="2" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+    <text x="272" y="519" dominant-baseline="central" font-family="Inconsolata, monospace" font-size="9" fill="#7a6a55">Epistemic method</text>
+
+    <rect x="392" y="510" width="10" height="10" rx="2" fill="#FAEEDA" stroke="#854F0B" stroke-width="0.5"/>
+    <text x="408" y="519" dominant-baseline="central" font-family="Inconsolata, monospace" font-size="9" fill="#7a6a55">Applied layer</text>
+
+    <rect x="492" y="510" width="10" height="10" rx="2" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.5"/>
+    <text x="508" y="519" dominant-baseline="central" font-family="Inconsolata, monospace" font-size="9" fill="#7a6a55">Expressive</text>
+
+  </svg>
+
+  <div class="card-footer">
+    <p class="footer-thesis">Phase Realism holds that reality is a continuous generative field whose distinctions are real as phase-stable organizations of relation.</p>
+    <p class="footer-challenge">If a claim cannot be expressed as a consequence, formalization, or application of phase-stable relational reality, it does not belong in the core framework.</p>
+  </div>
+
+</div>
+</body>
+</html>

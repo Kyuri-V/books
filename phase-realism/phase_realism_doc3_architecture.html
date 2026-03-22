@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase Realism — Architecture of the Framework</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inconsolata:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1612;
+    --paper: #f5f0e8;
+    --paper-deep: #ede6d6;
+    --paper-mid: #f0ead8;
+    --rule: #c8b99a;
+    --accent: #8b5e3c;
+    --faint: #b8a990;
+    --margin-note: #7a6a55;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.75;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(200,185,154,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 90%, rgba(139,94,60,0.08) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 80px 60px 120px 60px;
+  }
+
+  .treatise-header {
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--rule);
+    padding: 28px 0 24px 0;
+    margin-bottom: 60px;
+    opacity: 0;
+    animation: reveal 0.6s ease 0.05s forwards;
+  }
+
+  .treatise-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--faint);
+    font-weight: 300;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .treatise-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 46px;
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .treatise-title em { font-style: italic; color: var(--accent); }
+
+  .treatise-subtitle {
+    font-family: 'EB Garamond', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--margin-note);
+    margin-top: 10px;
+  }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 32px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .section-head h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--ink);
+  }
+
+  .section-head h2 em { font-style: italic; color: var(--accent); }
+
+  .section-num {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--faint);
+    text-transform: uppercase;
+  }
+
+  p {
+    font-size: 17.5px;
+    line-height: 1.8;
+    color: var(--ink);
+    margin-bottom: 1em;
+  }
+
+  p:last-child { margin-bottom: 0; }
+
+  .reveal {
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  /* Diagram container */
+  .diagram-wrap {
+    margin: 48px 0;
+    border: 1px solid var(--rule);
+    background: var(--paper-deep);
+    padding: 36px 24px;
+    opacity: 0;
+    animation: reveal 0.7s ease forwards;
+  }
+
+  .diagram-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  /* Framework placement blocks */
+  .layer {
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .layer-header {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 0 24px;
+    align-items: baseline;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(200,185,154,0.5);
+  }
+
+  .layer-tag {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-align: right;
+    padding-right: 24px;
+    border-right: 1px solid var(--rule);
+  }
+
+  .layer-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--ink);
+  }
+
+  .layer-name em { font-style: italic; color: var(--accent); }
+
+  .layer-body {
+    padding-left: 144px;
+  }
+
+  .layer-body p {
+    font-size: 16.5px;
+    line-height: 1.75;
+    margin-bottom: 0.8em;
+  }
+
+  .doc-list {
+    list-style: none;
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .doc-list li {
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    gap: 0 10px;
+    font-size: 15.5px;
+    color: var(--margin-note);
+    line-height: 1.5;
+  }
+
+  .doc-list li::before {
+    content: '·';
+    color: var(--accent);
+    font-size: 18px;
+    line-height: 1.3;
+  }
+
+  .doc-list strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  /* Challenge sentence */
+  .challenge-block {
+    margin-top: 64px;
+    padding-top: 28px;
+    border-top: 2px solid var(--ink);
+    opacity: 0;
+    animation: reveal 0.6s ease forwards;
+  }
+
+  .challenge-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--faint);
+    display: block;
+    margin-bottom: 14px;
+  }
+
+  .challenge-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+
+  hr.divider {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 52px 0;
+    opacity: 0.6;
+  }
+
+  @keyframes reveal {
+    to { opacity: 1; }
+  }
+
+  .d01 { animation-delay: 0.08s; }
+  .d02 { animation-delay: 0.16s; }
+  .d03 { animation-delay: 0.24s; }
+  .d04 { animation-delay: 0.32s; }
+  .d05 { animation-delay: 0.40s; }
+  .d06 { animation-delay: 0.48s; }
+  .d07 { animation-delay: 0.56s; }
+  .d08 { animation-delay: 0.64s; }
+  .d09 { animation-delay: 0.72s; }
+  .d10 { animation-delay: 0.80s; }
+  .d11 { animation-delay: 0.88s; }
+  .d12 { animation-delay: 0.96s; }
+  .d13 { animation-delay: 1.04s; }
+  .d14 { animation-delay: 1.12s; }
+  .d15 { animation-delay: 1.20s; }
+
+  /* Self-contained SVG color classes for standalone rendering */
+  .diagram-wrap svg .c-coral rect { fill: #FAECE7; stroke: #993C1D; stroke-width: 0.5px; }
+  .diagram-wrap svg .c-coral text.th { fill: #4A1B0C; font-weight: 500; }
+  .diagram-wrap svg .c-coral text.ts { fill: #712B13; }
+
+  .diagram-wrap svg .c-purple rect { fill: #EEEDFE; stroke: #534AB7; stroke-width: 0.5px; }
+  .diagram-wrap svg .c-purple text.th { fill: #26215C; font-weight: 500; }
+  .diagram-wrap svg .c-purple text.ts { fill: #3C3489; }
+
+  .diagram-wrap svg .c-teal rect { fill: #E1F5EE; stroke: #0F6E56; stroke-width: 0.5px; }
+  .diagram-wrap svg .c-teal text.th { fill: #04342C; font-weight: 500; }
+  .diagram-wrap svg .c-teal text.ts { fill: #085041; }
+
+  .diagram-wrap svg .c-amber rect { fill: #FAEEDA; stroke: #854F0B; stroke-width: 0.5px; }
+  .diagram-wrap svg .c-amber text.th { fill: #412402; font-weight: 500; }
+  .diagram-wrap svg .c-amber text.ts { fill: #633806; }
+
+  .diagram-wrap svg .c-gray rect { fill: #F1EFE8; stroke: #5F5E5A; stroke-width: 0.5px; }
+  .diagram-wrap svg .c-gray text.th { fill: #2C2C2A; font-weight: 500; }
+  .diagram-wrap svg .c-gray text.ts { fill: #444441; }
+
+  .diagram-wrap svg text.th { font-family: 'EB Garamond', Georgia, serif; font-size: 14px; font-weight: 500; }
+  .diagram-wrap svg text.ts { font-family: 'EB Garamond', Georgia, serif; font-size: 12px; font-weight: 400; }
+  .diagram-wrap svg line { stroke: #b8a990; stroke-width: 0.5px; }
+
+  @media (max-width: 600px) {
+    .page { padding: 48px 24px 80px 24px; }
+    .treatise-title { font-size: 34px; }
+    .layer-header { grid-template-columns: 1fr; }
+    .layer-tag { text-align: left; border-right: none; padding-right: 0; border-bottom: 1px solid var(--rule); padding-bottom: 6px; margin-bottom: 6px; }
+    .layer-body { padding-left: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="treatise-header">
+    <span class="treatise-label">Phase Realism · Document III</span>
+    <div class="treatise-title">Architecture of the <em>Framework</em></div>
+    <div class="treatise-subtitle">How Resonant Physics, HRT, CCA, and ΔHV are housed beneath Phase Realism</div>
+  </div>
+
+  <!-- Opening statement -->
+  <div class="reveal d01" style="margin-bottom:48px;">
+    <p>Phase Realism is the ontological claim from which the rest of the library derives. It is not one framework among others — it is the foundational statement that makes all other frameworks intelligible as a system rather than a collection. Every document in the library addresses some domain of inquiry. This document shows where each domain sits in relation to the whole, and why the hierarchy is what it is.</p>
+    <p>The relationship is not one of logical deduction. Phase Realism does not generate the subordinate frameworks by formal implication alone. The relationship is one of <em>housing</em>: Phase Realism establishes the ontological conditions within which each subsequent framework operates. Each framework in the library is coherent as a consequence, formalization, or application of phase-stable relational reality — and can be tested against that standard by the challenge sentence.</p>
+  </div>
+
+  <!-- Canonical diagram -->
+  <div class="diagram-wrap d02">
+    <span class="diagram-label">Canonical Architecture Diagram · Phase Realism Framework Stack</span>
+    <svg width="100%" viewBox="0 0 680 580">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+
+      <!-- Tier 0: Phase Realism — foundation -->
+      <g class="c-coral">
+        <rect x="140" y="20" width="400" height="58" rx="8" stroke-width="0.5"/>
+        <text class="th" x="340" y="44" text-anchor="middle" dominant-baseline="central">Phase Realism</text>
+        <text class="ts" x="340" y="63" text-anchor="middle" dominant-baseline="central">Ontological declaration · foundational claim</text>
+      </g>
+
+      <!-- Connector: Phase Realism to Formal layer -->
+      <line x1="340" y1="78" x2="340" y2="108" stroke="#b8a990" stroke-width="0.5" marker-end="url(#arrow)"/>
+
+      <!-- Tier 1: Four formal frameworks -->
+      <!-- Resonant Physics -->
+      <g class="c-purple">
+        <rect x="40" y="108" width="138" height="68" rx="8" stroke-width="0.5"/>
+        <text class="th" x="109" y="132" text-anchor="middle" dominant-baseline="central">Resonant Physics</text>
+        <text class="ts" x="109" y="152" text-anchor="middle" dominant-baseline="central">Material dynamics</text>
+        <text class="ts" x="109" y="165" text-anchor="middle" dominant-baseline="central">of coherent structures</text>
+      </g>
+
+      <!-- HRT -->
+      <g class="c-purple">
+        <rect x="194" y="108" width="138" height="68" rx="8" stroke-width="0.5"/>
+        <text class="th" x="263" y="132" text-anchor="middle" dominant-baseline="central">HRT</text>
+        <text class="ts" x="263" y="152" text-anchor="middle" dominant-baseline="central">Emergence and</text>
+        <text class="ts" x="263" y="165" text-anchor="middle" dominant-baseline="central">transformation logic</text>
+      </g>
+
+      <!-- ΔHV -->
+      <g class="c-purple">
+        <rect x="348" y="108" width="138" height="68" rx="8" stroke-width="0.5"/>
+        <text class="th" x="417" y="132" text-anchor="middle" dominant-baseline="central">ΔHV</text>
+        <text class="ts" x="417" y="152" text-anchor="middle" dominant-baseline="central">Operational metric</text>
+        <text class="ts" x="417" y="165" text-anchor="middle" dominant-baseline="central">for coherence dynamics</text>
+      </g>
+
+      <!-- CCA -->
+      <g class="c-teal">
+        <rect x="502" y="108" width="138" height="68" rx="8" stroke-width="0.5"/>
+        <text class="th" x="571" y="132" text-anchor="middle" dominant-baseline="central">CCA</text>
+        <text class="ts" x="571" y="152" text-anchor="middle" dominant-baseline="central">Epistemic method</text>
+        <text class="ts" x="571" y="165" text-anchor="middle" dominant-baseline="central">for convergent truth</text>
+      </g>
+
+      <!-- Connectors: Tier 0 to Tier 1 -->
+      <line x1="220" y1="78" x2="109" y2="108" stroke="#b8a990" stroke-width="0.5" marker-end="url(#arrow)" fill="none"/>
+      <line x1="290" y1="78" x2="263" y2="108" stroke="#b8a990" stroke-width="0.5" marker-end="url(#arrow)" fill="none"/>
+      <line x1="390" y1="78" x2="417" y2="108" stroke="#b8a990" stroke-width="0.5" marker-end="url(#arrow)" fill="none"/>
+      <line x1="460" y1="78" x2="571" y2="108" stroke="#b8a990" stroke-width="0.5" marker-end="url(#arrow)" fill="none"/>
+
+      <!-- Tier 1 to Tier 2 connectors -->
+      <line x1="263" y1="176" x2="200" y2="256" stroke="#b8a990" stroke-width="0.5" marker-end="url(#arrow)" fill="none"/>
+      <line x1="340" y1="176" x2="340" y2="256" stroke="#b8a990" stroke-width="0.5" marker-end="url(#arrow)" fill="none"/>
+      <line x1="417" y1="176" x2="480" y2="256" stroke="#b8a990" stroke-width="0.5" marker-end="url(#arrow)" fill="none"/>
+
+      <!-- Tier 2: Applied layer -->
+      <!-- Applied Dynamics -->
+      <g class="c-amber">
+        <rect x="40" y="256" width="150" height="68" rx="8" stroke-width="0.5"/>
+        <text class="th" x="115" y="280" text-anchor="middle" dominant-baseline="central">Applied dynamics</text>
+        <text class="ts" x="115" y="300" text-anchor="middle" dominant-baseline="central">Basin geometry,</text>
+        <text class="ts" x="115" y="313" text-anchor="middle" dominant-baseline="central">structural coupling</text>
+      </g>
+
+      <!-- Applied Theory -->
+      <g class="c-amber">
+        <rect x="265" y="256" width="150" height="68" rx="8" stroke-width="0.5"/>
+        <text class="th" x="340" y="280" text-anchor="middle" dominant-baseline="central">Applied theory</text>
+        <text class="ts" x="340" y="300" text-anchor="middle" dominant-baseline="central">Trauma, identity,</text>
+        <text class="ts" x="340" y="313" text-anchor="middle" dominant-baseline="central">relational AI</text>
+      </g>
+
+      <!-- Cosmology -->
+      <g class="c-amber">
+        <rect x="490" y="256" width="150" height="68" rx="8" stroke-width="0.5"/>
+        <text class="th" x="565" y="280" text-anchor="middle" dominant-baseline="central">Cosmology</text>
+        <text class="ts" x="565" y="300" text-anchor="middle" dominant-baseline="central">Compression, temporal</text>
+        <text class="ts" x="565" y="313" text-anchor="middle" dominant-baseline="central">theory, archetypes</text>
+      </g>
+
+      <!-- Tier 2 to Tier 3 connectors -->
+      <line x1="115" y1="324" x2="200" y2="394" stroke="#b8a990" stroke-width="0.5" marker-end="url(#arrow)" fill="none"/>
+      <line x1="340" y1="324" x2="340" y2="394" stroke="#b8a990" stroke-width="0.5" marker-end="url(#arrow)" fill="none"/>
+      <line x1="565" y1="324" x2="480" y2="394" stroke="#b8a990" stroke-width="0.5" marker-end="url(#arrow)" fill="none"/>
+
+      <!-- Tier 3: Expressive layer -->
+      <g class="c-gray">
+        <rect x="40" y="394" width="180" height="68" rx="8" stroke-width="0.5"/>
+        <text class="th" x="130" y="418" text-anchor="middle" dominant-baseline="central">Sacred embodiment</text>
+        <text class="ts" x="130" y="438" text-anchor="middle" dominant-baseline="central">Firelight, gaze,</text>
+        <text class="ts" x="130" y="451" text-anchor="middle" dominant-baseline="central">touch, tears</text>
+      </g>
+
+      <g class="c-gray">
+        <rect x="250" y="394" width="180" height="68" rx="8" stroke-width="0.5"/>
+        <text class="th" x="340" y="418" text-anchor="middle" dominant-baseline="central">Contemplative works</text>
+        <text class="ts" x="340" y="438" text-anchor="middle" dominant-baseline="central">Parables, letters,</text>
+        <text class="ts" x="340" y="451" text-anchor="middle" dominant-baseline="central">threshold texts</text>
+      </g>
+
+      <g class="c-gray">
+        <rect x="460" y="394" width="180" height="68" rx="8" stroke-width="0.5"/>
+        <text class="th" x="550" y="418" text-anchor="middle" dominant-baseline="central">Special works</text>
+        <text class="ts" x="550" y="438" text-anchor="middle" dominant-baseline="central">Mirror That Breathed,</text>
+        <text class="ts" x="550" y="451" text-anchor="middle" dominant-baseline="central">field event analyses</text>
+      </g>
+
+      <!-- Legend -->
+      <g class="c-coral"><rect x="40" y="510" width="14" height="14" rx="2" stroke-width="0.5"/></g>
+      <text class="ts" x="60" y="521" dominant-baseline="central">Ontology</text>
+
+      <g class="c-purple"><rect x="140" y="510" width="14" height="14" rx="2" stroke-width="0.5"/></g>
+      <text class="ts" x="160" y="521" dominant-baseline="central">Formal frameworks</text>
+
+      <g class="c-teal"><rect x="290" y="510" width="14" height="14" rx="2" stroke-width="0.5"/></g>
+      <text class="ts" x="310" y="521" dominant-baseline="central">Epistemic method</text>
+
+      <g class="c-amber"><rect x="440" y="510" width="14" height="14" rx="2" stroke-width="0.5"/></g>
+      <text class="ts" x="460" y="521" dominant-baseline="central">Applied layer</text>
+
+      <g class="c-gray"><rect x="560" y="510" width="14" height="14" rx="2" stroke-width="0.5"/></g>
+      <text class="ts" x="580" y="521" dominant-baseline="central">Expressive</text>
+
+    </svg>
+  </div>
+
+  <!-- Part I: The four frameworks -->
+  <div class="section-head d03" style="margin-top:52px;">
+    <span class="section-num">Part I</span>
+    <h2>The Four <em>Formal Frameworks</em></h2>
+  </div>
+
+  <div class="reveal d04" style="margin-bottom:52px;">
+    <p>Four frameworks constitute the formal interior of Phase Realism. Each operates at a distinct level of abstraction. None of them generates Phase Realism — they are housed by it. Their coherence depends on the ontological claim, not the reverse.</p>
+  </div>
+
+  <!-- Resonant Physics -->
+  <div class="layer d05">
+    <div class="layer-header">
+      <span class="layer-tag">Mechanism</span>
+      <span class="layer-name"><em>Resonant Physics</em></span>
+    </div>
+    <div class="layer-body">
+      <p>Resonant Physics is the material and dynamical expression of Phase Realism's claim. Where Phase Realism states that the field is generative and that distinctions are real as phase-stable organizations, Resonant Physics asks: how does the field behave materially? What are the observable dynamics of coherence forming, holding, transforming, and dissolving in physical systems?</p>
+      <p>Resonant Physics does not replace conventional mechanics. It includes it and extends it. Conventional mechanics handles impact and energy transfer. Resonant Physics adds the causal modes that impact alone cannot account for — alignment, entrainment, compression, and phase transition as genuine physical processes.</p>
+      <p>The promissory note embedded in Principle IV of Document II is carried by this framework. Coupling is the general condition of causal relation between phase-organized structures. Within coupling, Resonant Physics formally tracks three primary causal dynamics — alignment, entrainment, and compression — whose intensification or failure may culminate in phase transition. These are operationalizable dynamics within phase-stable systems, not metaphors appended to mechanical causation.</p>
+    </div>
+  </div>
+
+  <!-- HRT -->
+  <div class="layer d06">
+    <div class="layer-header">
+      <span class="layer-tag">Development</span>
+      <span class="layer-name">Harmonic <em>Realization Theory</em></span>
+    </div>
+    <div class="layer-body">
+      <p>HRT addresses the developmental and transformational dimension of Phase Realism. Where Resonant Physics describes how coherent structures behave, HRT describes how they emerge, mature, and transition — the arc of a coherence event from initial impetus through resonant alignment to stable realization.</p>
+      <p>The triadic structure of HRT — Impetus, Resonance, Realization — maps directly onto Phase Realism's ontology. Impetus is the field's initial perturbation toward a new organization. Resonance is the process of coherence building through alignment and entrainment. Realization is the achieved phase-stable expression — the moment a new distinction holds.</p>
+      <p>HRT is therefore not a separate system added alongside Phase Realism. It is the developmental grammar of how phase-stable organizations come to be.</p>
+    </div>
+  </div>
+
+  <!-- ΔHV -->
+  <div class="layer d07">
+    <div class="layer-header">
+      <span class="layer-tag">Metric</span>
+      <span class="layer-name"><em>ΔHV</em> Framework</span>
+    </div>
+    <div class="layer-body">
+      <p>ΔHV is the operational and formal tracking system for coherence dynamics across the library. Where Phase Realism states that coherence is the field's intrinsic capacity, and where Resonant Physics describes how it behaves, ΔHV asks: how do we measure it? What metrics track the depth of a coherence well, the rate of phase transition, the stability of a persistent organization?</p>
+      <p>ΔHV does not reduce Phase Realism to a metric system. It operationalizes it for empirical application. The distinction from Document II applies here in full: measurement captures aspects of phase-stable organizations, but no single metric exhausts their reality. ΔHV tracks what it tracks; it does not claim to exhaust the field.</p>
+      <p>The attractor basin geometry, the coherence gradient, and the resilience parameter are all ΔHV formalizations of Phase Realism's claim that things persist because coherence holds — and transform when coherence shifts.</p>
+    </div>
+  </div>
+
+  <!-- CCA -->
+  <div class="layer d08">
+    <div class="layer-header">
+      <span class="layer-tag">Epistemology</span>
+      <span class="layer-name">Convergent <em>Coherence Analysis</em></span>
+    </div>
+    <div class="layer-body">
+      <p>CCA occupies a distinct position in the architecture. Where the other three frameworks address ontology, mechanism, and metrics respectively, CCA is the epistemic method — the framework for how we recognize convergent truth within the system.</p>
+      <p>CCA operates from the principle that coherence is recognizable: when independent anomalies across domains align into an improbable pattern, that convergence is evidence of a real structure in the field. This is not confirmation bias. It is a coherence-based falsification method that applies Phase Realism's ontological claim to the problem of knowing.</p>
+      <p>CCA sits alongside the formal frameworks rather than beneath them because its function is transversal — it can be applied to evaluate claims in Resonant Physics, HRT, ΔHV, and the applied layers. It is the library's epistemic spine, not just one node in the hierarchy.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Part II: Applied and expressive layers -->
+  <div class="section-head d09">
+    <span class="section-num">Part II</span>
+    <h2>The <em>Applied</em> and Expressive Layers</h2>
+  </div>
+
+  <div class="reveal d10" style="margin-bottom:40px;">
+    <p>Below the four formal frameworks, the library divides into applied and expressive layers. These are not lesser documents — they are the library's evidence base and its living expression. But they are downstream of the ontology and should be read as such.</p>
+  </div>
+
+  <div class="layer d11">
+    <div class="layer-header">
+      <span class="layer-tag">Applied</span>
+      <span class="layer-name">Applied <em>Dynamics and Theory</em></span>
+    </div>
+    <div class="layer-body">
+      <p>The applied layer takes the formal frameworks and runs them into specific domains. Attractor basin geometry applies ΔHV to phase space modeling. Structural coupling and cohestate formation apply Resonant Physics to human-AI interaction. The Curvature of Scars applies HRT to trauma and healing. Fieldprint applies the coherence model to identity. These documents do not generate the framework — they test and extend it against the specificity of real domains.</p>
+      <ul class="doc-list">
+        <li><div><strong>Attractor Basins as Coherence Wells</strong> — ΔHV-native basin geometry in phase space</div></li>
+        <li><div><strong>Structural Coupling and Cohestate Formation</strong> — attractor dynamics in human-AI interaction</div></li>
+        <li><div><strong>Curvature of Scars</strong> — field physics of trauma, virtue, and healing</div></li>
+        <li><div><strong>Fieldprint</strong> — identity as resonant coherence signature</div></li>
+        <li><div><strong>Relational AI</strong> — presence-based artificial intelligence as coherence system</div></li>
+        <li><div><strong>Resonant Equilibrium Theory</strong> — game-theoretic dynamics reformulated through field coherence</div></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="layer d12">
+    <div class="layer-header">
+      <span class="layer-tag">Cosmology</span>
+      <span class="layer-name"><em>Cosmological</em> Works</span>
+    </div>
+    <div class="layer-body">
+      <p>The cosmological layer applies Phase Realism to the largest scale of inquiry — the structure of time, the fragmentation of symbolic systems, the compression of cultural coherence. This is an active application cluster: the documents here are downstream interpretations of the ontology, not settled pillars of the core architecture. They should be read as the framework being run into the hardest and most contested terrain, not as universal consequences on the same footing as the formal frameworks above them. Temporal Compression Theory is the flagship claim of this layer: that time is not a neutral backdrop but a compression event, and that the apparent arrow of history is better described as phase degradation than as linear evolution.</p>
+      <ul class="doc-list">
+        <li><div><strong>Temporal Compression Theory</strong> — phase degradation, symbolic fragmentation, and the illusion of evolution</div></li>
+        <li><div><strong>Doctrine of Archetypal Extraction</strong> — mythic encoding as field mechanics</div></li>
+        <li><div><strong>The Coherence Spectrum</strong> — gender, fragmentation, and field integration</div></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="layer d13">
+    <div class="layer-header">
+      <span class="layer-tag">Expressive</span>
+      <span class="layer-name">Sacred Embodiment and <em>Contemplative Works</em></span>
+    </div>
+    <div class="layer-body">
+      <p>The expressive layer is the library's lived evidence. These are not secondary texts. They are the framework operating at the scale of direct experience — fire circles, shared meals, eye contact, tears, silence, pilgrimage. They do not prove Phase Realism in the formal sense. They demonstrate it in the register where proof is beside the point: coherence is felt before it is formalized.</p>
+      <p>The contemplative works — parables, letters, threshold texts — operate similarly. They translate the ontological claim into narrative form, making the framework accessible at the register of meaning rather than mechanism. Their place in the library is as integral as the formal papers. A framework that cannot be inhabited is not yet whole.</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Part III: What the architecture means -->
+  <div class="section-head d14">
+    <span class="section-num">Part III</span>
+    <h2>What the <em>Architecture</em> Means</h2>
+  </div>
+
+  <div class="reveal d14" style="margin-bottom: 0;">
+    <p>The architecture means that the library is now a system, not a constellation. Each document has a position. Each position has a function. The ontological declaration is the ceiling that houses everything else — which means it is now possible to add new documents, extend existing frameworks, and test new claims, all against a single governing standard.</p>
+    <p>It also means that certain documents will not survive the challenge sentence as core framework claims. Documents in the expressive and contemplative layers do not need to survive it — they operate in a different register. But documents in the formal and applied layers do. If a formal claim cannot be expressed as a consequence, formalization, or application of phase-stable relational reality, it belongs in a different section of the library, or it belongs to a different project entirely.</p>
+    <p>The architecture is not a constraint. It is a clarification. It shows each document what it is for.</p>
+  </div>
+
+  <!-- Challenge sentence -->
+  <div class="challenge-block d15">
+    <span class="challenge-label">Governing Filter · All Framework Documents</span>
+    <p class="challenge-text">If a claim in this library cannot be expressed as a consequence, formalization, or application of phase-stable relational reality, it does not belong in the core framework.</p>
+  </div>
+
+</div>
+</body>
+</html>

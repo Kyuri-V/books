@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phase Realism — Ontological Declaration</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inconsolata:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1612;
+    --paper: #f5f0e8;
+    --paper-deep: #ede6d6;
+    --rule: #c8b99a;
+    --accent: #8b5e3c;
+    --faint: #b8a990;
+    --margin-note: #7a6a55;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.75;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* Subtle paper texture via gradient */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(200,185,154,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 90%, rgba(139,94,60,0.08) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 740px;
+    margin: 0 auto;
+    padding: 80px 60px 100px 60px;
+  }
+
+  /* Red margin rule — classic treatise aesthetic */
+  .page::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: calc(50% - 370px + 14px);
+    width: 1px;
+    height: 100vh;
+    background: linear-gradient(to bottom, transparent 60px, var(--rule) 60px, var(--rule) calc(100% - 60px), transparent);
+    opacity: 0.5;
+  }
+
+  /* Header block */
+  .treatise-header {
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--rule);
+    padding: 28px 0 24px 0;
+    margin-bottom: 52px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .treatise-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--faint);
+    font-weight: 300;
+  }
+
+  .treatise-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 52px;
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .treatise-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .treatise-subtitle {
+    font-family: 'EB Garamond', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--margin-note);
+    margin-top: 8px;
+    letter-spacing: 0.02em;
+  }
+
+  /* Section anatomy */
+  .section {
+    margin-bottom: 44px;
+    opacity: 0;
+    transform: translateY(12px);
+    animation: reveal 0.7s ease forwards;
+  }
+
+  .section:nth-child(1) { animation-delay: 0.1s; }
+  .section:nth-child(2) { animation-delay: 0.25s; }
+  .section:nth-child(3) { animation-delay: 0.4s; }
+  .section:nth-child(4) { animation-delay: 0.55s; }
+  .section:nth-child(5) { animation-delay: 0.7s; }
+  .section:nth-child(6) { animation-delay: 0.85s; }
+  .section:nth-child(7) { animation-delay: 1.0s; }
+
+  @keyframes reveal {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  p {
+    font-size: 18px;
+    line-height: 1.8;
+    color: var(--ink);
+    margin-bottom: 1.1em;
+    font-feature-settings: "liga" 1, "kern" 1;
+  }
+
+  p:last-child { margin-bottom: 0; }
+
+  /* Core statement — slightly elevated */
+  .core-statement {
+    font-size: 19.5px;
+    line-height: 1.75;
+    border-left: 2px solid var(--accent);
+    padding-left: 24px;
+    margin: 0;
+    color: var(--ink);
+  }
+
+  /* Principles list */
+  .principles {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .principles li {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 0 16px;
+    align-items: baseline;
+  }
+
+  .principle-num {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    padding-top: 3px;
+    text-align: right;
+  }
+
+  .principle-text {
+    font-size: 17.5px;
+    line-height: 1.7;
+    color: var(--ink);
+  }
+
+  .principle-text strong {
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  /* Signature inversion — the canonical line */
+  .canonical {
+    background: var(--paper-deep);
+    border: 1px solid var(--rule);
+    padding: 28px 32px;
+    margin: 0;
+  }
+
+  .canonical p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.6;
+    margin-bottom: 0.6em;
+    color: var(--ink);
+  }
+
+  .canonical p:last-child {
+    margin-bottom: 0;
+    font-style: italic;
+    color: var(--margin-note);
+    font-size: 16px;
+  }
+
+  /* Closing rule */
+  .closing-rule {
+    border-top: 1px solid var(--rule);
+    padding-top: 28px;
+    margin-top: 52px;
+  }
+
+  .closing-rule p {
+    font-size: 14px;
+    font-style: italic;
+    color: var(--faint);
+    line-height: 1.6;
+  }
+
+  hr.section-divider {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 40px 0;
+    opacity: 0.6;
+  }
+
+  @media (max-width: 600px) {
+    .page { padding: 48px 28px 72px 28px; }
+    .treatise-title { font-size: 38px; }
+    .page::before { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="treatise-header section">
+    <span class="treatise-label">Ontological Declaration · Page One</span>
+    <div class="treatise-title"><em>Phase</em> Realism</div>
+    <div class="treatise-subtitle">A declaration of the foundational ontological claim</div>
+  </div>
+
+  <div class="section">
+    <span class="section-label">Core Statement</span>
+    <p class="core-statement">Phase Realism is the view that reality is a continuous generative field whose distinctions are not separate substances but real, phase-stable organizations of relation. Forms persist where coherence holds, transform where coherence shifts, and dissolve where coherence fails. Causation is therefore not reducible to external impact alone, but includes alignment, entrainment, compression, and phase transition across scales.</p>
+  </div>
+
+  <hr class="section-divider">
+
+  <div class="section">
+    <span class="section-label">Principles</span>
+    <ul class="principles">
+      <li>
+        <span class="principle-num">0.</span>
+        <span class="principle-text"><strong>The field is generative, not passive.</strong> Reality is not inert potential awaiting external event. The field is intrinsically self-organizing — coherence is not imposed upon it but arises from within its own nature. This is the condition that makes causation, form, and persistence possible at all.</span>
+      </li>
+      <li>
+        <span class="principle-num">I.</span>
+        <span class="principle-text"><strong>The field is primary.</strong> Not matter, not mind, not void — but the generative continuity that precedes and underlies all of these as expressions.</span>
+      </li>
+      <li>
+        <span class="principle-num">II.</span>
+        <span class="principle-text"><strong>Difference is real as stabilized relation.</strong> Distinctions are not illusions, not projections, not errors to be corrected. They are phase-stable events of the field — real insofar as coherence holds them.</span>
+      </li>
+      <li>
+        <span class="principle-num">III.</span>
+        <span class="principle-text"><strong>Persistence is coherence maintained through phase.</strong> A thing endures not because it is sealed off from everything else, but because it achieves and sustains stable distinction within everything else.</span>
+      </li>
+      <li>
+        <span class="principle-num">IV.</span>
+        <span class="principle-text"><strong>Change occurs through shifts of coupling, tension, entrainment, and compression.</strong> This does not replace mechanical causation. It includes it — and extends beyond it to the full range of how the field reorganizes.</span>
+      </li>
+      <li>
+        <span class="principle-num">V.</span>
+        <span class="principle-text"><strong>Measurement captures aspects of these organizations, but no single metric exhausts their reality.</strong> Resolution-dependent description does not negate ontological distinction. The coastline is real. Its length is conditional.</span>
+      </li>
+    </ul>
+  </div>
+
+  <hr class="section-divider">
+
+  <div class="section">
+    <span class="section-label">The Signature Inversion</span>
+    <div class="canonical">
+      <p>Difference is not the opposite of unity.<br>Difference is how unity becomes real.</p>
+      <p>— Phase Realism does not dissolve the world to find the ground. It finds the ground already expressing itself as the world.</p>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <div class="section">
+    <span class="section-label">What This Is Not</span>
+    <p>Phase Realism is not illusionism. It does not hold that the world of forms is a dream to be escaped or a veil to be pierced. Forms are real expressions of the field, not mistakes.</p>
+    <p>Phase Realism is not atomism. It does not hold that reality is composed of sealed, self-sufficient substances whose relations are secondary. Relation is primary. Substance is what relation stabilizes into.</p>
+    <p>Phase Realism is not undifferentiated monism. It does not flatten all distinction into featureless unity. The field is one. Its articulations are genuinely many. Both are true simultaneously, without contradiction, because distinction is a real event of the field — not its negation.</p>
+  </div>
+
+  <hr class="section-divider">
+
+  <div class="section">
+    <span class="section-label">Plain Statement</span>
+    <p>Reality is one continuous field, but its patterns are genuinely real. Things are not separate in the absolute sense, yet they are not illusions either. They are stable ways the whole organizes itself. A thing is real because it achieves stable distinction within everything else — not despite relation, but through the stability it achieves within relation.</p>
+  </div>
+
+  <div class="closing-rule">
+    <p>This declaration precedes all mechanical elaboration. The frameworks that follow — Resonant Physics, Harmonic Realization Theory, Coherent Convergence Analysis, the ΔHV metric system — are the interior architecture of this claim, not its foundation. This is the foundation.</p>
+  </div>
+
+</div>
+</body>
+</html>
