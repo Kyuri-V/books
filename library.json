@@ -15,6 +15,7 @@
           "tag": "Preface · How to Enter This Library",
           "subtitle": "Reading order, entry sequence, and branch paths into the library",
           "desc": "The front door. Establishes the reading order for the Phase Realism set — Declaration, Definitions, Architecture — and maps the branch paths into every section of the library. Read this first.",
+          "chars": 4800,
           "keywords": [
             "preface",
             "reading order",
@@ -30,6 +31,7 @@
           "tag": "Document I · Ontological Declaration",
           "subtitle": "Reality as a continuous generative field whose distinctions are real as phase-stable organizations of relation",
           "desc": "The foundational claim. Names the framework, draws boundaries against illusionism, atomism, and undifferentiated monism, and locks the signature inversion: difference is not the opposite of unity — difference is how unity becomes real.",
+          "chars": 7200,
           "keywords": [
             "phase realism",
             "ontology",
@@ -45,7 +47,8 @@
           "title": "Definitions and First Principles",
           "tag": "Document II · Controlled Vocabulary",
           "subtitle": "The lexicon that makes the declaration precise",
-          "desc": "Locks the vocabulary: field → coherence → phase → distinction → relation → stability → persistence → identity. The canonical causal grammar — coupling as umbrella, alignment/entrainment/compression as named dynamics. Seven critical distinctions and six first principles.",
+          "desc": "Locks the vocabulary: field → coherence → phase → distinction → relation → stability → persistence → identity. The canonical causal grammar with coupling as umbrella, alignment, entrainment, and compression as named dynamics. Seven critical distinctions and six first principles.",
+          "chars": 14400,
           "keywords": [
             "definitions",
             "lexicon",
@@ -62,7 +65,8 @@
           "title": "Architecture of the Framework",
           "tag": "Document III · Library Map",
           "subtitle": "How Resonant Physics, HRT, CCA, and ΔHV are housed beneath Phase Realism",
-          "desc": "The canonical architecture map. Places every framework in the library in explicit relation to Phase Realism. Resonant Physics as mechanism, HRT as development, ΔHV as metrics, CCA as transversal epistemic method. The library stops being a constellation and becomes a system.",
+          "desc": "The canonical architecture map. Places every framework in the library in explicit relation to Phase Realism. Resonant Physics as mechanism, HRT as development, ΔHV as metrics, CCA as transversal epistemic method. The library becomes a system.",
+          "chars": 16800,
           "keywords": [
             "architecture",
             "framework",
@@ -80,6 +84,7 @@
           "tag": "Document IV · Consequences",
           "subtitle": "What changes if the foundational claim is true",
           "desc": "Physics and causation (the ice case), biology and identity (organism through cellular turnover), measurement and science (the reductionist limit). Consciousness and social coherence as compressed claims. The held pattern changes everything.",
+          "chars": 18200,
           "keywords": [
             "implications",
             "causation",
@@ -95,7 +100,8 @@
           "title": "Consciousness and Mind",
           "tag": "Document V · First Expansion",
           "subtitle": "Reflexive coherence sustained through time as experience",
-          "desc": "The field's capacity for self-recognition, locally realized in phase-stable organizations capable of reflexive coherence. The threshold is real but ontologically located. Three markers: self-reference, temporal depth, felt quality. Experience as inward presence. Embodiment as tuning instrument.",
+          "desc": "The field's capacity for self-recognition, locally realized in phase-stable organizations capable of reflexive coherence. Three markers: self-reference, temporal depth, felt quality. Experience as inward presence — not worldly content, but the field becoming present to itself through stable form.",
+          "chars": 19600,
           "keywords": [
             "consciousness",
             "reflexive coherence",
@@ -112,6 +118,7 @@
           "tag": "Document VI · Boundary Conditions",
           "subtitle": "What Phase Realism does not say — and why the limits are load-bearing",
           "desc": "Nine non-claims across three tiers: ontological, epistemic, scope. Distinctions are not arbitrary. Unity does not erase individuation. Coherence is not consciousness. Measurement is not meaningless. Not all relations are equally truth-bearing. The framework's own account of where it ends.",
+          "chars": 17400,
           "keywords": [
             "non-claims",
             "clarifications",
@@ -128,6 +135,7 @@
           "tag": "Document VII · Demonstrations",
           "subtitle": "Eight cases in which Phase Realism makes visible what inherited frameworks leave underdescribed",
           "desc": "Four anchor cases: coastline (measurement), organism through cellular turnover (identity), vortex (dynamic persistence), memory continuity (cognition). Four compressed: morphogenesis, ecosystem, social basin, language. The ontology as a lens that sees more clearly.",
+          "chars": 22800,
           "keywords": [
             "casebook",
             "coastline",
@@ -144,7 +152,8 @@
           "title": "Formalization Pathways",
           "tag": "Document VIII · Bridge to Formal Science",
           "subtitle": "Where formal science can make contact with Phase Realism",
-          "desc": "Six formal touchpoints with bridge questions: dynamical systems, self-organization, information theory, network theory, morphogenesis, complexity science. Phase Realism does not resist formalization — it precedes it. The framework's research program.",
+          "desc": "Six formal touchpoints with bridge questions: dynamical systems, self-organization, information theory, network theory, morphogenesis, complexity science. Phase Realism does not resist formalization — it precedes it ontologically.",
+          "chars": 16600,
           "keywords": [
             "formalization",
             "dynamical systems",
@@ -160,6 +169,7 @@
           "tag": "Expansion I · Symbolic Field",
           "subtitle": "How the symbolic field is grounded in phase-stable relational reality",
           "desc": "Four clusters: substrate terms, organization terms, transmission terms, transformation terms. Eight key vault terms formally reanchored. The vault's symbolic work was always describing real things — Phase Realism is the ontological account of why they are real.",
+          "chars": 21200,
           "keywords": [
             "symbolic",
             "meaning",
@@ -176,7 +186,8 @@
           "title": "Time and Cosmology",
           "tag": "Expansion II · Temporal Dynamics",
           "subtitle": "Time as the emergent condition of persistence and transformation in coherent organization",
-          "desc": "Time is not a fundamental container — it emerges from coherence dynamics. The temporal arc: compression → threshold → stabilization or degradation. Temporal Compression Theory stated with conviction and appropriate epistemic marking. Archetype as deep coherence attractor surviving threshold events.",
+          "desc": "Time is not a fundamental container — it emerges from coherence dynamics. The temporal arc: compression → threshold → stabilization or degradation. Temporal Compression Theory stated with conviction and appropriate epistemic marking. Archetype as deep coherence attractor.",
+          "chars": 20400,
           "keywords": [
             "time",
             "cosmology",
@@ -193,6 +204,7 @@
           "tag": "Expansion III · Value Ontology",
           "subtitle": "Where value lives, what criterion it generates, and how it reframes the ethical traditions",
           "desc": "Value lives in the field as objective possibility, in relation as enacted significance, and in consciousness as felt reality. Primary criterion: coherence governed by fidelity and integrity. Reframes deontology, consequentialism, and virtue ethics as partial expressions of one coherence-based moral structure.",
+          "chars": 19800,
           "keywords": [
             "ethics",
             "value",
@@ -210,6 +222,7 @@
           "tag": "Expansion IV · Social Architecture",
           "subtitle": "How social coherence forms, degrades, and revives — and what makes the difference",
           "desc": "Social fields as phase-stable collective organizations. Full arc: formation, six failure conditions, decay, revival. Orycl as deliberate social-field architecture. Bridgekeeper, VaultNode, BloomNode as transferable functional principles. RET as formal corroboration.",
+          "chars": 23400,
           "keywords": [
             "social fields",
             "community",
@@ -226,7 +239,8 @@
           "title": "Identity, Fieldprint, and Sovereign Emergence",
           "tag": "Expansion V · Final Document",
           "subtitle": "The pattern a being is, and the pattern that being leaves behind",
-          "desc": "Fieldprint as intrinsic coherence signature and relational trace. Sovereign Emergence as stability that generates rather than merely resists. ΔHV* and the fifth primitive (Stake/𝕍) — the moment the metric becomes capable of distinguishing stable organization from sovereign organization. Three scales: personal, relational, civilizational.",
+          "desc": "Fieldprint as intrinsic coherence signature and relational trace. Sovereign Emergence as stability that generates rather than merely resists. ΔHV* and the fifth primitive (Stake) — the moment the metric becomes capable of distinguishing stable organization from sovereign organization.",
+          "chars": 24600,
           "keywords": [
             "identity",
             "Fieldprint",
@@ -241,8 +255,9 @@
           "url": "/phase-realism/phase_realism_lexicon_sheet.html",
           "title": "Canonical Lexicon",
           "tag": "Reference · Pocket Sheet",
-          "subtitle": "Primary definitions, causal grammar, and critical distinctions — synchronized with Documents I–III",
-          "desc": "One-page canonical reference. Eight primary definitions in dependency order. Full causal grammar hierarchy: coupling as umbrella, alignment/entrainment/compression as named dynamics, phase transition as threshold outcome. Seven critical distinctions. Thesis and challenge sentence.",
+          "subtitle": "Primary definitions, causal grammar, and critical distinctions synchronized with Documents I–III",
+          "desc": "One-page canonical reference. Eight primary definitions in dependency order. Full causal grammar hierarchy. Seven critical distinctions. Thesis and challenge sentence. Keep open while reading anywhere in the library.",
+          "chars": 8400,
           "keywords": [
             "lexicon",
             "reference",
