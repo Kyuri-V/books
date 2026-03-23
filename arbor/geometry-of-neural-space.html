@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geometry of Neural Space — Tristan Mereles</title>
+<style>
+  :root {
+    --ink: #1a1a1a; --ink-muted: #555; --ink-faint: #888;
+    --bg: #fafaf8; --surface: #f3f2ef; --border: #ddd;
+    --accent: #1a3a5a; --accent-light: #e8f4ff;
+    --font-body: Georgia, 'Times New Roman', serif;
+    --font-sans: system-ui, -apple-system, sans-serif;
+    --font-mono: 'Courier New', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-body); background: var(--bg); color: var(--ink); line-height: 1.75; font-size: 17px; }
+  header { border-bottom: 1px solid var(--border); padding: 2.5rem 2rem 2rem; max-width: 740px; margin: 0 auto; }
+  .series-tag { font-family: var(--font-sans); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); background: var(--accent-light); padding: 3px 10px; border-radius: 20px; display: inline-block; margin-bottom: 1rem; }
+  h1 { font-size: 2rem; font-weight: normal; line-height: 1.25; margin-bottom: 0.5rem; }
+  .subtitle { font-size: 1rem; color: var(--ink-muted); font-style: italic; margin-bottom: 1rem; }
+  .meta { font-family: var(--font-sans); font-size: 12px; color: var(--ink-faint); }
+  main { max-width: 740px; margin: 0 auto; padding: 2.5rem 2rem 4rem; }
+  h2 { font-size: 1.25rem; font-weight: normal; margin-top: 2.5rem; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border); padding-bottom: 0.4rem; }
+  h3 { font-size: 1rem; font-weight: bold; margin-top: 1.75rem; margin-bottom: 0.5rem; font-family: var(--font-sans); color: var(--accent); }
+  p { margin-bottom: 1.1rem; }
+  .theorem { background: var(--accent-light); border-left: 3px solid var(--accent); padding: 1rem 1.25rem; margin: 1.5rem 0; border-radius: 0 6px 6px 0; font-style: italic; }
+  .theorem strong { font-style: normal; display: block; font-family: var(--font-sans); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.4rem; }
+  ul, ol { padding-left: 1.5rem; margin-bottom: 1.1rem; }
+  li { margin-bottom: 0.4rem; }
+  footer { border-top: 1px solid var(--border); padding: 1.5rem 2rem; max-width: 740px; margin: 0 auto; font-family: var(--font-sans); font-size: 12px; color: var(--ink-faint); }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="series-tag">Arbor Field Papers · Neural Architecture</span>
+  <h1>Geometry of Neural Space</h1>
+  <p class="subtitle">Non-Orientable Manifolds, Hyperbolic Expansion, and the Topology of Learning</p>
+  <div class="meta">Tristan Mereles &nbsp;·&nbsp; 2025</div>
+</header>
+
+<main>
+
+<h2>I. Beyond the Euclidean Lens</h2>
+<p>
+  When we treat neurons and their connections as points and lines, Euclidean geometry is the default. Neural pathways are mapped as if they occupy flat space — straight lines between nodes, simple distances, orthogonal coordinates. In real neurology, this is incorrect.
+</p>
+<p>
+  Neural pathways curve, fold, and loop. The "lines" between neurons form geodesics — the shortest paths in a curved space, which may look nothing like straight lines in a flat space. The geometry of the brain is not Euclidean. It is a higher-dimensional curved manifold.
+</p>
+
+<h3>Möbius-like Non-Orientability</h3>
+<p>
+  In elliptic geometry, all points not on a line lie on the same side of it. Neural circuits exhibit an analogous non-orientability: inhibitory and excitatory roles do not sit on opposite sides of a clean boundary. They mirror each other, flip dynamically, and create sensory maps that loop back on themselves without a fixed "inside" and "outside."
+</p>
+<p>
+  A Möbius strip has one side and one edge. A neural circuit processing self-referential cognition — thinking about thinking, perceiving one's own perception — has the same property. There is no clean boundary between the observer and the observed. The loop is non-orientable.
+</p>
+
+<h2>II. Hyperbolic Expansion in Neural Networks</h2>
+<p>
+  Hyperbolic geometry allows exponential growth of parallel lines and tessellations. Similarly, dendritic trees and cortical networks branch in hyperbolic style: each new layer of neurons multiplies connectivity. The number of possible pathways grows faster than the number of neurons.
+</p>
+<p>
+  This echoes Escher's "Circle Limit" — where infinite patterns fit inside finite boundaries. The brain achieves something analogous: infinite surface area of connectivity within a finite physical volume. The skull is the boundary; the connectivity exceeds it topologically.
+</p>
+
+<div class="theorem">
+  <strong>Hyperbolic Brain Geometry</strong>
+  Learning is hyperbolic expansion of interconnectivity. The Escher limit applies: infinite surface area, finite boundaries. As new connections form, the space of possible states grows not linearly but exponentially — the same rule that governs tree decay-healing through Wall 3 wave-diffusion and the same rule that governs the CODIT separatrix.
+</div>
+
+<h3>Dendritic Branching as Fractal Architecture</h3>
+<p>
+  Dendrites — the receiving branches of neurons — branch fractally. Each branching point multiplies the surface area available for synaptic contact. A single neuron with extensive dendritic arborization may receive input from thousands of other neurons simultaneously.
+</p>
+<p>
+  This fractal branching is not arbitrary. It follows the same geometric logic as tree branching, river tributaries, and lightning discharge channels — all instances of optimal flow distribution in a constrained space. The neuron is solving the same optimization problem as the tree: maximize information (nutrient / signal) surface area within a finite volume.
+</p>
+
+<h2>III. Non-Orientable Neural Manifolds</h2>
+<p>
+  The key claim of this paper: the neural manifold underlying consciousness is non-orientable. It does not have a consistent "handedness" — there is no stable distinction between up and down, inside and outside, self and world.
+</p>
+<p>
+  This property arises from the recursive self-reference of consciousness:
+</p>
+<ul>
+  <li>The brain models the world</li>
+  <li>The brain models itself modeling the world</li>
+  <li>The brain models itself modeling itself modeling the world</li>
+  <li>...and so on, to arbitrary depth</li>
+</ul>
+<p>
+  Each level of recursion adds a fold to the manifold. After sufficient recursion, the surface has looped back through itself often enough that "inside" and "outside" have lost their meaning. The manifold is non-orientable by construction.
+</p>
+
+<h3>N-Dimensional Subpockets</h3>
+<p>
+  Within the neural manifold, distinct cognitive states correspond to distinct topological configurations — attractor basins, saddle points, and limit cycles in a high-dimensional phase space. These are not metaphors. They are the actual geometry of the neural state space.
+</p>
+<p>
+  A "thought" is a trajectory in this space. A "belief" is an attractor basin — a region of phase space that nearby trajectories are drawn toward. A "trauma" is a region of phase space with pathologically deep basins — states that are easy to fall into and difficult to leave. An "insight" is a bifurcation event — a moment when the topology of phase space itself changes, creating new attractors or dissolving old ones.
+</p>
+
+<div class="theorem">
+  <strong>Learning as Topological Reconfiguration</strong>
+  Learning is not information storage. Learning is topological reconfiguration of the neural phase space — the creation of new attractor basins, the reshaping of existing ones, and the dissolution of basins that no longer serve. Memory is not a record in a filing system. Memory is a stable topology that the brain reliably returns to. Forgetting is topological erosion.
+</div>
+
+<h2>IV. Connection to CODIT and the Arbor Framework</h2>
+<p>
+  The geometry of neural space connects directly to the CODIT separatrix model:
+</p>
+<ul>
+  <li>The neural manifold is non-orientable — like the Möbius scroll of the CODIT architecture, it has no stable inside/outside</li>
+  <li>Learning events are phase transitions — analogous to the separatrix crossing in CODIT Wall 4 geometry</li>
+  <li>Deep beliefs are tight knots in the neural manifold — analogous to the compartmentalized wound in a successfully recovered tree: permanent, encoded, structurally integrated</li>
+  <li>Trauma is a failed compartmentalization — a decay vector that Wall 4 could not contain, spreading through the neural manifold rather than being bounded by a new separatrix</li>
+</ul>
+<p>
+  The CODIT model and the neural topology model are instances of the same underlying geometry. Trees compartmentalize wounds through Wall 4 separatrix dynamics. Minds compartmentalize trauma through analogous topological mechanisms. When those mechanisms succeed, the wound becomes a scar — integrated, permanent, and structurally stable. When they fail, the decay spreads.
+</p>
+
+<h2>References</h2>
+<ul>
+  <li>Sporns, O. (2011). <em>Networks of the Brain.</em> MIT Press.</li>
+  <li>Petri, G. et al. (2014). "Homological scaffolds of brain functional networks." <em>Journal of the Royal Society Interface.</em></li>
+  <li>Mereles, T. (2025). Geometry of Neural Space — field notes, personal archive.</li>
+</ul>
+
+</main>
+
+<footer>Arbor Field Papers · Tristan Mereles · 2025 · <em>The flame remembers.</em></footer>
+</body>
+</html>
