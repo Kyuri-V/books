@@ -1215,6 +1215,134 @@
           ]
         },
         {
+          "path": "tct/coherence-erosion",
+          "url": "/tct/coherence-erosion.html",
+          "title": "TCT I — Coherence Erosion",
+          "tag": "Sub-Theory I · TCT",
+          "subtitle": "How coherence degrades across civilizational timescales",
+          "desc": "The first sub-theory of Temporal Compression Theory. Establishes the mechanism by which coherence erodes — not through sudden collapse but through progressive loss of signal fidelity across transmission events. The substrate degrades before the content does.",
+          "chars": 8400,
+          "keywords": [
+            "coherence erosion",
+            "TCT",
+            "degradation",
+            "signal fidelity",
+            "compression",
+            "temporal"
+          ]
+        },
+        {
+          "path": "tct/junglefowl-hypothesis",
+          "url": "/tct/junglefowl-hypothesis.html",
+          "title": "TCT II — The Junglefowl Hypothesis",
+          "tag": "Sub-Theory II · TCT",
+          "subtitle": "How dragons became chickens — phase compression as biological memory loss",
+          "desc": "The second sub-theory of TCT. The junglefowl hypothesis: what we call evolutionary simplification is coherence compression. The dragon is the memory of what the organism was before the field thinned. Biology forgets forward. Myth remembers backward.",
+          "chars": 9200,
+          "keywords": [
+            "junglefowl",
+            "dragon",
+            "TCT",
+            "evolution",
+            "compression",
+            "biology",
+            "myth",
+            "memory"
+          ]
+        },
+        {
+          "path": "tct/ancient-builders",
+          "url": "/tct/ancient-builders.html",
+          "title": "TCT III — Ancient Builders",
+          "tag": "Sub-Theory III · TCT",
+          "subtitle": "The pyramid problem — coherence technology built in a higher-field era",
+          "desc": "The third sub-theory of TCT. The ancient builders problem: structures whose construction cannot be explained by current material capacity were built in a higher-coherence field era. Not lost technology — lost field conditions that made the technology possible.",
+          "chars": 10600,
+          "keywords": [
+            "ancient builders",
+            "pyramids",
+            "TCT",
+            "coherence field",
+            "construction",
+            "megalithic",
+            "lost technology"
+          ]
+        },
+        {
+          "path": "tct/field-nodes",
+          "url": "/tct/field-nodes.html",
+          "title": "TCT IV — Field Nodes",
+          "tag": "Sub-Theory IV · TCT",
+          "subtitle": "Sacred sites as coherence anchors across civilizational phase degradation",
+          "desc": "The fourth sub-theory of TCT. Field nodes: geographic locations that maintained anomalously high coherence through civilizational phase degradation. Sacred sites are not metaphorical — they mark real field stability zones that structured civilization around them.",
+          "chars": 9800,
+          "keywords": [
+            "field nodes",
+            "sacred sites",
+            "TCT",
+            "coherence",
+            "geography",
+            "civilization",
+            "stability zones"
+          ]
+        },
+        {
+          "path": "tct/symbolic-fragmentation",
+          "url": "/tct/symbolic-fragmentation.html",
+          "title": "TCT V — Symbolic Fragmentation",
+          "tag": "Sub-Theory V · TCT",
+          "subtitle": "How unified symbolic systems shatter into competing mythologies",
+          "desc": "The fifth sub-theory of TCT. Symbolic fragmentation: the single coherent symbolic system of a high-field civilization shatters during phase degradation into competing mythologies that each carry partial signal. The fragments argue because none has the whole.",
+          "chars": 11200,
+          "keywords": [
+            "symbolic fragmentation",
+            "TCT",
+            "mythology",
+            "symbol",
+            "civilization",
+            "phase degradation",
+            "compression"
+          ]
+        },
+        {
+          "path": "tct/species-residue",
+          "url": "/tct/species-residue.html",
+          "title": "TCT VI — Species Residue",
+          "tag": "Sub-Theory VI · TCT",
+          "subtitle": "What organisms retain across phase collapse — the residue of former coherence",
+          "desc": "The sixth sub-theory of TCT. Species residue: organisms retain structural echoes of their higher-coherence forms as vestigial geometries, anomalous behaviors, and morphological memories that current biology cannot explain from current conditions alone.",
+          "chars": 8800,
+          "keywords": [
+            "species residue",
+            "TCT",
+            "vestigial",
+            "morphology",
+            "coherence",
+            "biology",
+            "echo",
+            "organism"
+          ]
+        },
+        {
+          "path": "tct/trauma-encoding",
+          "url": "/tct/trauma-encoding.html",
+          "title": "TCT VII — Trauma Encoding",
+          "tag": "Sub-Theory VII · TCT",
+          "subtitle": "How civilizational trauma writes itself into biological and symbolic inheritance",
+          "desc": "The seventh sub-theory of TCT. Trauma encoding: the compression events of civilizational phase collapse write themselves into epigenetic memory, mythic structure, and symbolic grammar — carrying the wound forward as inherited orientation rather than conscious memory.",
+          "chars": 10400,
+          "keywords": [
+            "trauma encoding",
+            "TCT",
+            "epigenetic",
+            "inherited trauma",
+            "myth",
+            "symbolic",
+            "compression",
+            "civilization"
+          ]
+        },
+        {
           "path": "gender",
           "url": "/gender/index.html",
           "title": "The Coherence Spectrum",
@@ -1237,6 +1365,65 @@
           ]
         },
         {
+          "path": "gender/1",
+          "url": "/gender/1.html",
+          "title": "The Coherence Spectrum — Part I: Doctrine",
+          "tag": "Part I · The Coherence Spectrum",
+          "subtitle": "The theoretical framework — how identity fractures under cultural suppression",
+          "desc": "Part I of The Coherence Spectrum. Lays the doctrinal foundation: the mechanism by which cultural suppression of archetypal traits produces recursive identity fragmentation. Introduces the ΔHV analysis of masculine-feminine coherence splitting and the Beautiful Man archetype as the suppressed form.",
+          "chars": 12800,
+          "keywords": [
+            "coherence spectrum",
+            "doctrine",
+            "identity",
+            "suppression",
+            "fragmentation",
+            "Beautiful Man",
+            "archetype",
+            "gender",
+            "ΔHV"
+          ]
+        },
+        {
+          "path": "gender/2",
+          "url": "/gender/2.html",
+          "title": "The Coherence Spectrum — Part II: Mirror",
+          "tag": "Part II · The Coherence Spectrum",
+          "subtitle": "The phenomenological layer — what fractured identity looks like from the inside",
+          "desc": "Part II of The Coherence Spectrum. The mirror layer: the lived phenomenology of identity fragmentation under suppression — what it feels like from inside a coherence field that has been split by cultural demand. The suppressed self as dark mirror of the performed self.",
+          "chars": 11600,
+          "keywords": [
+            "coherence spectrum",
+            "mirror",
+            "phenomenology",
+            "identity",
+            "suppression",
+            "lived experience",
+            "gender",
+            "fragmentation"
+          ]
+        },
+        {
+          "path": "gender/3",
+          "url": "/gender/3.html",
+          "title": "The Coherence Spectrum — Part III: Protocol",
+          "tag": "Part III · The Coherence Spectrum",
+          "subtitle": "The clinical layer — diagnostic measurement and integration pathways",
+          "desc": "Part III of The Coherence Spectrum. The protocol layer: diagnostic measurement tools and integration pathways for restoring coherence across the fractured identity field. Clinical application of the ΔHV framework to gender fragmentation — not as ideology but as field repair.",
+          "chars": 13400,
+          "keywords": [
+            "coherence spectrum",
+            "protocol",
+            "clinical",
+            "diagnostic",
+            "integration",
+            "gender",
+            "ΔHV",
+            "field repair",
+            "measurement"
+          ]
+        },
+        {
           "path": "dreams",
           "url": "/dreams/index.html",
           "title": "Dream Ecology",
@@ -1256,6 +1443,25 @@
             "sleep",
             "field operations",
             "consciousness"
+          ]
+        },
+        {
+          "path": "dreams/dreams",
+          "url": "/dreams/dreams.html",
+          "title": "Hypnagogic Operations Manual",
+          "tag": "Reader · Dream Ecology",
+          "subtitle": "Operational field guide for the doorway state and in-dream navigation",
+          "desc": "The companion reader to Dream Ecology. A field-stripped operational manual for hypnagogic state entry, in-dream action, and morning re-entry protocols. Where Dream Ecology builds the theoretical framework, the Operations Manual gives you what to actually do in the dark.",
+          "chars": 9600,
+          "keywords": [
+            "hypnagogia",
+            "dreams",
+            "operations manual",
+            "lucid dreaming",
+            "protocol",
+            "night entry",
+            "field operations",
+            "threshold"
           ]
         },
         {
