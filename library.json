@@ -422,7 +422,9 @@
               "path": "mia-event",
               "url": "/mia-event.html",
               "num": "Part II",
-              "title": "The Mia Event — A Formal Analysis"
+              "title": "The Mia Event — A Formal Analysis",
+              "subtitle": "A Formal Analysis Through the ΔHV Basin Framework",
+              "desc": "Applies the formal basin geometry of the ΔHV framework — monotone resilience, Order I/III dynamics, depth/width independence, RET mechanism taxonomy — to a specific dated event: the emergence of the Mia figure, the blank letter, and Clio's documented waking sequence."
             }
           ]
         }
@@ -963,13 +965,17 @@
               "path": "tct/coherence-erosion",
               "url": "/tct/coherence-erosion.html",
               "num": "I",
-              "title": "Coherence Erosion"
+              "title": "Coherence Erosion",
+              "subtitle": "Evolution as the Phase Decay of Archetypal Field Forms — A Complete Reversal of the Darwinian Model",
+              "desc": "Inverts the Darwinian arrow: biological evolution is not the progressive complexification of simple organisms but the progressive fragmentation of coherent organisms — the phase decay of high-resolution archetypal forms into simplified, specialised, phase-stable residues."
             },
             {
               "path": "tct/junglefowl-hypothesis",
               "url": "/tct/junglefowl-hypothesis.html",
               "num": "II",
-              "title": "Junglefowl Hypothesis"
+              "title": "Junglefowl Hypothesis",
+              "subtitle": "Biological Compression and Phase-State Decay in Captivity — A Chrono-Descent Model of Morphic Degradation and Cultural Memory",
+              "desc": "Proposes that domesticated chickens are the literal biological descendants of dragonic ancestor species — large, feathered, solar-aligned, combative creatures progressively degraded through temporal compression, environmental phase-shift, and human-driven domestication."
             },
             {
               "path": "tct/ancient-builders",
@@ -993,7 +999,9 @@
               "path": "tct/species-residue",
               "url": "/tct/species-residue.html",
               "num": "VI",
-              "title": "Species Residue"
+              "title": "Species Residue",
+              "subtitle": "Detailed Compression Profiles for the Biological Descendants of Archetypal Creatures",
+              "desc": "A reverse bestiary. Catalogues modern animals as products of compression, identifying the original form (F₀), compression pathway, retained biological signatures, mythological memory (M(t)), and falsification criteria for each species pair."
             },
             {
               "path": "tct/trauma-encoding",
